@@ -47,8 +47,8 @@ pinout:
   uio[7]: "tap_401inv"
 
   # Analog pins
-  ua[0]: "V_BG (bandgap ~1.2V)"
-  ua[1]: "V_PTAT (temp proportional)"
+  ua[0]: "VREF (bandgap ~1.2V, temp independent)"
+  ua[1]: "VPTAT (proportional to absolute temp)"
   ua[2]: ""
   ua[3]: ""
   ua[4]: ""
