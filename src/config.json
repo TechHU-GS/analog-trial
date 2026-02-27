@@ -1,0 +1,6 @@
+{
+  "DESIGN_NAME": "tt_um_techhu_analog_trial",
+  "VERILOG_FILES": "dir::*.v",
+  "CLOCK_PERIOD": 100,
+  "SYNTH_STRATEGY": "AREA 0"
+}

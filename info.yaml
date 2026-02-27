@@ -1,0 +1,49 @@
+# Tiny Tapeout project information
+project:
+  title:        "Configurable Ring Oscillator"
+  author:       "TechHU"
+  discord:      ""
+  description:  "Process characterization ring oscillator with 15 output taps (3 to 501 inverters)"
+  language:     "Verilog"
+  clock_hz:     0
+
+  tiles: "1x2"
+  analog_pins: 0
+
+  top_module:  "tt_um_techhu_analog_trial"
+
+  source_files:
+    - "project.v"
+
+pinout:
+  # Inputs
+  ui[0]: "enable"
+  ui[1]: "sel[0]"
+  ui[2]: "sel[1]"
+  ui[3]: "sel[2]"
+  ui[4]: ""
+  ui[5]: ""
+  ui[6]: ""
+  ui[7]: ""
+
+  # Outputs
+  uo[0]: "selected_tap"
+  uo[1]: "tap_7inv"
+  uo[2]: "tap_13inv"
+  uo[3]: "tap_21inv"
+  uo[4]: "tap_51inv"
+  uo[5]: "tap_101inv"
+  uo[6]: "tap_201inv"
+  uo[7]: "tap_351inv"
+
+  # Bidirectional pins
+  uio[0]: "tap_501inv"
+  uio[1]: "tap_3inv"
+  uio[2]: "tap_5inv"
+  uio[3]: "tap_31inv"
+  uio[4]: "tap_75inv"
+  uio[5]: "tap_149inv"
+  uio[6]: "tap_251inv"
+  uio[7]: "tap_401inv"
+
+yaml_version: 6
