@@ -49,5 +49,9 @@ pinout:
   # Analog pins
   ua[0]: "V_BG (bandgap ~1.2V)"
   ua[1]: "V_PTAT (temp proportional)"
+  ua[2]: ""
+  ua[3]: ""
+  ua[4]: ""
+  ua[5]: ""
 
 yaml_version: 6
