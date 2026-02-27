@@ -1,14 +1,14 @@
 # Tiny Tapeout project information
 project:
-  title:        "Configurable Ring Oscillator"
+  title:        "Bandgap Reference + PTAT Sensor"
   author:       "TechHU"
   discord:      ""
-  description:  "Process characterization ring oscillator with 15 output taps (3 to 501 inverters)"
+  description:  "Bandgap voltage reference and PTAT temperature sensor on IHP SG13G2 130nm"
   language:     "Verilog"
   clock_hz:     0
 
   tiles: "1x2"
-  analog_pins: 0
+  analog_pins: 2
 
   top_module:  "tt_um_techhu_analog_trial"
 
@@ -45,5 +45,9 @@ pinout:
   uio[5]: "tap_149inv"
   uio[6]: "tap_251inv"
   uio[7]: "tap_401inv"
+
+  # Analog pins
+  ua[0]: "V_BG (bandgap ~1.2V)"
+  ua[1]: "V_PTAT (temp proportional)"
 
 yaml_version: 6
