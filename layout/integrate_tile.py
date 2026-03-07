@@ -378,6 +378,23 @@ def main():
 
         print(f'  {ua_name} ({sig["net"]}): via@({gx/1000:.1f},{gy/1000:.1f}) → pad@({ua_x/1000:.1f},{ua_y/1000:.1f}) um')
 
+    # ═══ 5b. Unused analog pin pads (ua[2]~ua[7]) ═══
+    used_ua = {sig['ua_idx'] for sig in ANALOG_SIGNALS.values()}
+    li_tm1_pin = layout.layer(*LY_TM1_PIN)
+    for idx, ua in UA_PINS.items():
+        if idx in used_ua:
+            continue
+        ua_x, ua_y = ua['x'], ua['y']
+        # TopMetal1 drawing pad
+        top.shapes(li_tm1).insert(box(ua_x - ua['hw'], ua_y - ua['hh'],
+                                       ua_x + ua['hw'], ua_y + ua['hh']))
+        # Pin marker
+        top.shapes(li_tm1_pin).insert(box(ua_x - ua['hw'], ua_y - ua['hh'],
+                                           ua_x + ua['hw'], ua_y + ua['hh']))
+        # Label
+        add_label(top, layout, LY_TM1_LABEL, ua_x, ua_y, f'ua[{idx}]')
+    print(f'  Unused analog pins: ua[2]~ua[7] pads on TopMetal1')
+
     # ═══ 6. Digital pin stubs (Metal4, top edge) ═══
     li_m4 = layout.layer(*LY_M4)
     li_m4_pin = layout.layer(*LY_M4_PIN)

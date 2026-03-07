@@ -24,6 +24,54 @@ MACRO tt_um_techhu_analog_trial
         RECT 165.685 0.000 167.435 2.000 ;
     END
   END ua[1]
+  PIN ua[2]
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER TopMetal1 ;
+        RECT 141.205 0.000 142.955 2.000 ;
+    END
+  END ua[2]
+  PIN ua[3]
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER TopMetal1 ;
+        RECT 116.725 0.000 118.475 2.000 ;
+    END
+  END ua[3]
+  PIN ua[4]
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER TopMetal1 ;
+        RECT 92.245 0.000 93.995 2.000 ;
+    END
+  END ua[4]
+  PIN ua[5]
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER TopMetal1 ;
+        RECT 67.765 0.000 69.515 2.000 ;
+    END
+  END ua[5]
+  PIN ua[6]
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER TopMetal1 ;
+        RECT 43.285 0.000 45.035 2.000 ;
+    END
+  END ua[6]
+  PIN ua[7]
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER TopMetal1 ;
+        RECT 18.805 0.000 20.555 2.000 ;
+    END
+  END ua[7]
   PIN VDPWR
     DIRECTION INOUT ;
     USE POWER ;
