@@ -1,0 +1,73 @@
+{
+  "version": "sg13g2-v0.1",
+  "source": "Derived from pdkdb.json rules",
+  "units": "nm",
+  "ntap": {
+    "description": "Minimum NWell tie: N+ Activ in NWell, contacted to M1",
+    "purpose": "Connects NWell to VDD to prevent latchup (LU.a)",
+    "derivation": {
+      "step1_contact": "Cnt_a=160nm square contact",
+      "step2_activ_min": "Cnt_a + 2*Cnt_c = 160 + 2*70 = 300nm (min activ enclosing 1 contact)",
+      "step3_activ_2cont": "2*Cnt_a + Cnt_b + 2*Cnt_c = 2*160 + 180 + 2*70 = 640nm (2 contacts in a row)",
+      "step4_chosen_activ": "640nm x 640nm (2x2 contact array for reliability)",
+      "step5_nwell": "Activ + 2*NW_e = 640 + 2*240 = 1120nm",
+      "step6_nwell_check": "1120nm < 2990nm nBuLay threshold => NO nBuLay generated (CRITICAL)",
+      "step7_m1_pad": "Cnt_a + 2*M1_c = 160 + 0 = 160nm min, use 640nm for 2x2 contacts",
+      "step8_psd_clearance": "pSD_d1=30nm from N+Activ in NWell (no pSD drawn inside NWell tie)"
+    },
+    "activ": {"w": 640, "h": 640},
+    "nwell": {"w": 1120, "h": 1120},
+    "m1_pad": {"w": 640, "h": 640},
+    "contacts": {"count": 4, "layout": "2x2", "size": 160, "spacing": 180},
+    "total_keepout": {
+      "w": 1120,
+      "h": 1120,
+      "note": "= NWell extent (governing dimension). pSD clearance is within NWell envelope."
+    },
+    "m1_keepout": {
+      "w": 1000,
+      "h": 1000,
+      "note": "M1 pad 640 + 2*M1_b(180) = 1000nm. Other M1 shapes must be >= 180nm from tie M1."
+    },
+    "nbulay_safe": true,
+    "nbulay_note": "NWell 1120nm < 2990nm threshold. If NWell is bridged to adjacent device NWell, check combined width."
+  },
+  "ptap": {
+    "description": "Minimum substrate tie: P+ Activ with pSD in P-well, contacted to M1",
+    "purpose": "Connects substrate to GND to prevent latchup (LU.b)",
+    "derivation": {
+      "step1_contact": "Same as ntap: 2x2 array in 640nm activ",
+      "step2_psd": "Activ + 2*pSD_d = 640 + 2*180 = 1000nm (pSD enclosure of activ for P-tap)",
+      "step3_activ_space": "Act_b=210nm from any other activ",
+      "step4_m1_pad": "640nm (same as ntap)"
+    },
+    "activ": {"w": 640, "h": 640},
+    "psd": {"w": 1000, "h": 1000},
+    "m1_pad": {"w": 640, "h": 640},
+    "contacts": {"count": 4, "layout": "2x2", "size": 160, "spacing": 180},
+    "total_keepout": {
+      "w": 1000,
+      "h": 1000,
+      "note": "= pSD extent (governing dimension for substrate tie)"
+    },
+    "m1_keepout": {
+      "w": 1000,
+      "h": 1000,
+      "note": "M1 pad 640 + 2*M1_b(180) = 1000nm"
+    }
+  },
+  "placement_rules": {
+    "ntap_to_pmos_pactiv_max_distance_nm": 20000,
+    "ntap_to_pmos_pactiv_max_distance_rule": "LU.a",
+    "ptap_to_nmos_nactiv_max_distance_nm": 20000,
+    "ptap_to_nmos_nactiv_max_distance_rule": "LU.b",
+    "tie_activ_to_device_activ_min_space_nm": 210,
+    "tie_activ_to_device_activ_min_space_rule": "Act.b",
+    "tie_m1_to_device_m1_min_space_nm": 180,
+    "tie_m1_to_device_m1_min_space_rule": "M1.b",
+    "ntap_nwell_to_external_nwell_min_space_nm": 1800,
+    "ntap_nwell_to_external_nwell_min_space_rule": "NW.b1 (different net)",
+    "ntap_nwell_to_same_net_nwell_min_space_nm": 0,
+    "ntap_nwell_to_same_net_nwell_note": "Same-net NWells can merge (gap=0)"
+  }
+}

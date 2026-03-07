@@ -1,0 +1,362 @@
+{
+  "bounding_box": {
+    "area_um2": 5124.0,
+    "h_um": 73.41,
+    "w_um": 69.8
+  },
+  "hbt_halos": {
+    "Q1": {
+      "h_um": 11.11,
+      "halo_um": 2.0,
+      "w_um": 10.7,
+      "x_um": 3.0,
+      "y_um": 59.3
+    },
+    "Q2": {
+      "h_um": 11.11,
+      "halo_um": 2.0,
+      "w_um": 23.65,
+      "x_um": 15.2,
+      "y_um": 59.3
+    }
+  },
+  "instances": {
+    "M1": {
+      "h_um": 2.62,
+      "type": "pmos_mirror",
+      "w_um": 5.68,
+      "x_um": 15.5,
+      "y_um": 36.0
+    },
+    "M2": {
+      "h_um": 2.62,
+      "type": "pmos_mirror",
+      "w_um": 5.68,
+      "x_um": 22.2,
+      "y_um": 36.0
+    },
+    "M3": {
+      "h_um": 2.62,
+      "type": "pmos_mirror",
+      "w_um": 5.68,
+      "x_um": 28.9,
+      "y_um": 36.0
+    },
+    "M5": {
+      "h_um": 2.62,
+      "type": "pmos_mirror",
+      "w_um": 5.68,
+      "x_um": 35.6,
+      "y_um": 36.0
+    },
+    "MBn1": {
+      "h_um": 2.36,
+      "type": "nmos_buf1",
+      "w_um": 1.18,
+      "x_um": 62.3,
+      "y_um": 22.5
+    },
+    "MBn2": {
+      "h_um": 2.36,
+      "type": "nmos_buf2",
+      "w_um": 2.06,
+      "x_um": 64.4,
+      "y_um": 22.5
+    },
+    "MBp1": {
+      "h_um": 4.62,
+      "type": "pmos_buf1",
+      "w_um": 1.8,
+      "x_um": 61.6,
+      "y_um": 28.4
+    },
+    "MBp2": {
+      "h_um": 4.62,
+      "type": "pmos_buf2",
+      "w_um": 2.68,
+      "x_um": 64.1,
+      "y_um": 28.4
+    },
+    "MNb1": {
+      "h_um": 1.36,
+      "type": "nmos_bias",
+      "w_um": 3.18,
+      "x_um": 39.1,
+      "y_um": 16.6
+    },
+    "MNb2": {
+      "h_um": 1.36,
+      "type": "nmos_bias",
+      "w_um": 3.18,
+      "x_um": 44.1,
+      "y_um": 16.6
+    },
+    "MNb3": {
+      "h_um": 1.36,
+      "type": "nmos_bias",
+      "w_um": 3.18,
+      "x_um": 49.1,
+      "y_um": 16.6
+    },
+    "MNb4": {
+      "h_um": 1.36,
+      "type": "nmos_bias",
+      "w_um": 3.18,
+      "x_um": 54.1,
+      "y_um": 16.6
+    },
+    "MNb5": {
+      "h_um": 1.36,
+      "type": "nmos_bias",
+      "w_um": 3.18,
+      "x_um": 59.1,
+      "y_um": 16.6
+    },
+    "MNdiode": {
+      "h_um": 2.36,
+      "type": "nmos_diode",
+      "w_um": 1.68,
+      "x_um": 34.4,
+      "y_um": 11.7
+    },
+    "MPd1": {
+      "h_um": 0.86,
+      "type": "nmos_vco",
+      "w_um": 1.18,
+      "x_um": 41.1,
+      "y_um": 22.5
+    },
+    "MPd2": {
+      "h_um": 0.86,
+      "type": "nmos_vco",
+      "w_um": 1.18,
+      "x_um": 45.6,
+      "y_um": 22.5
+    },
+    "MPd3": {
+      "h_um": 0.86,
+      "type": "nmos_vco",
+      "w_um": 1.18,
+      "x_um": 50.1,
+      "y_um": 22.5
+    },
+    "MPd4": {
+      "h_um": 0.86,
+      "type": "nmos_vco",
+      "w_um": 1.18,
+      "x_um": 54.6,
+      "y_um": 22.5
+    },
+    "MPd5": {
+      "h_um": 0.86,
+      "type": "nmos_vco",
+      "w_um": 1.18,
+      "x_um": 59.1,
+      "y_um": 22.5
+    },
+    "MPu1": {
+      "h_um": 4.62,
+      "type": "pmos_vco",
+      "w_um": 1.8,
+      "x_um": 41.8,
+      "y_um": 28.4
+    },
+    "MPu2": {
+      "h_um": 4.62,
+      "type": "pmos_vco",
+      "w_um": 1.8,
+      "x_um": 45.8,
+      "y_um": 28.4
+    },
+    "MPu3": {
+      "h_um": 4.62,
+      "type": "pmos_vco",
+      "w_um": 1.8,
+      "x_um": 49.8,
+      "y_um": 28.4
+    },
+    "MPu4": {
+      "h_um": 4.62,
+      "type": "pmos_vco",
+      "w_um": 1.8,
+      "x_um": 53.8,
+      "y_um": 28.4
+    },
+    "MPu5": {
+      "h_um": 4.62,
+      "type": "pmos_vco",
+      "w_um": 1.8,
+      "x_um": 57.8,
+      "y_um": 28.4
+    },
+    "Q1": {
+      "h_um": 7.11,
+      "type": "hbt_1x",
+      "w_um": 6.7,
+      "x_um": 5.0,
+      "y_um": 61.3
+    },
+    "Q2": {
+      "h_um": 7.11,
+      "type": "hbt_8x",
+      "w_um": 19.65,
+      "x_um": 17.2,
+      "y_um": 61.3
+    },
+    "Riso": {
+      "h_um": 6.22,
+      "type": "rppd_iso",
+      "w_um": 2.9,
+      "x_um": 63.9,
+      "y_um": 3.0
+    },
+    "Rout": {
+      "h_um": 7.29,
+      "type": "rppd_out",
+      "w_um": 4.3,
+      "x_um": 34.6,
+      "y_um": 41.7
+    },
+    "Rptat": {
+      "h_um": 14.93,
+      "type": "rppd_ptat",
+      "w_um": 8.38,
+      "x_um": 13.4,
+      "y_um": 41.7
+    },
+    "Rstart": {
+      "h_um": 15.62,
+      "type": "rppd_start",
+      "w_um": 0.9,
+      "x_um": 39.6,
+      "y_um": 41.7
+    }
+  },
+  "nwell_islands": [
+    {
+      "bbox_um": [
+        15.5,
+        28.4,
+        59.6,
+        38.62
+      ],
+      "devices": [
+        "M1",
+        "M2",
+        "M3",
+        "M5",
+        "MPu1",
+        "MPu2",
+        "MPu3",
+        "MPu4",
+        "MPu5"
+      ],
+      "id": "NWell_A",
+      "net": "vdd_vco"
+    },
+    {
+      "bbox_um": [
+        61.6,
+        28.4,
+        66.78,
+        33.02
+      ],
+      "devices": [
+        "MBp1",
+        "MBp2"
+      ],
+      "id": "NWell_B",
+      "net": "vdd"
+    }
+  ],
+  "routing_channels": [
+    {
+      "above": "hbt",
+      "below": "res",
+      "h_um": 1.98,
+      "n_tracks": 3,
+      "y_um": 57.32
+    },
+    {
+      "above": "res",
+      "below": "pmos_mirror",
+      "h_um": 3.08,
+      "n_tracks": 3,
+      "y_um": 38.62
+    },
+    {
+      "above": "pmos_mirror",
+      "below": "vco_pu",
+      "h_um": 2.98,
+      "n_tracks": 2,
+      "y_um": 33.02
+    },
+    {
+      "above": "vco_pu",
+      "below": "vco_pd",
+      "h_um": 3.54,
+      "n_tracks": 6,
+      "y_um": 24.86
+    },
+    {
+      "above": "vco_pd",
+      "below": "vco_nb",
+      "h_um": 4.54,
+      "n_tracks": 6,
+      "y_um": 17.96
+    },
+    {
+      "above": "vco_nb",
+      "below": "mndiode",
+      "h_um": 2.54,
+      "n_tracks": 2,
+      "y_um": 14.06
+    },
+    {
+      "above": "mndiode",
+      "below": "riso",
+      "h_um": 2.48,
+      "n_tracks": 2,
+      "y_um": 9.22
+    }
+  ],
+  "solver_status": "OPTIMAL",
+  "tie_strips": {
+    "mndiode_ptap": {
+      "h_um": 1.0,
+      "net": "gnd",
+      "row": "mndiode",
+      "type": "ptap",
+      "y_um": 10.7
+    },
+    "pmos_mirror_ntap": {
+      "h_um": 1.12,
+      "net": "vdd_vco",
+      "row": "pmos_mirror",
+      "type": "ntap",
+      "y_um": 38.62
+    },
+    "vco_nb_ptap": {
+      "h_um": 1.0,
+      "net": "gnd",
+      "row": "vco_nb",
+      "type": "ptap",
+      "y_um": 15.6
+    },
+    "vco_pd_ptap": {
+      "h_um": 1.0,
+      "net": "gnd",
+      "row": "vco_pd",
+      "type": "ptap",
+      "y_um": 21.5
+    },
+    "vco_pu_ntap": {
+      "h_um": 1.12,
+      "net": "vdd_vco",
+      "row": "vco_pu",
+      "type": "ntap",
+      "y_um": 33.02
+    }
+  },
+  "version": "2.1"
+}

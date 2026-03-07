@@ -1,0 +1,21 @@
+[project]
+name = "analog-layout-toolkit"
+version = "0.1.0"
+description = "IHP SG13G2 analog IC layout toolkit — DRC-aware routing, verification, visualization"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "shapely>=2.0",
+    "networkx",
+    "matplotlib",
+    "gdstk",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[tool.pytest.ini_options]
+testpaths = ["atk/tests"]
+
+[tool.ruff]
+line-length = 100

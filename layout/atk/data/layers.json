@@ -1,0 +1,1723 @@
+{
+  "version": "sg13g2-v0.1",
+  "source": "layers_def.drc",
+  "total_layers": 286,
+  "layers": {
+    "Activ": {
+      "layer": 1,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "activ_drw"
+    },
+    "Activ_pin": {
+      "layer": 1,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "activ_pin"
+    },
+    "Activ_mask": {
+      "layer": 1,
+      "datatype": 20,
+      "purpose": "mask",
+      "drc_var": "activ_mask"
+    },
+    "Activ_filler": {
+      "layer": 1,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "activ_filler"
+    },
+    "Activ_nofill": {
+      "layer": 1,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "activ_nofill"
+    },
+    "Activ_opc": {
+      "layer": 1,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "activ_opc"
+    },
+    "Activ_iopc": {
+      "layer": 1,
+      "datatype": 27,
+      "purpose": "iopc",
+      "drc_var": "activ_iopc"
+    },
+    "Activ_noqrc": {
+      "layer": 1,
+      "datatype": 28,
+      "purpose": "noqrc",
+      "drc_var": "activ_noqrc"
+    },
+    "Biwind": {
+      "layer": 3,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "biwind_drw"
+    },
+    "Biwind_opc": {
+      "layer": 3,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "biwind_opc"
+    },
+    "Pemwind": {
+      "layer": 11,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "pemwind_drw"
+    },
+    "Gatpoly": {
+      "layer": 5,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "gatpoly_drw"
+    },
+    "Gatpoly_pin": {
+      "layer": 5,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "gatpoly_pin"
+    },
+    "Gatpoly_filler": {
+      "layer": 5,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "gatpoly_filler"
+    },
+    "Gatpoly_nofill": {
+      "layer": 5,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "gatpoly_nofill"
+    },
+    "Gatpoly_opc": {
+      "layer": 5,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "gatpoly_opc"
+    },
+    "Gatpoly_iopc": {
+      "layer": 5,
+      "datatype": 27,
+      "purpose": "iopc",
+      "drc_var": "gatpoly_iopc"
+    },
+    "Gatpoly_noqrc": {
+      "layer": 5,
+      "datatype": 28,
+      "purpose": "noqrc",
+      "drc_var": "gatpoly_noqrc"
+    },
+    "Cont": {
+      "layer": 6,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "cont_drw"
+    },
+    "Cont_opc": {
+      "layer": 6,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "cont_opc"
+    },
+    "Nsd": {
+      "layer": 7,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "nsd_drw"
+    },
+    "Nsd_block": {
+      "layer": 7,
+      "datatype": 21,
+      "purpose": "block",
+      "drc_var": "nsd_block"
+    },
+    "Metal1": {
+      "layer": 8,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "metal1_drw"
+    },
+    "Metal1_pin": {
+      "layer": 8,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "metal1_pin"
+    },
+    "Metal1_mask": {
+      "layer": 8,
+      "datatype": 20,
+      "purpose": "mask",
+      "drc_var": "metal1_mask"
+    },
+    "Metal1_filler": {
+      "layer": 8,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "metal1_filler"
+    },
+    "Metal1_nofill": {
+      "layer": 8,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "metal1_nofill"
+    },
+    "Metal1_slit": {
+      "layer": 8,
+      "datatype": 24,
+      "purpose": "slit",
+      "drc_var": "metal1_slit"
+    },
+    "Metal1_opc": {
+      "layer": 8,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "metal1_opc"
+    },
+    "Metal1_noqrc": {
+      "layer": 8,
+      "datatype": 28,
+      "purpose": "noqrc",
+      "drc_var": "metal1_noqrc"
+    },
+    "Metal1_res": {
+      "layer": 8,
+      "datatype": 29,
+      "purpose": "resistor",
+      "drc_var": "metal1_res"
+    },
+    "Metal1_iprobe": {
+      "layer": 8,
+      "datatype": 33,
+      "purpose": "iprobe",
+      "drc_var": "metal1_iprobe"
+    },
+    "Metal1_diffprb": {
+      "layer": 8,
+      "datatype": 34,
+      "purpose": "diffprb",
+      "drc_var": "metal1_diffprb"
+    },
+    "Passiv": {
+      "layer": 9,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "passiv_drw"
+    },
+    "Passiv_pin": {
+      "layer": 9,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "passiv_pin"
+    },
+    "Passiv_sbump": {
+      "layer": 9,
+      "datatype": 36,
+      "purpose": "sbump",
+      "drc_var": "passiv_sbump"
+    },
+    "Passiv_pillar": {
+      "layer": 9,
+      "datatype": 35,
+      "purpose": "pillar",
+      "drc_var": "passiv_pillar"
+    },
+    "Passiv_pdl": {
+      "layer": 9,
+      "datatype": 40,
+      "purpose": "pdl",
+      "drc_var": "passiv_pdl"
+    },
+    "Metal2": {
+      "layer": 10,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "metal2_drw"
+    },
+    "Metal2_pin": {
+      "layer": 10,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "metal2_pin"
+    },
+    "Metal2_mask": {
+      "layer": 10,
+      "datatype": 20,
+      "purpose": "mask",
+      "drc_var": "metal2_mask"
+    },
+    "Metal2_filler": {
+      "layer": 10,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "metal2_filler"
+    },
+    "Metal2_nofill": {
+      "layer": 10,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "metal2_nofill"
+    },
+    "Metal2_slit": {
+      "layer": 10,
+      "datatype": 24,
+      "purpose": "slit",
+      "drc_var": "metal2_slit"
+    },
+    "Metal2_opc": {
+      "layer": 10,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "metal2_opc"
+    },
+    "Metal2_noqrc": {
+      "layer": 10,
+      "datatype": 28,
+      "purpose": "noqrc",
+      "drc_var": "metal2_noqrc"
+    },
+    "Metal2_res": {
+      "layer": 10,
+      "datatype": 29,
+      "purpose": "resistor",
+      "drc_var": "metal2_res"
+    },
+    "Metal2_iprobe": {
+      "layer": 10,
+      "datatype": 33,
+      "purpose": "iprobe",
+      "drc_var": "metal2_iprobe"
+    },
+    "Metal2_diffprb": {
+      "layer": 10,
+      "datatype": 34,
+      "purpose": "diffprb",
+      "drc_var": "metal2_diffprb"
+    },
+    "Baspoly": {
+      "layer": 13,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "baspoly_drw"
+    },
+    "Baspoly_pin": {
+      "layer": 13,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "baspoly_pin"
+    },
+    "Psd": {
+      "layer": 14,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "psd_drw"
+    },
+    "Nldb": {
+      "layer": 15,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "nldb_drw"
+    },
+    "Digibnd": {
+      "layer": 16,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "digibnd_drw"
+    },
+    "Via1": {
+      "layer": 19,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "via1_drw"
+    },
+    "Backmetal1": {
+      "layer": 20,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "backmetal1_drw"
+    },
+    "Backmetal1_pin": {
+      "layer": 20,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "backmetal1_pin"
+    },
+    "Backmetal1_mask": {
+      "layer": 20,
+      "datatype": 20,
+      "purpose": "mask",
+      "drc_var": "backmetal1_mask"
+    },
+    "Backmetal1_filler": {
+      "layer": 20,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "backmetal1_filler"
+    },
+    "Backmetal1_nofill": {
+      "layer": 20,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "backmetal1_nofill"
+    },
+    "Backmetal1_slit": {
+      "layer": 20,
+      "datatype": 24,
+      "purpose": "slit",
+      "drc_var": "backmetal1_slit"
+    },
+    "Backmetal1_opc": {
+      "layer": 20,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "backmetal1_opc"
+    },
+    "Backmetal1_noqrc": {
+      "layer": 20,
+      "datatype": 28,
+      "purpose": "noqrc",
+      "drc_var": "backmetal1_noqrc"
+    },
+    "Backmetal1_res": {
+      "layer": 20,
+      "datatype": 29,
+      "purpose": "resistor",
+      "drc_var": "backmetal1_res"
+    },
+    "Backmetal1_iprobe": {
+      "layer": 20,
+      "datatype": 33,
+      "purpose": "iprobe",
+      "drc_var": "backmetal1_iprobe"
+    },
+    "Backmetal1_diffprb": {
+      "layer": 20,
+      "datatype": 34,
+      "purpose": "diffprb",
+      "drc_var": "backmetal1_diffprb"
+    },
+    "Backpassiv": {
+      "layer": 23,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "backpassiv_drw"
+    },
+    "Res": {
+      "layer": 24,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "res_drw"
+    },
+    "Sram": {
+      "layer": 25,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "sram_drw"
+    },
+    "Trans": {
+      "layer": 26,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "trans_drw"
+    },
+    "Ind": {
+      "layer": 27,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "ind_drw"
+    },
+    "Ind_pin": {
+      "layer": 27,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "ind_pin"
+    },
+    "Salblock": {
+      "layer": 28,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "salblock_drw"
+    },
+    "Via2": {
+      "layer": 29,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "via2_drw"
+    },
+    "Metal3": {
+      "layer": 30,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "metal3_drw"
+    },
+    "Metal3_pin": {
+      "layer": 30,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "metal3_pin"
+    },
+    "Metal3_mask": {
+      "layer": 30,
+      "datatype": 20,
+      "purpose": "mask",
+      "drc_var": "metal3_mask"
+    },
+    "Metal3_filler": {
+      "layer": 30,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "metal3_filler"
+    },
+    "Metal3_nofill": {
+      "layer": 30,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "metal3_nofill"
+    },
+    "Metal3_slit": {
+      "layer": 30,
+      "datatype": 24,
+      "purpose": "slit",
+      "drc_var": "metal3_slit"
+    },
+    "Metal3_opc": {
+      "layer": 30,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "metal3_opc"
+    },
+    "Metal3_noqrc": {
+      "layer": 30,
+      "datatype": 28,
+      "purpose": "noqrc",
+      "drc_var": "metal3_noqrc"
+    },
+    "Metal3_res": {
+      "layer": 30,
+      "datatype": 29,
+      "purpose": "resistor",
+      "drc_var": "metal3_res"
+    },
+    "Metal3_iprobe": {
+      "layer": 30,
+      "datatype": 33,
+      "purpose": "iprobe",
+      "drc_var": "metal3_iprobe"
+    },
+    "Metal3_diffprb": {
+      "layer": 30,
+      "datatype": 34,
+      "purpose": "diffprb",
+      "drc_var": "metal3_diffprb"
+    },
+    "Nwell": {
+      "layer": 31,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "nwell_drw"
+    },
+    "Nwell_pin": {
+      "layer": 31,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "nwell_pin"
+    },
+    "Nbulay": {
+      "layer": 32,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "nbulay_drw"
+    },
+    "Nbulay_pin": {
+      "layer": 32,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "nbulay_pin"
+    },
+    "Nbulay_block": {
+      "layer": 32,
+      "datatype": 21,
+      "purpose": "block",
+      "drc_var": "nbulay_block"
+    },
+    "Emwind": {
+      "layer": 33,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "emwind_drw"
+    },
+    "Emwind_opc": {
+      "layer": 33,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "emwind_opc"
+    },
+    "Deepco": {
+      "layer": 35,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "deepco_drw"
+    },
+    "Mim": {
+      "layer": 36,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "mim_drw"
+    },
+    "Edgeseal": {
+      "layer": 39,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "edgeseal_drw"
+    },
+    "Edgeseal_bound": {
+      "layer": 39,
+      "datatype": 4,
+      "purpose": "dt4",
+      "drc_var": "edgeseal_bound"
+    },
+    "Substrate": {
+      "layer": 40,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "substrate_drw"
+    },
+    "Dfpad": {
+      "layer": 41,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "dfpad_drw"
+    },
+    "Dfpad_pillar": {
+      "layer": 41,
+      "datatype": 35,
+      "purpose": "pillar",
+      "drc_var": "dfpad_pillar"
+    },
+    "Dfpad_sbump": {
+      "layer": 41,
+      "datatype": 36,
+      "purpose": "sbump",
+      "drc_var": "dfpad_sbump"
+    },
+    "Thickgateox": {
+      "layer": 44,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "thickgateox_drw"
+    },
+    "Pldb": {
+      "layer": 45,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "pldb_drw"
+    },
+    "Pwell": {
+      "layer": 46,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "pwell_drw"
+    },
+    "Pwell_pin": {
+      "layer": 46,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "pwell_pin"
+    },
+    "Pwell_block": {
+      "layer": 46,
+      "datatype": 21,
+      "purpose": "block",
+      "drc_var": "pwell_block"
+    },
+    "Ic": {
+      "layer": 48,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "ic_drw"
+    },
+    "Via3": {
+      "layer": 49,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "via3_drw"
+    },
+    "Metal4": {
+      "layer": 50,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "metal4_drw"
+    },
+    "Metal4_pin": {
+      "layer": 50,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "metal4_pin"
+    },
+    "Metal4_mask": {
+      "layer": 50,
+      "datatype": 20,
+      "purpose": "mask",
+      "drc_var": "metal4_mask"
+    },
+    "Metal4_filler": {
+      "layer": 50,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "metal4_filler"
+    },
+    "Metal4_nofill": {
+      "layer": 50,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "metal4_nofill"
+    },
+    "Metal4_slit": {
+      "layer": 50,
+      "datatype": 24,
+      "purpose": "slit",
+      "drc_var": "metal4_slit"
+    },
+    "Metal4_opc": {
+      "layer": 50,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "metal4_opc"
+    },
+    "Metal4_noqrc": {
+      "layer": 50,
+      "datatype": 28,
+      "purpose": "noqrc",
+      "drc_var": "metal4_noqrc"
+    },
+    "Metal4_res": {
+      "layer": 50,
+      "datatype": 29,
+      "purpose": "resistor",
+      "drc_var": "metal4_res"
+    },
+    "Metal4_iprobe": {
+      "layer": 50,
+      "datatype": 33,
+      "purpose": "iprobe",
+      "drc_var": "metal4_iprobe"
+    },
+    "Metal4_diffprb": {
+      "layer": 50,
+      "datatype": 34,
+      "purpose": "diffprb",
+      "drc_var": "metal4_diffprb"
+    },
+    "Heattrans": {
+      "layer": 51,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "heattrans_drw"
+    },
+    "Heatres": {
+      "layer": 52,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "heatres_drw"
+    },
+    "Pempoly": {
+      "layer": 53,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "pempoly_drw"
+    },
+    "Fbe": {
+      "layer": 54,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "fbe_drw"
+    },
+    "Empoly": {
+      "layer": 55,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "empoly_drw"
+    },
+    "Ldmos": {
+      "layer": 57,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "ldmos_drw"
+    },
+    "Pbiwind": {
+      "layer": 58,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "pbiwind_drw"
+    },
+    "Digisub": {
+      "layer": 60,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "digisub_drw"
+    },
+    "Nodrc": {
+      "layer": 62,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "nodrc_drw"
+    },
+    "Via4": {
+      "layer": 66,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "via4_drw"
+    },
+    "Metal5": {
+      "layer": 67,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "metal5_drw"
+    },
+    "Metal5_pin": {
+      "layer": 67,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "metal5_pin"
+    },
+    "Metal5_mask": {
+      "layer": 67,
+      "datatype": 20,
+      "purpose": "mask",
+      "drc_var": "metal5_mask"
+    },
+    "Metal5_filler": {
+      "layer": 67,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "metal5_filler"
+    },
+    "Metal5_nofill": {
+      "layer": 67,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "metal5_nofill"
+    },
+    "Metal5_slit": {
+      "layer": 67,
+      "datatype": 24,
+      "purpose": "slit",
+      "drc_var": "metal5_slit"
+    },
+    "Metal5_opc": {
+      "layer": 67,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "metal5_opc"
+    },
+    "Metal5_noqrc": {
+      "layer": 67,
+      "datatype": 28,
+      "purpose": "noqrc",
+      "drc_var": "metal5_noqrc"
+    },
+    "Metal5_res": {
+      "layer": 67,
+      "datatype": 29,
+      "purpose": "resistor",
+      "drc_var": "metal5_res"
+    },
+    "Metal5_iprobe": {
+      "layer": 67,
+      "datatype": 33,
+      "purpose": "iprobe",
+      "drc_var": "metal5_iprobe"
+    },
+    "Metal5_diffprb": {
+      "layer": 67,
+      "datatype": 34,
+      "purpose": "diffprb",
+      "drc_var": "metal5_diffprb"
+    },
+    "Radhard": {
+      "layer": 68,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "radhard_drw"
+    },
+    "Memcap": {
+      "layer": 69,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "memcap_drw"
+    },
+    "Varicap": {
+      "layer": 70,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "varicap_drw"
+    },
+    "Flash": {
+      "layer": 71,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "flash_drw"
+    },
+    "Intbondvia": {
+      "layer": 72,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "intbondvia_drw"
+    },
+    "Intbondmet": {
+      "layer": 73,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "intbondmet_drw"
+    },
+    "Devbondvia": {
+      "layer": 74,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "devbondvia_drw"
+    },
+    "Devbondmet": {
+      "layer": 75,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "devbondmet_drw"
+    },
+    "Devtrench": {
+      "layer": 76,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "devtrench_drw"
+    },
+    "Redist": {
+      "layer": 77,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "redist_drw"
+    },
+    "Graphbot": {
+      "layer": 78,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "graphbot_drw"
+    },
+    "Graphtop": {
+      "layer": 79,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "graphtop_drw"
+    },
+    "Antvia1": {
+      "layer": 83,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "antvia1_drw"
+    },
+    "Antmetal2": {
+      "layer": 84,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "antmetal2_drw"
+    },
+    "Graphcont": {
+      "layer": 85,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "graphcont_drw"
+    },
+    "Siwg": {
+      "layer": 86,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "siwg_drw"
+    },
+    "Siwg_filler": {
+      "layer": 86,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "siwg_filler"
+    },
+    "Siwg_nofill": {
+      "layer": 86,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "siwg_nofill"
+    },
+    "Sigrating": {
+      "layer": 87,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "sigrating_drw"
+    },
+    "Singrating": {
+      "layer": 88,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "singrating_drw"
+    },
+    "Graphpas": {
+      "layer": 89,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "graphpas_drw"
+    },
+    "Emwind3": {
+      "layer": 90,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "emwind3_drw"
+    },
+    "Emwihv3": {
+      "layer": 91,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "emwihv3_drw"
+    },
+    "Redbulay": {
+      "layer": 92,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "redbulay_drw"
+    },
+    "Smos": {
+      "layer": 93,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "smos_drw"
+    },
+    "Graphpad": {
+      "layer": 97,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "graphpad_drw"
+    },
+    "Polimide": {
+      "layer": 98,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "polimide_drw"
+    },
+    "Polimide_pin": {
+      "layer": 98,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "polimide_pin"
+    },
+    "Recog": {
+      "layer": 99,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "recog_drw"
+    },
+    "Recog_pin": {
+      "layer": 99,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "recog_pin"
+    },
+    "Recog_esd": {
+      "layer": 99,
+      "datatype": 30,
+      "purpose": "dt30",
+      "drc_var": "recog_esd"
+    },
+    "Recog_diode": {
+      "layer": 99,
+      "datatype": 31,
+      "purpose": "dt31",
+      "drc_var": "recog_diode"
+    },
+    "Recog_tsv": {
+      "layer": 99,
+      "datatype": 32,
+      "purpose": "dt32",
+      "drc_var": "recog_tsv"
+    },
+    "Recog_iprobe": {
+      "layer": 99,
+      "datatype": 33,
+      "purpose": "iprobe",
+      "drc_var": "recog_iprobe"
+    },
+    "Recog_diffprb": {
+      "layer": 99,
+      "datatype": 34,
+      "purpose": "diffprb",
+      "drc_var": "recog_diffprb"
+    },
+    "Recog_pillar": {
+      "layer": 99,
+      "datatype": 35,
+      "purpose": "pillar",
+      "drc_var": "recog_pillar"
+    },
+    "Recog_sbump": {
+      "layer": 99,
+      "datatype": 36,
+      "purpose": "sbump",
+      "drc_var": "recog_sbump"
+    },
+    "Recog_otp": {
+      "layer": 99,
+      "datatype": 37,
+      "purpose": "dt37",
+      "drc_var": "recog_otp"
+    },
+    "Recog_pdiode": {
+      "layer": 99,
+      "datatype": 38,
+      "purpose": "dt38",
+      "drc_var": "recog_pdiode"
+    },
+    "Recog_mom": {
+      "layer": 99,
+      "datatype": 39,
+      "purpose": "dt39",
+      "drc_var": "recog_mom"
+    },
+    "Recog_pcm": {
+      "layer": 99,
+      "datatype": 100,
+      "purpose": "dt100",
+      "drc_var": "recog_pcm"
+    },
+    "Colopen": {
+      "layer": 101,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "colopen_drw"
+    },
+    "Graphmetal1": {
+      "layer": 109,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "graphmetal1_drw"
+    },
+    "Graphmetal1_filler": {
+      "layer": 109,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "graphmetal1_filler"
+    },
+    "Graphmetal1_nofill": {
+      "layer": 109,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "graphmetal1_nofill"
+    },
+    "Graphmetal1_slit": {
+      "layer": 109,
+      "datatype": 24,
+      "purpose": "slit",
+      "drc_var": "graphmetal1_slit"
+    },
+    "Graphmetal1_opc": {
+      "layer": 109,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "graphmetal1_opc"
+    },
+    "Graphmet1l": {
+      "layer": 110,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "graphmet1l_drw"
+    },
+    "Graphmet1l_filler": {
+      "layer": 110,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "graphmet1l_filler"
+    },
+    "Graphmet1l_nofill": {
+      "layer": 110,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "graphmet1l_nofill"
+    },
+    "Graphmet1l_slit": {
+      "layer": 110,
+      "datatype": 24,
+      "purpose": "slit",
+      "drc_var": "graphmet1l_slit"
+    },
+    "Graphmet1l_opc": {
+      "layer": 110,
+      "datatype": 26,
+      "purpose": "opc",
+      "drc_var": "graphmet1l_opc"
+    },
+    "Extblock": {
+      "layer": 111,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "extblock_drw"
+    },
+    "Nldd": {
+      "layer": 112,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "nldd_drw"
+    },
+    "Pldd": {
+      "layer": 113,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "pldd_drw"
+    },
+    "Next": {
+      "layer": 114,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "next_drw"
+    },
+    "Pext": {
+      "layer": 115,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "pext_drw"
+    },
+    "Nexthv": {
+      "layer": 116,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "nexthv_drw"
+    },
+    "Pexthv": {
+      "layer": 117,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "pexthv_drw"
+    },
+    "Graphgate": {
+      "layer": 118,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "graphgate_drw"
+    },
+    "Sinwg": {
+      "layer": 119,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "sinwg_drw"
+    },
+    "Sinwg_filler": {
+      "layer": 119,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "sinwg_filler"
+    },
+    "Sinwg_nofill": {
+      "layer": 119,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "sinwg_nofill"
+    },
+    "Mempad": {
+      "layer": 124,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "mempad_drw"
+    },
+    "Topvia1": {
+      "layer": 125,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "topvia1_drw"
+    },
+    "Topmetal1": {
+      "layer": 126,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "topmetal1_drw"
+    },
+    "Topmetal1_pin": {
+      "layer": 126,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "topmetal1_pin"
+    },
+    "Topmetal1_mask": {
+      "layer": 126,
+      "datatype": 20,
+      "purpose": "mask",
+      "drc_var": "topmetal1_mask"
+    },
+    "Topmetal1_filler": {
+      "layer": 126,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "topmetal1_filler"
+    },
+    "Topmetal1_nofill": {
+      "layer": 126,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "topmetal1_nofill"
+    },
+    "Topmetal1_slit": {
+      "layer": 126,
+      "datatype": 24,
+      "purpose": "slit",
+      "drc_var": "topmetal1_slit"
+    },
+    "Topmetal1_noqrc": {
+      "layer": 126,
+      "datatype": 28,
+      "purpose": "noqrc",
+      "drc_var": "topmetal1_noqrc"
+    },
+    "Topmetal1_res": {
+      "layer": 126,
+      "datatype": 29,
+      "purpose": "resistor",
+      "drc_var": "topmetal1_res"
+    },
+    "Topmetal1_iprobe": {
+      "layer": 126,
+      "datatype": 33,
+      "purpose": "iprobe",
+      "drc_var": "topmetal1_iprobe"
+    },
+    "Topmetal1_diffprb": {
+      "layer": 126,
+      "datatype": 34,
+      "purpose": "diffprb",
+      "drc_var": "topmetal1_diffprb"
+    },
+    "Inldpwl": {
+      "layer": 127,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "inldpwl_drw"
+    },
+    "Polyres": {
+      "layer": 128,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "polyres_drw"
+    },
+    "Polyres_pin": {
+      "layer": 128,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "polyres_pin"
+    },
+    "Vmim": {
+      "layer": 129,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "vmim_drw"
+    },
+    "Nbulaycut": {
+      "layer": 131,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "nbulaycut_drw"
+    },
+    "Antmetal1": {
+      "layer": 132,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "antmetal1_drw"
+    },
+    "Topvia2": {
+      "layer": 133,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "topvia2_drw"
+    },
+    "Topmetal2": {
+      "layer": 134,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "topmetal2_drw"
+    },
+    "Topmetal2_pin": {
+      "layer": 134,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "topmetal2_pin"
+    },
+    "Topmetal2_mask": {
+      "layer": 134,
+      "datatype": 20,
+      "purpose": "mask",
+      "drc_var": "topmetal2_mask"
+    },
+    "Topmetal2_filler": {
+      "layer": 134,
+      "datatype": 22,
+      "purpose": "filler",
+      "drc_var": "topmetal2_filler"
+    },
+    "Topmetal2_nofill": {
+      "layer": 134,
+      "datatype": 23,
+      "purpose": "nofill",
+      "drc_var": "topmetal2_nofill"
+    },
+    "Topmetal2_slit": {
+      "layer": 134,
+      "datatype": 24,
+      "purpose": "slit",
+      "drc_var": "topmetal2_slit"
+    },
+    "Topmetal2_noqrc": {
+      "layer": 134,
+      "datatype": 28,
+      "purpose": "noqrc",
+      "drc_var": "topmetal2_noqrc"
+    },
+    "Topmetal2_res": {
+      "layer": 134,
+      "datatype": 29,
+      "purpose": "resistor",
+      "drc_var": "topmetal2_res"
+    },
+    "Topmetal2_iprobe": {
+      "layer": 134,
+      "datatype": 33,
+      "purpose": "iprobe",
+      "drc_var": "topmetal2_iprobe"
+    },
+    "Topmetal2_diffprb": {
+      "layer": 134,
+      "datatype": 34,
+      "purpose": "diffprb",
+      "drc_var": "topmetal2_diffprb"
+    },
+    "Snsring": {
+      "layer": 135,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "snsring_drw"
+    },
+    "Sensor": {
+      "layer": 136,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "sensor_drw"
+    },
+    "Snsarms": {
+      "layer": 137,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "snsarms_drw"
+    },
+    "Snscmosvia": {
+      "layer": 138,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "snscmosvia_drw"
+    },
+    "Colwind": {
+      "layer": 139,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "colwind_drw"
+    },
+    "Flm": {
+      "layer": 142,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "flm_drw"
+    },
+    "Hafniumox": {
+      "layer": 143,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "hafniumox_drw"
+    },
+    "Memvia": {
+      "layer": 145,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "memvia_drw"
+    },
+    "Thinfilmres": {
+      "layer": 146,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "thinfilmres_drw"
+    },
+    "Rfmem": {
+      "layer": 147,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "rfmem_drw"
+    },
+    "Norcx": {
+      "layer": 148,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "norcx_drw"
+    },
+    "Norcx_m2m3": {
+      "layer": 148,
+      "datatype": 41,
+      "purpose": "dt41",
+      "drc_var": "norcx_m2m3"
+    },
+    "Norcx_m2m4": {
+      "layer": 148,
+      "datatype": 42,
+      "purpose": "dt42",
+      "drc_var": "norcx_m2m4"
+    },
+    "Norcx_m2m5": {
+      "layer": 148,
+      "datatype": 43,
+      "purpose": "dt43",
+      "drc_var": "norcx_m2m5"
+    },
+    "Norcx_m2tm1": {
+      "layer": 148,
+      "datatype": 44,
+      "purpose": "dt44",
+      "drc_var": "norcx_m2tm1"
+    },
+    "Norcx_m2tm2": {
+      "layer": 148,
+      "datatype": 45,
+      "purpose": "dt45",
+      "drc_var": "norcx_m2tm2"
+    },
+    "Norcx_m3m4": {
+      "layer": 148,
+      "datatype": 46,
+      "purpose": "dt46",
+      "drc_var": "norcx_m3m4"
+    },
+    "Norcx_m3m5": {
+      "layer": 148,
+      "datatype": 47,
+      "purpose": "dt47",
+      "drc_var": "norcx_m3m5"
+    },
+    "Norcx_m3tm1": {
+      "layer": 148,
+      "datatype": 48,
+      "purpose": "dt48",
+      "drc_var": "norcx_m3tm1"
+    },
+    "Norcx_m3tm2": {
+      "layer": 148,
+      "datatype": 49,
+      "purpose": "dt49",
+      "drc_var": "norcx_m3tm2"
+    },
+    "Norcx_m4m5": {
+      "layer": 148,
+      "datatype": 50,
+      "purpose": "dt50",
+      "drc_var": "norcx_m4m5"
+    },
+    "Norcx_m4tm1": {
+      "layer": 148,
+      "datatype": 51,
+      "purpose": "dt51",
+      "drc_var": "norcx_m4tm1"
+    },
+    "Norcx_m4tm2": {
+      "layer": 148,
+      "datatype": 52,
+      "purpose": "dt52",
+      "drc_var": "norcx_m4tm2"
+    },
+    "Norcx_m5tm1": {
+      "layer": 148,
+      "datatype": 53,
+      "purpose": "dt53",
+      "drc_var": "norcx_m5tm1"
+    },
+    "Norcx_m5tm2": {
+      "layer": 148,
+      "datatype": 54,
+      "purpose": "dt54",
+      "drc_var": "norcx_m5tm2"
+    },
+    "Norcx_tm1tm2": {
+      "layer": 148,
+      "datatype": 55,
+      "purpose": "dt55",
+      "drc_var": "norcx_tm1tm2"
+    },
+    "Norcx_m1sub": {
+      "layer": 148,
+      "datatype": 123,
+      "purpose": "dt123",
+      "drc_var": "norcx_m1sub"
+    },
+    "Norcx_m2sub": {
+      "layer": 148,
+      "datatype": 124,
+      "purpose": "dt124",
+      "drc_var": "norcx_m2sub"
+    },
+    "Norcx_m3sub": {
+      "layer": 148,
+      "datatype": 125,
+      "purpose": "dt125",
+      "drc_var": "norcx_m3sub"
+    },
+    "Norcx_m4sub": {
+      "layer": 148,
+      "datatype": 126,
+      "purpose": "dt126",
+      "drc_var": "norcx_m4sub"
+    },
+    "Norcx_m5sub": {
+      "layer": 148,
+      "datatype": 127,
+      "purpose": "dt127",
+      "drc_var": "norcx_m5sub"
+    },
+    "Norcx_tm1sub": {
+      "layer": 148,
+      "datatype": 300,
+      "purpose": "dt300",
+      "drc_var": "norcx_tm1sub"
+    },
+    "Norcx_tm2sub": {
+      "layer": 148,
+      "datatype": 301,
+      "purpose": "dt301",
+      "drc_var": "norcx_tm2sub"
+    },
+    "Snsbotvia": {
+      "layer": 149,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "snsbotvia_drw"
+    },
+    "Snstopvia": {
+      "layer": 151,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "snstopvia_drw"
+    },
+    "Deepvia": {
+      "layer": 152,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "deepvia_drw"
+    },
+    "Fgetch": {
+      "layer": 153,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "fgetch_drw"
+    },
+    "Ctrgat": {
+      "layer": 154,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "ctrgat_drw"
+    },
+    "Fgimp": {
+      "layer": 155,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "fgimp_drw"
+    },
+    "Emwihv": {
+      "layer": 156,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "emwihv_drw"
+    },
+    "Lbe": {
+      "layer": 157,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "lbe_drw"
+    },
+    "Alcustop": {
+      "layer": 159,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "alcustop_drw"
+    },
+    "Nometfiller": {
+      "layer": 160,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "nometfiller_drw"
+    },
+    "Prboundary": {
+      "layer": 189,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "prboundary_drw"
+    },
+    "Exchange0": {
+      "layer": 190,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "exchange0_drw"
+    },
+    "Exchange0_pin": {
+      "layer": 190,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "exchange0_pin"
+    },
+    "Exchange1": {
+      "layer": 191,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "exchange1_drw"
+    },
+    "Exchange1_pin": {
+      "layer": 191,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "exchange1_pin"
+    },
+    "Exchange2": {
+      "layer": 192,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "exchange2_drw"
+    },
+    "Exchange2_pin": {
+      "layer": 192,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "exchange2_pin"
+    },
+    "Exchange3": {
+      "layer": 193,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "exchange3_drw"
+    },
+    "Exchange3_pin": {
+      "layer": 193,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "exchange3_pin"
+    },
+    "Exchange4": {
+      "layer": 194,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "exchange4_drw"
+    },
+    "Exchange4_pin": {
+      "layer": 194,
+      "datatype": 2,
+      "purpose": "pin",
+      "drc_var": "exchange4_pin"
+    },
+    "Isonwell": {
+      "layer": 257,
+      "datatype": 0,
+      "purpose": "drawing",
+      "drc_var": "isonwell_drw"
+    }
+  }
+}

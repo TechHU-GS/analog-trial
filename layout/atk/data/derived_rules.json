@@ -1,0 +1,173 @@
+{
+  "version": "sg13g2-v0.1",
+  "source": "ihp-sg13g2.drc + sub-decks (5_3_nbulay.drc, 7_2_latchup.drc, etc.)",
+  "nbulay_generation": {
+    "formula": "nwell_drw.sized(-1.495um).sized(0.495um)",
+    "shrink_nm": 1495,
+    "expand_nm": 495,
+    "net_shrink_nm": 1000,
+    "threshold_nm": 2990,
+    "description": "NWell regions >= 2990nm wide in both X and Y generate nBuLay",
+    "exclusion": "nbulay_block.join(res_drw) areas are excluded from generation",
+    "final": "nbuLay_gen.join(nbulay_drw) — generated nBuLay merged with drawn nBuLay",
+    "implication": "NWell extensions for tie must be < 2990nm wide to avoid triggering nBuLay generation, which would invoke NBL.c/d spacing rules"
+  },
+  "derived_layers": {
+    "pwell": {
+      "formula": "CHIP.not(pwell_block).not(nwell_drw).not(digisub_gap)",
+      "description": "P-well = chip extent minus pwell_block, NWell, and digi-substrate gaps"
+    },
+    "nactiv": {
+      "formula": "activ_drw.not(psd_drw.join(nsd_block))",
+      "description": "N-type active = active minus pSD and nSD_block"
+    },
+    "pactiv": {
+      "formula": "activ_drw.and(psd_drw)",
+      "description": "P-type active = active AND pSD"
+    },
+    "ptap": {
+      "formula": "pactiv.and(pwell)",
+      "description": "P-tap = P-active in P-well (substrate tie)"
+    },
+    "ntap": {
+      "formula": "nactiv.and(nwell_drw)",
+      "description": "N-tap = N-active in NWell (well tie)"
+    },
+    "pact_fet": {
+      "formula": "pactiv.and(nwell_drw)",
+      "description": "PMOS active = P-active in NWell"
+    },
+    "nact_fet": {
+      "formula": "nactiv.and(pwell)",
+      "description": "NMOS active = N-active in P-well"
+    },
+    "ngate": {
+      "formula": "nact_fet.and(gatpoly_drw)",
+      "description": "NMOS gate region"
+    },
+    "pgate": {
+      "formula": "pact_fet.and(gatpoly_drw)",
+      "description": "PMOS gate region"
+    },
+    "res_mk": {
+      "formula": "polyres_drw.join(res_drw)",
+      "description": "Resistor marker = PolyRes + Res layers combined"
+    },
+    "cont_sq": {
+      "formula": "cont_drw.not(edgeseal_drw).not(non_squares)",
+      "description": "Square contacts (standard)"
+    },
+    "contbar": {
+      "formula": "cont_drw.not(edgeseal_drw).non_squares",
+      "description": "Rectangular contacts (contact bars)"
+    }
+  },
+  "connectivity_model": {
+    "description": "Inter-layer connections for LVS net extraction. Order matters for net propagation.",
+    "well_connections": [
+      {"from": "pwell_sub", "to": "pwell", "note": "substrate to p-well"},
+      {"from": "pwell", "to": "ptap", "note": "p-well to p-tap"},
+      {"from": "nwell_drw", "to": "ntap", "note": "n-well to n-tap"}
+    ],
+    "device_connections": [
+      {"from": "cont_drw", "to": "nactiv", "note": "contact to n-active"},
+      {"from": "cont_drw", "to": "pactiv", "note": "contact to p-active"},
+      {"from": "ntap", "to": "cont_drw", "note": "n-tap to contact"},
+      {"from": "ptap", "to": "cont_drw", "note": "p-tap to contact"},
+      {"from": "poly_con", "to": "cont_drw", "note": "gate poly (non-resistor) to contact"},
+      {"from": "nact_fet", "to": "cont_drw", "note": "NMOS active to contact"},
+      {"from": "pact_fet", "to": "cont_drw", "note": "PMOS active to contact"}
+    ],
+    "metal_stack": [
+      {"from": "cont_drw", "to": "metal1_con", "note": "contact to M1"},
+      {"from": "metal1_con", "to": "via1_drw", "note": "M1 to V1"},
+      {"from": "via1_drw", "to": "metal2_con", "note": "V1 to M2"},
+      {"from": "metal2_con", "to": "via2_drw", "note": "M2 to V2"},
+      {"from": "via2_drw", "to": "metal3_con", "note": "V2 to M3"},
+      {"from": "metal3_con", "to": "via3_drw", "note": "M3 to V3"},
+      {"from": "via3_drw", "to": "metal4_con", "note": "V3 to M4"},
+      {"from": "metal4_con", "to": "via4_drw", "note": "M4 to V4"},
+      {"from": "via4_drw", "to": "metal5_con", "note": "V4 to M5"},
+      {"from": "metal5_con", "to": "topvia1_n_cap", "note": "M5 to TV1 (non-MIM)"},
+      {"from": "topvia1_n_cap", "to": "topmetal1_con", "note": "TV1 to TM1"},
+      {"from": "topmetal1_con", "to": "topvia2_drw", "note": "TM1 to TV2"},
+      {"from": "topvia2_drw", "to": "topmetal2_con", "note": "TV2 to TM2"}
+    ],
+    "buried_layer": [
+      {"from": "nbulay_drw", "to": "nbuLay_gen_nbulay", "note": "drawn nBuLay to generated"},
+      {"from": "nbuLay_gen_nbulay", "to": "nwell_drw", "note": "generated nBuLay to NWell"}
+    ],
+    "derived_conn_layers": {
+      "poly_con": "gatpoly_drw.not(res_mk)",
+      "metal1_con": "metal1_drw.not(metal1_res)",
+      "metal2_con": "metal2_drw.not(metal2_res)",
+      "metal3_con": "metal3_drw.not(metal3_res)",
+      "metal4_con": "metal4_drw.not(metal4_res)",
+      "metal5_con": "metal5_drw.not(metal5_res)",
+      "topmetal1_con": "topmetal1_drw.not(topmetal1_res).not(ind_drw)",
+      "topmetal2_con": "topmetal2_drw.not(topmetal2_res).not(ind_drw)",
+      "topvia1_n_cap": "topvia1_drw.not(mim_via)"
+    }
+  },
+  "latchup_expansion": {
+    "method": "Iterative sizing from tap active: 40 iterations of 0.5µm expansion",
+    "iteration_step_nm": 500,
+    "max_iterations": 40,
+    "total_radius_nm": 20000,
+    "LU_a": {
+      "value_nm": 20000,
+      "description": "Max distance from ntap to PMOS p+active (in NWell)",
+      "check": "ntap must cover all PMOS within 20µm radius"
+    },
+    "LU_b": {
+      "value_nm": 20000,
+      "description": "Max distance from ptap to NMOS n+active (in substrate)",
+      "check": "ptap must cover all NMOS within 20µm radius"
+    },
+    "LU_c": {
+      "value_nm": 6000,
+      "description": "Max distance from ntap to nactiv on NWell edge",
+      "note": "Stricter rule for edge regions"
+    },
+    "LU_d": {
+      "value_nm": 6000,
+      "description": "Max distance from ptap to pactiv on substrate edge",
+      "note": "Stricter rule for edge regions"
+    }
+  },
+  "nbl_net_aware_spacing": {
+    "description": "NBuLay spacing rules are net-aware — same-net vs different-net have different values",
+    "NBL_c": {
+      "value_nm": 3200,
+      "condition": "different-net nBuLay to nBuLay spacing"
+    },
+    "NBL_d": {
+      "value_nm": 2200,
+      "condition": "different-net nBuLay to NWell spacing"
+    },
+    "NBL_e": {
+      "value_nm": 1000,
+      "condition": "same-net nBuLay to nBuLay spacing"
+    },
+    "NBL_f": {
+      "value_nm": 500,
+      "condition": "same-net nBuLay to NWell spacing"
+    }
+  },
+  "well_net_aware_rules": {
+    "NW_b1": {
+      "value_nm": 1800,
+      "condition": "different-net NWell to NWell spacing",
+      "note": "Same-net NWells can be merged (gap=0) — connect(nwell_drw, ntap) propagates net"
+    }
+  },
+  "isolated_pwell": {
+    "formula": "nbulay_drw.and(nwell_drw.holes.not(nwell_drw))",
+    "description": "PWell regions enclosed by NWell ring with nBuLay underneath become isolated",
+    "connectivity": "pwell_sub = pwell.not(isoPWell).join(nwell_ring_niso)"
+  },
+  "drc_tolerance": {
+    "value_nm": 5,
+    "source": "drc_tole = 0.005.um in ihp-sg13g2.drc"
+  }
+}
