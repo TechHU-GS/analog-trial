@@ -31,6 +31,11 @@ echo "=== Phase 4: Routing ==="
 python3 solve_routing.py || true  # gate warning (HBT pre-route disabled) is non-fatal
 echo ""
 
+# --- Phase 4b: Route Optimization ---
+echo "=== Phase 4b: Route Optimization ==="
+python3 -m atk.route.optimize
+echo ""
+
 # --- Phase 5: GDS Assembly ---
 echo "=== Phase 5: GDS Assembly ==="
 klayout -n sg13g2 -zz -r assemble_gds.py
