@@ -267,6 +267,15 @@ def main():
     sub_cell = layout.create_cell(SUBCELL_NAME)
     sub_cell.copy_tree(sub_top)
 
+    # Strip invalid layers (PCell artifacts not in TTIHP precheck whitelist)
+    INVALID_LAYERS = [(33, 0), (26, 0), (51, 0), (1, 20)]
+    for ly, dt in INVALID_LAYERS:
+        li_inv = layout.layer(ly, dt)
+        for cell_idx in range(layout.cells()):
+            c = layout.cell(cell_idx)
+            c.shapes(li_inv).clear()
+    print(f'  Stripped {len(INVALID_LAYERS)} invalid PCell layers')
+
     # Place subcell instance
     trans = pya.Trans(pya.Point(SUBCELL_X, SUBCELL_Y))
     top.insert(pya.CellInstArray(sub_cell.cell_index(), trans))
@@ -384,15 +393,12 @@ def main():
 
     print(f'  Digital pins: {len(DIGITAL_PINS)} stubs on Metal4 @ y={313240/1000:.1f} um')
 
-    # ═══ 7. VDPWR/VGND pin labels ═══
-    # Power pins should also have pin markers on TopMetal1
+    # ═══ 7. VDPWR/VGND pin markers ═══
+    # Pin marker must cover full stripe (precheck: within 10um of top AND bottom)
     li_tm1_pin = layout.layer(*LY_TM1_PIN)
-    # Small pin marker rectangles on the power stripes
-    pwr_pin_y = TILE_H // 2  # center of tile
-    pwr_pin_hh = 1000
     for name, px in [('VDPWR', VDPWR_X), ('VGND', VGND_X)]:
-        top.shapes(li_tm1_pin).insert(box(px - hw, pwr_pin_y - pwr_pin_hh,
-                                           px + hw, pwr_pin_y + pwr_pin_hh))
+        top.shapes(li_tm1_pin).insert(box(px - hw, PWR_STRIPE_Y0,
+                                           px + hw, PWR_STRIPE_Y1))
 
     # ═══ 8. Write output ═══
     os.makedirs(os.path.dirname(output_gds), exist_ok=True)

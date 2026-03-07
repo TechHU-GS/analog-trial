@@ -116,8 +116,8 @@ def main():
 
         f.write(f'MACRO {CELL_NAME}\n')
         f.write(f'  CLASS BLOCK ;\n')
-        f.write(f'  FOREIGN {CELL_NAME} 0 0 ;\n')
-        f.write(f'  ORIGIN 0 0 ;\n')
+        f.write(f'  FOREIGN {CELL_NAME} 0.000 0.000 ;\n')
+        f.write(f'  ORIGIN 0.000 0.000 ;\n')
         f.write(f'  SIZE {TILE_W_UM:.3f} BY {TILE_H_UM:.3f} ;\n')
         f.write(f'  SYMMETRY X Y ;\n')
 

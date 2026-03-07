@@ -4,8 +4,8 @@ DIVIDERCHAR "/" ;
 
 MACRO tt_um_techhu_analog_trial
   CLASS BLOCK ;
-  FOREIGN tt_um_techhu_analog_trial 0 0 ;
-  ORIGIN 0 0 ;
+  FOREIGN tt_um_techhu_analog_trial 0.000 0.000 ;
+  ORIGIN 0.000 0.000 ;
   SIZE 202.080 BY 313.740 ;
   SYMMETRY X Y ;
   PIN ua[0]
@@ -29,7 +29,7 @@ MACRO tt_um_techhu_analog_trial
     USE POWER ;
     PORT
       LAYER TopMetal1 ;
-        RECT 1.800 155.870 4.200 157.870 ;
+        RECT 1.800 5.000 4.200 308.000 ;
     END
   END VDPWR
   PIN VGND
@@ -37,7 +37,7 @@ MACRO tt_um_techhu_analog_trial
     USE POWER ;
     PORT
       LAYER TopMetal1 ;
-        RECT 6.800 155.870 9.200 157.870 ;
+        RECT 6.800 5.000 9.200 308.000 ;
     END
   END VGND
   PIN clk
