@@ -11,3 +11,18 @@ test/sim_build
 test/__pycache__/
 test/results.xml
 test/gate_level_netlist.v
+
+# Python
+__pycache__/
+*.pyc
+
+# KLayout DRC/LVS output dirs
+layout/drc_flat/
+layout/drc_run/
+layout/drc_run2/
+
+# Large binary GDS (keep source scripts, not output)
+layout/*.gds
+
+# Claude internal
+.claude/
