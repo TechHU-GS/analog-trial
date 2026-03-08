@@ -891,7 +891,12 @@ def main():
         # M1 pad covering Cont.  Via1+M2 drawn by access point system.
         # Top capped at poly_bot (avoid M1.b with S/D M1).
         # Extend downward to satisfy M1.d area ≥ 0.09 µm².
-        m1_hw = hc + CONT_ENC_M1_END  # 130nm → width = 260nm
+        # Width sized so downward extension stays ≤ M1.b-safe distance
+        # from non-same-net M1 shapes below.
+        import math
+        m1_hw_min = hc + CONT_ENC_M1_END  # 130nm floor
+        m1_hw_area = int(math.ceil(math.sqrt(M1_MIN_AREA) / 2))  # ~150nm
+        m1_hw = ((max(m1_hw_min, m1_hw_area) + 4) // 5) * 5  # 5nm grid
         m1_w = 2 * m1_hw
         m1_min_h = (M1_MIN_AREA + m1_w - 1) // m1_w
         m1_min_h = ((m1_min_h + 4) // 5) * 5  # 5nm grid
