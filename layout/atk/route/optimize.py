@@ -1,27 +1,30 @@
-"""Post-routing optimizer: Z-jog elimination.
+"""Post-routing optimizer: loop pruning + chain straightening (rubber-banding).
 
-Reads routing.json, simplifies signal route segments by removing
-unnecessary Z-shaped jogs (H->V(short)->H or V->H(short)->V patterns).
+Reads routing.json, simplifies signal route segments by:
+1. Removing redundant edges that form loops (keeping spanning tree)
+2. Straightening zigzag chains between anchor points into L-shapes
 
-DRC-safe: checks that straightened paths don't violate minimum spacing
-with other nets' segments before applying each transformation.
+Anchor points = via endpoints + branch points + chain endpoints.
+Between any two anchors, the shortest rectilinear path is an L-shape (1-2
+segments). The optimizer replaces multi-segment zigzag chains with L-shapes,
+DRC-checking each replacement against a complete obstacle model (other-net
+routes + access point M1/M2 pads + tie M1 + power M2).
 
 Usage: cd layout && python -m atk.route.optimize
 """
 
 import json
-import sys
 from collections import defaultdict
 
 from ..pdk import (
     MAZE_GRID,
     M1_SIG_W, M2_SIG_W,
     M1_MIN_S, M2_MIN_S,
+    DEV_MARGIN,
 )
-from ..paths import ROUTING_JSON
+from ..paths import ROUTING_JSON, TIES_JSON, NETLIST_JSON, PLACEMENT_JSON
 
-# Eliminate jogs shorter than this (nm).
-# MAZE_GRID = 350nm; threshold catches 1-grid-step quantization jogs.
+# For statistics reporting only (not used by optimizer logic).
 JOG_THRESHOLD = MAZE_GRID + 50  # 400nm
 
 
@@ -37,29 +40,15 @@ def _seg_len(seg):
     return abs(seg[2] - seg[0]) + abs(seg[3] - seg[1])
 
 
-def _far_ep(seg, shared):
-    """Return the endpoint of seg that is NOT shared."""
-    p1 = (seg[0], seg[1])
-    p2 = (seg[2], seg[3])
-    return p2 if p1 == shared else p1
-
-
 def _rect_overlap(a, b):
     """Check if two (x1,y1,x2,y2) rects overlap."""
     return a[0] < b[2] and a[2] > b[0] and a[1] < b[3] and a[3] > b[1]
 
 
 def _segs_spacing_ok(new_segs, other_segs, obstacle_rects, layer, min_s, wire_w):
-    """Check new segments don't violate spacing with other nets or obstacles.
-
-    Args:
-        other_segs: segments from other nets (centerlines, use wire_w)
-        obstacle_rects: pre-computed (x1,y1,x2,y2,layer) rectangles from
-                        power drops, access points, etc. (already full-size)
-    """
+    """Check new segments don't violate spacing with other nets or obstacles."""
     hw = wire_w // 2
     for ns in new_segs:
-        # Bounding box of new segment expanded by half-width + spacing
         nr = (min(ns[0], ns[2]) - hw - min_s,
               min(ns[1], ns[3]) - hw - min_s,
               max(ns[0], ns[2]) + hw + min_s,
@@ -73,7 +62,6 @@ def _segs_spacing_ok(new_segs, other_segs, obstacle_rects, layer, min_s, wire_w)
                   max(os[1], os[3]) + hw)
             if _rect_overlap(nr, ob):
                 return False
-        # Check against obstacle rectangles (power M2, access M2 pads)
         for orect in obstacle_rects:
             if orect[4] != layer:
                 continue
@@ -85,8 +73,7 @@ def _segs_spacing_ok(new_segs, other_segs, obstacle_rects, layer, min_s, wire_w)
 def _creates_same_net_gap(new_segs, remaining_segs, layer, min_s, wire_w):
     """Check if new segments create close-but-not-touching gaps with same-net.
 
-    DRC checks spacing between ALL shapes regardless of net connectivity.
-    Same-net shapes that are close but don't touch/overlap violate M2.b/M1.b.
+    Same-net shapes that are close but don't touch/overlap violate M1.b/M2.b.
     """
     hw = wire_w // 2
     for ns in new_segs:
@@ -99,7 +86,7 @@ def _creates_same_net_gap(new_segs, remaining_segs, layer, min_s, wire_w):
         nr_exp = (nr[0] - min_s, nr[1] - min_s,
                   nr[2] + min_s, nr[3] + min_s)
         for rs in remaining_segs:
-            if rs[4] != layer:
+            if len(rs) < 5 or rs[4] != layer:
                 continue
             rr = (min(rs[0], rs[2]) - hw,
                   min(rs[1], rs[3]) - hw,
@@ -110,21 +97,284 @@ def _creates_same_net_gap(new_segs, remaining_segs, layer, min_s, wire_w):
     return False
 
 
-def eliminate_zjogs(segs, layer, other_net_segs, obstacle_rects):
-    """Remove Z-jogs from segments on a single layer.
+# ─── Obstacle extraction ────────────────────────────────────────────────
 
-    A Z-jog is a short perpendicular segment connecting two parallel
-    segments (H->V(short)->H or V->H(short)->V). The optimizer replaces
-    the 3-segment Z with a 2-segment L-shape.
+def _extract_obstacles(routing):
+    """Extract ALL obstacle rects (M1 + M2), tagged by net.
+
+    Returns:
+        per_net: dict net_name → [(x1,y1,x2,y2,layer), ...]
+        global_obs: [(x1,y1,x2,y2,layer), ...]  (ties, power — always foreign)
+    """
+    per_net = defaultdict(list)
+    global_obs = []
+    M1, M2 = 0, 1
+
+    # Build pin → net mapping from netlist.json
+    pin_net = {}
+    try:
+        with open(NETLIST_JSON) as f:
+            netlist = json.load(f)
+        for net in netlist.get('nets', []):
+            for pin_str in net.get('pins', []):
+                pin_net[pin_str] = net['name']
+    except FileNotFoundError:
+        pass
+
+    # Access point M1 pads, M2 pads, M1 stubs (per-net)
+    for pin_key, ap in routing.get('access_points', {}).items():
+        net = pin_net.get(pin_key, '')
+        vp = ap.get('via_pad', {})
+        if 'm1' in vp:
+            m1 = vp['m1']
+            per_net[net].append((m1[0], m1[1], m1[2], m1[3], M1))
+        if 'm2' in vp:
+            m2 = vp['m2']
+            per_net[net].append((m2[0], m2[1], m2[2], m2[3], M2))
+        stub = ap.get('m1_stub')
+        if stub:
+            per_net[net].append((stub[0], stub[1], stub[2], stub[3], M1))
+
+    # Power drop M2 vbars + jogs + via_stack M2 pads (global)
+    from ..pdk import VIA1_PAD
+    hw = M2_SIG_W // 2
+    vhp = VIA1_PAD // 2
+    for drop in routing.get('power', {}).get('drops', []):
+        if 'm2_vbar' in drop:
+            vb = drop['m2_vbar']
+            x = vb[0]
+            y1, y2 = min(vb[1], vb[3]), max(vb[1], vb[3])
+            global_obs.append((x - hw, y1, x + hw, y2, M2))
+        if 'm2_jog' in drop:
+            jog = drop['m2_jog']
+            jhw = VIA1_PAD // 2
+            x1, x2 = min(jog[0], jog[2]), max(jog[0], jog[2])
+            y = jog[1]
+            global_obs.append((x1, y - jhw, x2, y + jhw, M2))
+        if drop.get('type') == 'via_stack' and 'via2_pos' in drop:
+            v2 = drop['via2_pos']
+            global_obs.append((v2[0] - vhp, v2[1] - vhp,
+                               v2[0] + vhp, v2[1] + vhp, M2))
+
+    # Tie M1 shapes from ties.json (global — belong to vdd/gnd)
+    try:
+        with open(TIES_JSON) as f:
+            ties_data = json.load(f)
+        for t in ties_data.get('ties', []):
+            for layer_key, shapes in t.get('layers', {}).items():
+                if layer_key.startswith('M1'):
+                    for r in shapes:
+                        global_obs.append((r[0], r[1], r[2], r[3], M1))
+    except FileNotFoundError:
+        pass
+
+    # Device bboxes on M1 (route wires must not enter device + DEV_MARGIN)
+    dev_m1_bboxes = []
+    try:
+        with open(PLACEMENT_JSON) as f:
+            placement = json.load(f)
+        margin = DEV_MARGIN
+        for inst_name, inst in placement.get('instances', {}).items():
+            left = int(inst['x_um'] * 1000)
+            bot = int(inst['y_um'] * 1000)
+            right = left + int(inst['w_um'] * 1000)
+            top = bot + int(inst['h_um'] * 1000)
+            dev_m1_bboxes.append((left - margin, bot - margin,
+                                  right + margin, top + margin))
+    except FileNotFoundError:
+        pass
+
+    return per_net, global_obs, dev_m1_bboxes
+
+
+# ─── Loop pruning ────────────────────────────────────────────────────────
+
+def prune_loops(segs):
+    """Remove redundant edges that form loops, keeping a spanning tree.
+
+    Uses Kruskal's MST: processes edges shortest-first so the longest
+    cycle-forming edges are removed.
+    """
+    wire_segs = [s for s in segs if s[4] >= 0]
+    via_segs = [s for s in segs if s[4] == -1]
+
+    if len(wire_segs) < 2:
+        return segs, 0
+
+    edges = []
+    for i, s in enumerate(wire_segs):
+        p1 = (s[0], s[1])
+        p2 = (s[2], s[3])
+        if p1 == p2:
+            continue
+        edges.append((p1, p2, i, _seg_len(s)))
+
+    edges.sort(key=lambda e: e[3])
+
+    parent = {}
+
+    def find(x):
+        while parent.get(x, x) != x:
+            parent[x] = parent.get(parent[x], parent[x])
+            x = parent[x]
+        return x
+
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            return False
+        parent[ra] = rb
+        return True
+
+    remove_idx = set()
+    for p1, p2, idx, length in edges:
+        if not union(p1, p2):
+            remove_idx.add(idx)
+
+    if not remove_idx:
+        return segs, 0
+
+    kept_wires = [s for i, s in enumerate(wire_segs) if i not in remove_idx]
+    live_points = set()
+    for s in kept_wires:
+        live_points.add((s[0], s[1]))
+        live_points.add((s[2], s[3]))
+    kept_vias = [v for v in via_segs if (v[0], v[1]) in live_points]
+
+    return kept_vias + kept_wires, len(remove_idx)
+
+
+def prune_redundant_vias(segs):
+    """Remove vias that aren't needed for inter-layer connectivity.
+
+    Uses layer-aware Union-Find: nodes are (x, y, layer).
+    All wire edges are added first (mandatory), then vias are added
+    only if they connect previously disconnected components.
+    """
+    wire_segs = [s for s in segs if s[4] >= 0]
+    via_segs = [s for s in segs if s[4] == -1]
+
+    if not via_segs:
+        return segs, 0, 0
+
+    parent = {}
+
+    def find(x):
+        while parent.get(x, x) != x:
+            parent[x] = parent.get(parent[x], parent[x])
+            x = parent[x]
+        return x
+
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            return False
+        parent[ra] = rb
+        return True
+
+    # Pre-load all wire edges (mandatory)
+    for s in wire_segs:
+        p1 = (s[0], s[1], s[4])
+        p2 = (s[2], s[3], s[4])
+        if p1 != p2:
+            union(p1, p2)
+
+    # Add vias, keeping only those that connect new components
+    kept_vias = []
+    removed = 0
+    for v in via_segs:
+        n0 = (v[0], v[1], 0)  # M1 node
+        n1 = (v[0], v[1], 1)  # M2 node
+        if union(n0, n1):
+            kept_vias.append(v)  # bridge via — needed
+        else:
+            removed += 1  # redundant — both layers already connected
+
+    if not removed:
+        return segs, 0, 0
+
+    # Remove orphaned wire stubs (degree-0 after via removal)
+    live_via_pts = set((v[0], v[1]) for v in kept_vias)
+    all_via_pts = set((v[0], v[1]) for v in via_segs)
+    removed_via_pts = all_via_pts - live_via_pts
+
+    # Check each wire: if an endpoint is at a removed via position
+    # and has no other connection, it's an orphaned stub
+    from collections import defaultdict
+    ep_count = defaultdict(int)
+    for s in wire_segs:
+        ep_count[(s[0], s[1], s[4])] += 1
+        ep_count[(s[2], s[3], s[4])] += 1
+
+    orphaned = set()
+    changed = True
+    while changed:
+        changed = False
+        kept_wires = []
+        for s in wire_segs:
+            p1 = (s[0], s[1])
+            p2 = (s[2], s[3])
+            n1 = (s[0], s[1], s[4])
+            n2 = (s[2], s[3], s[4])
+            # A wire is orphaned if one endpoint is at a removed via,
+            # has degree 1, and is not at a kept via
+            is_orphan = False
+            if ep_count[n1] == 1 and p1 in removed_via_pts and p1 not in live_via_pts:
+                is_orphan = True
+            if ep_count[n2] == 1 and p2 in removed_via_pts and p2 not in live_via_pts:
+                is_orphan = True
+            if is_orphan:
+                orphaned.add(id(s))
+                ep_count[n1] -= 1
+                ep_count[n2] -= 1
+                changed = True
+            else:
+                kept_wires.append(s)
+        wire_segs = kept_wires
+
+    stub_count = len(orphaned)
+    return kept_vias + wire_segs, removed, stub_count
+
+
+# ─── Chain straightening (rubber-banding) ────────────────────────────────
+
+def _enters_device_m1(new_segs, dev_bboxes):
+    """Check if any M1 wire center enters a device bbox (+ DEV_MARGIN).
+
+    Device bboxes are pre-expanded by DEV_MARGIN. This replicates the
+    router's M1 blocking: no wire center may enter device areas.
+    """
+    for ns in new_segs:
+        if ns[4] != 0:  # only check M1
+            continue
+        sx1 = min(ns[0], ns[2])
+        sy1 = min(ns[1], ns[3])
+        sx2 = max(ns[0], ns[2])
+        sy2 = max(ns[1], ns[3])
+        for db in dev_bboxes:
+            if sx1 < db[2] and sx2 > db[0] and sy1 < db[3] and sy2 > db[1]:
+                return True
+    return False
+
+
+def straighten_chains(segs, layer, other_net_segs, obstacle_rects,
+                      same_net_shapes, dev_m1_bboxes=()):
+    """Straighten zigzag chains between anchor points into L-shapes.
+
+    Anchor points = via endpoints + branch points (degree!=2) + leaf endpoints.
+    For each chain of >= 2 segments between anchors A and B, try replacing
+    the entire chain with a 1-2 segment L-shape (or straight line if collinear).
+    Two L-shape orientations are tried; the first that passes DRC is used.
 
     Args:
         segs: all segments for this net (all layers)
         layer: 0 (M1) or 1 (M2) to process
         other_net_segs: segments from all OTHER nets (for spacing check)
-        obstacle_rects: M2/M1 obstacle rectangles from power/access points
+        obstacle_rects: obstacle rects from other nets + global (for spacing)
+        same_net_shapes: obstacle rects from SAME net (for gap check only)
 
     Returns:
-        (new_segments, jogs_eliminated)
+        (new_segments, chains_straightened)
     """
     wire_w = M1_SIG_W if layer == 0 else M2_SIG_W
     min_s = M1_MIN_S if layer == 0 else M2_MIN_S
@@ -132,99 +382,155 @@ def eliminate_zjogs(segs, layer, other_net_segs, obstacle_rects):
     layer_segs = [list(s) for s in segs if s[4] == layer]
     other_layer = [list(s) for s in segs if s[4] != layer]
 
-    if len(layer_segs) < 3:
+    if len(layer_segs) < 2:
         return segs, 0
 
-    # Collect via and other-layer endpoint positions — these are anchor
-    # points that must NOT be moved (vias connect layers at exact coords)
+    # Anchor points: via/cross-layer endpoints
     anchor_points = set()
     for s in other_layer:
         anchor_points.add((s[0], s[1]))
         anchor_points.add((s[2], s[3]))
 
-    total_jogs = 0
+    # Build endpoint map
+    ep_map = defaultdict(set)
+    for i, s in enumerate(layer_segs):
+        ep_map[(s[0], s[1])].add(i)
+        ep_map[(s[2], s[3])].add(i)
 
-    for _pass in range(10):
-        ep_map = defaultdict(list)
-        for i, s in enumerate(layer_segs):
-            ep_map[(s[0], s[1])].append(i)
-            ep_map[(s[2], s[3])].append(i)
+    # Degree != 2 points are also anchors (branch or leaf)
+    for pt, indices in ep_map.items():
+        if len(indices) != 2:
+            anchor_points.add(pt)
 
-        removed = set()
-        additions = []
-        jogs_this_pass = 0
-
-        for mid_i, seg in enumerate(layer_segs):
-            if mid_i in removed:
+    # Access-point connection anchors: if a segment physically overlaps
+    # a same-net M1/M2 shape (AP via_pad or m1_stub), its endpoints must
+    # be anchors — removing that segment would disconnect the device.
+    hw = wire_w // 2
+    for i, s in enumerate(layer_segs):
+        sx1 = min(s[0], s[2]) - hw
+        sy1 = min(s[1], s[3]) - hw
+        sx2 = max(s[0], s[2]) + hw
+        sy2 = max(s[1], s[3]) + hw
+        for shape in same_net_shapes:
+            if shape[4] != layer:
                 continue
-            if _seg_len(seg) == 0 or _seg_len(seg) > JOG_THRESHOLD:
+            if sx1 < shape[2] and sx2 > shape[0] and sy1 < shape[3] and sy2 > shape[1]:
+                anchor_points.add((s[0], s[1]))
+                anchor_points.add((s[2], s[3]))
+                break
+
+    # Walk chains between consecutive anchors
+    visited_segs = set()
+    chains = []  # [(anchor_a, anchor_b, [seg_indices])]
+
+    for start_pt in list(anchor_points):
+        if start_pt not in ep_map:
+            continue
+        for seg_i in list(ep_map[start_pt]):
+            if seg_i in visited_segs:
+                continue
+            chain = [seg_i]
+            visited_segs.add(seg_i)
+            s = layer_segs[seg_i]
+            p1, p2 = (s[0], s[1]), (s[2], s[3])
+            current = p2 if p1 == start_pt else p1
+
+            while current not in anchor_points:
+                neighbors = ep_map[current] - visited_segs
+                if len(neighbors) != 1:
+                    anchor_points.add(current)
+                    break
+                next_i = next(iter(neighbors))
+                chain.append(next_i)
+                visited_segs.add(next_i)
+                ns = layer_segs[next_i]
+                np1, np2 = (ns[0], ns[1]), (ns[2], ns[3])
+                current = np2 if np1 == current else np1
+
+            chains.append((start_pt, current, chain))
+
+    # Filter same-net shapes for this layer (for gap check)
+    same_layer_shapes = [r for r in same_net_shapes if r[4] == layer]
+
+    # Try straightening each chain with >= 2 segments
+    straightened = 0
+    replaced = set()
+    new_segs = []
+
+    for anchor_a, anchor_b, chain_indices in chains:
+        if len(chain_indices) < 2:
+            continue
+        if anchor_a == anchor_b:
+            continue
+
+        ax, ay = anchor_a
+        bx, by = anchor_b
+
+        # Generate L-shape candidates
+        candidates = []
+        if ax == bx:
+            candidates.append([[ax, ay, bx, by, layer]])
+        elif ay == by:
+            candidates.append([[ax, ay, bx, by, layer]])
+        else:
+            # Try both L orientations
+            candidates.append([
+                [ax, ay, bx, ay, layer],
+                [bx, ay, bx, by, layer],
+            ])
+            candidates.append([
+                [ax, ay, ax, by, layer],
+                [ax, by, bx, by, layer],
+            ])
+
+        chain_set = set(chain_indices)
+
+        # Verify chain connectivity: walk from anchor_a through chain to anchor_b
+        chain_pts = [anchor_a]
+        cur = anchor_a
+        valid_chain = True
+        for ci in chain_indices:
+            cs = layer_segs[ci]
+            cp1, cp2 = (cs[0], cs[1]), (cs[2], cs[3])
+            if cp1 == cur:
+                cur = cp2
+            elif cp2 == cur:
+                cur = cp1
+            else:
+                valid_chain = False
+                break
+            chain_pts.append(cur)
+        if not valid_chain or cur != anchor_b:
+            continue  # chain walking error, skip
+
+        for cand in candidates:
+            # Check M1 wire doesn't enter device areas
+            if dev_m1_bboxes and _enters_device_m1(cand, dev_m1_bboxes):
                 continue
 
-            p1 = (seg[0], seg[1])
-            p2 = (seg[2], seg[3])
-
-            # Skip if a via or other-layer segment connects at junction
-            if p1 in anchor_points or p2 in anchor_points:
+            # Check spacing against other nets + foreign obstacles
+            if not _segs_spacing_ok(cand, other_net_segs, obstacle_rects,
+                                    layer, min_s, wire_w):
                 continue
 
-            n1 = [j for j in ep_map[p1] if j != mid_i and j not in removed]
-            n2 = [j for j in ep_map[p2] if j != mid_i and j not in removed]
-
-            if len(n1) != 1 or len(n2) != 1:
+            # Check same-net gaps (close-but-not-touching)
+            remaining = [layer_segs[i] for i in range(len(layer_segs))
+                         if i not in replaced and i not in chain_set]
+            remaining.extend(new_segs)
+            remaining.extend(same_layer_shapes)
+            if _creates_same_net_gap(cand, remaining, layer, min_s, wire_w):
                 continue
 
-            sa = layer_segs[n1[0]]
-            sb = layer_segs[n2[0]]
-
-            new_pair = None
-
-            if _is_v(seg) and _is_h(sa) and _is_h(sb):
-                # H -> V(short) -> H: replace with L-shape
-                a_far = _far_ep(sa, p1)
-                b_far = _far_ep(sb, p2)
-                new_pair = (
-                    [a_far[0], a_far[1], b_far[0], a_far[1], layer],
-                    [b_far[0], a_far[1], b_far[0], b_far[1], layer],
-                )
-            elif _is_h(seg) and _is_v(sa) and _is_v(sb):
-                # V -> H(short) -> V: replace with L-shape
-                a_far = _far_ep(sa, p1)
-                b_far = _far_ep(sb, p2)
-                new_pair = (
-                    [a_far[0], a_far[1], a_far[0], b_far[1], layer],
-                    [a_far[0], b_far[1], b_far[0], b_far[1], layer],
-                )
-
-            if new_pair is None:
-                continue
-
-            # DRC safety check against other nets AND infrastructure shapes
-            if not _segs_spacing_ok(list(new_pair), other_net_segs,
-                                    obstacle_rects, layer, min_s, wire_w):
-                continue
-
-            # Same-net gap check: new segments must not create
-            # close-but-not-touching gaps with remaining same-net segments
-            to_remove = {mid_i, n1[0], n2[0]}
-            remaining = [s for i, s in enumerate(layer_segs)
-                         if i not in removed and i not in to_remove]
-            if _creates_same_net_gap(list(new_pair), remaining,
-                                     layer, min_s, wire_w):
-                continue
-
-            removed.update(to_remove)
-            additions.extend(new_pair)
-            jogs_this_pass += 1
-
-        if jogs_this_pass == 0:
+            replaced.update(chain_indices)
+            new_segs.extend(cand)
+            straightened += 1
             break
 
-        total_jogs += jogs_this_pass
-        layer_segs = [s for i, s in enumerate(layer_segs) if i not in removed]
-        layer_segs.extend(additions)
+    kept = [layer_segs[i] for i in range(len(layer_segs)) if i not in replaced]
+    return other_layer + kept + new_segs, straightened
 
-    return other_layer + layer_segs, total_jogs
 
+# ─── Statistics ──────────────────────────────────────────────────────────
 
 def count_stats(segs):
     """Count segments, corners, and short jogs per layer."""
@@ -256,44 +562,7 @@ def count_stats(segs):
     return stats
 
 
-def _extract_m2_obstacles(routing):
-    """Extract M2 obstacle rectangles from power drops and access points.
-
-    These shapes are drawn on M2 but NOT stored as signal route segments.
-    The optimizer must check against them to avoid M2.b spacing violations.
-
-    Returns list of (x1, y1, x2, y2, layer=1) obstacle rects.
-    """
-    obstacles = []
-    M2 = 1
-
-    # Power drop M2 vbars (vertical, width = M2_SIG_W)
-    hw = M2_SIG_W // 2
-    for drop in routing.get('power', {}).get('drops', []):
-        if 'm2_vbar' in drop:
-            vb = drop['m2_vbar']
-            x = vb[0]
-            y1, y2 = min(vb[1], vb[3]), max(vb[1], vb[3])
-            obstacles.append((x - hw, y1, x + hw, y2, M2))
-
-        # M2 jogs use VIA1_PAD width (480nm)
-        if 'm2_jog' in drop:
-            from ..pdk import VIA1_PAD
-            jog = drop['m2_jog']
-            jhw = VIA1_PAD // 2
-            x1, x2 = min(jog[0], jog[2]), max(jog[0], jog[2])
-            y = jog[1]
-            obstacles.append((x1, y - jhw, x2, y + jhw, M2))
-
-    # Access point M2 pads (from via_pad.m2)
-    for _pin, ap in routing.get('access_points', {}).items():
-        vp = ap.get('via_pad', {})
-        if 'm2' in vp:
-            m2 = vp['m2']
-            obstacles.append((m2[0], m2[1], m2[2], m2[3], M2))
-
-    return obstacles
-
+# ─── Main entry points ──────────────────────────────────────────────────
 
 def optimize_routing(routing):
     """Optimize all signal route segments in routing dict (in-place)."""
@@ -304,12 +573,16 @@ def optimize_routing(routing):
     for net, route in {**signal_routes, **pre_routes}.items():
         all_segs[net] = route.get('segments', [])
 
-    # Extract M2 infrastructure obstacles (power drops, access pads)
-    obstacle_rects = _extract_m2_obstacles(routing)
-    print(f'  Loaded {len(obstacle_rects)} M2 obstacle rects '
-          f'(power drops + access pads)')
+    # Extract all obstacles (M1 + M2), tagged by net
+    obs_per_net, obs_global, dev_m1_bboxes = _extract_obstacles(routing)
+    m1_g = sum(1 for o in obs_global if o[4] == 0)
+    m2_g = sum(1 for o in obs_global if o[4] == 1)
+    ap_total = sum(len(v) for v in obs_per_net.values())
+    print(f'  Obstacles: {m1_g} M1 + {m2_g} M2 global, '
+          f'{ap_total} per-net, {len(dev_m1_bboxes)} device bboxes')
 
-    total_jogs = 0
+    total_loops = 0
+    total_straightened = 0
     segs_before = 0
     segs_after = 0
 
@@ -321,25 +594,57 @@ def optimize_routing(routing):
 
         segs_before += len(segs)
 
-        # Other nets' segments for collision checking
+        # Pass 1: prune loops
+        segs, loops = prune_loops(segs)
+        if loops:
+            print(f'    {net_name}: pruned {loops} loop edge(s)')
+        total_loops += loops
+        all_segs[net_name] = segs
+
+        # Build obstacle rects for this net (exclude own access points)
+        net_obstacles = list(obs_global)
+        for other_net, obs in obs_per_net.items():
+            if other_net != net_name:
+                net_obstacles.extend(obs)
+
+        # Same-net access point shapes (for gap check)
+        same_net_shapes = obs_per_net.get(net_name, [])
+
+        # Other nets' route segments
         other_segs = []
         for other_net, other_s in all_segs.items():
             if other_net != net_name:
                 other_segs.extend(other_s)
 
-        for layer in (0, 1):
-            segs, jogs = eliminate_zjogs(segs, layer, other_segs,
-                                        obstacle_rects)
-            if jogs:
-                print(f'    {net_name}: eliminated {jogs} Z-jog(s) on '
-                      f'{"M1" if layer == 0 else "M2"}')
-            total_jogs += jogs
+        # Pass 2: straighten chains per layer
+        for ly in (0, 1):  # M1 + M2
+            segs, count = straighten_chains(
+                segs, ly, other_segs, net_obstacles, same_net_shapes,
+                dev_m1_bboxes)
+            if count:
+                lname = "M1" if ly == 0 else "M2"
+                print(f'    {net_name}: straightened {count} chain(s) on {lname}')
+            total_straightened += count
+
+        # Pass 3: re-prune loops introduced by straightening
+        # (L-shape corner may land on a via position, creating a redundant edge)
+        segs, loops2 = prune_loops(segs)
+        if loops2:
+            print(f'    {net_name}: re-pruned {loops2} loop edge(s) after straighten')
+        total_loops += loops2
+
+        # Pass 4: remove redundant vias (non-bridge inter-layer edges)
+        result = prune_redundant_vias(segs)
+        segs, vias_rm, stubs_rm = result
+        if vias_rm:
+            print(f'    {net_name}: removed {vias_rm} redundant via(s)'
+                  f'{f", {stubs_rm} orphaned stub(s)" if stubs_rm else ""}')
 
         route['segments'] = segs
         all_segs[net_name] = segs
         segs_after += len(segs)
 
-    return total_jogs, segs_before, segs_after
+    return total_loops, total_straightened, segs_before, segs_after
 
 
 def main():
@@ -361,7 +666,7 @@ def main():
           f'{before[1]["short_jogs"]} jogs), '
           f'{before["vias"]} vias')
 
-    jogs, sb, sa = optimize_routing(routing)
+    loops, straightened, sb, sa = optimize_routing(routing)
 
     # After stats
     all_segs_after = []
@@ -374,12 +679,13 @@ def main():
           f'M2({after[1]["segments"]} seg, {after[1]["corners"]} corners, '
           f'{after[1]["short_jogs"]} jogs), '
           f'{after["vias"]} vias')
-    print(f'  Eliminated {jogs} Z-jogs ({sb} -> {sa} segments)')
+    print(f'  Pruned {loops} loops, straightened {straightened} chains '
+          f'({sb} -> {sa} segments)')
 
-    # Update statistics in routing.json
     if 'statistics' in routing:
         routing['statistics']['optimizer'] = {
-            'zjogs_eliminated': jogs,
+            'loops_pruned': loops,
+            'chains_straightened': straightened,
             'segments_before': sb,
             'segments_after': sa,
         }

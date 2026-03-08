@@ -33,7 +33,7 @@ from atk.pdk import (
     s5,
 )
 from atk.route.maze_router import M1_LYR, M2_LYR
-from atk.device import load_device_lib, get_pcell_params, get_ng2_gate_data
+from atk.device import load_device_lib, get_pcell_params, get_ng2_gate_data, get_sd_strips
 from atk.verify.pcell_xray import load_gate_info
 from atk.paths import DEVICE_LIB_JSON
 
@@ -186,15 +186,15 @@ def _parse_tie_layer(key):
 # Power drop M2 fill helpers
 # ═══════════════════════════════════════════════════
 
-def _fill_via_m1_corners(cell, li_m1, routing):
+def _fill_via_m1_corners(cell, li_m1, routing, gate_cont_m1=None):
     """Fill M1 corner notches between via M1 pads and M1 wire segments.
 
     When a via1 and an M1 wire bar are in the same net but not directly
     connected (e.g., via → hbar → vbar), the via M1 pad and wire bar
     may have a small gap (~15nm) that violates M1.b (180nm min notch).
 
-    Also checks access point via pads against routing wire segments on
-    the same net, to fix notches at gate stub ↔ routing wire junctions.
+    Also checks access point via pads and gate contact M1 pads against
+    routing wire segments on the same net, to fix notches.
     """
     hp_m1 = VIA1_PAD_M1 // 2  # 185
     hw = M1_SIG_W // 2         # 150
@@ -206,14 +206,25 @@ def _fill_via_m1_corners(cell, li_m1, routing):
             for pin_key in rd.get('pins', []):
                 _pin_to_net[pin_key] = net_name
 
-    # Collect access point M1 pads per net
+    # Collect access point M1 pads and m1_stubs per net
     _ap_m1_per_net = {}
     for key, ap in routing.get('access_points', {}).items():
+        net = _pin_to_net.get(key)
+        if not net:
+            continue
         vp = ap.get('via_pad')
         if vp and 'm1' in vp:
-            net = _pin_to_net.get(key)
+            _ap_m1_per_net.setdefault(net, []).append(vp['m1'])
+        stub = ap.get('m1_stub')
+        if stub:
+            _ap_m1_per_net.setdefault(net, []).append(stub)
+
+    # Add gate contact M1 pads (drawn in section 1c)
+    if gate_cont_m1:
+        for pin_key, rect in gate_cont_m1.items():
+            net = _pin_to_net.get(pin_key)
             if net:
-                _ap_m1_per_net.setdefault(net, []).append(vp['m1'])
+                _ap_m1_per_net.setdefault(net, []).append(rect)
 
     fill_count = 0
     for route_dict in [routing.get('signal_routes', {}), routing.get('pre_routes', {})]:
@@ -625,9 +636,10 @@ def main():
         ox_nm = ((ox_nm + 2) // 5) * 5
         oy_nm = ((oy_nm + 2) // 5) * 5
 
+        rot = dev.get('rotation', 0)
         top.insert(klayout.db.CellInstArray(
             pcell_id,
-            klayout.db.Trans(klayout.db.Point(ox_nm, oy_nm))
+            klayout.db.Trans(rot, False, klayout.db.Point(ox_nm, oy_nm))
         ))
         print(f'    {inst_name:8s} ({dev_type:14s}) at ({px:7.2f}, {py:7.2f})')
     print(f'  Placed {len(instances)} devices')
@@ -636,6 +648,80 @@ def main():
     # Prevents duplicate Via1 at positions already drawn by gate contacts,
     # access points, or power drops.
     drawn_vias = set()
+
+    # ═══ 1a. M1 S/D bus straps for ng>=2 devices ═══
+    # IHP SG13G2 multi-finger PCells have isolated M1 strips per S/D finger.
+    # The PCell does NOT internally connect same-type (S or D) strips.
+    # Bus straps connect all source strips and all drain strips with M1 bars.
+    #
+    # Source bus (ABOVE device): connects intermediate source strips + S2.
+    #   Skips S1 (strip 0) to avoid crossing D pin's m1_stub at strip 1.
+    #   S1 connects to the net independently via its own access point.
+    # Drain bus (BELOW device): connects D pin + intermediate drain strips.
+    #   Stays within drain strip X range, avoiding S/S2 m1_stubs at edges.
+    #
+    # Geometry: 160nm-wide M1 bars with 200nm gap from strip edges (> M1.b=180nm).
+    # Extends ~50-180nm beyond PCell bbox; well within placer's 700nm device gap.
+    print('\n  === Drawing M1 S/D bus straps ===')
+    BUS_W = M1_THIN   # 160nm — bus bar width (matches PCell M1 strip width)
+    BUS_GAP = 200      # 200nm gap from strip edge to bus bar (> M1.b = 180nm)
+
+    bus_count = 0
+    for inst_name, info in instances.items():
+        dev_type = info['type']
+        sd = get_sd_strips(_device_lib, dev_type)
+        if sd is None:
+            continue
+
+        dev = DEVICES[dev_type]
+        pcell_x = s5(info['x_um'] - dev['ox'])
+        pcell_y = s5(info['y_um'] - dev['oy'])
+
+        src_strips = sd['source']
+        drn_strips = sd['drain']
+        strip_top = src_strips[0][3]  # All strips share same Y range
+        strip_bot = src_strips[0][1]
+
+        # Source bus above: skip S1 (strip 0), connect remaining source strips.
+        # The bus crosses intermediate drain strips (no m1_stubs) but NOT
+        # strip 1 (D pin with m1_stub extending upward).
+        bus_src = src_strips[1:]  # source[1:] = strips 2, 4, 6, 8 for ng=8
+        if len(bus_src) >= 2:
+            by1 = pcell_y + strip_top + BUS_GAP
+            by2 = by1 + BUS_W
+            bx1 = pcell_x + bus_src[0][0]
+            bx2 = pcell_x + bus_src[-1][2]
+            # Horizontal bus bar
+            top.shapes(li_m1).insert(klayout.db.Box(bx1, by1, bx2, by2))
+            # Stubs connecting each source strip top to bus
+            for strip in bus_src:
+                top.shapes(li_m1).insert(klayout.db.Box(
+                    pcell_x + strip[0], pcell_y + strip_top,
+                    pcell_x + strip[2], by2))
+            bus_count += 1
+
+        # Drain bus below: connect all drain strips (D pin + intermediates).
+        # Bus range = strip 1 to strip N-2, never reaches strip 0 or strip N,
+        # so it avoids S/S2 m1_stubs (which may extend below for NMOS).
+        if len(drn_strips) >= 2:
+            by2 = pcell_y + strip_bot - BUS_GAP
+            by1 = by2 - BUS_W
+            bx1 = pcell_x + drn_strips[0][0]
+            bx2 = pcell_x + drn_strips[-1][2]
+            # Horizontal bus bar
+            top.shapes(li_m1).insert(klayout.db.Box(bx1, by1, bx2, by2))
+            # Stubs connecting each drain strip bottom to bus
+            for strip in drn_strips:
+                top.shapes(li_m1).insert(klayout.db.Box(
+                    pcell_x + strip[0], by1,
+                    pcell_x + strip[2], pcell_y + strip_bot))
+            bus_count += 1
+
+        n_src = len(bus_src) if len(bus_src) >= 2 else 0
+        n_drn = len(drn_strips) if len(drn_strips) >= 2 else 0
+        if n_src or n_drn:
+            print(f'    {inst_name}: S bus {n_src} strips, D bus {n_drn} strips')
+    print(f'  Drew {bus_count} M1 S/D bus straps')
 
     # ═══ 1b. Gate straps for ng=2 devices ═══
     # ng=2 PCells have 2 separate poly gate fingers (G1, G2).
@@ -684,10 +770,10 @@ def main():
         ext_bot = poly_bot - GATE_POLY_EXT
         cont_cy = ext_bot + CNT_D_ENC + hc  # = poly_bot - 80
 
-        # Draw GatPoly extensions at G1 and G2 (match PCell finger widths)
+        # Draw GatPoly extensions at G1 and G2 (cap half-width for large-L)
         gi = _gate_info.get(dev_type)
-        g1_hw = gi.finger_hws[0] if gi else 250
-        g2_hw = gi.finger_hws[1] if gi else 250
+        g1_hw = min(gi.finger_hws[0], 500) if gi else 250
+        g2_hw = min(gi.finger_hws[1], 500) if gi else 250
         for gx, ghw in ((g1_x, g1_hw), (g2_x, g2_hw)):
             top.shapes(li_gatpoly).insert(klayout.db.Box(
                 gx - ghw, ext_bot, gx + ghw, poly_bot))
@@ -719,13 +805,21 @@ def main():
     # Every gate pin needs an explicit Cont connecting poly→M1 in the gate
     # extension area (below active for all orientations here).
     # Gate access modes 'gate' and 'm1_pin' both need this.
+    #
+    # ng=1: single poly extension + Cont + M1 pad at G pin.
+    # ng>=4: continuous GatPoly extension bar bridging ALL fingers on poly layer,
+    #   then single Cont + M1 pad at finger[0] (same as ng=1).
+    #   IHP ng>=4 PCells have SEPARATE gate poly rectangles per finger (380nm gap).
+    #   We bridge them on GatPoly (in extension zone below Activ, no extra FETs).
+    #   Gate connectivity on GatPoly, S/D connectivity on M1 — no layer conflict.
     print('\n  === Drawing gate contacts ===')
 
     from atk.route.access import _DEVICES as _ACC_DEV, get_access_mode
+    from atk.pdk import M1_MIN_AREA
 
-    # Poly finger center X = G pin X (for ng=1 devices).
-    # Poly bottom Y = G pin Y = -0.18 µm (consistent across all devices).
     gate_cont_count = 0
+    gate_bridge_count = 0
+    gate_cont_m1 = {}  # pin_key → [x1,y1,x2,y2] for fill checker
     hc = CONT_SZ // 2  # 80nm
 
     for inst_name, info in instances.items():
@@ -756,17 +850,37 @@ def main():
         pcell_y = round((info['y_um'] - dev['oy']) * UM)
         pcell_y = ((pcell_y + 2) // 5) * 5
 
-        # Gate poly center X and poly bottom Y (absolute nm)
-        gx = ((pcell_x + round(g_rel_x * UM) + 2) // 5) * 5
+        # Gate poly bottom Y (absolute nm) — same for all fingers
         poly_bot = ((pcell_y + round(g_rel_y * UM) + 2) // 5) * 5
 
-        # GatPoly extension for DRC-clean gate contacts
+        # GatPoly extension geometry
         ext_bot = poly_bot - GATE_POLY_EXT
         cy = ext_bot + CNT_D_ENC + hc  # = poly_bot - 80
 
-        # Draw GatPoly extension (match PCell finger width)
-        gi_ng1 = _gate_info.get(dev_type)
-        gate_hw = gi_ng1.finger_hws[0] if gi_ng1 else 250
+        gi = _gate_info.get(dev_type)
+
+        # ── ng>=4: bridge all gate poly fingers on GatPoly layer ──
+        if ng >= 4 and gi and gi.ng >= 4:
+            # One continuous GatPoly bar spanning finger[0]..finger[N-1]
+            # in the extension zone [ext_bot, poly_bot] — below Activ,
+            # so no extra transistors are formed.
+            first_left = pcell_x + gi.finger_xs[0] - gi.finger_hws[0]
+            last_right = pcell_x + gi.finger_xs[-1] + gi.finger_hws[-1]
+            first_left = ((first_left + 2) // 5) * 5
+            last_right = ((last_right + 2) // 5) * 5
+            top.shapes(li_gatpoly).insert(klayout.db.Box(
+                first_left, ext_bot, last_right, poly_bot))
+            gate_bridge_count += 1
+            print(f'    {inst_name}: GatPoly bridge ng={gi.ng}, '
+                  f'X=[{first_left},{last_right}] Y=[{ext_bot},{poly_bot}]')
+
+        # ── Single Cont + M1 pad at G pin (all ng values) ──
+        gx = ((pcell_x + round(g_rel_x * UM) + 2) // 5) * 5
+
+        # Draw GatPoly extension at contact finger.
+        # Cap half-width: large-L ng=1 devices (e.g. pmos_mirror L=100µm)
+        # have finger_hws ~50µm — a 100µm GatPoly bar would bridge nets.
+        gate_hw = min(gi.finger_hws[0], 500) if gi else 250
         top.shapes(li_gatpoly).insert(klayout.db.Box(
             gx - gate_hw, ext_bot, gx + gate_hw, poly_bot))
 
@@ -777,18 +891,18 @@ def main():
         # M1 pad covering Cont.  Via1+M2 drawn by access point system.
         # Top capped at poly_bot (avoid M1.b with S/D M1).
         # Extend downward to satisfy M1.d area ≥ 0.09 µm².
-        from atk.pdk import M1_MIN_AREA
         m1_hw = hc + CONT_ENC_M1_END  # 130nm → width = 260nm
         m1_w = 2 * m1_hw
         m1_min_h = (M1_MIN_AREA + m1_w - 1) // m1_w
         m1_min_h = ((m1_min_h + 4) // 5) * 5  # 5nm grid
         m1_h = max(m1_min_h, poly_bot - (cy - hc))
-        top.shapes(li_m1).insert(klayout.db.Box(
-            gx - m1_hw, poly_bot - m1_h, gx + m1_hw, poly_bot))
+        gc_m1 = [gx - m1_hw, poly_bot - m1_h, gx + m1_hw, poly_bot]
+        top.shapes(li_m1).insert(klayout.db.Box(*gc_m1))
+        gate_cont_m1[f'{inst_name}.G'] = gc_m1
 
         gate_cont_count += 1
 
-    print(f'  Drew {gate_cont_count} gate contacts (ng=1)')
+    print(f'  Drew {gate_cont_count} gate contacts, {gate_bridge_count} poly bridges (ng>=4)')
 
     # ═══ 2. Draw tie cells from ties.json ═══
     print('\n  === Drawing ties ===')
@@ -847,11 +961,10 @@ def main():
 
     ap_count = 0
     for key, ap in routing.get('access_points', {}).items():
-        if key in via_stack_pins:
-            continue
+        is_via_stack = key in via_stack_pins
         vp = ap.get('via_pad')
         skip_m1 = ap.get('mode') == 'gate_no_m1'
-        if vp:
+        if vp and not is_via_stack:
             if 'via1' in vp:
                 draw_rect(top, li_v1, vp['via1'])
                 v = vp['via1']
@@ -860,9 +973,11 @@ def main():
                 draw_rect(top, li_m1, vp['m1'])
             if 'm2' in vp:
                 draw_rect(top, li_m2, vp['m2'])
+        # Always draw m1_stub — via_stack pins need it to bridge
+        # ptap/ntap tie M1 to PCell M1 strip
         if ap.get('m1_stub') and not skip_m1:
             draw_rect(top, li_m1, ap['m1_stub'])
-        if ap.get('m2_stub'):
+        if ap.get('m2_stub') and not is_via_stack:
             draw_rect(top, li_m2, ap['m2_stub'])
         ap_count += 1
     print(f'  Drew {ap_count} access points ({len(drawn_vias)} via1 positions tracked)')
@@ -1070,7 +1185,7 @@ def main():
           f'{skipped_vias} deduped)')
 
     # Fill M1 corner notches at routing via bends
-    _fill_via_m1_corners(top, li_m1, routing)
+    _fill_via_m1_corners(top, li_m1, routing, gate_cont_m1)
 
     # Fill M2 gaps between routing vias and access point M2 pads
     _fill_via_ap_m2_gaps(top, li_m2, routing)

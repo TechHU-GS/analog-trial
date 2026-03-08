@@ -84,10 +84,6 @@ V2_ENC_M3   = 90      # M3 enclosure of Via2
 GATE_OFFSET = 180     # Gate pin sits this far below MOSFET bbox bottom
 NMOS_GS_DX  = 440     # Gate-to-Source pin X distance (all NMOS PCells)
 
-# Gate via X shift: avoids M1.b between gate pad and PCell source M1 strap.
-# G-S pin dx = 440nm, gap = 440 - VIA1_PAD_M1/2 - M1_THIN/2 = 175nm < M1_MIN_S=180nm.
-# Shift 10nm (5nm solve + 5nm margin) → gap = 185nm > 180nm.
-GATE_VIA_SHIFT = 10
 
 # ═══════════════════════════════════════════════════
 # Constraint system: derived values

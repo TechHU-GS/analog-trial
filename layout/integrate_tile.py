@@ -27,10 +27,11 @@ TILE_W = 202080
 TILE_H = 313740
 
 # ptat_vco placement offset within tile (nm)
-# Place so vco_out (local x=65500) lands near ua[0] (x=191040)
-# x_offset = 191040 - 65500 = 125540 → round to 125000
+# CMOS Vittoz layout: bbox (-1000,1500)→(169000,52190), size 170×50.7 µm
+# Place so vco_out M2 endpoint (local x=157900) lands near ua[0] (x=191040)
+# x_offset = 191040 - 157900 = 33140 → use 30000 (3µm right margin)
 # y_offset = 10000 (above bottom analog pins at y=0..2000)
-SUBCELL_X = 125000
+SUBCELL_X = 30000
 SUBCELL_Y = 10000
 
 # ── Layer definitions (GDS layer, datatype) ──
@@ -94,29 +95,24 @@ UA_PINS = {
     7: {'x': 19680,  'y': 1000, 'hw': 875, 'hh': 1000},
 }
 
-# ptat_vco signal endpoints (local coordinates, from routing.json)
-# vco_out: last segment endpoint at (65500, 30600) on M2 (layer_idx=1)
-# vptat:   last segment endpoint at (38550, 39350) on M2 (layer_idx=0 → M1 actually)
-# Actually from routing.json segments: [x1,y1,x2,y2,layer]
-# vco_out: [65500, 29550, 65500, 30600, 1] → M2, endpoint (65500, 30600)
-# vptat:   [38550, 40750, 38550, 39350, 0] → M1, connects at (38550, 39350)
-# vptat signal also has Rout.PLUS access point which is on M2 via access system
-# For via stack, we need M2 landing → use a nearby M2 point or create one
+# ptat_vco signal endpoints (local coordinates, from routing.json — CMOS Vittoz design)
+# vco_out: M2 segment [157900,29550,157900,30600] → endpoint (157900, 30600)
+# vptat:   M2 segment [105750,35500,105750,42150] → endpoint (105750, 42150)
 
 # Signal connection points (global coordinates after subcell placement)
 ANALOG_SIGNALS = {
     'ua[0]': {
         'net': 'vco_out',
-        'local_x': 65500,   # M2 endpoint in ptat_vco
+        'local_x': 157900,  # M2 endpoint in ptat_vco
         'local_y': 30600,
         'start_layer': 'M2',
         'ua_idx': 0,
     },
     'ua[1]': {
         'net': 'vptat',
-        'local_x': 38550,   # endpoint in ptat_vco
-        'local_y': 40750,   # top of the segment (closer to M2 access)
-        'start_layer': 'M1',
+        'local_x': 105750,  # M2 endpoint in ptat_vco
+        'local_y': 42150,
+        'start_layer': 'M2',
         'ua_idx': 1,
     },
 }
@@ -261,7 +257,15 @@ def main():
     # ═══ 2. Load and place ptat_vco subcell ═══
     sub_layout = pya.Layout()
     sub_layout.read(subcell_gds)
-    sub_top = sub_layout.top_cell()
+    # Explicitly find ptat_vco cell (avoid picking $$$CONTEXT_INFO$$$ artifact)
+    sub_top = None
+    for ci in range(sub_layout.cells()):
+        if sub_layout.cell(ci).name == SUBCELL_NAME:
+            sub_top = sub_layout.cell(ci)
+            break
+    if sub_top is None:
+        sub_top = sub_layout.top_cell()
+        print(f'  WARNING: {SUBCELL_NAME} not found, using top_cell: {sub_top.name}')
 
     # Merge subcell into our layout
     sub_cell = layout.create_cell(SUBCELL_NAME)
@@ -316,8 +320,9 @@ def main():
     # We need M3 wires from VDPWR_X (3000) to SUBCELL_X (125000) at the rail y heights.
 
     # VDD connection: M3 horizontal wire from VDPWR stripe to ptat_vco
+    # CMOS design: vdd rail at local Y=49140
     li_m3 = layout.layer(*LY_M3)
-    vdd_global_y = 31700 + SUBCELL_Y  # ~41700 nm
+    vdd_global_y = 49140 + SUBCELL_Y  # ~59140 nm
     m3_rail_hw = 200  # M3 half-width (400nm rail, >= 200nm min)
     top.shapes(li_m3).insert(box(VDPWR_X - hw, vdd_global_y - m3_rail_hw,
                                   SUBCELL_X + 2000, vdd_global_y + m3_rail_hw))
@@ -326,11 +331,19 @@ def main():
     print(f'  VDPWR→vdd: via stack at ({VDPWR_X/1000:.1f}, {vdd_global_y/1000:.1f}) um')
 
     # GND connection: M3 horizontal wire from VGND stripe to ptat_vco
-    gnd_global_y = 14200 + SUBCELL_Y  # ~24200 nm
+    # CMOS design: gnd main rail at local Y=19500, secondary at Y=3000
+    gnd_global_y = 19500 + SUBCELL_Y  # ~29500 nm (main rail)
     top.shapes(li_m3).insert(box(VGND_X - hw, gnd_global_y - m3_rail_hw,
                                   SUBCELL_X + 2000, gnd_global_y + m3_rail_hw))
     draw_via_stack(top, layout, VGND_X, gnd_global_y, 'M3', 'TM1')
     print(f'  VGND→gnd: via stack at ({VGND_X/1000:.1f}, {gnd_global_y/1000:.1f}) um')
+
+    # GND secondary rail connection (local Y=3000)
+    gnd2_global_y = 3000 + SUBCELL_Y  # ~13000 nm
+    top.shapes(li_m3).insert(box(VGND_X - hw, gnd2_global_y - m3_rail_hw,
+                                  SUBCELL_X + 2000, gnd2_global_y + m3_rail_hw))
+    draw_via_stack(top, layout, VGND_X, gnd2_global_y, 'M3', 'TM1')
+    print(f'  VGND→gnd2: via stack at ({VGND_X/1000:.1f}, {gnd2_global_y/1000:.1f}) um')
 
     # ═══ 5. Analog pin connections (M2 → TopMetal1) ═══
     for ua_name, sig in ANALOG_SIGNALS.items():

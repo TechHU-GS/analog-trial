@@ -147,20 +147,26 @@ class RoutingSolver:
               f'M1 margin={DEV_MARGIN}nm)')
 
     def _block_tie_m1(self):
-        """Block tie cell M1 shapes — PERMANENT."""
+        """Block tie cell M1 shapes — PERMANENT.
+
+        Uses an extra half-grid-cell margin beyond M1_ROUTE_MARGIN to
+        compensate for to_grid() round-to-nearest: the standard margin
+        can under-block by up to GRID/2, causing sub-180nm M1.b gaps.
+        """
         if not self.ties or 'ties' not in self.ties:
             print('  Tie M1 obstacles: 0 (no ties)')
             return
+        tie_margin = M1_ROUTE_MARGIN + MAZE_GRID // 2
         count = 0
         for tie in self.ties['ties']:
             m1_rects = tie.get('layers', {}).get('M1_8_0', [])
             for rect in m1_rects:
                 self.router.block_rect(
                     rect[0], rect[1], rect[2], rect[3],
-                    M1_LYR, margin=M1_ROUTE_MARGIN, permanent=True)
+                    M1_LYR, margin=tie_margin, permanent=True)
                 count += 1
         print(f'  Tie M1 obstacles: {count} rects (permanent, '
-              f'margin={M1_ROUTE_MARGIN}nm)')
+              f'margin={tie_margin}nm)')
 
     def _block_pin_access(self):
         """Block pin access structures — SOFT (clearable per-net).

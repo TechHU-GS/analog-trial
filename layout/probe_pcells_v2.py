@@ -18,22 +18,40 @@ layout = pya.Layout()
 dbu = layout.dbu  # 0.001 µm = 1nm
 
 # ── Device definitions ──
+# CMOS Dual-CS VCO + VPTAT (no BJT)
 DEVICES = [
-    ("pmos_mirror", "pmos", {"w": 4e-6, "l": 2e-6,   "ng": 2, "m": 1}),
-    ("pmos_vco",    "pmos", {"w": 4e-6, "l": 0.5e-6,  "ng": 1, "m": 1}),
-    ("pmos_buf1",   "pmos", {"w": 4e-6, "l": 0.5e-6,  "ng": 1, "m": 1}),
-    ("pmos_buf2",   "pmos", {"w": 8e-6, "l": 0.5e-6,  "ng": 2, "m": 1}),
-    ("nmos_vco",    "nmos", {"w": 0.5e-6, "l": 0.5e-6, "ng": 1, "m": 1}),
-    ("nmos_bias",   "nmos", {"w": 1e-6,  "l": 2.5e-6, "ng": 1, "m": 1}),
-    ("nmos_diode",  "nmos", {"w": 2e-6,  "l": 1e-6,   "ng": 1, "m": 1}),
-    ("nmos_buf1",   "nmos", {"w": 2e-6,  "l": 0.5e-6, "ng": 1, "m": 1}),
-    ("nmos_buf2",   "nmos", {"w": 4e-6,  "l": 0.5e-6, "ng": 2, "m": 1}),
-    ("hbt_1x",  "npn13G2", {"Nx": 1}),
-    ("hbt_8x",  "npn13G2", {"Nx": 8}),
-    ("rppd_iso",   "rppd", {"w": 2.5e-6, "l": 5e-6,    "b": 0}),
-    ("rppd_ptat",  "rppd", {"w": 0.5e-6, "l": 13e-6,   "b": 11}),
-    ("rppd_start", "rppd", {"w": 0.5e-6, "l": 14.4e-6, "b": 0}),
-    ("rppd_out",   "rppd", {"w": 0.5e-6, "l": 5.5e-6,  "b": 5}),
+    # PTAT PMOS mirror (PM3, PM4, PM_ref, PM5): w=0.5u l=100u
+    ("pmos_mirror", "pmos", {"w": 0.5e-6, "l": 100e-6, "ng": 1, "m": 1}),
+    # PMOS current source diode (PM_pdiode): w=0.5u l=2u
+    ("pmos_cs", "pmos", {"w": 0.5e-6, "l": 2e-6, "ng": 1, "m": 1}),
+    # PMOS current source x8 (Mpb1-5): w=4u l=2u ng=8 (total w, per-finger=0.5u)
+    ("pmos_cs8", "pmos", {"w": 4e-6, "l": 2e-6, "ng": 8, "m": 1}),
+    # PMOS VCO inverter (MPu1-5): w=2u l=0.5u
+    ("pmos_vco", "pmos", {"w": 2e-6, "l": 0.5e-6, "ng": 1, "m": 1}),
+    # PMOS buffer stage 1 (MBp1): w=4u l=0.5u
+    ("pmos_buf1", "pmos", {"w": 4e-6, "l": 0.5e-6, "ng": 1, "m": 1}),
+    # PMOS buffer stage 2 (MBp2): w=8u l=0.5u ng=2
+    ("pmos_buf2", "pmos", {"w": 8e-6, "l": 0.5e-6, "ng": 2, "m": 1}),
+    # NMOS Vittoz 1x (MN1): w=2u l=4u
+    ("nmos_vittoz", "nmos", {"w": 2e-6, "l": 4e-6, "ng": 1, "m": 1}),
+    # NMOS Vittoz 8x (MN2): w=16u l=4u ng=8 (total w, per-finger=2u)
+    ("nmos_vittoz8", "nmos", {"w": 16e-6, "l": 4e-6, "ng": 8, "m": 1}),
+    # NMOS bias unit (MN_diode, MN_pgen): w=1u l=2u
+    ("nmos_bias", "nmos", {"w": 1e-6, "l": 2e-6, "ng": 1, "m": 1}),
+    # NMOS bias x8 (MNb1-5): w=8u l=2u ng=8 (total w, per-finger=1u)
+    ("nmos_bias8", "nmos", {"w": 8e-6, "l": 2e-6, "ng": 8, "m": 1}),
+    # NMOS VCO inverter (MPd1-5): w=1u l=0.5u
+    ("nmos_vco", "nmos", {"w": 1e-6, "l": 0.5e-6, "ng": 1, "m": 1}),
+    # NMOS buffer stage 1 (MBn1): w=2u l=0.5u
+    ("nmos_buf1", "nmos", {"w": 2e-6, "l": 0.5e-6, "ng": 1, "m": 1}),
+    # NMOS buffer stage 2 (MBn2): w=4u l=0.5u ng=2
+    ("nmos_buf2", "nmos", {"w": 4e-6, "l": 0.5e-6, "ng": 2, "m": 1}),
+    # PTAT resistor: rhigh w=0.5u l=133u b=12
+    ("rhigh_ptat", "rhigh", {"w": 0.5e-6, "l": 133e-6, "b": 12}),
+    # Output resistor: rppd w=0.5u l=25u b=4
+    ("rppd_out", "rppd", {"w": 0.5e-6, "l": 25e-6, "b": 4}),
+    # NOTE: cap_cmim (MIM) deferred — lives on Metal3/TopMetal1, no M1/M2
+    # Will be added after via-stack support is implemented
 ]
 
 LAYER_NAMES = {
@@ -108,7 +126,6 @@ def extract_texts(cell, layer_idx):
 
 
 def union_bbox(rects):
-    """Compute union bounding box of a list of [x1,y1,x2,y2] rects."""
     if not rects:
         return None
     x1 = min(r[0] for r in rects)
@@ -119,12 +136,10 @@ def union_bbox(rects):
 
 
 def infer_pin_role(pin_name):
-    """Infer pin role from name."""
     return PIN_ROLE_MAP.get(pin_name.upper(), 'unknown')
 
 
 def derive_gate_info(shapes_by_layer):
-    """Extract gate finger info from GatPoly shapes (pcell_xray logic)."""
     rects = shapes_by_layer.get('GatPoly_5_0', [])
     if not rects:
         return None
@@ -140,7 +155,6 @@ def derive_gate_info(shapes_by_layer):
 
 
 def derive_implant_bounds(shapes_by_layer):
-    """Extract NWell/pSD/Activ union bboxes."""
     result = {}
     for key, layer_name in [('nwell', 'NW_31_0'), ('psd', 'pSD_14_0'), ('activ', 'Activ_1_0')]:
         rects = shapes_by_layer.get(layer_name, [])
@@ -151,20 +165,20 @@ def derive_implant_bounds(shapes_by_layer):
 
 
 def classify_device(pcell_type):
-    """Derive device class and well requirements."""
     if pcell_type == 'pmos':
         return {'device_class': 'pmos', 'has_nwell': True, 'requires_ntap': True, 'requires_ptap': False}
     elif pcell_type == 'nmos':
         return {'device_class': 'nmos', 'has_nwell': False, 'requires_ntap': False, 'requires_ptap': True}
     elif pcell_type == 'npn13G2':
         return {'device_class': 'hbt', 'has_nwell': False, 'requires_ntap': False, 'requires_ptap': False}
-    elif pcell_type == 'rppd':
+    elif pcell_type in ('rppd', 'rhigh'):
         return {'device_class': 'resistor', 'has_nwell': False, 'requires_ntap': False, 'requires_ptap': False}
+    elif pcell_type == 'cmim':
+        return {'device_class': 'capacitor', 'has_nwell': False, 'requires_ntap': False, 'requires_ptap': False}
     return {'device_class': 'unknown', 'has_nwell': False, 'requires_ntap': False, 'requires_ptap': False}
 
 
 def dedupe_rects(rects):
-    """Deduplicate rectangles by content."""
     seen = set()
     unique = []
     for r in rects:
@@ -218,15 +232,9 @@ def infer_mos_pins(shapes_by_layer, ng, pcell_type):
 
 
 def infer_res_pins(shapes_by_layer):
-    """Infer resistor MINUS/PLUS pin positions from M1 geometry.
-
-    M1 terminals sorted by (center_x, center_y): first=MINUS, second=PLUS.
-    """
     m1 = dedupe_rects(shapes_by_layer.get('M1_8_0', []))
     if len(m1) < 2:
         return {}
-
-    # Sort by (center_x, center_y) — MINUS first, PLUS second
     m1_sorted = sorted(m1, key=lambda r: ((r[0]+r[2])//2, (r[1]+r[3])//2))
     pins = {}
     for name, rect in [('MINUS', m1_sorted[0]), ('PLUS', m1_sorted[-1])]:
@@ -236,8 +244,20 @@ def infer_res_pins(shapes_by_layer):
     return pins
 
 
+def infer_cap_pins(raw_ports):
+    """Infer capacitor pins from text labels."""
+    VALID = {'PLUS': 'plus', 'MINUS': 'minus'}
+    pins = {}
+    for pname, pdata in raw_ports.items():
+        if pname in VALID:
+            pins[pname] = {
+                'pos_nm': pdata['center'],
+                'pin_role': VALID[pname],
+            }
+    return pins
+
+
 def infer_hbt_pins(raw_ports):
-    """Filter HBT text labels to only C/B/E pins."""
     VALID = {'C': 'collector', 'B': 'base', 'E': 'emitter'}
     pins = {}
     for pname, pdata in raw_ports.items():
@@ -285,25 +305,27 @@ for dev_name, pcell_type, params in DEVICES:
         "nmos": ["M1_8_0", "Activ_1_0", "GatPoly_5_0", "Cont_6_0", "NW_31_0", "pSD_14_0"],
         "npn13G2": ["M1_8_0", "M2_10_0", "Via1_19_0", "Activ_1_0", "Cont_6_0"],
         "rppd": ["M1_8_0", "GatPoly_5_0", "Cont_6_0", "PolyRes_128_0", "pSD_14_0"],
+        "rhigh": ["M1_8_0", "GatPoly_5_0", "Cont_6_0", "PolyRes_128_0", "pSD_14_0"],
+        "cmim": ["M1_8_0", "M2_10_0", "Via1_19_0"],
     }
     for ln in key_layers.get(pcell_type, []):
         if ln not in shapes_by_layer:
             shapes_by_layer[ln] = []
 
-    # ── Derived fields (NEW in v2) ──
+    # ── Derived fields ──
 
-    # C1: bbox offset
     bbox_offset = {
         'ox_um': round(bbox.left / 1000.0, 3),
         'oy_um': round(bbox.bottom / 1000.0, 3),
     }
 
-    # C2: structured pins — inferred from geometry (not text labels)
     ng = params.get('ng', 1)
     if pcell_type in ('pmos', 'nmos'):
         pins = infer_mos_pins(shapes_by_layer, ng, pcell_type)
-    elif pcell_type == 'rppd':
+    elif pcell_type in ('rppd', 'rhigh'):
         pins = infer_res_pins(shapes_by_layer)
+    elif pcell_type == 'cmim':
+        pins = infer_cap_pins(raw_ports)
     elif pcell_type == 'npn13G2':
         pins = infer_hbt_pins(raw_ports)
     else:
@@ -314,23 +336,15 @@ for dev_name, pcell_type, params in DEVICES:
                 'pin_role': infer_pin_role(pname),
             }
 
-    # C3: implant bounds
     implant_bounds = derive_implant_bounds(shapes_by_layer)
-
-    # C4: gate info
     gate_info = derive_gate_info(shapes_by_layer)
-
-    # C5: device classification
     classification = classify_device(pcell_type)
 
-    # C6: pcell name
     pcell_name = "sg13_lv_pmos" if pcell_type == "pmos" else \
                  "sg13_lv_nmos" if pcell_type == "nmos" else \
-                 pcell_type  # npn13G2, rppd as-is
+                 pcell_type
 
-    # Build entry (v1 fields + v2 derived)
     entry = {
-        # v1 (existing)
         "pcell": pcell_type,
         "params": {k: v if not isinstance(v, float) else round(v * 1e6, 4) for k, v in params.items()},
         "params_note": "params values in µm (converted from m)",
@@ -338,7 +352,6 @@ for dev_name, pcell_type, params in DEVICES:
         "bbox_nm": f"{bbox.width()}x{bbox.height()} nm",
         "shapes_by_layer": shapes_by_layer,
         "ports": raw_ports,
-        # v2 (new)
         "pcell_name": pcell_name,
         "bbox_offset": bbox_offset,
         "pins": pins,
@@ -350,10 +363,10 @@ for dev_name, pcell_type, params in DEVICES:
 
     result[dev_name] = entry
 
-    # Print summary
     pin_roles = {p: d['pin_role'] for p, d in pins.items()}
     print(f"  bbox: {bbox.left},{bbox.bottom} -> {bbox.right},{bbox.top}")
-    print(f"  offset: ox={bbox_offset['ox_um']}, oy={bbox_offset['oy_um']} µm")
+    print(f"  size: {bbox.width()/1000:.1f} x {bbox.height()/1000:.1f} um")
+    print(f"  offset: ox={bbox_offset['ox_um']}, oy={bbox_offset['oy_um']} um")
     print(f"  pins: {pin_roles}")
     print(f"  implant: {list(implant_bounds.keys())}")
     if gate_info:

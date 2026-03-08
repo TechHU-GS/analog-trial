@@ -57,7 +57,7 @@ def solve():
     c = nl['constraints']
 
     placer = ConstraintPlacer(solver_devs, grid=0.10)
-    placer.setup(max_width=120.0, max_height=100.0)
+    placer.setup(max_width=196.0, max_height=300.0)
 
     # 1. Row groups
     for row_name, row_def in c['row_groups'].items():

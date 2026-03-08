@@ -3,7 +3,7 @@ project:
   title:        "PTAT Temperature Sensor + VCO"
   author:       "TechHU"
   discord:      ""
-  description:  "PTAT current source drives 5-stage ring VCO, ~35 MHz @ 27C on IHP SG13G2 130nm"
+  description:  "CMOS Vittoz PTAT + 5-stage ring VCO, ~9 MHz @ 27C on IHP SG13G2 130nm"
   language:     "Analog"
   clock_hz:     0
 
@@ -47,8 +47,8 @@ pinout:
   uio[7]: ""
 
   # Analog pins
-  ua[0]: "VCO output (~35 MHz square wave)"
-  ua[1]: "VPTAT (proportional to absolute temperature, ~0.35-0.45V)"
+  ua[0]: "VCO output (~9 MHz square wave)"
+  ua[1]: "VPTAT (proportional to absolute temperature)"
   ua[2]: ""
   ua[3]: ""
   ua[4]: ""

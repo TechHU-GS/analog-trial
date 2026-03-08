@@ -18,7 +18,8 @@ from ..pdk import (
     UM, VIA_CLEAR, VIA1_PAD_M1, M1_THIN, M1_MIN_S,
 )
 from ..device import (
-    load_device_lib, get_device_pins_nm, get_nwell_tie_info, is_mosfet,
+    load_device_lib, get_device_pins_nm, get_nwell_tie_info, get_gate_info,
+    is_mosfet,
 )
 from ..paths import DEVICE_LIB_JSON
 
@@ -32,6 +33,11 @@ PSD_CLR = 50       # pSD clearance margin
 PSD_C1 = 30        # pSD.c1: pSD enclosure of P+Activ in PWell
 ACT_B = 210        # Act.b: min Activ space or notch
 PSD_D = 180        # pSD.d: min pSD space
+GAT_D = 70         # Gat.d: min GatPoly space to Activ
+CNT_F = 110        # Cnt.f: min Cont on Activ space to GatPoly
+CNT_G1 = 90        # Cnt.g1: min pSD space to Cont on nSD-Activ
+PSD_D1 = 30        # pSD.d1: min pSD space to N+Activ in NWell
+LU_A_MAX = 20000   # LU.a: max P+Activ to ntap distance in NWell
 NBULAY_THRESHOLD = 2990  # NWell width that triggers nBuLay generation
 
 _device_lib = load_device_lib(DEVICE_LIB_JSON)
@@ -92,6 +98,8 @@ class TiePlacer:
 
         self._m1_obstacles = self._build_m1_obstacle_map()
         self._activ_obstacles = self._build_activ_obstacle_map()
+        self._gatpoly_obstacles = self._build_gatpoly_obstacle_map()
+        self._psd_obstacles = self._build_psd_obstacle_map()
         self.ties = []
         self.nwell_extensions = []
 
@@ -140,6 +148,100 @@ class TiePlacer:
                 for s in activ_shapes
             ]
         return obstacles
+
+    def _build_gatpoly_obstacle_map(self):
+        """Build GatPoly bounding boxes for all MOSFET devices (abs nm)."""
+        obstacles = {}
+        for name, inst in self.instances.items():
+            dev_type = inst['type']
+            if not is_mosfet(_device_lib, dev_type):
+                continue
+            origin_x, origin_y = self._inst_origin(name)
+            gp_shapes = self.device_lib[dev_type]['shapes_by_layer'].get(
+                'GatPoly_5_0', [])
+            obstacles[name] = [
+                [origin_x + s[0], origin_y + s[1],
+                 origin_x + s[2], origin_y + s[3]]
+                for s in gp_shapes
+            ]
+        return obstacles
+
+    def _build_psd_obstacle_map(self):
+        """Build pSD bounding boxes for all MOSFET devices (abs nm)."""
+        obstacles = {}
+        for name, inst in self.instances.items():
+            dev_type = inst['type']
+            if not is_mosfet(_device_lib, dev_type):
+                continue
+            origin_x, origin_y = self._inst_origin(name)
+            psd_shapes = self.device_lib[dev_type]['shapes_by_layer'].get(
+                'pSD_14_0', [])
+            obstacles[name] = [
+                [origin_x + s[0], origin_y + s[1],
+                 origin_x + s[2], origin_y + s[3]]
+                for s in psd_shapes
+            ]
+        return obstacles
+
+    def _clamp_act_cy_for_clearance(self, act_cy, tie_cx, act_hx, act_hy,
+                                     skip_device):
+        """Clamp act_cy so tie Activ/contacts don't violate GatPoly/pSD DRC.
+
+        Checks ALL devices (except skip_device) for:
+          - Gat.d: tie Activ must be ≥70nm from any GatPoly
+          - Cnt.f: tie Cont must be ≥110nm from any GatPoly on Activ
+          - pSD.e/Cnt.g1: tie nSD-Activ/Cont must not overlap device pSD
+        """
+        half_pitch_y = (CNT_SZ + CNT_SP) // 2
+        upper_cont_dy = half_pitch_y + CNT_SZ // 2  # 250nm
+
+        for dev_name, gp_shapes in self._gatpoly_obstacles.items():
+            if dev_name == skip_device:
+                continue
+            for gp in gp_shapes:
+                # X overlap check (tie Activ vs GatPoly)
+                if tie_cx + act_hx <= gp[0] or tie_cx - act_hx >= gp[2]:
+                    continue
+                # GatPoly below tie → cap act_cy from below (min)
+                # GatPoly above tie → cap act_cy from above (max)
+                if gp[3] <= act_cy:
+                    # GatPoly is below: tie bottom must be above GatPoly top
+                    min_cy = gp[3] + GAT_D + act_hy
+                    min_cy_cnt = gp[3] + CNT_F + upper_cont_dy
+                    lower = max(min_cy, min_cy_cnt)
+                    if act_cy < lower:
+                        act_cy = _snap5(lower)
+                else:
+                    # GatPoly is above: tie top must be below GatPoly bottom
+                    max_cy = gp[1] - GAT_D - act_hy
+                    max_cy_cnt = gp[1] - CNT_F - upper_cont_dy
+                    upper = min(max_cy, max_cy_cnt)
+                    if act_cy > upper:
+                        act_cy = _snap5(upper)
+
+        for dev_name, psd_shapes in self._psd_obstacles.items():
+            if dev_name == skip_device:
+                continue
+            for psd in psd_shapes:
+                # X overlap check
+                if tie_cx + act_hx <= psd[0] or tie_cx - act_hx >= psd[2]:
+                    continue
+                # pSD below tie → tie bottom must clear pSD top
+                if psd[3] <= act_cy:
+                    lower = psd[3] + PSD_D1 + act_hy
+                    lower_cnt = psd[3] + CNT_G1 + upper_cont_dy
+                    lb = max(lower, lower_cnt)
+                    if act_cy < lb:
+                        act_cy = _snap5(lb)
+                else:
+                    # pSD above tie → tie top must clear pSD bottom
+                    upper = psd[1] - PSD_D1 - act_hy
+                    upper_cnt = psd[1] - CNT_G1 - upper_cont_dy
+                    ub = min(upper, upper_cnt)
+                    if act_cy > ub:
+                        act_cy = _snap5(ub)
+
+        return act_cy
 
     def _resolve_activ_clear_x(self, default_cx, act_rect, skip_device):
         """Shift tie X so its Activ does not overlap any device Activ.
@@ -245,8 +347,17 @@ class TiePlacer:
         nw_left = _snap5(origin_x + info['nw'][0])
         nw_right = _snap5(origin_x + info['nw'][2])
 
+        # Net
+        nwell_net = self._nwell_nets.get(inst_name, 'vdd')
+
         # Source pin absolute X (nm)
         src_abs_x = _snap5(origin_x + get_device_pins_nm(_device_lib, dev_type)[cfg['src_pin']][0])
+
+        # Check if source pin is on the NWell net.
+        # If source is a signal net, tie M1 must NOT touch source M1.
+        src_pin_key = f'{inst_name}.{cfg["src_pin"]}'
+        src_net = self._pin_net_map.get(src_pin_key, nwell_net)
+        src_is_nwell_net = (src_net == nwell_net)
 
         # Half-extents
         if cfg['cont'] == '2x2':
@@ -265,9 +376,19 @@ class TiePlacer:
         src_via_y = bbox_top + VIA_CLEAR
         src_m1_top = src_via_y + VIA1_PAD_M1 // 2
 
-        # Tie Activ center Y: merge M1 pad bottom with source M1 top
-        act_cy = max(src_m1_top + m1_hy, psd_top + PSD_CLR + act_hy)
+        # Tie Activ center Y
+        if src_is_nwell_net:
+            # Source is NWell net — tie M1 top merges with source M1 top
+            act_cy = max(src_m1_top + m1_hy, psd_top + PSD_CLR + act_hy)
+        else:
+            # Source is signal — add M1 spacing gap to prevent short
+            act_cy = max(src_m1_top + m1_hy + M1_MIN_S, psd_top + PSD_CLR + act_hy)
         act_cy = _snap5(act_cy)
+
+        # GatPoly + pSD clearance: clamp act_cy so tie Activ/contacts
+        # don't violate Gat.d/Cnt.f/Cnt.g1/pSD.e with nearby devices.
+        act_cy = self._clamp_act_cy_for_clearance(
+            act_cy, tie_cx, act_hx, act_hy, skip_device=inst_name)
 
         # M1 conflict avoidance
         tie_cx = self._resolve_m1_clear_x(
@@ -282,9 +403,6 @@ class TiePlacer:
         # Re-run M1 check after Activ shift
         tie_cx = self._resolve_m1_clear_x(
             tie_cx, m1_hx, act_cy - m1_hy, act_cy + m1_hy, skip_device=inst_name)
-
-        # Net
-        nwell_net = self._nwell_nets.get(inst_name, 'vdd')
 
         # Contact positions
         half_pitch = (CNT_SZ + CNT_SP) // 2   # 170
@@ -312,20 +430,22 @@ class TiePlacer:
                   tie_cx + act_hx + NW_E, act_cy + act_hy + NW_E]
 
         # M1 bridge: from tie M1 pad bottom to source via M1 top
+        # Only bridge when source is on the NWell net.
         bridge = None
-        bridge_top = m1_pad[1]     # tie M1 pad bottom
-        bridge_bot = src_m1_top    # source M1 top (merge point)
-        if bridge_top > bridge_bot:
-            bridge = [src_abs_x - M1_THIN // 2, bridge_bot,
-                      src_abs_x + M1_THIN // 2, bridge_top]
-
-        # Horizontal jog if tie_cx != src_abs_x (1x2 variants)
         jog = None
-        if abs(tie_cx - src_abs_x) > 10:
-            jog = [min(tie_cx - m1_hx, src_abs_x - M1_THIN // 2),
-                   bridge_top - M1_THIN,
-                   max(tie_cx + m1_hx, src_abs_x + M1_THIN // 2),
-                   bridge_top]
+        if src_is_nwell_net:
+            bridge_top = m1_pad[1]     # tie M1 pad bottom
+            bridge_bot = src_m1_top    # source M1 top (merge point)
+            if bridge_top > bridge_bot:
+                bridge = [src_abs_x - M1_THIN // 2, bridge_bot,
+                          src_abs_x + M1_THIN // 2, bridge_top]
+
+            # Horizontal jog if tie_cx != src_abs_x (1x2 variants)
+            if abs(tie_cx - src_abs_x) > 10:
+                jog = [min(tie_cx - m1_hx, src_abs_x - M1_THIN // 2),
+                       m1_pad[1] - M1_THIN,
+                       max(tie_cx + m1_hx, src_abs_x + M1_THIN // 2),
+                       m1_pad[1]]
 
         # LU distance: device Activ center Y to tie Activ center Y
         dev_act_cy = origin_y + get_device_pins_nm(_device_lib, dev_type)[cfg['src_pin']][1]
@@ -451,6 +571,143 @@ class TiePlacer:
             'lu_distance_nm': lu_distance,
         }
 
+    def _compute_lu_extra_ties(self, primary_tie, inst_name):
+        """Generate additional ntap ties along a wide PMOS device for LU.a.
+
+        When device Activ is wider than LU_A_MAX, places 1x2 ntap ties
+        at intervals ≤ LU_A_MAX along the device length.  Each extra tie
+        has the same Y as the primary tie but different X.  M1 is
+        connected via a horizontal bar to the primary tie's M1.
+        """
+        inst = self.instances[inst_name]
+        dev_type = inst['type']
+        dev = self.device_lib[dev_type]
+        origin_x, origin_y = self._inst_origin(inst_name)
+
+        # Device Activ X extent (absolute nm)
+        activ_shapes = dev['shapes_by_layer'].get('Activ_1_0', [])
+        if not activ_shapes:
+            return []
+        act_x_min = min(origin_x + s[0] for s in activ_shapes)
+        act_x_max = max(origin_x + s[2] for s in activ_shapes)
+        dev_act_width = act_x_max - act_x_min
+
+        if dev_act_width <= LU_A_MAX:
+            return []
+
+        # Primary tie covers [primary_x - LU_A_MAX/2, primary_x + LU_A_MAX/2]
+        primary_cx = primary_tie['center_nm'][0]
+        act_cy = primary_tie['center_nm'][1]
+
+        # 1x2 half-extents for extra ties
+        act_hx, m1_hx = _half_extents_1x2()
+        act_hy, m1_hy = _half_extents_y()
+
+        # NWell bounds for clamping
+        info = get_nwell_tie_info(_device_lib, dev_type)
+        nw_top = _snap5(origin_y + info['nw'][3])
+        nw_left = _snap5(origin_x + info['nw'][0])
+        nw_right = _snap5(origin_x + info['nw'][2])
+
+        # Net
+        nwell_net = primary_tie['net']
+
+        # Exclusion zones: device pin X positions have access-point m1_stubs
+        # extending vertically through the tie strip.  Keep tie M1 away.
+        pin_xs = get_device_pins_nm(_device_lib, dev_type)
+        exclude_xs = []
+        for pname, (px, _) in pin_xs.items():
+            abs_px = _snap5(origin_x + px)
+            exclude_xs.append(abs_px)
+
+        # Place extra ties at LU_A_MAX intervals, covering the full device
+        # Start from primary_cx, step by LU_A_MAX in both directions
+        extra_ties = []
+        half_pitch_y = (CNT_SZ + CNT_SP) // 2
+
+        step = LU_A_MAX
+        cx = _snap5(primary_cx + step)
+        idx = 0
+
+        while cx < act_x_max:
+            # Clamp to NW.e valid range
+            tie_cx = max(nw_left + NW_E + act_hx,
+                         min(cx, nw_right - NW_E - act_hx))
+            tie_cx = _snap5(tie_cx)
+
+            # Skip if too close to a device pin m1_stub
+            # m1_stub is M1_THIN (160nm) wide; need M1_MIN_S (180nm) clearance
+            stub_margin = M1_THIN // 2 + M1_MIN_S + m1_hx  # 80+180+130=390nm
+            skip = False
+            for epx in exclude_xs:
+                if abs(tie_cx - epx) < stub_margin:
+                    skip = True
+                    break
+            if skip:
+                cx = _snap5(cx + step)
+                continue
+
+            # M1 + Activ conflict avoidance
+            tie_cx = self._resolve_m1_clear_x(
+                tie_cx, m1_hx, act_cy - m1_hy, act_cy + m1_hy,
+                skip_device=inst_name)
+            trial_activ = [tie_cx - act_hx, act_cy - act_hy,
+                           tie_cx + act_hx, act_cy + act_hy]
+            tie_cx = self._resolve_activ_clear_x(
+                tie_cx, trial_activ, skip_device=inst_name)
+            tie_cx = self._resolve_m1_clear_x(
+                tie_cx, m1_hx, act_cy - m1_hy, act_cy + m1_hy,
+                skip_device=inst_name)
+
+            # Contacts (1x2)
+            contacts = []
+            for dy in [-1, 1]:
+                contacts.append([tie_cx - CNT_SZ // 2,
+                                 act_cy + dy * half_pitch_y - CNT_SZ // 2,
+                                 tie_cx + CNT_SZ // 2,
+                                 act_cy + dy * half_pitch_y + CNT_SZ // 2])
+
+            activ = [tie_cx - act_hx, act_cy - act_hy,
+                     tie_cx + act_hx, act_cy + act_hy]
+            m1_pad = [tie_cx - m1_hx, act_cy - m1_hy,
+                      tie_cx + m1_hx, act_cy + m1_hy]
+
+            # NWell extension
+            nw_ext = [tie_cx - act_hx - NW_E, nw_top,
+                      tie_cx + act_hx + NW_E, act_cy + act_hy + NW_E]
+
+            idx += 1
+            extra_ties.append({
+                'id': f'tie_{inst_name}_ntap_lu{idx}',
+                'device': inst_name,
+                'type': 'ntap',
+                'net': nwell_net,
+                'center_nm': [tie_cx, act_cy],
+                'cont_config': '1x2',
+                'activ': activ,
+                'nwell': nw_ext,
+                'm1_pad': m1_pad,
+                'contacts': contacts,
+                'bridge': None,
+                'jog': None,
+                'lu_distance_nm': 0,
+                'nwell_ext_width': nw_ext[2] - nw_ext[0],
+            })
+
+            cx = _snap5(cx + step)
+
+        # M1 bus bar: connect all extra ties to primary via horizontal M1
+        if extra_ties:
+            hp_m1_thin = M1_THIN // 2
+            bus_x1 = primary_tie['m1_pad'][0]
+            bus_x2 = extra_ties[-1]['m1_pad'][2]
+            bus_y1 = act_cy - m1_hy
+            bus_y2 = act_cy - m1_hy + M1_THIN
+            # Add bus bar as M1 rect on the primary tie
+            primary_tie.setdefault('m1_bus', [bus_x1, bus_y1, bus_x2, bus_y2])
+
+        return extra_ties
+
     def solve(self):
         """Compute all tie positions. Returns list of tie dicts."""
         self.ties = []
@@ -471,6 +728,17 @@ class TiePlacer:
                     'net': tie['net'],
                     'width_nm': tie['nwell_ext_width'],
                 })
+                # LU.a: extra ties along wide devices
+                extras = self._compute_lu_extra_ties(tie, name)
+                for et in extras:
+                    self.ties.append(et)
+                    self.nwell_extensions.append({
+                        'tie_id': et['id'],
+                        'device': name,
+                        'rect_nm': et['nwell'],
+                        'net': et['net'],
+                        'width_nm': et['nwell_ext_width'],
+                    })
             elif dev_type in nmos_types:
                 tie = self._compute_ptap(name)
                 self.ties.append(tie)
@@ -627,6 +895,8 @@ class TiePlacer:
                 entry['layers']['M1_8_0'].append(t['bridge'])
             if t.get('jog'):
                 entry['layers']['M1_8_0'].append(t['jog'])
+            if t.get('m1_bus'):
+                entry['layers']['M1_8_0'].append(t['m1_bus'])
             if t['type'] == 'ntap':
                 entry['layers']['NW_31_0'] = [t['nwell']]
             if 'psd' in t:

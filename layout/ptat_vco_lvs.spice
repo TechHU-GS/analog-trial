@@ -1,62 +1,67 @@
-** PTAT VCO v4 — LVS netlist (element prefixes for KLayout LVS)
-** L2: PTAT current source + NMOS current-starved 5-stage ring VCO + RC decoupling
-.subckt ptat_vco net_rptat vptat gnd buf1 vco_out vdd net_c1 net_c2 nmos_bias
-+ ns1 ns2 ns3 ns4 ns5 vco1 vco2 vco3 vco4 vco5 vdd_vco
+** CMOS Dual Current-Starved VCO + VPTAT — LVS reference netlist
+** Vittoz PTAT core, all SG13CMOS devices (no BJT/HBT)
+** W values = PCell total width (KLayout extracts merged W for multi-finger)
+.subckt ptat_vco vdd gnd net_c1 net_c2 net_rptat nmos_bias pmos_bias vptat
++ vco1 vco2 vco3 vco4 vco5 ns1 ns2 ns3 ns4 ns5 nb1 nb2 nb3 nb4 nb5
++ buf1 vco_out
 
-** ── RC supply isolation ──
-RRiso vdd vdd_vco rppd w=2.5e-6 l=5e-6 m=1 b=0
+** ── PTAT core: PMOS mirror (L=100u) ──
+MPM3 net_c1 net_c1 vdd vdd sg13_lv_pmos w=0.5u l=100u
+MPM4 net_c2 net_c1 vdd vdd sg13_lv_pmos w=0.5u l=100u
+MPM_ref nmos_bias net_c1 vdd vdd sg13_lv_pmos w=0.5u l=100u
+MPM5 vptat net_c1 vdd vdd sg13_lv_pmos w=0.5u l=100u
 
-** ── PTAT core (on VDD_VCO) ──
-** PMOS mirror: ng=2 PCell → LVS extracts merged W (each PCell = W=4u)
-** M1 is diode-connected, 2 PCells fully parallel → W=8u
-MM1 net_c1 net_c1 vdd_vco vdd_vco sg13_lv_pmos w=4u l=2u ng=1 m=1
-MM2 net_c2 net_c1 vdd_vco vdd_vco sg13_lv_pmos w=4u l=2u ng=1 m=1
-MM3 nmos_bias net_c1 vdd_vco vdd_vco sg13_lv_pmos w=4u l=2u ng=1 m=1
-MM5 vptat net_c1 vdd_vco vdd_vco sg13_lv_pmos w=4u l=2u ng=1 m=1
+** ── PTAT core: NMOS Vittoz pair ──
+MMN1 net_c1 net_c1 gnd gnd sg13_lv_nmos w=2u l=4u
+MMN2 net_c2 net_c1 net_rptat gnd sg13_lv_nmos w=16u l=4u
 
-** HBT pair: Q1(1x) / Q2(8x)
-QQ1 net_c1 net_c1 gnd gnd npn13G2 le=900.0n we=70.00n m=1
-QQ2 net_c2 net_c2 net_rptat gnd npn13G2 le=900.0n we=70.00n m=8
+** ── PTAT resistor (rhigh) ──
+RRptat net_rptat gnd rhigh w=0.5u l=134.09u ps=0.18u b=12 m=1
 
-** Resistors: Rptat (sets IPTAT), Rstart (startup 3MΩ), Rout (VPTAT)
-RRptat net_rptat gnd rppd w=0.5e-6 l=14.08e-6 m=1 b=11 ps=0.18e-6
-RRstart vdd net_c1 rppd w=0.5e-6 l=14.4e-6 m=1 b=0
-RRout vptat gnd rppd w=0.5e-6 l=6.465e-6 m=1 b=5 ps=0.18e-6
+** ── VPTAT output resistor (rppd) ──
+RRout vptat gnd rppd w=0.5u l=25.915u ps=0.18u b=4 m=1
 
-** NMOS bias conversion (diode-connected)
-MMNdiode nmos_bias nmos_bias gnd gnd sg13_lv_nmos w=2u l=1u ng=1 m=1
+** ── NMOS bias generation ──
+MMN_diode nmos_bias nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u
+MMN_pgen pmos_bias nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u
 
-** ── VCO 5-stage ring (on VDD_VCO) ──
-** Each stage: PMOS pull-up + NMOS inverter + NMOS current limiter
-MMpu1 vco1 vco5 vdd_vco vdd_vco sg13_lv_pmos w=4u l=0.5u ng=1 m=1
-MMpd1 vco1 vco5 ns1 gnd sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
-MMnb1 ns1 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2.5u ng=1 m=1
+** ── PMOS bias generation ──
+MPM_pdiode pmos_bias pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u
 
-MMpu2 vco2 vco1 vdd_vco vdd_vco sg13_lv_pmos w=4u l=0.5u ng=1 m=1
-MMpd2 vco2 vco1 ns2 gnd sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
-MMnb2 ns2 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2.5u ng=1 m=1
+** ── 5-stage dual current-starved ring VCO ──
+** PMOS current sources (ng=8, total W=4u)
+MMpb1 ns1 pmos_bias vdd vdd sg13_lv_pmos w=4u l=2u
+MMpb2 ns2 pmos_bias vdd vdd sg13_lv_pmos w=4u l=2u
+MMpb3 ns3 pmos_bias vdd vdd sg13_lv_pmos w=4u l=2u
+MMpb4 ns4 pmos_bias vdd vdd sg13_lv_pmos w=4u l=2u
+MMpb5 ns5 pmos_bias vdd vdd sg13_lv_pmos w=4u l=2u
 
-MMpu3 vco3 vco2 vdd_vco vdd_vco sg13_lv_pmos w=4u l=0.5u ng=1 m=1
-MMpd3 vco3 vco2 ns3 gnd sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
-MMnb3 ns3 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2.5u ng=1 m=1
+** PMOS pull-up inverters
+MMpu1 vco1 vco5 ns1 vdd sg13_lv_pmos w=2u l=0.5u
+MMpu2 vco2 vco1 ns2 vdd sg13_lv_pmos w=2u l=0.5u
+MMpu3 vco3 vco2 ns3 vdd sg13_lv_pmos w=2u l=0.5u
+MMpu4 vco4 vco3 ns4 vdd sg13_lv_pmos w=2u l=0.5u
+MMpu5 vco5 vco4 ns5 vdd sg13_lv_pmos w=2u l=0.5u
 
-MMpu4 vco4 vco3 vdd_vco vdd_vco sg13_lv_pmos w=4u l=0.5u ng=1 m=1
-MMpd4 vco4 vco3 ns4 gnd sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
-MMnb4 ns4 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2.5u ng=1 m=1
+** NMOS pull-down inverters
+MMpd1 vco1 vco5 nb1 gnd sg13_lv_nmos w=1u l=0.5u
+MMpd2 vco2 vco1 nb2 gnd sg13_lv_nmos w=1u l=0.5u
+MMpd3 vco3 vco2 nb3 gnd sg13_lv_nmos w=1u l=0.5u
+MMpd4 vco4 vco3 nb4 gnd sg13_lv_nmos w=1u l=0.5u
+MMpd5 vco5 vco4 nb5 gnd sg13_lv_nmos w=1u l=0.5u
 
-MMpu5 vco5 vco4 vdd_vco vdd_vco sg13_lv_pmos w=4u l=0.5u ng=1 m=1
-MMpd5 vco5 vco4 ns5 gnd sg13_lv_nmos w=0.5u l=0.5u ng=1 m=1
-MMnb5 ns5 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2.5u ng=1 m=1
+** NMOS current sources (ng=8, total W=8u)
+MMnb1 nb1 nmos_bias gnd gnd sg13_lv_nmos w=8u l=2u
+MMnb2 nb2 nmos_bias gnd gnd sg13_lv_nmos w=8u l=2u
+MMnb3 nb3 nmos_bias gnd gnd sg13_lv_nmos w=8u l=2u
+MMnb4 nb4 nmos_bias gnd gnd sg13_lv_nmos w=8u l=2u
+MMnb5 nb5 nmos_bias gnd gnd sg13_lv_nmos w=8u l=2u
 
-** ── Buffer (on global VDD) ──
-** pmos_buf1: ng=1 (2 parallel fingers, same X)
-MMbp1 buf1 vco5 vdd vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
-** nmos_buf1: ng=1
-MMbn1 buf1 vco5 gnd gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
-** pmos_buf2: ng=2 PCell → LVS merges 2 PCells' fingers → W=8u
-MMbp2 vco_out buf1 vdd vdd sg13_lv_pmos w=8u l=0.5u ng=1 m=1
-** nmos_buf2: ng=2 PCell → KLayout merges both fingers into W=4u
-MMbn2 vco_out buf1 gnd gnd sg13_lv_nmos w=4u l=0.5u ng=1 m=1
+** ── Output buffer ──
+MMbp1 buf1 vco5 vdd vdd sg13_lv_pmos w=4u l=0.5u
+MMbn1 buf1 vco5 gnd gnd sg13_lv_nmos w=2u l=0.5u
+MMbp2 vco_out buf1 vdd vdd sg13_lv_pmos w=8u l=0.5u
+MMbn2 vco_out buf1 gnd gnd sg13_lv_nmos w=4u l=0.5u
 
 .ends ptat_vco
 .end

@@ -128,8 +128,10 @@ def _format_pcell_params(raw_params, pcell_type):
         if k in SKIP_KEYS:
             continue
         if k in DIM_KEYS and isinstance(v, (int, float)):
-            # Format: remove trailing zeros, append 'u'
-            s = ('%.4g' % v).rstrip('0').rstrip('.')
+            # Format: remove trailing decimal zeros, append 'u'
+            s = '%.4g' % v
+            if '.' in s:
+                s = s.rstrip('0').rstrip('.')
             result[k] = s + 'u'
         elif k in COUNT_KEYS:
             result[k] = int(v)
@@ -150,7 +152,7 @@ def get_pcell_params(device_lib, dev_type):
     """
     d = device_lib[dev_type]
     bb = d['bbox']
-    return {
+    result = {
         'pcell': d['pcell'],
         'pcell_name': d.get('pcell_name', d['pcell']),
         'params': _format_pcell_params(d['params'], d['pcell']),
@@ -159,6 +161,9 @@ def get_pcell_params(device_lib, dev_type):
         'ox': round(bb[0] / UM, 3),
         'oy': round(bb[1] / UM, 3),
     }
+    if 'rotation' in d:
+        result['rotation'] = d['rotation']
+    return result
 
 
 def get_ng2_gate_data(device_lib, dev_type):
@@ -193,3 +198,33 @@ def is_mosfet(device_lib, dev_type):
     """Check if device is a MOSFET (PMOS or NMOS)."""
     cls = device_lib[dev_type]['classification']['device_class']
     return cls in ('pmos', 'nmos')
+
+
+def get_sd_strips(device_lib, dev_type):
+    """Return source and drain M1 strip rectangles for ng>=2 MOSFET devices.
+
+    IHP SG13G2 multi-finger PCells have isolated M1 strips per S/D finger.
+    Strips alternate S-D-S-D-...-S (strip 0 = source, strip 1 = drain, etc.).
+
+    Returns: {'source': [(x1, y1, x2, y2), ...], 'drain': [...]}
+             or None if ng < 2 or not a MOSFET.
+    All coordinates in nm, PCell-local.
+    """
+    if not is_mosfet(device_lib, dev_type):
+        return None
+    d = device_lib[dev_type]
+    gi = d.get('gate_info')
+    if gi is None or gi['ng'] < 2:
+        return None
+
+    # Get unique M1 strips sorted by X
+    m1_shapes = d['shapes_by_layer'].get('M1_8_0', [])
+    unique = []
+    for s in m1_shapes:
+        if s not in unique:
+            unique.append(s)
+    unique.sort(key=lambda s: s[0])
+
+    source = [tuple(s) for i, s in enumerate(unique) if i % 2 == 0]
+    drain = [tuple(s) for i, s in enumerate(unique) if i % 2 != 0]
+    return {'source': source, 'drain': drain}

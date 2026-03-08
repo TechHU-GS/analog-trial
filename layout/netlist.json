@@ -1,296 +1,334 @@
 {
-  "design": "ptat_vco_v5",
+  "design": "cmos_ptat_vco",
   "version": "2.0",
   "phase": 1,
-  "description": "PTAT + 5-stage VCO with buffer, IHP SG13G2 130nm BiCMOS \u2014 row-optimized layout",
+  "description": "CMOS Dual Current-Starved VCO + VPTAT, IHP SG13G2 130nm \u2014 all MOSFET, no BJT",
   "devices": [
     {
-      "name": "M1",
+      "name": "PM3",
       "type": "pmos_mirror",
       "has_nwell": true,
-      "nwell_net": "vdd_vco"
+      "nwell_net": "vdd"
     },
     {
-      "name": "M2",
+      "name": "PM4",
       "type": "pmos_mirror",
       "has_nwell": true,
-      "nwell_net": "vdd_vco"
+      "nwell_net": "vdd"
     },
     {
-      "name": "M3",
+      "name": "PM_ref",
       "type": "pmos_mirror",
       "has_nwell": true,
-      "nwell_net": "vdd_vco"
+      "nwell_net": "vdd"
     },
     {
-      "name": "M5",
+      "name": "PM5",
       "type": "pmos_mirror",
       "has_nwell": true,
-      "nwell_net": "vdd_vco"
+      "nwell_net": "vdd"
     },
     {
-      "name": "MPu1",
+      "name": "PM_pdiode",
+      "type": "pmos_cs",
+      "has_nwell": true,
+      "nwell_net": "vdd"
+    },
+    {
+      "name": "Mpb1",
+      "type": "pmos_cs8",
+      "has_nwell": true,
+      "nwell_net": "vdd"
+    },
+    {
+      "name": "Mpb2",
+      "type": "pmos_cs8",
+      "has_nwell": true,
+      "nwell_net": "vdd"
+    },
+    {
+      "name": "Mpb3",
+      "type": "pmos_cs8",
+      "has_nwell": true,
+      "nwell_net": "vdd"
+    },
+    {
+      "name": "Mpb4",
+      "type": "pmos_cs8",
+      "has_nwell": true,
+      "nwell_net": "vdd"
+    },
+    {
+      "name": "Mpb5",
+      "type": "pmos_cs8",
+      "has_nwell": true,
+      "nwell_net": "vdd"
+    },
+    {
+      "name": "Mpu1",
       "type": "pmos_vco",
       "has_nwell": true,
-      "nwell_net": "vdd_vco"
+      "nwell_net": "vdd"
     },
     {
-      "name": "MPu2",
+      "name": "Mpu2",
       "type": "pmos_vco",
       "has_nwell": true,
-      "nwell_net": "vdd_vco"
+      "nwell_net": "vdd"
     },
     {
-      "name": "MPu3",
+      "name": "Mpu3",
       "type": "pmos_vco",
       "has_nwell": true,
-      "nwell_net": "vdd_vco"
+      "nwell_net": "vdd"
     },
     {
-      "name": "MPu4",
+      "name": "Mpu4",
       "type": "pmos_vco",
       "has_nwell": true,
-      "nwell_net": "vdd_vco"
+      "nwell_net": "vdd"
     },
     {
-      "name": "MPu5",
+      "name": "Mpu5",
       "type": "pmos_vco",
       "has_nwell": true,
-      "nwell_net": "vdd_vco"
+      "nwell_net": "vdd"
     },
     {
-      "name": "MPd1",
-      "type": "nmos_vco",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MPd2",
-      "type": "nmos_vco",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MPd3",
-      "type": "nmos_vco",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MPd4",
-      "type": "nmos_vco",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MPd5",
-      "type": "nmos_vco",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MNb1",
-      "type": "nmos_bias",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MNb2",
-      "type": "nmos_bias",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MNb3",
-      "type": "nmos_bias",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MNb4",
-      "type": "nmos_bias",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MNb5",
-      "type": "nmos_bias",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MNdiode",
-      "type": "nmos_diode",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "MBp1",
+      "name": "Mbp1",
       "type": "pmos_buf1",
       "has_nwell": true,
       "nwell_net": "vdd"
     },
     {
-      "name": "MBp2",
+      "name": "Mbp2",
       "type": "pmos_buf2",
       "has_nwell": true,
       "nwell_net": "vdd"
     },
     {
-      "name": "MBn1",
+      "name": "MN1",
+      "type": "nmos_vittoz",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "MN2",
+      "type": "nmos_vittoz8",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "MN_diode",
+      "type": "nmos_bias",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "MN_pgen",
+      "type": "nmos_bias",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mnb1",
+      "type": "nmos_bias8",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mnb2",
+      "type": "nmos_bias8",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mnb3",
+      "type": "nmos_bias8",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mnb4",
+      "type": "nmos_bias8",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mnb5",
+      "type": "nmos_bias8",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mpd1",
+      "type": "nmos_vco",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mpd2",
+      "type": "nmos_vco",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mpd3",
+      "type": "nmos_vco",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mpd4",
+      "type": "nmos_vco",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mpd5",
+      "type": "nmos_vco",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "Mbn1",
       "type": "nmos_buf1",
       "has_nwell": false,
       "nwell_net": null
     },
     {
-      "name": "MBn2",
+      "name": "Mbn2",
       "type": "nmos_buf2",
       "has_nwell": false,
       "nwell_net": null
     },
     {
-      "name": "Q1",
-      "type": "hbt_1x",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "Q2",
-      "type": "hbt_8x",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
       "name": "Rptat",
-      "type": "rppd_ptat",
+      "type": "rhigh_ptat_r90",
       "has_nwell": false,
       "nwell_net": null
     },
     {
       "name": "Rout",
-      "type": "rppd_out",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "Rstart",
-      "type": "rppd_start",
-      "has_nwell": false,
-      "nwell_net": null
-    },
-    {
-      "name": "Riso",
-      "type": "rppd_iso",
+      "type": "rppd_out_r90",
       "has_nwell": false,
       "nwell_net": null
     }
   ],
-  "device_lib_mapping": {
-    "_note": "l2_autoplace.py key \u2192 device_lib.json key (only where different)",
-    "hbt_1x": "hbt_1x",
-    "hbt_8x": "hbt_8x",
-    "_all_others": "same key name"
-  },
   "nets": [
-    {
-      "name": "vdd_vco",
-      "type": "power",
-      "pins": [
-        "M1.S1",
-        "M1.S2",
-        "M2.S1",
-        "M2.S2",
-        "M3.S1",
-        "M3.S2",
-        "M5.S1",
-        "M5.S2",
-        "MPu1.S",
-        "MPu2.S",
-        "MPu3.S",
-        "MPu4.S",
-        "MPu5.S",
-        "Riso.MINUS"
-      ]
-    },
     {
       "name": "vdd",
       "type": "power",
       "pins": [
-        "Riso.PLUS",
-        "Rstart.PLUS",
-        "MBp1.S",
-        "MBp2.S1",
-        "MBp2.S2"
+        "PM3.S",
+        "PM4.S",
+        "PM_ref.S",
+        "PM5.S",
+        "PM_pdiode.S",
+        "Mpb1.S1",
+        "Mpb1.S2",
+        "Mpb2.S1",
+        "Mpb2.S2",
+        "Mpb3.S1",
+        "Mpb3.S2",
+        "Mpb4.S1",
+        "Mpb4.S2",
+        "Mpb5.S1",
+        "Mpb5.S2",
+        "Mbp1.S",
+        "Mbp2.S1",
+        "Mbp2.S2"
       ]
     },
     {
       "name": "gnd",
       "type": "power",
       "pins": [
-        "Q1.E",
+        "MN1.S",
         "Rptat.MINUS",
         "Rout.MINUS",
-        "MNdiode.S",
-        "MNb1.S",
-        "MNb2.S",
-        "MNb3.S",
-        "MNb4.S",
-        "MNb5.S",
-        "MBn1.S",
-        "MBn2.S",
-        "MBn2.S2"
+        "MN_diode.S",
+        "MN_pgen.S",
+        "Mnb1.S",
+        "Mnb2.S",
+        "Mnb3.S",
+        "Mnb4.S",
+        "Mnb5.S",
+        "Mbn1.S",
+        "Mbn2.S",
+        "Mbn2.S2",
+        "Mnb1.S2",
+        "Mnb2.S2",
+        "Mnb3.S2",
+        "Mnb4.S2",
+        "Mnb5.S2"
       ]
     },
     {
       "name": "net_c1",
       "type": "signal",
       "pins": [
-        "M1.D",
-        "M1.G",
-        "M2.G",
-        "M3.G",
-        "M5.G",
-        "Q1.C",
-        "Q1.B",
-        "Rstart.MINUS"
+        "PM3.D",
+        "PM3.G",
+        "PM4.G",
+        "PM_ref.G",
+        "PM5.G",
+        "MN1.D",
+        "MN1.G",
+        "MN2.G"
       ]
     },
     {
       "name": "net_c2",
       "type": "signal",
       "pins": [
-        "M2.D",
-        "Q2.C",
-        "Q2.B"
+        "PM4.D",
+        "MN2.D"
       ]
     },
     {
       "name": "net_rptat",
       "type": "signal",
       "pins": [
-        "Q2.E",
-        "Rptat.PLUS"
+        "MN2.S",
+        "Rptat.PLUS",
+        "MN2.S2"
       ]
     },
     {
       "name": "nmos_bias",
       "type": "signal",
       "pins": [
-        "M3.D",
-        "MNdiode.D",
-        "MNdiode.G",
-        "MNb1.G",
-        "MNb2.G",
-        "MNb3.G",
-        "MNb4.G",
-        "MNb5.G"
+        "PM_ref.D",
+        "MN_diode.D",
+        "MN_diode.G",
+        "MN_pgen.G",
+        "Mnb1.G",
+        "Mnb2.G",
+        "Mnb3.G",
+        "Mnb4.G",
+        "Mnb5.G"
+      ]
+    },
+    {
+      "name": "pmos_bias",
+      "type": "signal",
+      "pins": [
+        "MN_pgen.D",
+        "PM_pdiode.D",
+        "PM_pdiode.G",
+        "Mpb1.G",
+        "Mpb2.G",
+        "Mpb3.G",
+        "Mpb4.G",
+        "Mpb5.G"
       ]
     },
     {
       "name": "vptat",
       "type": "signal",
       "pins": [
-        "M5.D",
+        "PM5.D",
         "Rout.PLUS"
       ]
     },
@@ -298,110 +336,150 @@
       "name": "vco1",
       "type": "signal",
       "pins": [
-        "MPu1.D",
-        "MPd1.D",
-        "MPu2.G",
-        "MPd2.G"
+        "Mpu1.D",
+        "Mpd1.D",
+        "Mpu2.G",
+        "Mpd2.G"
       ]
     },
     {
       "name": "vco2",
       "type": "signal",
       "pins": [
-        "MPu2.D",
-        "MPd2.D",
-        "MPu3.G",
-        "MPd3.G"
+        "Mpu2.D",
+        "Mpd2.D",
+        "Mpu3.G",
+        "Mpd3.G"
       ]
     },
     {
       "name": "vco3",
       "type": "signal",
       "pins": [
-        "MPu3.D",
-        "MPd3.D",
-        "MPu4.G",
-        "MPd4.G"
+        "Mpu3.D",
+        "Mpd3.D",
+        "Mpu4.G",
+        "Mpd4.G"
       ]
     },
     {
       "name": "vco4",
       "type": "signal",
       "pins": [
-        "MPu4.D",
-        "MPd4.D",
-        "MPu5.G",
-        "MPd5.G"
+        "Mpu4.D",
+        "Mpd4.D",
+        "Mpu5.G",
+        "Mpd5.G"
       ]
     },
     {
       "name": "vco5",
       "type": "signal",
       "pins": [
-        "MPu5.D",
-        "MPd5.D",
-        "MPu1.G",
-        "MPd1.G",
-        "MBp1.G",
-        "MBn1.G"
+        "Mpu5.D",
+        "Mpd5.D",
+        "Mpu1.G",
+        "Mpd1.G",
+        "Mbp1.G",
+        "Mbn1.G"
       ]
     },
     {
       "name": "ns1",
       "type": "signal",
       "pins": [
-        "MPd1.S",
-        "MNb1.D"
+        "Mpb1.D",
+        "Mpu1.S"
       ]
     },
     {
       "name": "ns2",
       "type": "signal",
       "pins": [
-        "MPd2.S",
-        "MNb2.D"
+        "Mpb2.D",
+        "Mpu2.S"
       ]
     },
     {
       "name": "ns3",
       "type": "signal",
       "pins": [
-        "MPd3.S",
-        "MNb3.D"
+        "Mpb3.D",
+        "Mpu3.S"
       ]
     },
     {
       "name": "ns4",
       "type": "signal",
       "pins": [
-        "MPd4.S",
-        "MNb4.D"
+        "Mpb4.D",
+        "Mpu4.S"
       ]
     },
     {
       "name": "ns5",
       "type": "signal",
       "pins": [
-        "MPd5.S",
-        "MNb5.D"
+        "Mpb5.D",
+        "Mpu5.S"
+      ]
+    },
+    {
+      "name": "nb1",
+      "type": "signal",
+      "pins": [
+        "Mpd1.S",
+        "Mnb1.D"
+      ]
+    },
+    {
+      "name": "nb2",
+      "type": "signal",
+      "pins": [
+        "Mpd2.S",
+        "Mnb2.D"
+      ]
+    },
+    {
+      "name": "nb3",
+      "type": "signal",
+      "pins": [
+        "Mpd3.S",
+        "Mnb3.D"
+      ]
+    },
+    {
+      "name": "nb4",
+      "type": "signal",
+      "pins": [
+        "Mpd4.S",
+        "Mnb4.D"
+      ]
+    },
+    {
+      "name": "nb5",
+      "type": "signal",
+      "pins": [
+        "Mpd5.S",
+        "Mnb5.D"
       ]
     },
     {
       "name": "buf1",
       "type": "signal",
       "pins": [
-        "MBp1.D",
-        "MBn1.D",
-        "MBp2.G",
-        "MBn2.G"
+        "Mbp1.D",
+        "Mbn1.D",
+        "Mbp2.G",
+        "Mbn2.G"
       ]
     },
     {
       "name": "vco_out",
       "type": "signal",
       "pins": [
-        "MBp2.D",
-        "MBn2.D"
+        "Mbp2.D",
+        "Mbn2.D"
       ]
     }
   ],
@@ -409,55 +487,66 @@
     "drc_spacing": {
       "default_gap_nm": 700,
       "default_gap_source": "PLACE_GAP_1T = max(2*DEV_MARGIN+M2_SIG_W, MIN_VIA_CC) = max(700,690) = 700",
-      "hbt_gap_nm": 1200,
-      "hbt_gap_source": "HBT_MARGIN(500) + DEV_MARGIN(200) + M2_SIG_W(300) = 1000, rounded for CntB.h1",
-      "hbt_halo_um": 2.0,
-      "hbt_halo_note": "Substrate contact ring reservation around HBT devices (ptap ring or mixed ring)"
+      "hbt_gap_nm": 0,
+      "hbt_halo_um": 0.0
+    },
+    "routing_channels": {
+      "row_channels": [
+        {"above": "pmos_mirror_0", "below": "pmos_mirror_1", "n_tracks": 0},
+        {"above": "pmos_mirror_1", "below": "pmos_mirror_2", "n_tracks": 0},
+        {"above": "pmos_mirror_2", "below": "pmos_mirror_3", "n_tracks": 0},
+        {"above": "pmos_mirror_3", "below": "vco_pb", "n_tracks": 2},
+        {"above": "vco_pb", "below": "vco_pu", "n_tracks": 3},
+        {"above": "vco_pu", "below": "vco_pd", "n_tracks": 3},
+        {"above": "vco_pd", "below": "vco_nb", "n_tracks": 3},
+        {"above": "vco_nb", "below": "nmos_vittoz", "n_tracks": 2},
+        {"above": "nmos_vittoz", "below": "res", "n_tracks": 2}
+      ]
     },
     "well_aware_spacing": {
       "nwell_islands": [
         {
           "id": "NWell_A",
-          "net": "vdd_vco",
-          "devices": [
-            "M1",
-            "M2",
-            "M3",
-            "M5",
-            "MPu1",
-            "MPu2",
-            "MPu3",
-            "MPu4",
-            "MPu5"
-          ]
-        },
-        {
-          "id": "NWell_B",
           "net": "vdd",
           "devices": [
-            "MBp1",
-            "MBp2"
+            "PM3",
+            "PM4",
+            "PM_ref",
+            "PM5",
+            "PM_pdiode",
+            "Mpb1",
+            "Mpb2",
+            "Mpb3",
+            "Mpb4",
+            "Mpb5",
+            "Mpu1",
+            "Mpu2",
+            "Mpu3",
+            "Mpu4",
+            "Mpu5",
+            "Mbp1",
+            "Mbp2"
           ]
         }
       ],
       "inter_island_min_nm": 1800,
       "inter_island_rule": "NW.b1 (different-net NWell spacing)",
       "intra_island_min_nm": 0,
-      "intra_island_note": "Same-net NWells can merge (gap=0), but watch nBuLay threshold",
+      "intra_island_note": "Single NWell island \u2014 all PMOS share vdd, can merge freely",
       "nbulay_threshold_nm": 2990,
       "nbulay_note": "Merged NWell width >= 2990nm triggers nBuLay generation -> NBL.c=3200nm spacing",
-      "design_intent": "NWell_A/B separated to preserve VDD_VCO/VDD RC filtering (Riso+Cdec)",
+      "design_intent": "Single vdd domain \u2014 no Riso isolation needed",
       "bridge_policy": {
-        "NWell_A_NWell_B": "isolate",
-        "reason": "Different supply domains (vdd_vco vs vdd), Riso filtering requires isolation",
         "intra_island": "merge",
-        "intra_note": "Same-island devices share NWell (e.g. mirror+vco_pu in NWell_A can merge)"
+        "intra_note": "All PMOS NWells merge into one contiguous island"
       }
     },
     "tie_reservation": {
       "pmos_ntap": {
         "applies_to": [
           "pmos_mirror",
+          "pmos_cs",
+          "pmos_cs8",
           "pmos_vco",
           "pmos_buf1",
           "pmos_buf2"
@@ -468,13 +557,15 @@
         "max_distance_nm": 20000,
         "max_distance_rule": "LU.a",
         "placement": "above_device",
-        "note": "ntap NWell must be same-net as device NWell (merge or bridge)"
+        "note": "ntap NWell must be same-net as device NWell (all vdd)"
       },
       "nmos_ptap": {
         "applies_to": [
-          "nmos_vco",
+          "nmos_vittoz",
+          "nmos_vittoz8",
           "nmos_bias",
-          "nmos_diode",
+          "nmos_bias8",
+          "nmos_vco",
           "nmos_buf1",
           "nmos_buf2"
         ],
@@ -486,71 +577,88 @@
         "placement": "below_device"
       },
       "strategy": "row_strip",
-      "strategy_note": "Each device row shares a tie strip, more area-efficient than per-device ties"
+      "strategy_note": "Each device row shares a tie strip"
     },
     "matching": {
       "match_groups": [
         {
           "devices": [
-            "M1",
-            "M2",
-            "M3",
-            "M5"
+            "Mpb1",
+            "Mpb2",
+            "Mpb3",
+            "Mpb4",
+            "Mpb5"
           ],
           "type": "same_row_equal_spacing",
-          "reason": "PMOS current mirror: VGS matching requires identical environment"
+          "reason": "VCO PMOS current sources: uniform bias current per stage"
         },
         {
           "devices": [
-            "MPu1",
-            "MPu2",
-            "MPu3",
-            "MPu4",
-            "MPu5"
+            "Mpu1",
+            "Mpu2",
+            "Mpu3",
+            "Mpu4",
+            "Mpu5"
           ],
           "type": "same_row_equal_spacing",
           "reason": "VCO PMOS ring: symmetry for phase noise"
         },
         {
           "devices": [
-            "MPd1",
-            "MPd2",
-            "MPd3",
-            "MPd4",
-            "MPd5"
+            "Mpd1",
+            "Mpd2",
+            "Mpd3",
+            "Mpd4",
+            "Mpd5"
           ],
           "type": "same_row_equal_spacing",
           "reason": "VCO NMOS ring: symmetry for phase noise"
         },
         {
           "devices": [
-            "MNb1",
-            "MNb2",
-            "MNb3",
-            "MNb4",
-            "MNb5"
+            "Mnb1",
+            "Mnb2",
+            "Mnb3",
+            "Mnb4",
+            "Mnb5"
           ],
           "type": "same_row_equal_spacing",
-          "reason": "VCO bias array: uniform bias current"
+          "reason": "VCO NMOS current sources: uniform bias current per stage"
         }
       ],
       "symmetry": [],
       "keep_close": [
         {
           "devices": [
-            "Q1",
-            "Rptat"
+            "PM3",
+            "PM4"
           ],
-          "max_distance_um": 25.0,
-          "reason": "net_rptat (Q2.E -> Rptat.PLUS): minimize parasitic R"
+          "max_distance_um": 5.0,
+          "reason": "PMOS current mirror matching (stacked vertically)"
         },
         {
           "devices": [
-            "MNdiode",
-            "MNb1"
+            "PM_ref",
+            "PM5"
           ],
-          "max_distance_um": 15.0,
-          "reason": "nmos_bias net: MNdiode sets bias for all MNb, minimize IR drop"
+          "max_distance_um": 5.0,
+          "reason": "PMOS current mirror matching (stacked vertically)"
+        },
+        {
+          "devices": [
+            "MN_diode",
+            "Mnb1"
+          ],
+          "max_distance_um": 120.0,
+          "reason": "nmos_bias net: MN_diode sets bias for Mnb (row is ~106um wide)"
+        },
+        {
+          "devices": [
+            "PM_pdiode",
+            "Mpb1"
+          ],
+          "max_distance_um": 120.0,
+          "reason": "pmos_bias net: PM_pdiode sets bias for Mpb (row is ~107um wide)"
         }
       ]
     },
@@ -559,51 +667,56 @@
         {
           "name": "ptat_core",
           "devices": [
-            "M1",
-            "M2",
-            "M3",
-            "M5",
-            "Q1",
-            "Q2",
+            "PM3",
+            "PM4",
+            "PM5",
+            "MN1",
+            "MN2",
             "Rptat",
-            "Rout",
-            "Rstart",
-            "MNdiode"
+            "Rout"
+          ]
+        },
+        {
+          "name": "bias_gen",
+          "devices": [
+            "PM_ref",
+            "PM_pdiode",
+            "MN_diode",
+            "MN_pgen"
           ]
         },
         {
           "name": "vco_ring",
           "devices": [
-            "MPu1",
-            "MPu2",
-            "MPu3",
-            "MPu4",
-            "MPu5",
-            "MPd1",
-            "MPd2",
-            "MPd3",
-            "MPd4",
-            "MPd5",
-            "MNb1",
-            "MNb2",
-            "MNb3",
-            "MNb4",
-            "MNb5"
+            "Mpb1",
+            "Mpb2",
+            "Mpb3",
+            "Mpb4",
+            "Mpb5",
+            "Mpu1",
+            "Mpu2",
+            "Mpu3",
+            "Mpu4",
+            "Mpu5",
+            "Mpd1",
+            "Mpd2",
+            "Mpd3",
+            "Mpd4",
+            "Mpd5",
+            "Mnb1",
+            "Mnb2",
+            "Mnb3",
+            "Mnb4",
+            "Mnb5"
           ]
         },
         {
           "name": "buffer",
           "devices": [
-            "MBp1",
-            "MBp2",
-            "MBn1",
-            "MBn2"
-          ]
-        },
-        {
-          "name": "decoupling",
-          "devices": [
-            "Riso"
+            "Mbp1",
+            "Mbp2",
+            "Mbn1",
+            "Mbn2"
           ]
         }
       ],
@@ -612,7 +725,7 @@
           "from": "ptat_core",
           "to": "vco_ring",
           "min_gap_um": 3.0,
-          "reason": "VCO switching noise isolation"
+          "reason": "VCO switching noise isolation from sensitive PTAT core"
         },
         {
           "from": "vco_ring",
@@ -629,251 +742,179 @@
       ],
       "zone_order_x": [
         "ptat_core",
+        "bias_gen",
         "vco_ring",
         "buffer"
       ],
-      "zone_order_note": "PTAT left, VCO center, Buffer right. Riso near VCO power entry."
-    },
-    "routing_channels": {
-      "_note": "Auto-generated by row_optimizer: signal crossing nets per channel (power excluded)",
-      "row_channels": [
-        {
-          "above": "hbt",
-          "below": "res",
-          "n_tracks": 3,
-          "width_nm": 2010
-        },
-        {
-          "above": "res",
-          "below": "pmos_mirror",
-          "n_tracks": 3,
-          "width_nm": 2010
-        },
-        {
-          "above": "pmos_mirror",
-          "below": "vco_pu",
-          "n_tracks": 2,
-          "width_nm": 1500
-        },
-        {
-          "above": "vco_pu",
-          "below": "vco_pd",
-          "n_tracks": 6,
-          "width_nm": 3540
-        },
-        {
-          "above": "vco_pd",
-          "below": "vco_nb",
-          "n_tracks": 6,
-          "width_nm": 3540
-        },
-        {
-          "above": "vco_nb",
-          "below": "mndiode",
-          "n_tracks": 2,
-          "width_nm": 1500
-        },
-        {
-          "above": "mndiode",
-          "below": "riso",
-          "n_tracks": 2,
-          "width_nm": 1500
-        }
-      ],
-      "power_corridors": [
-        {
-          "net": "vdd_vco",
-          "layer": "M3",
-          "width_nm": 3000,
-          "position": "upper",
-          "note": "Horizontal M3 rail near pmos_mirror/vco_pu (NWell_A consumers)"
-        },
-        {
-          "net": "gnd",
-          "layer": "M3",
-          "width_nm": 3000,
-          "position": "lower",
-          "note": "Horizontal M3 rail below vco_nb/mndiode rows"
-        },
-        {
-          "net": "vdd",
-          "layer": "M3",
-          "width_nm": 3000,
-          "position": "vco_pu",
-          "note": "VDD rail near MBp1/MBp2 (now in vco_pu row)"
-        }
-      ],
-      "channel_formula": "pdk.py channel_width(n) = n * M2_ROUTE_PITCH + VIA1_PAD",
-      "channel_integrity": {
-        "policy": "inviolable",
-        "note": "Phase 3 tie/ring generation MUST NOT cut through routing channels",
-        "crossing_allowed": false,
-        "crossing_note": "If Phase 3 needs to cross a channel, it must use a designated crossing slot (TBD in Phase 3)"
-      }
+      "zone_order_note": "PTAT left, bias center-left, VCO center, Buffer right"
     },
     "row_groups": {
-      "hbt": {
+      "nmos_vittoz": {
         "devices": [
-          "Q1",
-          "Q2"
+          "MN1",
+          "MN2"
         ],
         "gap_um": 1.5
       },
       "res": {
         "devices": [
           "Rptat",
-          "Rout",
-          "Rstart"
+          "Rout"
         ]
       },
-      "pmos_mirror": {
+      "pmos_mirror_0": {
+        "devices": ["PM3"]
+      },
+      "pmos_mirror_1": {
+        "devices": ["PM4"]
+      },
+      "pmos_mirror_2": {
+        "devices": ["PM_ref"]
+      },
+      "pmos_mirror_3": {
+        "devices": ["PM5"]
+      },
+      "vco_pb": {
         "devices": [
-          "M1",
-          "M2",
-          "M3",
-          "M5"
-        ],
-        "gap_um": 1.0
+          "Mpb1",
+          "Mpb2",
+          "Mpb3",
+          "Mpb4",
+          "Mpb5",
+          "PM_pdiode"
+        ]
       },
       "vco_pu": {
         "devices": [
-          "MPu1",
-          "MPu2",
-          "MPu3",
-          "MPu4",
-          "MPu5",
-          "MBp1",
-          "MBp2"
+          "Mpu1",
+          "Mpu2",
+          "Mpu3",
+          "Mpu4",
+          "Mpu5",
+          "Mbp1",
+          "Mbp2"
         ]
       },
       "vco_pd": {
         "devices": [
-          "MPd1",
-          "MPd2",
-          "MPd3",
-          "MPd4",
-          "MPd5",
-          "MBn1",
-          "MBn2"
+          "Mpd1",
+          "Mpd2",
+          "Mpd3",
+          "Mpd4",
+          "Mpd5",
+          "Mbn1",
+          "Mbn2"
         ]
       },
       "vco_nb": {
         "devices": [
-          "MNb1",
-          "MNb2",
-          "MNb3",
-          "MNb4",
-          "MNb5"
-        ],
-        "gap_um": 1.8
-      },
-      "mndiode": {
-        "devices": [
-          "MNdiode"
-        ]
-      },
-      "riso": {
-        "devices": [
-          "Riso"
+          "Mnb1",
+          "Mnb2",
+          "Mnb3",
+          "Mnb4",
+          "Mnb5",
+          "MN_diode",
+          "MN_pgen"
         ]
       }
     },
     "x_align": [
       [
-        "MPu1",
-        "MPd1",
-        "MNb1"
+        "PM3",
+        "PM4",
+        "PM_ref",
+        "PM5"
       ],
       [
-        "MPu2",
-        "MPd2",
-        "MNb2"
+        "Mpb1",
+        "Mpu1",
+        "Mpd1",
+        "Mnb1"
       ],
       [
-        "MPu3",
-        "MPd3",
-        "MNb3"
+        "Mpb2",
+        "Mpu2",
+        "Mpd2",
+        "Mnb2"
       ],
       [
-        "MPu4",
-        "MPd4",
-        "MNb4"
+        "Mpb3",
+        "Mpu3",
+        "Mpd3",
+        "Mnb3"
       ],
       [
-        "MPu5",
-        "MPd5",
-        "MNb5"
+        "Mpb4",
+        "Mpu4",
+        "Mpd4",
+        "Mnb4"
       ],
       [
-        "MBp1",
-        "MBn1"
+        "Mpb5",
+        "Mpu5",
+        "Mpd5",
+        "Mnb5"
       ],
       [
-        "MBp2",
-        "MBn2"
+        "Mbp1",
+        "Mbn1"
+      ],
+      [
+        "Mbp2",
+        "Mbn2"
       ]
     ],
     "y_align": [],
     "x_order": [
       {
-        "a": "M5",
-        "b": "Riso",
-        "min_gap_um": 2.0
-      },
-      {
-        "a": "Q2",
-        "b": "MPu1",
+        "a": "MN2",
+        "b": "Mpb1",
         "min_gap_um": 3.0
       },
       {
-        "a": "MPu5",
-        "b": "MBp1",
+        "a": "Mpu5",
+        "b": "Mbp1",
         "min_gap_um": 2.0
       },
       {
-        "a": "MPd5",
-        "b": "MBn1",
+        "a": "Mpd5",
+        "b": "Mbn1",
         "min_gap_um": 2.0
-      },
-      {
-        "a": "Rout",
-        "b": "Rstart",
-        "min_gap_um": 0.3
       }
     ],
     "electrical_proximity": {
       "inverter_pairs": [
         {
-          "pu": "MPu1",
-          "pd": "MPd1",
+          "pu": "Mpu1",
+          "pd": "Mpd1",
           "max_dy_um": 8.0,
           "net": "vco1",
           "reason": "drain-drain vertical proximity"
         },
         {
-          "pu": "MPu2",
-          "pd": "MPd2",
+          "pu": "Mpu2",
+          "pd": "Mpd2",
           "max_dy_um": 8.0,
           "net": "vco2",
           "reason": "drain-drain vertical proximity"
         },
         {
-          "pu": "MPu3",
-          "pd": "MPd3",
+          "pu": "Mpu3",
+          "pd": "Mpd3",
           "max_dy_um": 8.0,
           "net": "vco3",
           "reason": "drain-drain vertical proximity"
         },
         {
-          "pu": "MPu4",
-          "pd": "MPd4",
+          "pu": "Mpu4",
+          "pd": "Mpd4",
           "max_dy_um": 8.0,
           "net": "vco4",
           "reason": "drain-drain vertical proximity"
         },
         {
-          "pu": "MPu5",
-          "pd": "MPd5",
+          "pu": "Mpu5",
+          "pd": "Mpd5",
           "max_dy_um": 8.0,
           "net": "vco5",
           "reason": "drain-drain vertical proximity"
@@ -881,47 +922,39 @@
       ],
       "bias_pairs": [
         {
-          "inv": "MPd1",
-          "bias": "MNb1",
+          "inv": "Mpd1",
+          "bias": "Mnb1",
           "max_dy_um": 8.0,
-          "net": "ns1",
+          "net": "nb1",
           "reason": "source-drain vertical proximity"
         },
         {
-          "inv": "MPd2",
-          "bias": "MNb2",
+          "inv": "Mpd2",
+          "bias": "Mnb2",
           "max_dy_um": 8.0,
-          "net": "ns2",
+          "net": "nb2",
           "reason": "source-drain vertical proximity"
         },
         {
-          "inv": "MPd3",
-          "bias": "MNb3",
+          "inv": "Mpd3",
+          "bias": "Mnb3",
           "max_dy_um": 8.0,
-          "net": "ns3",
+          "net": "nb3",
           "reason": "source-drain vertical proximity"
         },
         {
-          "inv": "MPd4",
-          "bias": "MNb4",
+          "inv": "Mpd4",
+          "bias": "Mnb4",
           "max_dy_um": 8.0,
-          "net": "ns4",
+          "net": "nb4",
           "reason": "source-drain vertical proximity"
         },
         {
-          "inv": "MPd5",
-          "bias": "MNb5",
+          "inv": "Mpd5",
+          "bias": "Mnb5",
           "max_dy_um": 8.0,
-          "net": "ns5",
+          "net": "nb5",
           "reason": "source-drain vertical proximity"
-        }
-      ],
-      "supply_entry": [
-        {
-          "device": "Riso",
-          "near_island": "NWell_A",
-          "max_distance_um": 25.0,
-          "reason": "Riso is VDD\u2192VDD_VCO isolation resistor, connected via M3 power rail"
         }
       ]
     },
@@ -930,17 +963,27 @@
       "reason": "Guard ring closure space on all four edges"
     },
     "pin_access": {
-      "_note": "Design choice: (device_type, pin) \u2192 access mode. Modes: above, below, gate, gate_no_m1, m1_pin, m2_below, m2, direct",
+      "_note": "Design choice: (device_type, pin) -> access mode. Modes: above, below, gate, m1_pin, direct",
       "pmos_mirror": {
+        "S": "above",
+        "D": "above",
+        "G": "gate"
+      },
+      "pmos_cs": {
+        "S": "above",
+        "D": "above",
+        "G": "m1_pin"
+      },
+      "pmos_cs8": {
         "S1": "above",
         "S2": "above",
         "D": "above",
-        "G": "gate"
+        "G": "m1_pin"
       },
       "pmos_vco": {
         "S": "above",
         "D": "above",
-        "G": "gate"
+        "G": "m1_pin"
       },
       "pmos_buf1": {
         "S": "above",
@@ -953,8 +996,14 @@
         "D": "direct",
         "G": "m1_pin"
       },
-      "nmos_vco": {
+      "nmos_vittoz": {
         "S": "below",
+        "D": "above",
+        "G": "m1_pin"
+      },
+      "nmos_vittoz8": {
+        "S": "below",
+        "S2": "below",
         "D": "above",
         "G": "m1_pin"
       },
@@ -963,7 +1012,13 @@
         "D": "above",
         "G": "m1_pin"
       },
-      "nmos_diode": {
+      "nmos_bias8": {
+        "S": "below",
+        "S2": "below",
+        "D": "above",
+        "G": "m1_pin"
+      },
+      "nmos_vco": {
         "S": "below",
         "D": "above",
         "G": "m1_pin"
@@ -979,36 +1034,34 @@
         "S2": "below",
         "G": "m1_pin"
       },
-      "rppd_iso": {
-        "MINUS": "below",
-        "PLUS": "above"
-      },
-      "rppd_ptat": {
+      "rhigh_ptat": {
         "MINUS": "below",
         "PLUS": "below"
-      },
-      "rppd_start": {
-        "MINUS": "below",
-        "PLUS": "above"
       },
       "rppd_out": {
         "MINUS": "below",
         "PLUS": "below"
       },
-      "hbt_1x": {
-        "C": "above",
-        "B": "below",
-        "E": "m2_below"
+      "rhigh_ptat_r90": {
+        "MINUS": "below",
+        "PLUS": "above"
       },
-      "hbt_8x": {
-        "C": "above",
-        "B": "below",
-        "E": "m2_below"
+      "rppd_out_r90": {
+        "MINUS": "below",
+        "PLUS": "above"
       }
     },
     "tie_config": {
-      "_note": "Design choice: PMOS tie contact config (src_pin=which source for tie, cont=contact array)",
+      "_note": "PMOS tie: src_pin=which source pin for ntap, cont=contact array",
       "pmos_mirror": {
+        "src_pin": "S",
+        "cont": "1x2"
+      },
+      "pmos_cs": {
+        "src_pin": "S",
+        "cont": "1x2"
+      },
+      "pmos_cs8": {
         "src_pin": "S2",
         "cont": "2x2"
       },
@@ -1025,184 +1078,131 @@
         "cont": "2x2"
       }
     },
-    "hbt_extras": {
-      "_note": "HBT-specific: M2 stub X offset (nm) to avoid B\u2192C pre-route M2 overlap",
-      "hbt_1x": {
-        "m2_stub_dx": -885
-      },
-      "hbt_8x": {
-        "m2_stub_dx": -4120
-      }
-    },
     "power_topology": {
-      "_note": "Auto-generated by power_optimizer.py",
+      "_note": "Auto-generated by power_optimizer.py \u2014 placeholder anchors",
       "rails": [
         {
-          "id": "vdd_vco_0",
-          "net": "vdd_vco",
-          "anchor_inst": "M1",
-          "anchor_side": "bottom",
-          "offset_um": -0.18
-        },
-        {
-          "id": "vdd_vco_1",
-          "net": "vdd_vco",
-          "anchor_inst": "Riso",
-          "anchor_side": "bottom",
-          "offset_um": 0.0
-        },
-        {
-          "id": "vdd",
+          "id": "vdd_0",
           "net": "vdd",
-          "anchor_inst": "MBp1",
+          "anchor_inst": "PM3",
           "anchor_side": "top",
-          "offset_um": -1.35
+          "offset_um": -0.18
         },
         {
           "id": "gnd_0",
           "net": "gnd",
-          "anchor_inst": "MNdiode",
-          "anchor_side": "top",
-          "offset_um": 0.09
+          "anchor_inst": "Mnb1",
+          "anchor_side": "bottom",
+          "offset_um": 0.0
         },
         {
           "id": "gnd_1",
           "net": "gnd",
           "anchor_inst": "Rptat",
           "anchor_side": "bottom",
-          "offset_um": 3.25
+          "offset_um": 0.0
         }
       ],
       "rail_x": {
         "left_margin_um": -1.0,
-        "right_anchor_inst": "MBp2",
+        "right_anchor_inst": "PM_pdiode",
         "right_margin_um": 3.0
       },
       "drops": [
         {
-          "net": "vdd_vco",
-          "inst": "M1",
-          "pin": "S1",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "M1",
-          "pin": "S2",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "M2",
-          "pin": "S1",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "M2",
-          "pin": "S2",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "M3",
-          "pin": "S1",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "M3",
-          "pin": "S2",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "M5",
-          "pin": "S1",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "M5",
-          "pin": "S2",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "MPu1",
+          "net": "gnd",
+          "inst": "MN1",
           "pin": "S",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "MPu2",
-          "pin": "S",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "MPu3",
-          "pin": "S",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "MPu4",
-          "pin": "S",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "MPu5",
-          "pin": "S",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd_vco",
-          "inst": "Riso",
-          "pin": "MINUS",
           "strategy": "via_stack"
         },
         {
-          "net": "vdd",
-          "inst": "Riso",
-          "pin": "PLUS",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd",
-          "inst": "Rstart",
-          "pin": "PLUS",
-          "strategy": "via_access"
-        },
-        {
-          "net": "vdd",
-          "inst": "MBp1",
+          "net": "gnd",
+          "inst": "MN_diode",
           "pin": "S",
-          "strategy": "via_access"
+          "strategy": "via_stack"
         },
         {
-          "net": "vdd",
-          "inst": "MBp2",
-          "pin": "S1",
-          "strategy": "via_access"
+          "net": "gnd",
+          "inst": "MN_pgen",
+          "pin": "S",
+          "strategy": "via_stack"
         },
         {
-          "net": "vdd",
-          "inst": "MBp2",
+          "net": "gnd",
+          "inst": "Mbn1",
+          "pin": "S",
+          "strategy": "via_stack"
+        },
+        {
+          "net": "gnd",
+          "inst": "Mbn2",
+          "pin": "S",
+          "strategy": "via_stack"
+        },
+        {
+          "net": "gnd",
+          "inst": "Mbn2",
           "pin": "S2",
-          "strategy": "via_access"
+          "strategy": "via_stack"
         },
         {
           "net": "gnd",
-          "inst": "Q1",
-          "pin": "E",
-          "strategy": "via_access"
+          "inst": "Mnb1",
+          "pin": "S",
+          "strategy": "via_stack"
         },
         {
           "net": "gnd",
-          "inst": "Rptat",
-          "pin": "MINUS",
+          "inst": "Mnb1",
+          "pin": "S2",
+          "strategy": "via_stack"
+        },
+        {
+          "net": "gnd",
+          "inst": "Mnb2",
+          "pin": "S",
+          "strategy": "via_stack"
+        },
+        {
+          "net": "gnd",
+          "inst": "Mnb2",
+          "pin": "S2",
+          "strategy": "via_stack"
+        },
+        {
+          "net": "gnd",
+          "inst": "Mnb3",
+          "pin": "S",
+          "strategy": "via_stack"
+        },
+        {
+          "net": "gnd",
+          "inst": "Mnb3",
+          "pin": "S2",
+          "strategy": "via_stack"
+        },
+        {
+          "net": "gnd",
+          "inst": "Mnb4",
+          "pin": "S",
+          "strategy": "via_stack"
+        },
+        {
+          "net": "gnd",
+          "inst": "Mnb4",
+          "pin": "S2",
+          "strategy": "via_stack"
+        },
+        {
+          "net": "gnd",
+          "inst": "Mnb5",
+          "pin": "S",
+          "strategy": "via_stack"
+        },
+        {
+          "net": "gnd",
+          "inst": "Mnb5",
+          "pin": "S2",
           "strategy": "via_stack"
         },
         {
@@ -1213,56 +1213,116 @@
         },
         {
           "net": "gnd",
-          "inst": "MNdiode",
-          "pin": "S",
+          "inst": "Rptat",
+          "pin": "MINUS",
           "strategy": "via_stack"
         },
         {
-          "net": "gnd",
-          "inst": "MNb1",
-          "pin": "S",
-          "strategy": "via_stack"
-        },
-        {
-          "net": "gnd",
-          "inst": "MNb2",
-          "pin": "S",
-          "strategy": "via_stack"
-        },
-        {
-          "net": "gnd",
-          "inst": "MNb3",
-          "pin": "S",
-          "strategy": "via_stack"
-        },
-        {
-          "net": "gnd",
-          "inst": "MNb4",
-          "pin": "S",
-          "strategy": "via_stack"
-        },
-        {
-          "net": "gnd",
-          "inst": "MNb5",
-          "pin": "S",
-          "strategy": "via_stack"
-        },
-        {
-          "net": "gnd",
-          "inst": "MBn1",
+          "net": "vdd",
+          "inst": "Mbp1",
           "pin": "S",
           "strategy": "via_access"
         },
         {
-          "net": "gnd",
-          "inst": "MBn2",
-          "pin": "S",
+          "net": "vdd",
+          "inst": "Mbp2",
+          "pin": "S1",
           "strategy": "via_access"
         },
         {
-          "net": "gnd",
-          "inst": "MBn2",
+          "net": "vdd",
+          "inst": "Mbp2",
           "pin": "S2",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "Mpb1",
+          "pin": "S1",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "Mpb1",
+          "pin": "S2",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "Mpb2",
+          "pin": "S1",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "Mpb2",
+          "pin": "S2",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "Mpb3",
+          "pin": "S1",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "Mpb3",
+          "pin": "S2",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "Mpb4",
+          "pin": "S1",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "Mpb4",
+          "pin": "S2",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "Mpb5",
+          "pin": "S1",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "Mpb5",
+          "pin": "S2",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "PM3",
+          "pin": "S",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "PM4",
+          "pin": "S",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "PM5",
+          "pin": "S",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "PM_pdiode",
+          "pin": "S",
+          "strategy": "via_access"
+        },
+        {
+          "net": "vdd",
+          "inst": "PM_ref",
+          "pin": "S",
           "strategy": "via_access"
         }
       ]
@@ -1271,15 +1331,25 @@
       "net_c1",
       "net_c2",
       "nmos_bias",
+      "pmos_bias",
       "vco5"
     ],
     "power_nets": [
       "vdd",
-      "vdd_vco",
       "gnd"
     ],
     "pre_routed_pins": [],
     "routing_order": [
+      "nb1",
+      "nb2",
+      "nb3",
+      "nb4",
+      "nb5",
+      "ns1",
+      "ns2",
+      "ns3",
+      "ns4",
+      "ns5",
       "buf1",
       "vco_out",
       "vco5",
@@ -1287,12 +1357,8 @@
       "net_c1",
       "net_rptat",
       "nmos_bias",
+      "pmos_bias",
       "vptat",
-      "ns1",
-      "ns2",
-      "ns3",
-      "ns4",
-      "ns5",
       "vco1",
       "vco2",
       "vco3",

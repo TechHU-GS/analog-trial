@@ -3,23 +3,22 @@
   "placement": {
     "status": "OPTIMAL",
     "bbox_um": [
-      69.8,
-      73.41
+      169.58,
+      52.32
     ],
-    "area_um2": 5124.0,
-    "devices": 30,
-    "tie_strips": 5,
-    "nwell_islands": 2,
-    "routing_channels": 7
+    "area_um2": 8872.0,
+    "devices": 35,
+    "tie_strips": 9,
+    "nwell_islands": 1,
+    "routing_channels": 9
   },
   "drc": {
     "status": "CLEAN",
-    "total_markers": 41,
-    "pcell_waiver": 41,
+    "total_markers": 1,
+    "pcell_waiver": 1,
     "routing_violations": 0,
     "by_rule": {
-      "CntB.h1": 30,
-      "M1.b": 11
+      "M1.b": 1
     }
   },
   "lvs": {
