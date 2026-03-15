@@ -458,6 +458,22 @@ class ConstraintPlacer:
         self.model.minimize(
             10 * (self.bb_max_x + self.bb_max_y) + wl_w10 * self._total_hpwl)
 
+    def add_device_region(self, device_names, x_min, y_min, x_max, y_max):
+        """Constrain devices to a bounding box region (all values in µm)."""
+        gx_min = self._to_g(x_min)
+        gy_min = self._to_g(y_min)
+        gx_max = self._to_g(x_max)
+        gy_max = self._to_g(y_max)
+        for name in device_names:
+            if name not in self.x_vars:
+                continue
+            wg = self._to_g(self.devices[name]['w'])
+            hg = self._to_g(self.devices[name]['h'])
+            self.model.add(self.x_vars[name] >= gx_min)
+            self.model.add(self.y_vars[name] >= gy_min)
+            self.model.add(self.x_vars[name] + wg <= gx_max)
+            self.model.add(self.y_vars[name] + hg <= gy_max)
+
     def add_edge_keepout(self, margin_um):
         """Enforce margin on ALL 4 sides (left/bottom/right/top).
 

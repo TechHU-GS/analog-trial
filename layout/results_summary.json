@@ -14,12 +14,10 @@
   },
   "drc": {
     "status": "CLEAN",
-    "total_markers": 1,
-    "pcell_waiver": 1,
+    "total_markers": 0,
+    "pcell_waiver": 0,
     "routing_violations": 0,
-    "by_rule": {
-      "M1.b": 1
-    }
+    "by_rule": {}
   },
   "lvs": {
     "status": "PASS"

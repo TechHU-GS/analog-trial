@@ -3,7 +3,7 @@
 # Usage: cd /private/tmp/analog-trial/layout && source ~/pdk/venv/bin/activate && bash run_all.sh
 set -euo pipefail
 
-CELL="ptat_vco"
+CELL="soilz"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 GDS="${SCRIPT_DIR}/output/${CELL}.gds"
 CDL="${SCRIPT_DIR}/${CELL}_lvs.spice"

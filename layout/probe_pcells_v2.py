@@ -20,8 +20,9 @@ dbu = layout.dbu  # 0.001 µm = 1nm
 # ── Device definitions ──
 # CMOS Dual-CS VCO + VPTAT (no BJT)
 DEVICES = [
-    # PTAT PMOS mirror (PM3, PM4, PM_ref, PM5): w=0.5u l=100u
-    ("pmos_mirror", "pmos", {"w": 0.5e-6, "l": 100e-6, "ng": 1, "m": 1}),
+    # PTAT PMOS mirror (PM3, PM4, PM_ref, PM5): w=0.5u l=10u (compact, fits tile)
+    # Original l=100u → 101.3µm wide, impossible in 202µm tile. l=10u → 11.3µm.
+    ("pmos_mirror", "pmos", {"w": 0.5e-6, "l": 10e-6, "ng": 1, "m": 1}),
     # PMOS current source diode (PM_pdiode): w=0.5u l=2u
     ("pmos_cs", "pmos", {"w": 0.5e-6, "l": 2e-6, "ng": 1, "m": 1}),
     # PMOS current source x8 (Mpb1-5): w=4u l=2u ng=8 (total w, per-finger=0.5u)
@@ -50,8 +51,42 @@ DEVICES = [
     ("rhigh_ptat", "rhigh", {"w": 0.5e-6, "l": 133e-6, "b": 12}),
     # Output resistor: rppd w=0.5u l=25u b=4
     ("rppd_out", "rppd", {"w": 0.5e-6, "l": 25e-6, "b": 4}),
-    # NOTE: cap_cmim (MIM) deferred — lives on Metal3/TopMetal1, no M1/M2
-    # Will be added after via-stack support is implemented
+
+    # ── SoilZ v1: Excitation Path (cascode current source) ──
+    # Cascode bias ref + mirror x1 (PM_cas_ref, PM_mir1): pmos w=1u l=10u
+    ("pmos_cas_mir1", "pmos", {"w": 1e-6, "l": 10e-6, "ng": 1, "m": 1}),
+    # Mirror x2 (PM_mir2): pmos w=2u l=10u
+    ("pmos_cas_mir2", "pmos", {"w": 2e-6, "l": 10e-6, "ng": 1, "m": 1}),
+    # Mirror x4 (PM_mir3): pmos w=4u l=10u ng=2
+    ("pmos_cas_mir4", "pmos", {"w": 4e-6, "l": 10e-6, "ng": 2, "m": 1}),
+    # Cascode x1 (PM_cas_diode, PM_cas1): pmos w=1u l=2u
+    ("pmos_cas1", "pmos", {"w": 1e-6, "l": 2e-6, "ng": 1, "m": 1}),
+    # Cascode x2 (PM_cas2): pmos w=2u l=2u
+    ("pmos_cas2", "pmos", {"w": 2e-6, "l": 2e-6, "ng": 1, "m": 1}),
+    # Cascode x4 (PM_cas3): pmos w=4u l=2u ng=2
+    ("pmos_cas4", "pmos", {"w": 4e-6, "l": 2e-6, "ng": 2, "m": 1}),
+    # Cascode bias load (MN_cas_load): nmos w=0.5u l=2u
+    ("nmos_cas_load", "nmos", {"w": 0.5e-6, "l": 2e-6, "ng": 1, "m": 1}),
+
+    # ── SoilZ v1: Measurement Path (OTA + comparator) ──
+    # OTA PMOS active load (XMp_load_p/n): pmos w=4u l=4u
+    ("pmos_ota_load", "pmos", {"w": 4e-6, "l": 4e-6, "ng": 1, "m": 1}),
+    # OTA NMOS bias diode (XMbias_d): nmos w=4u l=4u
+    ("nmos_ota_bias", "nmos", {"w": 4e-6, "l": 4e-6, "ng": 1, "m": 1}),
+    # OTA NMOS input pair (XMin_p/n): nmos w=10u l=2u ng=4
+    ("nmos_ota_input", "nmos", {"w": 10e-6, "l": 2e-6, "ng": 4, "m": 1}),
+    # OTA NMOS tail (XMtail): nmos w=8u l=4u ng=2
+    ("nmos_ota_tail", "nmos", {"w": 8e-6, "l": 4e-6, "ng": 2, "m": 1}),
+    # Comparator PMOS latch (XMc_lp1/lp2): pmos w=1u l=0.5u
+    ("pmos_comp_latch", "pmos", {"w": 1e-6, "l": 0.5e-6, "ng": 1, "m": 1}),
+
+    # ── SoilZ v1: Passives ──
+    # 200kΩ ΣΔ resistor (R_in, R_dac): rhigh w=0.5u l=20u b=2 (verified: ~199kΩ)
+    ("rhigh_200k", "rhigh", {"w": 0.5e-6, "l": 20e-6, "b": 2}),
+    # 1pF MIM cap (C_fb): manual placement in assemble_gds.py, probed for dimensions
+    # PCell class = "cmim" in SG13_dev, SPICE model = "cap_cmim"
+    # Caspec = 1.5 fF/µm², 26x26µm ≈ 1.01pF
+    ("cap_cmim_1p", "cmim", {"w": 26e-6, "l": 26e-6}),
 ]
 
 LAYER_NAMES = {
@@ -173,7 +208,7 @@ def classify_device(pcell_type):
         return {'device_class': 'hbt', 'has_nwell': False, 'requires_ntap': False, 'requires_ptap': False}
     elif pcell_type in ('rppd', 'rhigh'):
         return {'device_class': 'resistor', 'has_nwell': False, 'requires_ntap': False, 'requires_ptap': False}
-    elif pcell_type == 'cmim':
+    elif pcell_type in ('cmim', 'cap_cmim'):
         return {'device_class': 'capacitor', 'has_nwell': False, 'requires_ntap': False, 'requires_ptap': False}
     return {'device_class': 'unknown', 'has_nwell': False, 'requires_ntap': False, 'requires_ptap': False}
 
@@ -307,6 +342,7 @@ for dev_name, pcell_type, params in DEVICES:
         "rppd": ["M1_8_0", "GatPoly_5_0", "Cont_6_0", "PolyRes_128_0", "pSD_14_0"],
         "rhigh": ["M1_8_0", "GatPoly_5_0", "Cont_6_0", "PolyRes_128_0", "pSD_14_0"],
         "cmim": ["M1_8_0", "M2_10_0", "Via1_19_0"],
+        "cap_cmim": ["M1_8_0", "M2_10_0", "M3_30_0", "Via1_19_0", "Via2_29_0", "TopMetal1_126_0"],
     }
     for ln in key_layers.get(pcell_type, []):
         if ln not in shapes_by_layer:
@@ -324,7 +360,7 @@ for dev_name, pcell_type, params in DEVICES:
         pins = infer_mos_pins(shapes_by_layer, ng, pcell_type)
     elif pcell_type in ('rppd', 'rhigh'):
         pins = infer_res_pins(shapes_by_layer)
-    elif pcell_type == 'cmim':
+    elif pcell_type in ('cmim', 'cap_cmim'):
         pins = infer_cap_pins(raw_ports)
     elif pcell_type == 'npn13G2':
         pins = infer_hbt_pins(raw_ports)
@@ -342,6 +378,7 @@ for dev_name, pcell_type, params in DEVICES:
 
     pcell_name = "sg13_lv_pmos" if pcell_type == "pmos" else \
                  "sg13_lv_nmos" if pcell_type == "nmos" else \
+                 "cap_cmim" if pcell_type == "cap_cmim" else \
                  pcell_type
 
     entry = {

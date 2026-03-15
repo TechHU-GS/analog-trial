@@ -27,13 +27,19 @@ def load_inputs():
     with open('atk/data/device_lib.json') as f:
         dlib = json.load(f)
 
+    rotation = nl.get('constraints', {}).get('rotation', {})
+
     solver_devs = {}
     for d in nl['devices']:
         lib = dlib[d['type']]
         bbox = lib['bbox']
+        w = (bbox[2] - bbox[0]) / 1000.0
+        h = (bbox[3] - bbox[1]) / 1000.0
+        if d['name'] in rotation and rotation[d['name']] == 90:
+            w, h = h, w
         solver_devs[d['name']] = {
-            'w': (bbox[2] - bbox[0]) / 1000.0,
-            'h': (bbox[3] - bbox[1]) / 1000.0,
+            'w': w,
+            'h': h,
             'type': d['type'],
             'has_nwell': d['has_nwell'],
             'nwell_net': d['nwell_net'],
@@ -57,7 +63,8 @@ def solve():
     c = nl['constraints']
 
     placer = ConstraintPlacer(solver_devs, grid=0.10)
-    placer.setup(max_width=196.0, max_height=300.0)
+    # TTIHP 1×2 tile: 202.08 × 313.74 µm (leave margin for edge keepout)
+    placer.setup(max_width=200.0, max_height=310.0)
 
     # 1. Row groups
     for row_name, row_def in c['row_groups'].items():
@@ -94,10 +101,23 @@ def solve():
     for kc in c['matching']['keep_close']:
         placer.add_adjacent(kc['devices'][0], kc['devices'][1], kc['max_distance_um'])
 
-    # 6. Y alignment (row names)
+    # 6. Y alignment (device names — shared Y via row_y lookup)
     for ya in c['y_align']:
-        for i in range(len(ya) - 1):
-            placer.add_same_y(ya[i], ya[i + 1])
+        if len(ya) < 2:
+            continue
+        # y_align entries are device names; find their rows and align
+        # Each device is the sole member of its row (VCO per-stage)
+        # Find the row for each device
+        dev_to_row = {}
+        for rn, rd in c['row_groups'].items():
+            for d in rd['devices']:
+                dev_to_row[d] = rn
+        first_row = dev_to_row.get(ya[0])
+        if first_row and first_row in placer.row_y:
+            for dev in ya[1:]:
+                row = dev_to_row.get(dev)
+                if row and row in placer.row_y:
+                    placer.add_same_y(first_row, row)
 
     # 7. X alignment (device columns)
     for xa in c['x_align']:
@@ -107,6 +127,32 @@ def solve():
     # 8. X ordering
     for xo in c['x_order']:
         placer.add_x_order(xo['a'], xo['b'], min_gap_um=xo['min_gap_um'])
+
+    # 8b. Floorplan zone regions (hierarchical placement)
+    if 'floorplan' in c:
+        for zone_name, region in c['floorplan'].items():
+            # Get device names for this zone from isolation.zones
+            zone_devs = []
+            for z in c.get('isolation', {}).get('zones', []):
+                if z['name'] == zone_name:
+                    zone_devs = z['devices']
+                    break
+            if zone_devs:
+                placer.add_device_region(
+                    zone_devs,
+                    region['x_min'], region['y_min'],
+                    region['x_max'], region['y_max'])
+
+    # 8c. Sub-regions (dual-column splits within zones)
+    if 'sub_regions' in c:
+        for sr_name, sr in c['sub_regions'].items():
+            sr_devs = []
+            for rn in sr['rows']:
+                sr_devs.extend(c['row_groups'][rn]['devices'])
+            placer.add_device_region(
+                sr_devs,
+                sr['x_min'], sr['y_min'],
+                sr['x_max'], sr['y_max'])
 
     # 9. Electrical proximity: VCO inverter pairing (MPu↔MPd drain-drain)
     if 'electrical_proximity' in c:
@@ -119,9 +165,10 @@ def solve():
 
     # 10. HBT extra spacing (wider gap for CntB.h1, halo already inflated in load_inputs)
     hbt_devs = [d['name'] for d in nl['devices'] if d['type'].startswith('hbt_')]
-    others = [d['name'] for d in nl['devices'] if not d['type'].startswith('hbt_')]
-    hbt_pairs = [(h, o) for h in hbt_devs for o in others]
-    placer._add_no_overlap_pairs(hbt_pairs, c['drc_spacing']['hbt_gap_nm'] / 1000.0)
+    if hbt_devs:
+        others = [d['name'] for d in nl['devices'] if not d['type'].startswith('hbt_')]
+        hbt_pairs = [(h, o) for h in hbt_devs for o in others]
+        placer._add_no_overlap_pairs(hbt_pairs, c['drc_spacing']['hbt_gap_nm'] / 1000.0)
 
     # 11. Global no-overlap (default gap)
     placer.add_no_overlap(min_gap_um=c['drc_spacing']['default_gap_nm'] / 1000.0)
@@ -136,20 +183,23 @@ def solve():
 
     # 13. Wirelength-aware objective + edge keepout
     # Build device_pins map from device_lib for HPWL computation
+    rotation = c.get('rotation', {})
     signal_nets = [n for n in nl['nets'] if n['type'] == 'signal']
     device_pins = {}
     for d in nl['devices']:
         lib = dlib.get(d['type'], {})
         pins = lib.get('pins', {})
         bbox = lib.get('bbox', [0, 0, 0, 0])
-        ox = bbox[0] / 1000.0  # nm → µm offset
+        w_orig = (bbox[2] - bbox[0]) / 1000.0
         for pin_name, pin_info in pins.items():
             pos = pin_info.get('pos_nm', [0, 0])
             # Pin position relative to device placement origin (µm)
-            device_pins[(d['name'], pin_name)] = (
-                (pos[0] - bbox[0]) / 1000.0,
-                (pos[1] - bbox[1]) / 1000.0,
-            )
+            px = (pos[0] - bbox[0]) / 1000.0
+            py = (pos[1] - bbox[1]) / 1000.0
+            # Rotation: 90° CCW → (px, py) → (py, w_orig - px)
+            if d['name'] in rotation and rotation[d['name']] == 90:
+                px, py = py, w_orig - px
+            device_pins[(d['name'], pin_name)] = (px, py)
 
     if signal_nets and device_pins:
         placer.set_nets(signal_nets, device_pins)
@@ -161,16 +211,20 @@ def solve():
     if 'edge_keepout' in c:
         placer.add_edge_keepout(c['edge_keepout']['margin_um'])
 
-    # 13. Solve (WORKFLOW.md: seed=42, 60s, 1 worker)
+    # 13b. Aspect ratio constraint
+    if 'max_aspect_ratio' in c:
+        placer.add_max_aspect(c['max_aspect_ratio'])
+
+    # 14. Solve (WORKFLOW.md: seed=42, 60s, 1 worker)
     print('=== CP-SAT Placement Solver (Phase 2) ===')
     placer.print_summary()
     print()
-    result = placer.solve(time_limit=60.0)
+    result, status = placer.solve(time_limit=600.0)  # 249 devices: allow more time
 
-    return result, nl, solver_devs, c
+    return result, status, nl, solver_devs, c
 
 
-def build_placement_json(result, nl, solver_devs, constraints):
+def build_placement_json(result, status, nl, solver_devs, constraints):
     """Build enriched placement.json from solver result + netlist constraints."""
     c = constraints
     hbt_halo = c['drc_spacing'].get('hbt_halo_um', 0.0)
@@ -195,15 +249,19 @@ def build_placement_json(result, nl, solver_devs, constraints):
     max_y = max(y + solver_devs[n]['h'] for n, (x, y) in result.items()) + edge_margin
 
     # Instances (real device positions/sizes)
+    rotation = c.get('rotation', {})
     instances = {}
     for name, (x, y) in real_result.items():
-        instances[name] = {
+        inst = {
             'x_um': round(x, 2),
             'y_um': round(y, 2),
             'type': real_devs[name]['type'],
             'w_um': round(real_devs[name]['w'], 2),
             'h_um': round(real_devs[name]['h'], 2),
         }
+        if name in rotation:
+            inst['rotation'] = rotation[name]
+        instances[name] = inst
     # HBT halos (for visualization)
     hbt_halos = {}
     if hbt_halo > 0:
@@ -287,7 +345,7 @@ def build_placement_json(result, nl, solver_devs, constraints):
 
     data = {
         'version': '2.1',
-        'solver_status': 'OPTIMAL',
+        'solver_status': status,
         'bounding_box': {
             'w_um': round(max_x, 2),
             'h_um': round(max_y, 2),
@@ -303,10 +361,10 @@ def build_placement_json(result, nl, solver_devs, constraints):
 
 
 def main():
-    result, nl, solver_devs, constraints = solve()
+    result, status, nl, solver_devs, constraints = solve()
 
     if result is None:
-        print('\nPlacement FAILED — check constraints')
+        print(f'\nPlacement FAILED ({status}) — check constraints')
         sys.exit(1)
 
     # Print coordinates
@@ -317,7 +375,7 @@ def main():
         print(f'    {name:10s}  ({x:6.2f}, {y:6.2f})  {dev["w"]:.2f}x{dev["h"]:.2f}')
 
     # Build enriched placement.json
-    data = build_placement_json(result, nl, solver_devs, constraints)
+    data = build_placement_json(result, status, nl, solver_devs, constraints)
 
     # Write output — canonical path from atk.paths
     from atk.paths import PLACEMENT_JSON
