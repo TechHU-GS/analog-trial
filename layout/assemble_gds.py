@@ -2833,13 +2833,20 @@ def main():
     print(f'  Trim index: {len(_route_m1_shapes)} route M1 ({_ap_stub_count} AP stubs)'
           f' + {len(_power_m1_shapes)} power M1 (cross-net)')
     tie_layer_cache = {}
+    # Build cross-net tie M1 index for tie-vs-tie overlap check
+    _tie_m1_by_net = {}  # net → [(xl, yb, xr, yt), ...]
+    for _t in ties.get('ties', []):
+        _tn = _t.get('net', 'gnd')
+        for _r in _t.get('layers', {}).get('M1_8_0', []):
+            _tie_m1_by_net.setdefault(_tn, []).append(tuple(_r))
+
     _tie_m1_trimmed = 0
     _CONT_LD = (6, 0)
     _M1_LD = (8, 0)
     for tie in ties.get('ties', []):
         tid = tie['id']
         tie_net = tie.get('net', 'gnd')  # ntap→vdd, ptap→gnd
-        # Check if tie M1 conflicts with routing/power M1.
+        # Check if tie M1 conflicts with routing/power M1 or cross-net tie M1.
         # If so, shrink tie M1 and drop exposed Conts.
         m1_rects = tie.get('layers', {}).get('M1_8_0', [])
         _trimmed_m1 = {}  # index → new rect (or None to skip)
@@ -2883,6 +2890,25 @@ def main():
                     y_gap_bot = m1r[1] - pw[3]
                     if -200 < y_gap_bot < M1_MIN_S:
                         new_bot = max(new_bot, pw[3] + M1_MIN_S)
+            # Check against cross-net tie M1 bars (tie-vs-tie overlap)
+            for _xnet in ('gnd', 'vdd'):
+                if _xnet == tie_net:
+                    continue
+                for tw in _tie_m1_by_net.get(_xnet, []):
+                    x_ov = min(m1r[2], tw[2]) - max(m1r[0], tw[0])
+                    if x_ov <= 0:
+                        continue
+                    y_ov = min(m1r[3], tw[3]) - max(m1r[1], tw[1])
+                    if y_ov > 0:
+                        new_top = min(new_top, tw[1] - M1_MIN_S)
+                        new_bot = max(new_bot, tw[3] + M1_MIN_S)
+                    else:
+                        y_gap_top = tw[1] - m1r[3]
+                        if -200 < y_gap_top < M1_MIN_S:
+                            new_top = min(new_top, tw[1] - M1_MIN_S)
+                        y_gap_bot = m1r[1] - tw[3]
+                        if -200 < y_gap_bot < M1_MIN_S:
+                            new_bot = max(new_bot, tw[3] + M1_MIN_S)
             if new_top != m1r[3] or new_bot != m1r[1]:
                 # Enforce M1.d min area
                 w_m1 = m1r[2] - m1r[0]
@@ -3287,6 +3313,26 @@ def main():
                                    min(_m3v[1], _m3v[3]),
                                    max(_m3v[1], _m3v[3])))
 
+    def _m3_pad_near_xnet_rail(px, py, drop_net):
+        """Check if an M3 pad at (px, py) is within M3_MIN_S of a cross-net rail.
+        Returns True if the pad would bridge to a cross-net rail."""
+        hp = VIA2_PAD_M3 // 2
+        pad_bot = py - hp
+        pad_top = py + hp
+        _fam = 'gnd' if 'gnd' in drop_net else 'vdd'
+        for _rn, _rl in all_rails.items():
+            _rfam = 'gnd' if 'gnd' in _rl.get('net', _rn) else 'vdd'
+            if _rfam == _fam:
+                continue  # same family
+            rh = _rl['width'] // 2
+            rail_bot = _rl['y'] - rh
+            rail_top = _rl['y'] + rh
+            dist_above = pad_bot - rail_top
+            dist_below = rail_bot - pad_top
+            if dist_above < M3_MIN_S and dist_below < M3_MIN_S:
+                return True
+        return False
+
     def _check_m3b_bridge(bx, by, drop_net):
         """Check bridge via2 M3 pad at (bx, by) against cross-net M3 vbars.
 
@@ -3624,20 +3670,21 @@ def main():
                 if not excl:
                     # No crossing — draw via2 at pin + M3 vbar
                     v2 = drop['via2_pos']
-                    # Check if Via2 M3 pad would overlap cross-net M3 vbar
-                    _hp_v2_m3 = VIA2_PAD_M3 // 2
-                    _v2_m3_xnet = False
-                    for _vn, _vx, _vy1, _vy2 in _m3_vbar_index:
-                        if _vn == drop_net:
-                            continue
-                        _vhw = M3_MIN_W // 2
-                        if (v2[0] + _hp_v2_m3 > _vx - _vhw and
-                                v2[0] - _hp_v2_m3 < _vx + _vhw and
-                                v2[1] + _hp_v2_m3 > _vy1 and
-                                v2[1] - _hp_v2_m3 < _vy2):
-                            _v2_m3_xnet = True
-                            break
-                    if _v2_m3_xnet:
+                    # Check M3 pad vs cross-net vbar AND cross-net rail
+                    _skip_m3 = _m3_pad_near_xnet_rail(v2[0], v2[1], drop_net)
+                    if not _skip_m3:
+                        _hp_v2_m3 = VIA2_PAD_M3 // 2
+                        for _vn, _vx, _vy1, _vy2 in _m3_vbar_index:
+                            if _vn == drop_net:
+                                continue
+                            _vhw = M3_MIN_W // 2
+                            if (v2[0] + _hp_v2_m3 > _vx - _vhw and
+                                    v2[0] - _hp_v2_m3 < _vx + _vhw and
+                                    v2[1] + _hp_v2_m3 > _vy1 and
+                                    v2[1] - _hp_v2_m3 < _vy2):
+                                _skip_m3 = True
+                                break
+                    if _skip_m3:
                         via2_cut_m2(top, li_v2, li_m2, v2[0], v2[1])
                     else:
                         via2(top, li_v2, li_m2, li_m3, v2[0], v2[1])
@@ -3648,7 +3695,10 @@ def main():
                     # Pin via2 only if pin is NOT inside an exclusion zone
                     pin_in_excl = any(e[0] <= pin_y <= e[1] for e in excl)
                     if not pin_in_excl:
-                        via2(top, li_v2, li_m2, li_m3, pin_x, pin_y)
+                        if _m3_pad_near_xnet_rail(pin_x, pin_y, drop_net):
+                            via2_cut_m2(top, li_v2, li_m2, pin_x, pin_y)
+                        else:
+                            via2(top, li_v2, li_m2, li_m3, pin_x, pin_y)
 
                     # Draw M3 segments in gaps between exclusion zones
                     seg_y1 = vbar_y1
@@ -4054,6 +4104,80 @@ def main():
 
     # ── Multi-rail bridges (connect same-net M3 rails via M2 underpass) ──
     _draw_rail_bridges(top, li_m2, li_v2, li_m3, all_rails, m2_signal_segs)
+
+    # ── M3 cross-net rail proximity cleanup ──
+    # Remove non-rail M3 shapes within M3_MIN_S of a cross-net power rail.
+    # These shapes (Via2 pads, vbar segments, stubs) can bridge gnd↔vdd
+    # through the ptap→pwell global network + M3 proximity.
+    _m3_xnet_removed = 0
+    _rail_zones = []  # (y1, y2, family)
+    for _rn, _rl in all_rails.items():
+        _rh = _rl['width'] // 2
+        _rfam = 'gnd' if 'gnd' in _rl.get('net', _rn) else 'vdd'
+        _rail_zones.append((_rl['y'] - _rh, _rl['y'] + _rh, _rfam))
+    # Build M3 family markers: vbar bodies + Via2 pad envelopes + Via1 X positions
+    _m3_family_markers = []  # (xl, yb, xr, yt, family)
+    for _d in routing.get('power', {}).get('drops', []):
+        _dfam = 'gnd' if 'gnd' in _d['net'] else 'vdd'
+        _m3v = _d.get('m3_vbar')
+        if _m3v and _m3v[1] != _m3v[3]:
+            _vhw = M3_MIN_W // 2
+            _m3_family_markers.append((_m3v[0] - _vhw,
+                min(_m3v[1], _m3v[3]), _m3v[0] + _vhw,
+                max(_m3v[1], _m3v[3]), _dfam))
+        _v2 = _d.get('via2_pos')
+        if _v2:
+            _hp = VIA2_PAD_M3 // 2
+            _m3_family_markers.append((_v2[0] - _hp, _v2[1] - _hp,
+                _v2[0] + _hp, _v2[1] + _hp, _dfam))
+    for _si in list(top.shapes(li_m3)):
+        _b = _si.bbox()
+        if _b.width() > 100000:
+            continue  # skip rails
+        # Determine shape's net family from markers (vbar + Via2 pad)
+        _sfam = None
+        for _mx1, _my1, _mx2, _my2, _mfam in _m3_family_markers:
+            if (_b.left <= _mx2 and _b.right >= _mx1 and
+                    _b.bottom <= _my2 and _b.top >= _my1):
+                _sfam = _mfam
+                break
+        if _sfam is None:
+            continue  # can't determine family
+        _removed = False
+        # Check against cross-net rails
+        for _ry1, _ry2, _rfam in _rail_zones:
+            if _rfam == _sfam:
+                continue
+            _dist_above = _b.bottom - _ry2
+            _dist_below = _ry1 - _b.top
+            if (0 <= _dist_above <= M3_MIN_S or
+                    0 <= _dist_below <= M3_MIN_S or
+                    (_dist_above < 0 and _dist_below < 0)):
+                _si.delete()
+                _m3_xnet_removed += 1
+                _removed = True
+                break
+        if _removed:
+            continue
+        # Check against cross-net M3 vbars (the main bridge mechanism:
+        # ptap→pwell global network extends gnd M3 chain near vdd M3 vbars)
+        for _vn, _vx, _vy1, _vy2 in _m3_vbar_index:
+            _vfam = 'gnd' if 'gnd' in _vn else 'vdd'
+            if _vfam == _sfam:
+                continue
+            _vhw = M3_MIN_W // 2
+            _x_gap = max(_b.left - (_vx + _vhw), (_vx - _vhw) - _b.right)
+            if _x_gap > M3_MIN_S:
+                continue
+            _y_ov = min(_b.top, _vy2) - max(_b.bottom, _vy1)
+            if _y_ov <= 0:
+                continue
+            if _x_gap < M3_MIN_S:
+                _si.delete()
+                _m3_xnet_removed += 1
+                break
+    if _m3_xnet_removed:
+        print(f'  M3 cross-net rail cleanup: {_m3_xnet_removed} shapes removed')
 
     # ═══ 5. Draw signal routing ═══
     print('\n  === Drawing signal routes ===')
