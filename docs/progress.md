@@ -176,13 +176,36 @@ NWell island 与有 vdd drop 的 neighbor 没有物理 NWell 连接 → bulk 浮
 **验证修法**: NWell bridge fill — 画 NWell rectangle 连接 isolated island 到
 有 vdd drop 的 neighbor island。PM_cas_diode 单点验证：15→14 wrong bulk ✅。
 
-**代码化方向**: 在 assembly 中系统性添加 NWell island bridges。
-对每个 disconnected NWell island，找最近的 vdd-connected neighbor，画 NWell fill。
+**NWell bridge 验证结果 (2026-03-16 10:10):**
+
+7 safe bridges tested individually → 6 PMOS fixed (15→9 wrong bulk).
+1 bridge (Mchop2p→Mp_load_n) causes merge — too tall, crosses signal routing.
+Remaining 9 wrong-bulk PMOS: Mchop2p, Mdac_tg1p/2p, SW1p, + others in islands
+without safe bridge paths.
+
+| Bridge | From → To | Size | Safe? |
+|--------|-----------|------|-------|
+| Mchop1p→Mp_load_p | [43200,70215]-[45000,82000] | 1800×11785 | ✅ |
+| Mchop2p→Mp_load_n | [48880,70215]-[50680,82000] | 1800×11785 | ❌ merge |
+| PM_cas1→PM_cas_ref | [119800,105215]-[123100,109500] | 3300×4285 | ✅ |
+| PM_cas2→PM_mir1 | [127800,106215]-[130900,109500] | 3100×3285 | ✅ |
+| PM_cas3→PM_mir1 | [135400,106215]-[139100,109500] | 3700×3285 | ✅ |
+| PM_cas_diode→PM_cas_ref | [112000,105215]-[115300,109500] | 3300×4285 | ✅ |
+| SW2p→M_db1_p | [147000,82035]-[152070,85500] | 5070×3465 | ✅ |
+| SW3p→M_nb_p1 | [151070,82035]-[152870,85500] | 1800×3465 | ✅ |
+
+**⚠️ Side-effect discovered**: 7 bridges fixed 12 devices but broke 6 others (net: 15→9).
+NWell fill changes Region merge topology — not a simple additive fix.
 
 ### 下一步
 
-- 批量实现 NWell island bridge fills（12 个 island）
-- 或：先 commit 当前进展，新 session 执行
+NWell island problem needs more systematic approach:
+- Option A: Careful per-island NWell analysis before adding bridges
+- Option B: Independent ntap→vdd via_stack chains (avoid NWell topology changes)
+- Option C: Accept current state (merged=0 is the major win) and revisit later
+
+**Session summary**: merged=0 code-level ✅, 15→9 wrong-bulk (partial fix),
+358→351 unmatched nets. DRC 116 violations untouched.
 
 ### 教训（累积，每条都踩过坑）
 
