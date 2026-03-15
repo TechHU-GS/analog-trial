@@ -164,11 +164,25 @@ python3 ~/pdk/IHP-Open-PDK/.../lvs/run_lvs.py --layout=output/ptat_vco.gds \
 → Routing: 133/0 intact
 ```
 
+### LVS Mismatch 主因：12 disconnected NWell islands (2026-03-16 10:00)
+
+**358 unmatched nets 的主因**：15 PMOS on 12 NWell islands have bulk NOT on vdd.
+Pre-existing issue masked by the merge.
+
+**根因**: Signal-only PMOS (transmission gates, cascodes) 没有 vdd power drop。
+ntap tie 只到 M1，无 Via1→M2→Via2→M3→vdd rail chain。
+NWell island 与有 vdd drop 的 neighbor 没有物理 NWell 连接 → bulk 浮空。
+
+**验证修法**: NWell bridge fill — 画 NWell rectangle 连接 isolated island 到
+有 vdd drop 的 neighbor island。PM_cas_diode 单点验证：15→14 wrong bulk ✅。
+
+**代码化方向**: 在 assembly 中系统性添加 NWell island bridges。
+对每个 disconnected NWell island，找最近的 vdd-connected neighbor，画 NWell fill。
+
 ### 下一步
 
-- Commit 当前代码
-- 进入 DRC 阶段（M3 80nm gap 等 DRC violations 待处理）
-- 或继续优化 LVS mismatch count
+- 批量实现 NWell island bridge fills（12 个 island）
+- 或：先 commit 当前进展，新 session 执行
 
 ### 教训（累积，每条都踩过坑）
 

@@ -2853,16 +2853,27 @@ def main():
         for mi, m1r in enumerate(m1_rects):
             new_top = m1r[3]
             new_bot = m1r[1]
-            # Check against signal routing M1 + AP m1_stubs (always trim)
+            # Check against signal routing M1 + AP m1_stubs
+            # ntap (vdd) ties: skip actual-overlap trim to preserve NWell
+            # connectivity. The M3 cleanup handles the LVS bridge.
+            _is_ntap = (tie_net == 'vdd')
             for w in _route_m1_shapes:
                 x_ov = min(m1r[2], w[2]) - max(m1r[0], w[0])
                 if x_ov <= 0:
                     continue
                 y_ov = min(m1r[3], w[3]) - max(m1r[1], w[1])
                 if y_ov > 0:
-                    # Actual spatial overlap — force trim both sides
-                    new_top = min(new_top, w[1] - M1_MIN_S)
-                    new_bot = max(new_bot, w[3] + M1_MIN_S)
+                    if _is_ntap:
+                        # Gentle single-side trim: avoid dropping ntap
+                        y_gap_top = w[1] - m1r[3]
+                        if -200 < y_gap_top < M1_MIN_S:
+                            new_top = min(new_top, w[1] - M1_MIN_S)
+                        y_gap_bot = m1r[1] - w[3]
+                        if -200 < y_gap_bot < M1_MIN_S:
+                            new_bot = max(new_bot, w[3] + M1_MIN_S)
+                    else:
+                        new_top = min(new_top, w[1] - M1_MIN_S)
+                        new_bot = max(new_bot, w[3] + M1_MIN_S)
                 else:
                     # Near-miss — use gap threshold
                     y_gap_top = w[1] - m1r[3]
@@ -2880,9 +2891,16 @@ def main():
                     continue
                 y_ov = min(m1r[3], pw[3]) - max(m1r[1], pw[1])
                 if y_ov > 0:
-                    # Actual spatial overlap — force trim both sides
-                    new_top = min(new_top, pw[1] - M1_MIN_S)
-                    new_bot = max(new_bot, pw[3] + M1_MIN_S)
+                    if _is_ntap:
+                        y_gap_top = pw[1] - m1r[3]
+                        if -200 < y_gap_top < M1_MIN_S:
+                            new_top = min(new_top, pw[1] - M1_MIN_S)
+                        y_gap_bot = m1r[1] - pw[3]
+                        if -200 < y_gap_bot < M1_MIN_S:
+                            new_bot = max(new_bot, pw[3] + M1_MIN_S)
+                    else:
+                        new_top = min(new_top, pw[1] - M1_MIN_S)
+                        new_bot = max(new_bot, pw[3] + M1_MIN_S)
                 else:
                     y_gap_top = pw[1] - m1r[3]
                     if -200 < y_gap_top < M1_MIN_S:
@@ -2891,7 +2909,10 @@ def main():
                     if -200 < y_gap_bot < M1_MIN_S:
                         new_bot = max(new_bot, pw[3] + M1_MIN_S)
             # Check against cross-net tie M1 bars (tie-vs-tie overlap)
-            for _xnet in ('gnd', 'vdd'):
+            # Only trim ptap (gnd) ties — ntap (vdd) must be preserved
+            # for NWell connectivity. ptap loss is less harmful (pwell backup).
+            if tie_net != 'vdd':
+              for _xnet in ('gnd', 'vdd'):
                 if _xnet == tie_net:
                     continue
                 for tw in _tie_m1_by_net.get(_xnet, []):
@@ -2910,17 +2931,29 @@ def main():
                         if -200 < y_gap_bot < M1_MIN_S:
                             new_bot = max(new_bot, tw[3] + M1_MIN_S)
             if new_top != m1r[3] or new_bot != m1r[1]:
-                # Enforce M1.d min area
-                w_m1 = m1r[2] - m1r[0]
-                min_h = (M1_MIN_AREA + w_m1 - 1) // w_m1
-                min_h = ((min_h + 4) // 5) * 5
-                if new_top - new_bot < min_h:
-                    # Anchor at bottom, extend top
-                    new_top = max(new_top, new_bot + min_h)
-                new_top = ((new_top + 2) // 5) * 5
-                new_bot = ((new_bot + 2) // 5) * 5
-                _trimmed_m1[mi] = [m1r[0], new_bot, m1r[2], new_top]
-                _tie_m1_trimmed += 1
+                # Displacement guard: if trim moves bar center > 500nm, drop it
+                orig_cy = (m1r[1] + m1r[3]) // 2
+                new_cy = (new_bot + new_top) // 2
+                if new_top <= new_bot or abs(new_cy - orig_cy) > 500:
+                    # Degenerate or excessive displacement — drop entire bar
+                    _trimmed_m1[mi] = None  # signal to skip
+                    _tie_m1_trimmed += 1
+                else:
+                    # Enforce M1.d min area
+                    w_m1 = m1r[2] - m1r[0]
+                    min_h = (M1_MIN_AREA + w_m1 - 1) // w_m1
+                    min_h = ((min_h + 4) // 5) * 5
+                    if new_top - new_bot < min_h:
+                        new_top = max(new_top, new_bot + min_h)
+                    new_top = ((new_top + 2) // 5) * 5
+                    new_bot = ((new_bot + 2) // 5) * 5
+                    # Final displacement check after grid snap
+                    final_cy = (new_bot + new_top) // 2
+                    if abs(final_cy - orig_cy) > 500:
+                        _trimmed_m1[mi] = None
+                    else:
+                        _trimmed_m1[mi] = [m1r[0], new_bot, m1r[2], new_top]
+                    _tie_m1_trimmed += 1
 
         for layer_key, rects in tie.get('layers', {}).items():
             ld = _parse_tie_layer(layer_key)
@@ -2932,11 +2965,15 @@ def main():
             li = tie_layer_cache[ld]
             for ri, rect in enumerate(rects):
                 if ld == _M1_LD and ri in _trimmed_m1:
-                    draw_rect(top, li, _trimmed_m1[ri])
+                    if _trimmed_m1[ri] is not None:
+                        draw_rect(top, li, _trimmed_m1[ri])
+                    # else: dropped (overlap/displacement)
+                    continue
                 elif ld == _CONT_LD and _trimmed_m1:
-                    # Drop Conts not fully enclosed by trimmed M1.
-                    # M1 must enclose Cont with min enclosure (M1.c/M1.c1).
+                    # Drop Conts when M1 is dropped or trimmed
                     m1_new = list(_trimmed_m1.values())[0]
+                    if m1_new is None:
+                        continue  # M1 dropped — drop all Conts too
                     if (rect[0] < m1_new[0] or rect[2] > m1_new[2]
                             or rect[1] < m1_new[1] or rect[3] > m1_new[3]):
                         continue  # Cont not fully inside trimmed M1 — skip
