@@ -1,0 +1,68 @@
+source("output/ptat_vco.gds", "ptat_vco")
+flat
+
+# Layer definitions
+metal1 = input(8, 0); metal2 = input(10, 0); metal3 = input(30, 0)
+metal4 = input(50, 0); via1 = input(19, 0); via2 = input(29, 0)
+via3 = input(49, 0); cont_drw = input(6, 0)
+metal1_text = labels(8, 25); metal2_text = labels(10, 25); metal3_text = labels(30, 25)
+
+# ── Build pmos_bias chain from M2 label ──
+pb_m2 = metal2.interacting(metal2_text.texts("pmos_bias"))
+pb_m1 = metal1.interacting(via1.interacting(pb_m2))
+pb_m2_2 = metal2.interacting(via1.interacting(pb_m1))
+pb_m1 = pb_m1.join(metal1.interacting(via1.interacting(pb_m2_2)))
+# Also from M1 labels
+pb_m1_lbl = metal1.interacting(metal1_text.texts("pmos_bias"))
+pb_m1 = pb_m1.join(pb_m1_lbl)
+pb_m3 = metal3.interacting(via2.interacting(pb_m2.join(pb_m2_2)))
+pb_m4 = metal4.interacting(via3.interacting(pb_m3))
+
+$stdout.puts "=== pmos_bias chain ==="
+$stdout.puts "  M1=#{pb_m1.count} M2=#{pb_m2.count}+#{pb_m2_2.count} M3=#{pb_m3.count} M4=#{pb_m4.count}"
+
+# ── Build gnd chain from M3 label ──
+gnd_m3 = metal3.interacting(metal3_text.texts("gnd"))
+gnd_v2 = via2.interacting(gnd_m3)
+gnd_m2 = metal2.interacting(gnd_v2)
+gnd_v1 = via1.interacting(gnd_m2)
+gnd_m1 = metal1.interacting(gnd_v1)
+# Second hop: gnd M1 → Via1 → more M2 → Via1 → more M1
+gnd_m2_2 = metal2.interacting(via1.interacting(gnd_m1))
+gnd_m1_2 = metal1.interacting(via1.interacting(gnd_m2_2))
+gnd_m1_all = gnd_m1.join(gnd_m1_2)
+# M4 path
+gnd_m4 = metal4.interacting(via3.interacting(gnd_m3))
+gnd_m3_from_m4 = metal3.interacting(via3.interacting(gnd_m4))
+gnd_m2_from_m3 = metal2.interacting(via2.interacting(gnd_m3.join(gnd_m3_from_m4)))
+gnd_m1_from_m2 = metal1.interacting(via1.interacting(gnd_m2_from_m3))
+gnd_m1_all = gnd_m1_all.join(gnd_m1_from_m2)
+
+$stdout.puts "\n=== gnd chain ==="
+$stdout.puts "  M1=#{gnd_m1_all.count} M2=#{gnd_m2.count}+#{gnd_m2_2.count} M3=#{gnd_m3.count} M4=#{gnd_m4.count}"
+
+# ── Find M1 overlap/touching between pmos_bias and gnd ──
+pb_touching_gnd = pb_m1.interacting(gnd_m1_all)
+gnd_touching_pb = gnd_m1_all.interacting(pb_m1)
+
+$stdout.puts "\n=== M1 bridges ==="
+$stdout.puts "pmos_bias M1 touching gnd M1: #{pb_touching_gnd.count}"
+pb_touching_gnd.each do |p|
+  b = p.bbox
+  $stdout.puts "  PB: [#{b.left},#{b.bottom}]-[#{b.right},#{b.top}] #{b.width}x#{b.height}"
+end
+$stdout.puts "gnd M1 touching pmos_bias M1: #{gnd_touching_pb.count}"
+gnd_touching_pb.each do |p|
+  b = p.bbox
+  $stdout.puts "  GND: [#{b.left},#{b.bottom}]-[#{b.right},#{b.top}] #{b.width}x#{b.height}"
+end
+
+# ── Also check M2 level ──
+pb_m2_all = pb_m2.join(pb_m2_2)
+gnd_m2_all = gnd_m2.join(gnd_m2_2).join(gnd_m2_from_m3)
+pb_m2_touching_gnd = pb_m2_all.interacting(gnd_m2_all)
+$stdout.puts "\npmos_bias M2 touching gnd M2: #{pb_m2_touching_gnd.count}"
+pb_m2_touching_gnd.each do |p|
+  b = p.bbox
+  $stdout.puts "  PB_M2: [#{b.left},#{b.bottom}]-[#{b.right},#{b.top}]"
+end

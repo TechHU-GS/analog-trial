@@ -12,7 +12,7 @@ Architecture:
 from atk.pdk import (
     UM, s5,
     M2_SIG_W, M2_MIN_S, M3_PWR_W, M3_MIN_S, M1_SIG_W,
-    VIA2_SZ, VIA2_PAD, MAZE_GRID,
+    VIA2_SZ, VIA2_PAD, VIA2_PAD_M3, MAZE_GRID,
     V2_MIN_S,
 )
 from atk.route.access import inst_bbox_nm, abs_pin_nm
@@ -243,7 +243,9 @@ def _resolve_m3_vbar_crossnet_spacing(drops):
     Vbar width = 200nm, so edge gap = |x1-x2| - 200nm.
     Need: |x1-x2| >= 200 + M3_MIN_S = 410nm center-to-center.
     """
-    MIN_CC = 200 + M3_MIN_S  # 410nm center-to-center
+    # Via2 M3 pad (380nm) extends beyond vbar (200nm), so effective
+    # M3 footprint at each vbar is pad-sized. Use pad-based center-to-center.
+    MIN_CC = VIA2_PAD_M3 + M3_MIN_S  # 590nm (was 410nm vbar-only)
 
     def _net_family(n):
         if 'gnd' in n: return 'gnd'
@@ -260,39 +262,103 @@ def _resolve_m3_vbar_crossnet_spacing(drops):
             continue  # zero-length
         vbar_drops.append((i, drop, v[0], _net_family(drop['net'])))
 
+    # Phase 1: Detect sandwiched vbars (cross-net on BOTH sides, no room to shift).
+    # Handle these FIRST by Y truncation / elimination, before the shift loop.
+    sandwiched = 0
+    for ii in range(len(vbar_drops)):
+        idx_i, drop_i, xi, fam_i = vbar_drops[ii]
+        vi = drop_i['m3_vbar']
+        if vi[1] == vi[3]:
+            continue
+        yi1, yi2 = min(vi[1], vi[3]), max(vi[1], vi[3])
+
+        # Find all cross-net vbars within MIN_CC that have Y overlap
+        left_conflicts = []   # cross-net vbars to the LEFT
+        right_conflicts = []  # cross-net vbars to the RIGHT
+        for jj in range(len(vbar_drops)):
+            if ii == jj:
+                continue
+            idx_j, drop_j, xj, fam_j = vbar_drops[jj]
+            if fam_i == fam_j:
+                continue
+            vj = drop_j['m3_vbar']
+            if vj[1] == vj[3]:
+                continue
+            cc = abs(xi - xj)
+            if cc >= MIN_CC:
+                continue
+            yj1, yj2 = min(vj[1], vj[3]), max(vj[1], vj[3])
+            if yi2 <= yj1 or yj2 <= yi1:
+                continue
+            if xj < xi:
+                left_conflicts.append((xj, yj1, yj2))
+            elif xj > xi:
+                right_conflicts.append((xj, yj1, yj2))
+
+        if not (left_conflicts and right_conflicts):
+            continue  # not sandwiched
+
+        # Check if total gap allows placement
+        left_max_x = max(c[0] for c in left_conflicts)
+        right_min_x = min(c[0] for c in right_conflicts)
+        total_gap = right_min_x - left_max_x
+        if total_gap >= 2 * MIN_CC:
+            continue  # enough room
+
+        # Sandwiched — try Y truncation to escape one side
+        pin_y = drop_i['via_y']
+        left_y_max = max(c[2] for c in left_conflicts)
+        right_y_max = max(c[2] for c in right_conflicts)
+        new_y1, new_y2 = yi1, yi2
+        # Raise bottom to clear left-side conflicts
+        if left_y_max < yi2 and left_y_max + 10 < pin_y - 200:
+            new_y1 = left_y_max + 10
+        # Or lower top to clear right-side conflicts
+        right_y_min = min(c[1] for c in right_conflicts)
+        if right_y_min > yi1 and right_y_min - 10 > pin_y + 200:
+            new_y2 = right_y_min - 10
+
+        if new_y2 - new_y1 > 200 and (new_y1 != yi1 or new_y2 != yi2):
+            drop_i['m3_vbar'] = [xi, new_y1, xi, new_y2]
+            vbar_drops[ii] = (idx_i, drop_i, xi, fam_i)
+            sandwiched += 1
+        else:
+            # Can't truncate — eliminate
+            drop_i['m3_vbar'] = [xi, pin_y, xi, pin_y]
+            vbar_drops[ii] = (idx_i, drop_i, xi, fam_i)
+            sandwiched += 1
+
+    if sandwiched:
+        print(f'  M3 vbar sandwich: {sandwiched} truncated/eliminated')
+
+    # Phase 2: Shift remaining conflicting vbars (single-side cases)
     shifted = 0
     for ii in range(len(vbar_drops)):
         idx_a, drop_a, xa, fam_a = vbar_drops[ii]
+        va = drop_a['m3_vbar']
+        if va[1] == va[3]:
+            continue  # eliminated
         for jj in range(ii + 1, len(vbar_drops)):
             idx_b, drop_b, xb, fam_b = vbar_drops[jj]
             if fam_a == fam_b:
-                continue  # same family
-
-            # Check Y overlap (vbars must have overlapping Y ranges to conflict)
-            va = drop_a['m3_vbar']
+                continue
             vb = drop_b['m3_vbar']
+            if vb[1] == vb[3]:
+                continue
             ya1, ya2 = min(va[1], va[3]), max(va[1], va[3])
             yb1, yb2 = min(vb[1], vb[3]), max(vb[1], vb[3])
             if ya2 <= yb1 or yb2 <= ya1:
-                continue  # no Y overlap
-
+                continue
             cc = abs(xa - xb)
             if cc >= MIN_CC:
-                continue  # already safe
-
-            # Need to shift one vbar. Shift the one whose X is adjustable
-            # (shift away from the other by the needed amount)
-            needed = MIN_CC - cc + 10  # +10nm safety margin
-            # Shift the second one (arbitrary choice — could optimize later)
+                continue
+            needed = MIN_CC - cc + 10
             if xa < xb:
                 new_xb = xb + needed
             else:
                 new_xb = xb - needed
-            # Snap to 5nm grid
             new_xb = ((new_xb + 2) // 5) * 5
-            # Update vbar
             drop_b['m3_vbar'] = [new_xb, vb[1], new_xb, vb[3]]
-            # Update via2_pos X to match
             if 'via2_pos' in drop_b:
                 drop_b['via2_pos'] = [new_xb, drop_b['via2_pos'][1]]
             vbar_drops[jj] = (idx_b, drop_b, new_xb, fam_b)
@@ -301,6 +367,96 @@ def _resolve_m3_vbar_crossnet_spacing(drops):
     if shifted:
         print(f'  M3 vbar cross-net spacing: {shifted} vbars shifted')
 
+    # Second stage: detect sandwiched vbars that STILL violate after shifting.
+    # A vbar is sandwiched when cross-net vbars exist on BOTH sides in X,
+    # with total gap < 2*MIN_CC (X-shift infeasible).
+    # Fix: truncate Y range to eliminate overlap with one side, or eliminate.
+    # Use effective MIN_CC that accounts for Via2 M3 pad width (380nm):
+    # pad extends 190nm beyond vbar center, so effective half-width = 190nm
+    # (not just vbar 100nm). Effective MIN_CC = 190 + 190 + M3_MIN_S.
+    EFF_MIN_CC = VIA2_PAD_M3 + M3_MIN_S  # 380 + 210 = 590nm (pad-to-pad)
+
+    # Rebuild vbar_drops after shifts
+    vbar_drops2 = []
+    for i, drop in enumerate(drops):
+        if drop['type'] != 'via_stack' or 'm3_vbar' not in drop:
+            continue
+        v = drop['m3_vbar']
+        if v[1] == v[3]:
+            continue
+        vbar_drops2.append((i, drop, v[0], _net_family(drop['net'])))
+
+    truncated = 0
+    eliminated = 0
+    for ii in range(len(vbar_drops2)):
+        idx_i, drop_i, xi, fam_i = vbar_drops2[ii]
+        vi = drop_i['m3_vbar']
+        yi1, yi2 = min(vi[1], vi[3]), max(vi[1], vi[3])
+
+        # Collect ALL cross-net vbars that conflict (cc < EFF_MIN_CC with Y overlap)
+        conflicts = []
+        for jj in range(len(vbar_drops2)):
+            if ii == jj:
+                continue
+            idx_j, drop_j, xj, fam_j = vbar_drops2[jj]
+            if fam_i == fam_j:
+                continue
+            cc = abs(xi - xj)
+            if cc >= EFF_MIN_CC:
+                continue
+            vj = drop_j['m3_vbar']
+            yj1, yj2 = min(vj[1], vj[3]), max(vj[1], vj[3])
+            y_ov_lo = max(yi1, yj1)
+            y_ov_hi = min(yi2, yj2)
+            if y_ov_hi <= y_ov_lo:
+                continue
+            conflicts.append((xj, yj1, yj2, cc, drop_j['inst']))
+
+        if not conflicts:
+            continue
+
+        # Check if sandwiched: conflicts on BOTH sides
+        left = [c for c in conflicts if c[0] < xi]
+        right = [c for c in conflicts if c[0] > xi]
+        if not (left and right):
+            continue  # single-side conflict, shift should handle it
+
+        # Sandwiched: try Y truncation to eliminate overlap with one side.
+        # Find the Y range where conflicts exist on each side.
+        left_y_max = max(c[2] for c in left)   # highest Y of left conflicts
+        right_y_max = max(c[2] for c in right)  # highest Y of right conflicts
+        left_y_min = min(c[1] for c in left)
+        right_y_min = min(c[1] for c in right)
+
+        pin_y = drop_i['via_y']
+        new_y1, new_y2 = yi1, yi2
+
+        # Try truncating from bottom (raise yi1) to escape left-side conflicts
+        if left_y_max < yi2:
+            candidate_y1 = left_y_max + 10  # just above left conflict range
+            if candidate_y1 < pin_y - 200:  # keep useful length from pin
+                new_y1 = max(new_y1, candidate_y1)
+
+        # Or truncate from top to escape right-side (less common)
+        if right_y_min > yi1:
+            candidate_y2 = right_y_min - 10
+            if candidate_y2 > pin_y + 200:
+                new_y2 = min(new_y2, candidate_y2)
+
+        if new_y1 != yi1 or new_y2 != yi2:
+            if new_y2 - new_y1 > 200:
+                drop_i['m3_vbar'] = [xi, new_y1, xi, new_y2]
+                truncated += 1
+            else:
+                drop_i['m3_vbar'] = [xi, pin_y, xi, pin_y]  # eliminate
+                eliminated += 1
+        else:
+            # Can't truncate either — eliminate
+            drop_i['m3_vbar'] = [xi, pin_y, xi, pin_y]
+            eliminated += 1
+
+    if truncated or eliminated:
+        print(f'  M3 vbar sandwich fix: {truncated} truncated, {eliminated} eliminated')
 
 
 def _shorten_vbars_near_signal_m3(drops):

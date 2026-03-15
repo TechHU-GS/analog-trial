@@ -1,0 +1,83 @@
+source("output/ptat_vco.gds", "ptat_vco")
+flat
+
+# Layer definitions (matching IHP deck)
+activ = input(1, 0)
+gatpoly = input(5, 0)
+psd_drw = input(14, 0)
+nsd_block = input(7, 0)  # NSD block (if used)
+nwell_drw = input(31, 0)
+salblock_drw = input(36, 0)
+cont_drw = input(6, 0)
+metal1 = input(8, 0)
+
+# Derive layers (matching general_derivations.lvs)
+chip = extent("*")
+pwell = chip.not(nwell_drw)
+nactiv = activ.not(psd_drw)
+pactiv = activ.and(psd_drw)
+
+# nsd_fet: NMOS S/D active (simplified — matches deck intent)
+nsd_fet = nactiv.not(nwell_drw).not(gatpoly)
+
+# ptap: P-type tap in pwell
+ptap = pactiv.and(pwell).not(gatpoly)
+
+# Salicide versions (exclude SalBlock)
+nsd_sal = nsd_fet.not(salblock_drw)
+ptap_sal = ptap.not(salblock_drw)
+
+# Salicide abutment: edges of nsd_sal touching edges of ptap_sal
+nsd_ptap_abutt = nsd_sal.edges.and(ptap_sal.edges).extended(:in => 1, :out => 1)
+
+$stdout.puts "=== nsd_ptap_abutt Analysis ==="
+$stdout.puts "nsd_fet shapes: #{nsd_fet.count}"
+$stdout.puts "ptap shapes: #{ptap.count}"
+$stdout.puts "nsd_sal shapes: #{nsd_sal.count}"
+$stdout.puts "ptap_sal shapes: #{ptap_sal.count}"
+$stdout.puts "SalBlock shapes: #{salblock_drw.count}"
+$stdout.puts ""
+$stdout.puts "nsd_ptap_abutt count: #{nsd_ptap_abutt.count}"
+
+nsd_ptap_abutt.each do |p|
+  b = p.bbox
+  $stdout.puts "  abutt: [#{b.left},#{b.bottom}]-[#{b.right},#{b.top}]"
+end
+
+# For each abutment, find which nsd_fet and ptap are involved
+if nsd_ptap_abutt.count > 0
+  $stdout.puts ""
+  $stdout.puts "=== Abutment Details ==="
+  nsd_involved = nsd_fet.interacting(nsd_ptap_abutt)
+  ptap_involved = ptap.interacting(nsd_ptap_abutt)
+  $stdout.puts "nsd_fet shapes at abutments: #{nsd_involved.count}"
+  nsd_involved.each do |p|
+    b = p.bbox
+    $stdout.puts "  nsd: [#{b.left},#{b.bottom}]-[#{b.right},#{b.top}] #{b.width}x#{b.height}"
+  end
+  $stdout.puts "ptap shapes at abutments: #{ptap_involved.count}"
+  ptap_involved.each do |p|
+    b = p.bbox
+    $stdout.puts "  ptap: [#{b.left},#{b.bottom}]-[#{b.right},#{b.top}] #{b.width}x#{b.height}"
+  end
+
+  # Also check: which M1 connects to these nsd_fet through Cont?
+  abutt_cont = cont_drw.interacting(nsd_involved)
+  abutt_m1 = metal1.interacting(abutt_cont)
+  $stdout.puts ""
+  $stdout.puts "M1 connected to abutting nsd_fet: #{abutt_m1.count}"
+end
+
+# Also check psd_ntap_abutt (PMOS S/D ↔ ntap)
+ntap = nactiv.and(nwell_drw).not(gatpoly)
+psd_fet = pactiv.and(nwell_drw).not(gatpoly)
+ntap_sal = ntap.not(salblock_drw)
+psd_sal = psd_fet.not(salblock_drw)
+psd_ntap_abutt = psd_sal.edges.and(ntap_sal.edges).extended(:in => 1, :out => 1)
+$stdout.puts ""
+$stdout.puts "=== psd_ntap_abutt (PMOS S/D ↔ ntap) ==="
+$stdout.puts "psd_ntap_abutt count: #{psd_ntap_abutt.count}"
+psd_ntap_abutt.each do |p|
+  b = p.bbox
+  $stdout.puts "  abutt: [#{b.left},#{b.bottom}]-[#{b.right},#{b.top}]"
+end
