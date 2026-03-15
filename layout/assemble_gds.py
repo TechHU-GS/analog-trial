@@ -909,11 +909,107 @@ def main():
 
     print(f'  Drew {gate_cont_count} gate contacts, {gate_bridge_count} poly bridges (ng>=4)')
 
-    # ═══ 2. Draw tie cells from ties.json ═══
+    # ═══ 2. Draw tie cells from ties.json (with M1 trim) ═══
+    # Build routing M1 index for tie M1 proximity check.
+    _route_m1_shapes = []  # (xl, yb, xr, yt)
+    _hw_m1 = M1_SIG_W // 2
+    for _rd_name in ('signal_routes', 'pre_routes'):
+        for _rnet, _rd in routing.get(_rd_name, {}).items():
+            for _seg in _rd.get('segments', []):
+                if len(_seg) < 5:
+                    continue
+                sx1, sy1, sx2, sy2, slyr = _seg[:5]
+                if slyr == 0:  # M1 wire
+                    if sx1 == sx2:
+                        _route_m1_shapes.append((sx1 - _hw_m1, min(sy1, sy2),
+                                                 sx1 + _hw_m1, max(sy1, sy2)))
+                    elif sy1 == sy2:
+                        _route_m1_shapes.append((min(sx1, sx2) - _hw_m1, sy1 - _hw_m1,
+                                                 max(sx1, sx2) + _hw_m1, sy1 + _hw_m1))
+                elif slyr == -1:  # via1 → M1 pad
+                    _vhp = VIA1_PAD_M1 // 2
+                    _route_m1_shapes.append((sx1 - _vhp, sy1 - _vhp,
+                                            sx1 + _vhp, sy1 + _vhp))
+
+    # Add signal AP M1 stubs
+    _power_pin_keys = set()
+    for _pd in routing.get('power', {}).get('drops', []):
+        _power_pin_keys.add(_pd.get('inst', '') + '.' + _pd.get('pin', ''))
+    for _apk, _apv in routing.get('access_points', {}).items():
+        if _apk in _power_pin_keys:
+            continue
+        _sig_stub = _apv.get('m1_stub')
+        if _sig_stub:
+            _route_m1_shapes.append((_sig_stub[0], _sig_stub[1],
+                                     _sig_stub[2], _sig_stub[3]))
+
+    # Build power drop M1 shapes with net labels
+    _power_m1_shapes = []  # (xl, yb, xr, yt, net_fam)
+    _v1hp = VIA1_PAD // 2
+    for _pdrop in routing.get('power', {}).get('drops', []):
+        _pnet = _pdrop.get('net', '')
+        _pnet_fam = 'gnd' if 'gnd' in _pnet else 'vdd'
+        if _pdrop.get('type') == 'via_stack':
+            _pv1 = _pdrop.get('via1_pos')
+            if _pv1:
+                _power_m1_shapes.append((_pv1[0] - _v1hp, _pv1[1] - _v1hp,
+                                         _pv1[0] + _v1hp, _pv1[1] + _v1hp, _pnet_fam))
+        _pap_key = _pdrop.get('inst', '') + '.' + _pdrop.get('pin', '')
+        _pap = routing.get('access_points', {}).get(_pap_key, {})
+        _pstub = _pap.get('m1_stub')
+        if _pstub:
+            _power_m1_shapes.append((_pstub[0], _pstub[1], _pstub[2], _pstub[3], _pnet_fam))
+
     print('\n  === Drawing ties ===')
     tie_layer_cache = {}
+    _tie_m1_trimmed = 0
+    _CONT_LD = (6, 0)
+    _M1_LD = (8, 0)
+    M1_MIN_AREA = 90000  # M1.d: min area
     for tie in ties.get('ties', []):
         tid = tie['id']
+        tie_type = tie.get('type', '')
+        tie_net = 'vdd' if 'ntap' in tie_type else 'gnd'
+        m1_rects = tie.get('layers', {}).get('M1_8_0', [])
+        _trimmed_m1 = {}
+        for mi, m1r in enumerate(m1_rects):
+            new_top = m1r[3]
+            new_bot = m1r[1]
+            # Check routing M1 overlap (threshold -200nm for deep overlaps)
+            for w in _route_m1_shapes:
+                x_ov = min(m1r[2], w[2]) - max(m1r[0], w[0])
+                if x_ov <= 0:
+                    continue
+                y_gap_top = w[1] - m1r[3]
+                if -200 < y_gap_top < M1_MIN_S:
+                    new_top = min(new_top, w[1] - M1_MIN_S)
+                y_gap_bot = m1r[1] - w[3]
+                if -200 < y_gap_bot < M1_MIN_S:
+                    new_bot = max(new_bot, w[3] + M1_MIN_S)
+            # Check cross-net power M1
+            for pw in _power_m1_shapes:
+                if pw[4] == tie_net:
+                    continue
+                x_ov = min(m1r[2], pw[2]) - max(m1r[0], pw[0])
+                if x_ov <= 0:
+                    continue
+                y_gap_top = pw[1] - m1r[3]
+                if -200 < y_gap_top < M1_MIN_S:
+                    new_top = min(new_top, pw[1] - M1_MIN_S)
+                y_gap_bot = m1r[1] - pw[3]
+                if -200 < y_gap_bot < M1_MIN_S:
+                    new_bot = max(new_bot, pw[3] + M1_MIN_S)
+            if new_top != m1r[3] or new_bot != m1r[1]:
+                w_m1 = m1r[2] - m1r[0]
+                min_h = (M1_MIN_AREA + w_m1 - 1) // w_m1
+                min_h = ((min_h + 4) // 5) * 5
+                if new_top - new_bot < min_h:
+                    new_top = max(new_top, new_bot + min_h)
+                new_top = ((new_top + 2) // 5) * 5
+                new_bot = ((new_bot + 2) // 5) * 5
+                _trimmed_m1[mi] = [m1r[0], new_bot, m1r[2], new_top]
+                _tie_m1_trimmed += 1
+
         for layer_key, rects in tie.get('layers', {}).items():
             ld = _parse_tie_layer(layer_key)
             if ld is None:
@@ -922,9 +1018,19 @@ def main():
             if ld not in tie_layer_cache:
                 tie_layer_cache[ld] = layout.layer(*ld)
             li = tie_layer_cache[ld]
-            for rect in rects:
-                draw_rect(top, li, rect)
-    print(f'  Drew {len(ties.get("ties", []))} ties')
+            for ri, rect in enumerate(rects):
+                if ld == _M1_LD and ri in _trimmed_m1:
+                    draw_rect(top, li, _trimmed_m1[ri])
+                elif ld == _CONT_LD and _trimmed_m1:
+                    m1_new = list(_trimmed_m1.values())[0] if _trimmed_m1 else rect
+                    if (rect[0] < m1_new[0] or rect[2] > m1_new[2]
+                            or rect[1] < m1_new[1] or rect[3] > m1_new[3]):
+                        continue
+                    draw_rect(top, li, rect)
+                else:
+                    draw_rect(top, li, rect)
+    print(f'  Drew {len(ties.get("ties", []))} ties'
+          f'{f" ({_tie_m1_trimmed} M1 trimmed)" if _tie_m1_trimmed else ""}')
 
     # ── NWell extensions ──
     li_nw = layout.layer(*NWELL)
@@ -1051,8 +1157,9 @@ def main():
                 pin_x = m3v[0]
                 pin_y = drop['via2_pos'][1]
                 rail_y = target_rail['y']
-                vbar_y1 = min(pin_y, rail_y)
-                vbar_y2 = max(pin_y, rail_y)
+                # Use truncated vbar Y range from power.py (respects rail conflicts)
+                vbar_y1 = min(m3v[1], m3v[3])
+                vbar_y2 = max(m3v[1], m3v[3])
 
                 # Collect exclusion zones (other nets' M3 rails)
                 # Clearance = rail half-width + M3.b spacing + VIA2 pad half
