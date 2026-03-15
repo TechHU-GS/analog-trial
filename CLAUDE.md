@@ -55,9 +55,9 @@ DRC violation 分类后按类型回退:
 ### 执行入口
 
 ```bash
-cd /private/tmp/analog-trial/layout
+cd /Users/techhu/Code/GS_IC/designs/analog-trial/layout
 source ~/pdk/venv/bin/activate
-bash run.sh
+bash run_all.sh
 ```
 
-**不要直接跑 l2_autoplace.py 或单独跑 DRC。用 run.sh。**
+**不要直接跑 assemble_gds.py 或单独跑 DRC。用 run_all.sh。**
