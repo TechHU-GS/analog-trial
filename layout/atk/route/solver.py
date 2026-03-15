@@ -16,7 +16,7 @@ import json
 from ..pdk import (
     UM, s5,
     M1_MIN_S, M2_MIN_S, V1_MIN_S,
-    M1_SIG_W, M2_SIG_W, M3_PWR_W, M1_THIN,
+    M1_SIG_W, M2_SIG_W, M3_PWR_W, M3_MIN_S, M1_THIN,
     VIA1_PAD, VIA1_PAD_M1, VIA1_SZ,
     VIA_CLEAR, HBT_VIA_CLEAR,
     DEV_MARGIN, HBT_MARGIN,
@@ -88,6 +88,7 @@ class RoutingSolver:
         self._pin_escape()             # clears soft only (safe_discard)
         self._reblock_pin_access()     # re-registers soft
         self._block_power_drops()      # permanent (skips pin terminals)
+        self._block_power_rails_m3()   # permanent M3 power rails
         self._signal_escape_recheck()  # re-open signal pins blocked by power
         print(f'  Router grid: {self.router.nx}×{self.router.ny} '
               f'({self.router.nx * self.router.ny} cells)')
@@ -452,6 +453,38 @@ class RoutingSolver:
               f'{m2_pad_count} M2 pads ({m2_pad_skip} skipped/via_access), '
               f'{m1_pad_count} M1 stubs'
               f'{f", {cross_exempt} cross-device exemptions" if cross_exempt else ""}')
+
+    def _block_power_rails_m3(self):
+        """Block M3 power rails as permanent obstacles on M3 layer.
+
+        M3 rails are horizontal bars spanning the full chip width.
+        Signal routes on M3 must avoid these areas.
+        Also blocks M3 vbar stubs from power drops.
+        """
+        from .maze_router import M3_LYR
+        m3_margin = M2_SIG_W // 2 + M3_MIN_S  # wire half-width + M3.b spacing = 360nm
+        count = 0
+        for rid, rail in self.rails.items():
+            y = rail['y']
+            hw = rail['width'] // 2
+            x1, x2 = rail.get('x1', self.router.x0), rail.get('x2', self.router.x1)
+            cells = self.router.block_rect(
+                x1, y - hw, x2, y + hw,
+                M3_LYR, margin=m3_margin, permanent=True)
+            count += len(cells)
+
+        # Block M3 vbar stubs from power drops
+        vbar_count = 0
+        for drop in self.power_drops:
+            if drop['type'] == 'via_stack' and 'm3_vbar' in drop:
+                vbar = drop['m3_vbar']
+                hw = 100  # half of 200nm vbar width
+                cells = self.router.block_rect(
+                    vbar[0] - hw, vbar[1], vbar[2] + hw, vbar[3],
+                    M3_LYR, margin=m3_margin, permanent=True)
+                vbar_count += len(cells)
+
+        print(f'  M3 power blocked: {count} rail cells, {vbar_count} vbar cells')
 
     def _signal_escape_recheck(self):
         """Re-open escape channels for signal pins trapped by power obstacles.

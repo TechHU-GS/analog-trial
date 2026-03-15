@@ -1,13 +1,14 @@
-"""Two-layer A* maze router for analog IC signal routing.
+"""Four-layer A* maze router for analog IC signal routing.
 
 Grid resolution from pdk.MAZE_GRID. Costs: same-layer step=1, via=VIA_COST.
 Supports multi-pin nets via sequential nearest-neighbor Steiner tree.
 
 Obstacle model:
-  permanent: device bbox, tie M1, power drops — never cleared by any unblock op.
+  permanent: device bbox, tie M1, power drops, M3 power rails — never cleared.
   soft:      pin access protection rings — clearable per-net for routing.
 
-Via positions marked on BOTH layers (via pads physically exist on M1 and M2).
+Via positions marked on BOTH adjacent layers (via pads physically exist on
+both metals).  Layer transitions: M1↔M2 (Via1), M2↔M3 (Via2), M3↔M4 (Via3).
 Wire positions marked on their own layer with margin from pdk.MAZE_MARGIN.
 """
 
@@ -16,10 +17,27 @@ from ..pdk import MAZE_GRID, MAZE_MARGIN, M2_SIG_W
 
 M1_LYR = 0
 M2_LYR = 1
+M3_LYR = 2
+M4_LYR = 3
+
+# Adjacent layer pairs for via transitions
+_VIA_PAIRS = {
+    (M1_LYR, M2_LYR),   # Via1
+    (M2_LYR, M3_LYR),   # Via2
+    (M3_LYR, M4_LYR),   # Via3
+}
+
+# For a given layer, which layers can be reached via a single via
+_VIA_NEIGHBORS = {
+    M1_LYR: (M2_LYR,),
+    M2_LYR: (M1_LYR, M3_LYR),
+    M3_LYR: (M2_LYR, M4_LYR),
+    M4_LYR: (M3_LYR,),
+}
 
 
 class MazeRouter:
-    """Two-layer (M1+M2) maze router using A* pathfinding."""
+    """Four-layer (M1+M2+M3+M4) maze router using A* pathfinding."""
 
     GRID = MAZE_GRID
     VIA_COST = 8
@@ -93,7 +111,7 @@ class MazeRouter:
     def unblock_radius(self, x_nm, y_nm, radius=5, layer=None):
         """Unblock cells around a point (respects permanent)."""
         gp = self.to_grid(x_nm, y_nm)
-        layers = (M1_LYR, M2_LYR) if layer is None else (layer,)
+        layers = (M1_LYR, M2_LYR, M3_LYR, M4_LYR) if layer is None else (layer,)
         for lyr in layers:
             for dx in range(-radius, radius + 1):
                 for dy in range(-radius, radius + 1):
@@ -109,7 +127,7 @@ class MazeRouter:
         Respects permanent blocks — only clears soft (pin access) cells.
         """
         if layers is None:
-            layers = (M1_LYR, M2_LYR)
+            layers = (M1_LYR, M2_LYR, M3_LYR, M4_LYR)
         if width_nm is None:
             width_nm = M2_SIG_W
         px, py = pin_nm
@@ -171,7 +189,7 @@ class MazeRouter:
         came_from = {}
         g_score = {}
 
-        layers = (start_layer,) if start_layer is not None else (M2_LYR, M1_LYR)
+        layers = (start_layer,) if start_layer is not None else (M4_LYR, M3_LYR, M2_LYR, M1_LYR)
         for layer in layers:
             s = (start_xy[0], start_xy[1], layer)
             if _passable(s):
@@ -202,15 +220,15 @@ class MazeRouter:
                             g_score[nb] = nc
                             came_from[nb] = cur
                             heapq.heappush(open_set, (nc + h(nx, ny), nc, nb))
-            # Via (layer change)
-            ol = 1 - layer
-            nb = (gx, gy, ol)
-            if _passable(nb):
-                nc = cost + self.VIA_COST
-                if nc < g_score.get(nb, float('inf')):
-                    g_score[nb] = nc
-                    came_from[nb] = cur
-                    heapq.heappush(open_set, (nc + h(gx, gy), nc, nb))
+            # Via (layer change) — try all adjacent layers
+            for ol in _VIA_NEIGHBORS.get(layer, ()):
+                nb = (gx, gy, ol)
+                if _passable(nb):
+                    nc = cost + self.VIA_COST
+                    if nc < g_score.get(nb, float('inf')):
+                        g_score[nb] = nc
+                        came_from[nb] = cur
+                        heapq.heappush(open_set, (nc + h(gx, gy), nc, nb))
 
         return None
 
@@ -330,7 +348,7 @@ class MazeRouter:
             for i, seg in enumerate(segs):
                 lyr = seg[4]
                 if lyr == -1:
-                    for l in (0, 1):
+                    for l in range(4):
                         pt_seg[(seg[0], seg[1], l)].add(i)
                 else:
                     pt_seg[(seg[0], seg[1], lyr)].add(i)
@@ -430,9 +448,9 @@ class MazeRouter:
                     nm_s = self.to_nm(g_start[0], g_start[1])
                     nm_e = self.to_nm(g_end[0], g_end[1])
                     bl_s = any((g_start[0], g_start[1], l) in self.blocked
-                               for l in (0, 1))
+                               for l in range(4))
                     bl_e = any((g_end[0], g_end[1], l) in self.blocked
-                               for l in (0, 1))
+                               for l in range(4))
                     print(f'    Router: {net_name} A* failed '
                           f'({nm_s[0]/1000:.1f},{nm_s[1]/1000:.1f})->'
                           f'({nm_e[0]/1000:.1f},{nm_e[1]/1000:.1f}) '
@@ -502,7 +520,7 @@ class MazeRouter:
             for i, seg in enumerate(segs):
                 x1, y1, x2, y2, layer = seg
                 if layer == -1:
-                    for lyr in (0, 1):
+                    for lyr in range(4):
                         pt_seg[(x1, y1, lyr)].add(i)
                 else:
                     pt_seg[(x1, y1, layer)].add(i)
@@ -543,11 +561,11 @@ class MazeRouter:
 
             comp_shapes = {}
             for ci, comp in enumerate(components):
-                shapes = {0: [], 1: []}
+                shapes = {lyr: [] for lyr in range(4)}
                 for idx in comp:
                     seg = segs[idx]
                     layer = seg[4]
-                    if layer in (0, 1):
+                    if layer in range(4):
                         shapes[layer].append(_seg_box(seg, hw))
                 comp_shapes[ci] = shapes
 
@@ -558,7 +576,7 @@ class MazeRouter:
                 for cj in range(ci + 1, len(components)):
                     if merged:
                         break
-                    for layer in (0, 1):
+                    for layer in range(4):
                         si = comp_shapes[ci][layer]
                         sj = comp_shapes[cj][layer]
                         if not si or not sj:
@@ -658,20 +676,26 @@ class MazeRouter:
                                 continue
                             self.used.add((nx, ny, layer))
 
-    def _mark_via_used(self, x_nm, y_nm):
-        """Mark a via position with margin on BOTH layers (no pin exemption).
+    def _mark_via_used(self, x_nm, y_nm, layer=None):
+        """Mark a via position with margin on ALL adjacent layers (no pin exemption).
 
-        Via pads (480nm M2, 370nm M1) are wider than signal wires (300nm).
-        At 1-cell distance (350nm), via pad overlaps adjacent wire:
-            350 - 240(via_half) - 150(wire_half) = -40nm overlap on M2.
-        So via margins must NOT exempt pin_terminals.
+        Via pads are wider than signal wires. At 1-cell distance, via pad
+        overlaps adjacent wire. So via margins must NOT exempt pin_terminals.
+
+        If layer is given, marks that layer + its _VIA_NEIGHBORS.
+        If None, marks M1+M2 (backward compat for Via1 junctions).
         """
         gx, gy = self.to_grid(x_nm, y_nm)
         margin = MAZE_MARGIN
+        if layer is not None:
+            layers_to_mark = [layer] + list(_VIA_NEIGHBORS.get(layer, ()))
+        else:
+            # Default: Via1 junction (M1+M2) — backward compat
+            layers_to_mark = [M1_LYR, M2_LYR]
         for dx in range(-margin, margin + 1):
             for dy in range(-margin, margin + 1):
-                self.used.add((gx + dx, gy + dy, M1_LYR))
-                self.used.add((gx + dx, gy + dy, M2_LYR))
+                for lyr in layers_to_mark:
+                    self.used.add((gx + dx, gy + dy, lyr))
 
     def _mark_used(self, path):
         """Mark path cells + margin as used (enforces DRC spacing).
@@ -700,7 +724,8 @@ class MazeRouter:
                         continue
                     self.used.add((nx, ny, layer))
                     if is_via:
-                        self.used.add((nx, ny, 1 - layer))
+                        for adj_lyr in _VIA_NEIGHBORS.get(layer, ()):
+                            self.used.add((nx, ny, adj_lyr))
 
     def _simplify(self, path):
         """Convert grid path to drawable segments."""
@@ -719,7 +744,11 @@ class MazeRouter:
                     x2, y2 = self.to_nm(*prev[:2])
                     segs.append((x1, y1, x2, y2, start[2]))
                 vx, vy = self.to_nm(*cur[:2])
-                segs.append((vx, vy, vx, vy, -1))
+                # Encode via type from layer transition:
+                # M1↔M2 = -1 (Via1), M2↔M3 = -2 (Via2), M3↔M4 = -3 (Via3)
+                _lo_lyr = min(prev[2], cur[2])
+                _via_code = -1 - _lo_lyr  # M1(0)→-1, M2(1)→-2, M3(2)→-3
+                segs.append((vx, vy, vx, vy, _via_code))
                 start = cur
                 prev_dir = None
             else:

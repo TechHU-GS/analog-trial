@@ -11,7 +11,7 @@ Architecture:
 
 from atk.pdk import (
     UM, s5,
-    M2_SIG_W, M2_MIN_S, M3_PWR_W, M1_SIG_W,
+    M2_SIG_W, M2_MIN_S, M3_PWR_W, M3_MIN_S, M1_SIG_W,
     VIA2_SZ, VIA2_PAD, MAZE_GRID,
     V2_MIN_S,
 )
@@ -105,7 +105,275 @@ def compute_power_drops(placement, access_points, rails, power_topology):
             drops.append(_make_via_stack_drop(net, inst, pin, placement, rail_y))
 
     _apply_vbar_jogs(drops, access_points)
+    _resolve_m3_vbar_rail_conflicts(drops, rails)
+    _resolve_m3_vbar_crossnet_spacing(drops)
+    _resolve_m3_vbar_crossnet_spacing(drops)  # second pass for cascaded shifts
     return drops
+
+
+def _resolve_m3_vbar_rail_conflicts(drops, rails):
+    """Truncate M3 vbars that cross ANY other-net M3 power rails.
+
+    Power nets are grouped by base name (vdd, vdd_vco, vdd_sd → all 'vdd-family';
+    gnd → 'gnd-family'). A gnd vbar crossing any vdd-family rail is a conflict.
+
+    When conflict detected: truncate vbar to stop before the nearest cross-net
+    rail boundary (with M3_MIN_S margin).
+    """
+    # Map rail net names to families
+    def _net_family(n):
+        if 'gnd' in n: return 'gnd'
+        if 'vdd' in n: return 'vdd'
+        return n
+
+    # Build rail zones
+    rail_zones = []  # (y_lo, y_hi, net, family)
+    for rid, rail in rails.items():
+        y = rail['y']
+        hw = rail['width'] // 2
+        rnet = rail.get('net', rid)
+        rail_zones.append((y - hw, y + hw, rnet, _net_family(rnet)))
+
+    fixed = 0
+    skipped = 0
+    for drop in drops:
+        if drop['type'] != 'via_stack' or 'm3_vbar' not in drop:
+            continue
+        vbar = drop['m3_vbar']
+        drop_net = drop['net']
+        drop_family = _net_family(drop_net)
+        vbar_y1, vbar_y2 = min(vbar[1], vbar[3]), max(vbar[1], vbar[3])
+        px = vbar[0]
+        pin_y = drop['via_y']
+        rail_y = drop['rail_y']
+
+        # Find ALL cross-family rail conflicts
+        conflicts = []
+        for ry1, ry2, rnet, rfam in rail_zones:
+            if rfam == drop_family:
+                continue  # same family, no conflict
+            if ry2 > vbar_y1 and ry1 < vbar_y2:
+                conflicts.append((ry1, ry2, rnet))
+
+        if not conflicts:
+            continue
+
+        # Find the cross-net rail closest to the pin (first obstacle encountered)
+        conflicts.sort(key=lambda c: abs((c[0]+c[1])/2 - pin_y))
+        nearest_ry1, nearest_ry2, nearest_rnet = conflicts[0]
+        margin = M3_MIN_S + 300 + M3_MIN_S  # 720nm: spacing + signal wire + spacing
+
+        if pin_y < rail_y:
+            # Vbar goes upward — truncate below nearest cross-net rail
+            new_top = nearest_ry1 - margin
+            if new_top > pin_y + 200:  # minimum useful vbar length
+                drop['m3_vbar'] = [px, pin_y, px, new_top]
+                fixed += 1
+            else:
+                # Vbar too short to be useful — skip entirely
+                drop['m3_vbar'] = [px, pin_y, px, pin_y]  # zero-length
+                skipped += 1
+        else:
+            # Vbar goes downward — truncate above nearest cross-net rail
+            new_bot = nearest_ry2 + margin
+            if new_bot < pin_y - 200:
+                drop['m3_vbar'] = [px, new_bot, px, pin_y]
+                fixed += 1
+            else:
+                drop['m3_vbar'] = [px, pin_y, px, pin_y]
+                skipped += 1
+
+    # Second pass: check vbar-vs-vbar cross-family conflicts
+    vbar_fixed = 0
+    for i, di in enumerate(drops):
+        if di['type'] != 'via_stack' or 'm3_vbar' not in di:
+            continue
+        vi = di['m3_vbar']
+        if vi[1] == vi[3]:
+            continue  # already eliminated
+        fi = _net_family(di['net'])
+        vi_y1, vi_y2 = min(vi[1], vi[3]), max(vi[1], vi[3])
+        vi_hw = 100
+        for j, dj in enumerate(drops):
+            if i == j:
+                continue
+            if dj['type'] != 'via_stack' or 'm3_vbar' not in dj:
+                continue
+            vj = dj['m3_vbar']
+            if vj[1] == vj[3]:
+                continue
+            fj = _net_family(dj['net'])
+            if fi == fj:
+                continue  # same family
+            vj_y1, vj_y2 = min(vj[1], vj[3]), max(vj[1], vj[3])
+            # Check X overlap (within 200nm = 2*hw)
+            if abs(vi[0] - vj[0]) > 200:
+                continue
+            # Check Y overlap
+            if vi_y2 > vj_y1 and vi_y1 < vj_y2:
+                # Conflict! Truncate the one that's closer to its pin
+                pin_y = di['via_y']
+                rail_y = di['rail_y']
+                if pin_y < rail_y:
+                    new_top = vj_y1 - M3_MIN_S
+                    if new_top > pin_y + 200:
+                        di['m3_vbar'] = [vi[0], pin_y, vi[0], new_top]
+                    else:
+                        di['m3_vbar'] = [vi[0], pin_y, vi[0], pin_y]
+                else:
+                    new_bot = vj_y2 + M3_MIN_S
+                    if new_bot < pin_y - 200:
+                        di['m3_vbar'] = [vi[0], new_bot, vi[0], pin_y]
+                    else:
+                        di['m3_vbar'] = [vi[0], pin_y, vi[0], pin_y]
+                vbar_fixed += 1
+                break  # one fix per drop
+
+    total = fixed + skipped + vbar_fixed
+    if total:
+        print(f'  M3 vbar conflicts: {fixed} rail-truncated, {skipped} eliminated, {vbar_fixed} vbar-truncated')
+
+
+def _resolve_m3_vbar_crossnet_spacing(drops):
+    """Shift M3 vbar X positions to maintain cross-net spacing.
+
+    When gnd and vdd M3 vbars from adjacent devices are too close in X
+    (edge gap < M3_MIN_S = 210nm), shift one vbar's X to achieve spacing.
+
+    Vbar width = 200nm, so edge gap = |x1-x2| - 200nm.
+    Need: |x1-x2| >= 200 + M3_MIN_S = 410nm center-to-center.
+    """
+    MIN_CC = 200 + M3_MIN_S  # 410nm center-to-center
+
+    def _net_family(n):
+        if 'gnd' in n: return 'gnd'
+        if 'vdd' in n: return 'vdd'
+        return n
+
+    # Collect all via_stack drops with M3 vbars
+    vbar_drops = []
+    for i, drop in enumerate(drops):
+        if drop['type'] != 'via_stack' or 'm3_vbar' not in drop:
+            continue
+        v = drop['m3_vbar']
+        if v[1] == v[3]:
+            continue  # zero-length
+        vbar_drops.append((i, drop, v[0], _net_family(drop['net'])))
+
+    shifted = 0
+    for ii in range(len(vbar_drops)):
+        idx_a, drop_a, xa, fam_a = vbar_drops[ii]
+        for jj in range(ii + 1, len(vbar_drops)):
+            idx_b, drop_b, xb, fam_b = vbar_drops[jj]
+            if fam_a == fam_b:
+                continue  # same family
+
+            # Check Y overlap (vbars must have overlapping Y ranges to conflict)
+            va = drop_a['m3_vbar']
+            vb = drop_b['m3_vbar']
+            ya1, ya2 = min(va[1], va[3]), max(va[1], va[3])
+            yb1, yb2 = min(vb[1], vb[3]), max(vb[1], vb[3])
+            if ya2 <= yb1 or yb2 <= ya1:
+                continue  # no Y overlap
+
+            cc = abs(xa - xb)
+            if cc >= MIN_CC:
+                continue  # already safe
+
+            # Need to shift one vbar. Shift the one whose X is adjustable
+            # (shift away from the other by the needed amount)
+            needed = MIN_CC - cc + 10  # +10nm safety margin
+            # Shift the second one (arbitrary choice — could optimize later)
+            if xa < xb:
+                new_xb = xb + needed
+            else:
+                new_xb = xb - needed
+            # Snap to 5nm grid
+            new_xb = ((new_xb + 2) // 5) * 5
+            # Update vbar
+            drop_b['m3_vbar'] = [new_xb, vb[1], new_xb, vb[3]]
+            # Update via2_pos X to match
+            if 'via2_pos' in drop_b:
+                drop_b['via2_pos'] = [new_xb, drop_b['via2_pos'][1]]
+            vbar_drops[jj] = (idx_b, drop_b, new_xb, fam_b)
+            shifted += 1
+
+    if shifted:
+        print(f'  M3 vbar cross-net spacing: {shifted} vbars shifted')
+
+
+
+def _shorten_vbars_near_signal_m3(drops):
+    """Shorten M3 vbar endpoints that land near signal M3 wires.
+
+    After rail conflict truncation, vbar endpoints may land in the
+    signal M3 routing corridor. This causes GDS merge between power
+    and signal M3 shapes.
+
+    For each vbar endpoint, check if it's within M3_MIN_S + wire_hw
+    of any signal M3 wire. If so, shorten the vbar further.
+    """
+    # Build signal M3 Y ranges per X bucket
+    sig_ranges = {}  # x_bucket(1um) -> [(y_lo, y_hi)]
+    import os, json as _json
+    _rpath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output', 'routing.json')
+    if not os.path.exists(_rpath): return
+    with open(_rpath) as _f: _routing = _json.load(_f)
+    for nn, nd in _routing.get('signal_routes', {}).items():
+        for seg in nd.get('segments', []):
+            if seg[4] != 2: continue  # M3 only
+            x1, y1, x2, y2 = seg[:4]
+            cx = (x1 + x2) // 2
+            ylo = min(y1, y2) - 150  # wire half-width
+            yhi = max(y1, y2) + 150
+            for db in range(-2, 3):  # ±2 buckets (±2µm)
+                sig_ranges.setdefault(cx // 1000 + db, []).append((ylo, yhi))
+
+    CLEAR = M3_MIN_S + 150 + 50  # spacing + signal half-width + safety
+
+    shortened = 0
+    for drop in drops:
+        if drop['type'] != 'via_stack' or 'm3_vbar' not in drop:
+            continue
+        v = drop['m3_vbar']
+        if v[1] == v[3]: continue
+
+        vx = v[0]
+        bucket = vx // 1000
+        ranges = sig_ranges.get(bucket, [])
+        if not ranges: continue
+
+        pin_y = drop['via_y']
+        vy_lo = min(v[1], v[3])
+        vy_hi = max(v[1], v[3])
+
+        # Check top endpoint
+        if pin_y < drop['rail_y']:  # vbar goes up
+            for sy_lo, sy_hi in ranges:
+                if abs(vy_hi - sy_lo) < CLEAR or (sy_lo <= vy_hi <= sy_hi):
+                    new_top = sy_lo - CLEAR
+                    if new_top > pin_y + 200:
+                        drop['m3_vbar'] = [vx, pin_y, vx, new_top]
+                        shortened += 1
+                    else:
+                        drop['m3_vbar'] = [vx, pin_y, vx, pin_y]  # eliminate
+                        shortened += 1
+                    break
+        else:  # vbar goes down
+            for sy_lo, sy_hi in ranges:
+                if abs(vy_lo - sy_hi) < CLEAR or (sy_lo <= vy_lo <= sy_hi):
+                    new_bot = sy_hi + CLEAR
+                    if new_bot < pin_y - 200:
+                        drop['m3_vbar'] = [vx, new_bot, vx, pin_y]
+                        shortened += 1
+                    else:
+                        drop['m3_vbar'] = [vx, pin_y, vx, pin_y]
+                        shortened += 1
+                    break
+
+    if shortened:
+        print(f'  M3 vbar signal proximity: {shortened} vbars shortened')
+
 
 
 def _apply_vbar_jogs(drops, access_points):

@@ -34,14 +34,18 @@ NBULAY      = (32, 0)
 METAL1      = (8, 0)
 METAL2      = (10, 0)
 METAL3      = (30, 0)
+METAL4      = (50, 0)
 VIA1        = (19, 0)
 VIA2        = (29, 0)
+VIA3        = (49, 0)
 METAL1_PIN  = (8, 2)
 METAL2_PIN  = (10, 2)
 METAL3_PIN  = (30, 2)
+METAL4_PIN  = (50, 2)
 METAL1_LBL  = (8, 1)
 METAL2_LBL  = (10, 1)
 METAL3_LBL  = (30, 1)
+METAL4_LBL  = (50, 1)
 TOPMETAL1   = (126, 0)
 TOPMETAL1_PIN = (126, 2)
 
@@ -80,6 +84,18 @@ V2_MIN_S    = 220     # V2.b: minimum spacing between vias — sg13g2 DRC deck =
 V2_ENC_M2   = 144     # M2 enclosure of Via2 — Mn_d=0.144µm (same as M2_VIA_ENC)
 V2_ENC_M3   = 90      # M3 enclosure of Via2
 
+# Metal4 (same generic Mn rules as M2/M3)
+M4_MIN_W    = 200     # M4.a: minimum width
+M4_MIN_S    = 210     # M4.b: minimum spacing (< 10µm run length)
+M4_MIN_S_10 = 280     # M4.b2: spacing for ≥ 10µm run length
+M4_VIA_ENC  = 90      # M4.d: enclosure of Via3
+
+# Via3 (Metal3 ↔ Metal4) — same generic Vn rules as Via2
+V3_SIZE     = 190     # V3.a: via square dimension
+V3_MIN_S    = 220     # V3.b: minimum spacing between vias
+V3_ENC_M3   = 90      # M3 enclosure of Via3
+V3_ENC_M4   = 90      # M4 enclosure of Via3
+
 # Device geometry (from PCell measurements)
 GATE_OFFSET = 180     # Gate pin sits this far below MOSFET bbox bottom
 NMOS_GS_DX  = 440     # Gate-to-Source pin X distance (all NMOS PCells)
@@ -99,6 +115,20 @@ VIA1_PAD    = ((VIA1_PAD_M2 + 4) // 5) * 5  # = 480nm — snap to 5nm grid
 VIA1_SZ     = V1_SIZE                     # alias
 VIA2_SZ     = V2_SIZE                     # alias
 VIA2_PAD    = ((V2_SIZE + 2 * max(V2_ENC_M2, V2_ENC_M3) + 4) // 5) * 5  # = 480nm (snapped)
+VIA2_PAD_M3 = ((V2_SIZE + 2 * V2_ENC_M3 + 4) // 5) * 5  # = 370nm → 380nm after DRC tuning
+VIA2_PAD_M2 = VIA2_PAD                    # alias: M2 enclosure of Via2
+
+# GDS-drawn pad sizes (after DRC-driven shrink from routing pad sizes)
+VIA1_GDS_M1 = 310          # AP M1 pad: shrunk from VIA1_PAD_M1(370) to fix M1.b
+VIA1_GDS_M2 = VIA1_PAD     # AP M2 pad: 480nm (unchanged)
+
+# M3 wide spacing (≥10µm run length)
+M3_WIDE_S   = M3_MIN_S_10  # = 280nm
+
+VIA3_SZ     = V3_SIZE                     # alias
+VIA3_PAD    = ((V3_SIZE + 2 * max(V3_ENC_M3, V3_ENC_M4) + 4) // 5) * 5  # = 370nm (snapped)
+VIA3_PAD_M3 = ((V3_SIZE + 2 * V3_ENC_M3 + 4) // 5) * 5  # = 370nm
+VIA3_PAD_M4 = ((V3_SIZE + 2 * V3_ENC_M4 + 4) // 5) * 5  # = 370nm
 
 # ─── 2. Via center-to-center: max of ALL layer constraints ───
 #
@@ -168,6 +198,7 @@ M1_SIG_W = 300         # Metal1 signal wire: 0.3µm (> M1.a by 140nm)
 M1_PWR_W = 1000        # Metal1 power: 1.0µm
 M2_SIG_W = 300         # Metal2 signal wire: 0.3µm (> M2.a by 100nm)
 M3_PWR_W = 3000        # Metal3 power rail: 3.0µm
+M4_SIG_W = 300         # Metal4 signal wire: 0.3µm (same as M2/M3)
 M1_THIN  = 160         # Metal1 thin stub: matches PCell M1 strip width
 CONT_SZ  = 160         # Cont cut size (nm)
 CONT_ENC_M1_END = 50   # M1 endcap enclosure of Cont (nm)
