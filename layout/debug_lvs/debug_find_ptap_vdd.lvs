@@ -1,0 +1,39 @@
+# Find ptap regions that connect to vdd M3 rail through Cont→metal chain
+source("output/ptat_vco.gds", "ptat_vco")
+flat
+activ = input(1, 0); gatpoly = input(5, 0); cont_drw = input(6, 0)
+psd_drw = input(14, 0); metal1 = input(8, 0); metal2 = input(10, 0)
+via1 = input(19, 0); via2 = input(29, 0); metal3 = input(30, 0)
+nwell_drw = input(31, 0); via3 = input(49, 0); metal4 = input(50, 0)
+metal3_text = labels(30, 25)
+pactiv = activ.and(psd_drw)
+chip = extent("*"); pwell = chip.not(nwell_drw)
+ptap = pactiv.and(pwell).not(gatpoly)
+
+# Build vdd M3 region (from labels)
+vdd_labels = metal3_text.texts("vdd")
+vdd_m3 = metal3.interacting(vdd_labels)
+$stdout.puts "vdd M3 shapes: #{vdd_m3.count}"
+
+# Trace DOWN from vdd M3: Via2 → M2 → Via1 → M1 → Cont
+vdd_via2 = via2.interacting(vdd_m3)
+vdd_m2 = metal2.interacting(vdd_via2)
+vdd_via1 = via1.interacting(vdd_m2)
+vdd_m1 = metal1.interacting(vdd_via1)
+$stdout.puts "vdd chain: M3=#{vdd_m3.count} Via2=#{vdd_via2.count} M2=#{vdd_m2.count} Via1=#{vdd_via1.count} M1=#{vdd_m1.count}"
+
+# Find Conts on vdd M1
+vdd_cont = cont_drw.interacting(vdd_m1)
+$stdout.puts "Cont on vdd M1: #{vdd_cont.count}"
+
+# Find ptap regions overlapping these vdd Conts
+ptap_on_vdd = ptap.interacting(vdd_cont)
+$stdout.puts "ptap on vdd chain: #{ptap_on_vdd.count}"
+
+if ptap_on_vdd.count > 0
+  $stdout.puts "=== BRIDGE PTAPS ==="
+  ptap_on_vdd.each do |p|
+    b = p.bbox
+    $stdout.puts "  [#{(b.left*1000).round},#{(b.bottom*1000).round}]-[#{(b.right*1000).round},#{(b.top*1000).round}]"
+  end
+end

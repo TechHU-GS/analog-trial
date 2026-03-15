@@ -1,0 +1,44 @@
+# Find how pmos_bias connects to gnd or vdd
+source("output/ptat_vco.gds", "ptat_vco")
+flat
+activ = input(1, 0); gatpoly = input(5, 0); cont_drw = input(6, 0)
+psd_drw = input(14, 0); metal1 = input(8, 0); metal2 = input(10, 0)
+via1 = input(19, 0); via2 = input(29, 0); metal3 = input(30, 0)
+nwell_drw = input(31, 0); via3 = input(49, 0); metal4 = input(50, 0)
+metal1_text = labels(8, 25); metal2_text = labels(10, 25); metal3_text = labels(30, 25)
+nactiv = activ.not(psd_drw); pactiv = activ.and(psd_drw)
+chip = extent("*"); pwell = chip.not(nwell_drw)
+ptap = pactiv.and(pwell).not(gatpoly)
+ntap = nactiv.and(nwell_drw).not(gatpoly)
+
+# Trace gnd chain down from M3
+gnd_labels = metal3_text.texts("gnd")
+gnd_m3 = metal3.interacting(gnd_labels)
+gnd_via2 = via2.interacting(gnd_m3)
+gnd_m2 = metal2.interacting(gnd_via2)
+gnd_via1 = via1.interacting(gnd_m2)
+gnd_m1 = metal1.interacting(gnd_via1)
+gnd_cont = cont_drw.interacting(gnd_m1)
+
+# Check: does any ntap overlap gnd Cont?
+ntap_on_gnd = ntap.interacting(gnd_cont)
+$stdout.puts "ntap on gnd chain: #{ntap_on_gnd.count}"
+ntap_on_gnd.each do |p|
+  b = p.bbox
+  $stdout.puts "  [#{(b.left*1000).round},#{(b.bottom*1000).round}]-[#{(b.right*1000).round},#{(b.top*1000).round}]"
+end
+
+# Also: any ptap still on vdd?
+vdd_labels = metal3_text.texts("vdd")
+vdd_m3 = metal3.interacting(vdd_labels)
+vdd_via2 = via2.interacting(vdd_m3)
+vdd_m2 = metal2.interacting(vdd_via2)
+vdd_via1 = via1.interacting(vdd_m2)
+vdd_m1 = metal1.interacting(vdd_via1)
+vdd_cont = cont_drw.interacting(vdd_m1)
+ptap_on_vdd = ptap.interacting(vdd_cont)
+$stdout.puts "ptap on vdd chain: #{ptap_on_vdd.count}"
+ptap_on_vdd.each do |p|
+  b = p.bbox
+  $stdout.puts "  [#{(b.left*1000).round},#{(b.bottom*1000).round}]-[#{(b.right*1000).round},#{(b.top*1000).round}]"
+end
