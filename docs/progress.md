@@ -194,18 +194,41 @@ without safe bridge paths.
 | SW2p→M_db1_p | [147000,82035]-[152070,85500] | 5070×3465 | ✅ |
 | SW3p→M_nb_p1 | [151070,82035]-[152870,85500] | 1800×3465 | ✅ |
 
-**⚠️ Side-effect discovered**: 7 bridges fixed 12 devices but broke 6 others (net: 15→9).
-NWell fill changes Region merge topology — not a simple additive fix.
+### Wrong-bulk root cause fully traced (2026-03-16)
 
-### 下一步
+**Root cause**: `power.py::_resolve_m3_vbar_rail_conflicts()` truncates 7 vdd
+power drops' M3 vbar to avoid crossing gnd rails. Truncation disconnects them
+from target vdd rail (gap 10µm+). These drops serve NWell islands for 15 PMOS.
 
-NWell island problem needs more systematic approach:
-- Option A: Careful per-island NWell analysis before adding bridges
-- Option B: Independent ntap→vdd via_stack chains (avoid NWell topology changes)
-- Option C: Accept current state (merged=0 is the major win) and revisit later
+**All fix approaches exhausted at assembly level:**
+- M3 vbar full-range: creates pmos_bias,vdd merge (M2 underpass in congested area)
+- M2 underpass: gnd_bias corridor occupied by pmos_bias signal routing
+- M4 bridge: signal M4 routing fills corridors (60nm gap to existing M4)
+- M3 direct segment: signal M3 routing fills corridors
+- NWell bridge fill: fixes 12 but creates 6 new wrong-bulk (Region merge topology change)
 
-**Session summary**: merged=0 code-level ✅, 15→9 wrong-bulk (partial fix),
-358→351 unmatched nets. DRC 116 violations untouched.
+**Conclusion**: 15 PMOS wrong-bulk is a **placement/routing upstream limitation**.
+The devices are placed where no metal corridor exists for vdd power access.
+Assembly post-processing cannot fix this.
+
+### Final session status
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| Merged groups | **0** | ✅ Code-level, stable |
+| Device count | 245 MOS + 4 R | ✅ Match |
+| Pin count | 143 | ✅ Match |
+| PMOS wrong bulk | 15 | ❌ Upstream limitation |
+| Unmatched nets | 358 | ❌ Cascade from wrong-bulk |
+| DRC violations | 116 | ⚠️ Untouched |
+
+### Next steps (Phase 2/3 upstream)
+
+To fix 15 wrong-bulk, need upstream changes in:
+1. `solve_placement.py`: reserve vdd power corridors near isolated PMOS
+2. `solve_ties.py`: place ntap ties where vdd access exists
+3. `solve_routing.py`: route power drops before signal routing
+4. Or: accept as known limitation for this placement iteration
 
 ### 教训（累积，每条都踩过坑）
 
