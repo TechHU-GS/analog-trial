@@ -2851,16 +2851,19 @@ def main():
                 x_ov = min(m1r[2], w[2]) - max(m1r[0], w[0])
                 if x_ov <= 0:
                     continue
-                # Wire above tie: shrink tie top
-                y_gap_top = w[1] - m1r[3]
-                if -200 < y_gap_top < M1_MIN_S:
-                    needed_top = w[1] - M1_MIN_S
-                    new_top = min(new_top, needed_top)
-                # Wire below tie: shrink tie bottom
-                y_gap_bot = m1r[1] - w[3]
-                if -200 < y_gap_bot < M1_MIN_S:
-                    needed_bot = w[3] + M1_MIN_S
-                    new_bot = max(new_bot, needed_bot)
+                y_ov = min(m1r[3], w[3]) - max(m1r[1], w[1])
+                if y_ov > 0:
+                    # Actual spatial overlap — force trim both sides
+                    new_top = min(new_top, w[1] - M1_MIN_S)
+                    new_bot = max(new_bot, w[3] + M1_MIN_S)
+                else:
+                    # Near-miss — use gap threshold
+                    y_gap_top = w[1] - m1r[3]
+                    if -200 < y_gap_top < M1_MIN_S:
+                        new_top = min(new_top, w[1] - M1_MIN_S)
+                    y_gap_bot = m1r[1] - w[3]
+                    if -200 < y_gap_bot < M1_MIN_S:
+                        new_bot = max(new_bot, w[3] + M1_MIN_S)
             # Check against cross-net power M1 (trim only if different net)
             for pw in _power_m1_shapes:
                 if pw[4] == tie_net:
@@ -2868,12 +2871,18 @@ def main():
                 x_ov = min(m1r[2], pw[2]) - max(m1r[0], pw[0])
                 if x_ov <= 0:
                     continue
-                y_gap_top = pw[1] - m1r[3]
-                if -200 < y_gap_top < M1_MIN_S:
+                y_ov = min(m1r[3], pw[3]) - max(m1r[1], pw[1])
+                if y_ov > 0:
+                    # Actual spatial overlap — force trim both sides
                     new_top = min(new_top, pw[1] - M1_MIN_S)
-                y_gap_bot = m1r[1] - pw[3]
-                if -200 < y_gap_bot < M1_MIN_S:
                     new_bot = max(new_bot, pw[3] + M1_MIN_S)
+                else:
+                    y_gap_top = pw[1] - m1r[3]
+                    if -200 < y_gap_top < M1_MIN_S:
+                        new_top = min(new_top, pw[1] - M1_MIN_S)
+                    y_gap_bot = m1r[1] - pw[3]
+                    if -200 < y_gap_bot < M1_MIN_S:
+                        new_bot = max(new_bot, pw[3] + M1_MIN_S)
             if new_top != m1r[3] or new_bot != m1r[1]:
                 # Enforce M1.d min area
                 w_m1 = m1r[2] - m1r[0]
@@ -3615,7 +3624,23 @@ def main():
                 if not excl:
                     # No crossing — draw via2 at pin + M3 vbar
                     v2 = drop['via2_pos']
-                    via2(top, li_v2, li_m2, li_m3, v2[0], v2[1])
+                    # Check if Via2 M3 pad would overlap cross-net M3 vbar
+                    _hp_v2_m3 = VIA2_PAD_M3 // 2
+                    _v2_m3_xnet = False
+                    for _vn, _vx, _vy1, _vy2 in _m3_vbar_index:
+                        if _vn == drop_net:
+                            continue
+                        _vhw = M3_MIN_W // 2
+                        if (v2[0] + _hp_v2_m3 > _vx - _vhw and
+                                v2[0] - _hp_v2_m3 < _vx + _vhw and
+                                v2[1] + _hp_v2_m3 > _vy1 and
+                                v2[1] - _hp_v2_m3 < _vy2):
+                            _v2_m3_xnet = True
+                            break
+                    if _v2_m3_xnet:
+                        via2_cut_m2(top, li_v2, li_m2, v2[0], v2[1])
+                    else:
+                        via2(top, li_v2, li_m2, li_m3, v2[0], v2[1])
                     vbar(top, li_m3, pin_x, vbar_y1, vbar_y2, M3_MIN_W)
                 else:
                     # M3 vbar crosses rails — draw M3 segments with gaps,
@@ -3958,14 +3983,33 @@ def main():
                         # another net's rail (would short M3).
                         # Use via2_no_m2_pad: M2 coverage comes from the
                         # extended vbar below (saves 95nm clearance per side).
-                        if not gy1_in_excl:
-                            via2_no_m2_pad(top, li_v2, li_m3, bridge_x, gy1)
-                            _drawn_via2_positions.add((bridge_x, gy1))
-                            _gap_bridge_m3_pads.append((bridge_x, gy1, drop_net))
-                        if not gy2_in_excl:
-                            via2_no_m2_pad(top, li_v2, li_m3, bridge_x, gy2)
-                            _drawn_via2_positions.add((bridge_x, gy2))
-                            _gap_bridge_m3_pads.append((bridge_x, gy2, drop_net))
+                        _hp_v2m3 = VIA2_PAD_M3 // 2
+                        for _gy, _gy_in_excl in ((gy1, gy1_in_excl),
+                                                  (gy2, gy2_in_excl)):
+                            if _gy_in_excl:
+                                continue
+                            # Check: would M3 pad overlap cross-net M3 vbar?
+                            _m3_xnet = False
+                            for _vn, _vx, _vy1, _vy2 in _m3_vbar_index:
+                                if _vn == drop_net:
+                                    continue
+                                _vhw = M3_MIN_W // 2
+                                if (bridge_x + _hp_v2m3 > _vx - _vhw and
+                                        bridge_x - _hp_v2m3 < _vx + _vhw and
+                                        _gy + _hp_v2m3 > _vy1 and
+                                        _gy - _hp_v2m3 < _vy2):
+                                    _m3_xnet = True
+                                    break
+                            if _m3_xnet:
+                                # Skip M3 pad — vbar provides M3 coverage
+                                via2_cut_only(top, li_v2, bridge_x, _gy)
+                            else:
+                                via2_no_m2_pad(top, li_v2, li_m3,
+                                               bridge_x, _gy)
+                            _drawn_via2_positions.add((bridge_x, _gy))
+                            if not _m3_xnet:
+                                _gap_bridge_m3_pads.append(
+                                    (bridge_x, _gy, drop_net))
 
                         # M2 vbar extended by endcap distance at each end
                         # to provide V2.c1 enclosure (50nm) for via2 cuts.

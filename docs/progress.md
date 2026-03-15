@@ -116,26 +116,45 @@
 
 **LVS 输出**: `Merged groups: 0` — 运行命令和输出见 session 记录。
 
-### 待完成
+### 根因完全解析 (2026-03-16)
 
-1. **mystery M1 来源确认**: `tie_MN_pgen_ptap` M1 `[51020,144845,51280,145445]` 260×600nm
-   已确认是 tie cell 的 M1 bar（在 ties.json 里），与 PM_pdiode.D pad 有 330nm 重叠。
-   assembly tie trim threshold -200nm 不够 catch（需要 -400nm）。
+**两类根因：**
 
-2. **3 个 vdd-bridge ptap 机制**: 为什么这 3 个 ptap 各自把 pwell 连到了 vdd？
-   - nsd_ptap_abutt = 0（非 salicide abutment）
-   - 机制未知，需要逐个调查
+**A. 局部桥（M1 level, 已代码修复 1/2）：**
+1. `tie_MN_pgen_ptap` M1 bar (gnd) ↔ PM_pdiode.D m1_pad (pmos_bias): 330nm overlap
+   → **代码修复 ✅**: 实重叠检测 trim（assemble_gds.py）
+2. `tie_SW2n_ptap` M1 bar (gnd) ↔ `tie_M_ia_p_ntap` M1 bar (vdd): 260×110nm overlap
+   → **GDS patch 验证 ✅, 代码修复待做**: tie-vs-tie cross-net overlap trim
 
-3. **Assembly 级修复**: 当前是 GDS post-process patch（删 PSD/M1）。
-   需要转化为 assembly 代码级修复（tie trim / SalBlock / 其他）。
+**B. 系统性桥（M3 level, GDS patch 验证）：**
+- `ptap → pwell`（全局导体）→ 所有 121 ptap → 金属链向上爬升
+- M1 → Via1 → M2 → Via2 → M3 → 部分 M3 在 VDD rail 附近（5nm-1000nm）
+- KLayout Region merge 将这些 M3 与 VDD rail 视为连通 → gnd=vdd
+- **GDS patch 验证 ✅**: 移除 184 个 VDD-adjacent 非 rail M3 → merged=0
+- **代码修复待做**: assembly 级 rail-adjacent M3 filter
 
-4. **BUF_I_n.S M3 80nm gap**: gnd M3 vbar 和 vdd M3 vbar 间距只有 80nm，
-   Via2 M3 pad 桥接两边。这是 DRC violation 也可能是 LVS bridge 的一部分。
+**完整 bridge 机制：**
+```
+ptap → pwell (全局) → 121 ptap → Cont → M1 → Via1 → M2 → Via2 → M3
+                                                                    ↓
+                                              M3 shapes 在 VDD rail 附近
+                                                    (5nm-1000nm gap)
+                                                         ↓
+                                            LVS Region merge → gnd = vdd
+```
+
+### 代码修复状态
+
+| Fix | 类型 | 状态 |
+|-----|------|------|
+| tie M1 实重叠 trim | assemble_gds.py | ✅ 已在代码中 |
+| tie-vs-tie cross-net overlap | assemble_gds.py | ⚠️ 待实现 |
+| rail-adjacent M3 filter | assemble_gds.py | ⚠️ 待实现 |
+| power.py vbar spacing | power.py | ✅ 已在代码中（辅助，非主修法） |
 
 ### 下一步
 
-调查 3 个 vdd-bridge ptap 的 bridge 机制，设计 assembly 级修复。
-psd_ntap_abutt = 7 作为交叉验证参考。
+把两个 ⚠️ 代码化 → 重跑 pipeline → LVS merged=0 无需 GDS patch。
 
 ### 教训（累积，每条都踩过坑）
 
