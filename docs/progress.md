@@ -263,16 +263,33 @@ Assembly post-processing cannot fix this.
 
 **⚠️ 未验证**: 硬错误(Cnt.j/Gat.f/V1.a) 在新 DRC 中是否仍存在（需重新跑 DRC 确认）
 
+### 代码审查 + 修复 (2026-03-16 15:00-15:40)
+
+**系统审查发现的 bug（solver.py + access.py + assemble_gds.py）：**
+
+| Bug | 严重性 | 状态 |
+|-----|--------|------|
+| optimize.py prune_loops 删 Via2/Via3 | 致命 | ✅ 修复 (`s[4] < 0`) |
+| optimize.py prune_redundant_vias 错误 layer pair | 致命 | ✅ 修复 (lo/hi decode) |
+| access.py 旋转设备 pin 坐标不处理 rotation | 致命 | ⚠️ 已确认，修复尝试失败（坐标系理解有误），需重新调查 |
+| 138 AP Via2 被 M3 冲突 skip | 高 | ⚠️ 未验证是否是 303 unmatched 主因 |
+| maze_router Via2/Via3 used marking 缺失 | 高 | ❌ 尝试修复但导致 3 net routing failure，已还原 |
+
+**optimize.py 修复效果**: LVS 无变化（303→303），说明当前 routing 中 Via2/Via3 没有被 optimize 误删。修复是防御性的。
+
+**教训**:
+1. access.py rotation fix 失败是因为没有先验证坐标数学——直接写代码跳过了 gather→verify 步骤
+2. Via2/Via3 used marking 在当前 grid 密度下过度阻塞，需要更精细的 margin 策略
+
 ### Next steps
 
 1. ✅ M3 min-area enforcement (partial: 46→38)
-2. ✅ **maze_router Via junction fix** (routing 碎片 79→0, LVS -55)
-3. 🔄 继续调查剩余 303 LVS unmatched 来源
-4. ⬜ M1.b spacing root cause (72→34)
-5. ⬜ M4.b spacing
-6. ⬜ 硬错误 (Cnt.j, Gat.f, V1.a)
-7. ⬜ NWell/pSD/Contact
-8. ⬜ 最终 DRC + LVS 验证
+2. ✅ maze_router Via junction fix (routing 碎片 79→0, LVS 358→303)
+3. ✅ optimize.py Via2/Via3 保留（防御性修复）
+4. ⚠️ access.py rotation — 需要先手动验证 3 个旋转电阻的正确 pin 坐标，再写修复
+5. ⬜ 138 skipped Via2 根因 — 需要验证是否是 303 unmatched 主因
+6. ⬜ DRC 系统性修法（M1.b, M4.b, NWell/pSD）
+7. ⬜ 最终 DRC + LVS 验证
 
 ### 教训（累积，每条都踩过坑）
 

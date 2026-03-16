@@ -196,7 +196,7 @@ def prune_loops(segs):
     cycle-forming edges are removed.
     """
     wire_segs = [s for s in segs if s[4] >= 0]
-    via_segs = [s for s in segs if s[4] == -1]
+    via_segs = [s for s in segs if s[4] < 0]  # Via1(-1), Via2(-2), Via3(-3)
 
     if len(wire_segs) < 2:
         return segs, 0
@@ -252,7 +252,7 @@ def prune_redundant_vias(segs):
     only if they connect previously disconnected components.
     """
     wire_segs = [s for s in segs if s[4] >= 0]
-    via_segs = [s for s in segs if s[4] == -1]
+    via_segs = [s for s in segs if s[4] < 0]  # Via1(-1), Via2(-2), Via3(-3)
 
     if not via_segs:
         return segs, 0, 0
@@ -280,11 +280,14 @@ def prune_redundant_vias(segs):
             union(p1, p2)
 
     # Add vias, keeping only those that connect new components
+    # Via codes: -1=Via1(M1↔M2), -2=Via2(M2↔M3), -3=Via3(M3↔M4)
     kept_vias = []
     removed = 0
     for v in via_segs:
-        n0 = (v[0], v[1], 0)  # M1 node
-        n1 = (v[0], v[1], 1)  # M2 node
+        lo = (-v[4]) - 1   # -1→0(M1), -2→1(M2), -3→2(M3)
+        hi = lo + 1         # -1→1(M2), -2→2(M3), -3→3(M4)
+        n0 = (v[0], v[1], lo)
+        n1 = (v[0], v[1], hi)
         if union(n0, n1):
             kept_vias.append(v)  # bridge via — needed
         else:

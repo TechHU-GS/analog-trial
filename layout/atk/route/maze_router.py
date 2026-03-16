@@ -282,6 +282,9 @@ class MazeRouter:
             segs.extend(self._simplify(path))
         segs = self._insert_junction_vias(segs)
         # Mark junction via positions (they bypass _mark_used)
+        # Only mark Via1 — Via2/Via3 junction vias share grid positions with
+        # existing M2/M3 wires already marked, so additional marking is
+        # over-aggressive and blocks subsequent net routing.
         for seg in segs:
             if seg[4] == -1:
                 self._mark_via_used(seg[0], seg[1])
