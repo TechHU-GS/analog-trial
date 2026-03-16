@@ -1,0 +1,34 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: ** soilz full circuit — convergence-tuned
+
+Option cshunt: 126 capacitors added with 5e-14 F each
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+Operating point simulation skipped by 'uic',
+  now using transient initial conditions.
+
+No. of Data Rows : 15263
+
+  Measurements for Transient Analysis
+
+vco_f               =  2.212918e-07 targ=  3.110113e-06 trig=  2.888822e-06
+vptat               =  1.230755e-01
+v_ota               =  6.118294e-01
+v_nc1               =  2.217764e-01
+v_bias              =  1.971354e-01
+div2_f              =  4.446081e-07 targ=  1.785942e-06 trig=  1.341334e-06
+
+
+Total analysis time (seconds) = 16.6976
+
+Total elapsed time (seconds) = 16.987 
+
+Total DRAM available = 16384.000 MB.
+DRAM currently available =  497.328 MB.
+Maximum ngspice program size =   33.625 MB.
+Current ngspice program size =   33.625 MB.
+
