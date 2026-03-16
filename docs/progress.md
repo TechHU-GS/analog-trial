@@ -327,7 +327,45 @@ Solver 集成到 assembly pipeline 是下一步。
 1. M3 pad clearance (M3.b = 210nm + pad half = 190nm)
 2. M2 bridge cross-net check (connectivity-based net identification)
 3. M3 bridge feasibility (Via2→anchor M3 bridge vs cross-net M3)
-4. Greedy merge-safety filter (incremental M3 conflict check)
+4. Greedy merge-safety filter (incremental LVS check, accept if merge count ≤ baseline)
+
+### Session 最终状态 (2026-03-16 17:35)
+
+| 指标 | 起始 | Base GDS | Patched GDS | 目标 |
+|------|------|----------|-------------|------|
+| LVS unmatched | 358 | 276 | **248** | 0 |
+| LVS merged (big) | 0 | 0 | 0 | 0 |
+| LVS comma-merges | 1 | 1 | 3 | 0 |
+| Routing 碎片 | 79 | **0** | 0 | 0 |
+| DRC | 208 | ~216 | 未测 | 0 |
+
+**Base GDS = assembly 直接输出 (276)。Patched GDS = solver post-patch (248)。**
+
+### 已定位但未修的 bug（下一 session 可直接修）
+
+1. **5 个 cross-net M2 pad overlap**（精确坐标+net 已知）
+   - MBp1.G(vco5) ↔ MBn1.D(buf1): 350×65nm overlap
+   - MBp2.G(buf1) ↔ MBn2.D(vco_out): 10nm gap
+   - PM_pdiode.D ↔ MN_pgen.S: 160nm gap
+   - Mdac_tg2n.S ↔ Mp_load_n.S: 160nm gap
+   - Mchop2p.D ↔ Mtail.S2: 160nm gap
+   → 修 `_shrink_ap_m2_pads_gds` 添加 cross-net spacing check
+
+2. **access.py rotation bug**（3 设备 4 nets: vptat, dac_out, chop_out, sum_n）
+   → 修 `abs_pin_nm` 加 rotation transform（需要先手算坐标验证）
+
+3. **15 wrong-bulk**（placement limitation，power.py vbar truncation）
+   → 需要 placement 层面修复
+
+4. **optimize.py M3/M4 straighten_chains 不处理**
+   → 扩展 `for ly in (0,1)` 到 `(0,1,2,3)`
+
+### 本 session 教训
+
+1. **先查基线再建工具** — 没提前查 pre-existing comma-merges，导致 merge 检测反复修改
+2. **计算几何 >> 启发式** — klayout.db Region ops 秒级完成，assembly heuristic scan 失败率高
+3. **Via2 placement 的真正约束是 M3 层累积效应** — 独立安全 ≠ 组合安全
+4. **Post-patch 不是最终形态** — solver 结果需要集成到 assembly pipeline
 
 ### 教训（累积，每条都踩过坑）
 
