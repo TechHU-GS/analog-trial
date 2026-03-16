@@ -850,6 +850,25 @@ def _shrink_ap_m2_pads_gds(top, li_m2, li_v1, routing):
                 else:
                     new_pad[1] = max(new_pad[1], min(oy2 + M2_MIN_S, min_b))
 
+            elif x_gap < 0 and y_gap < 0:
+                # Full overlap — both axes intersect. Shrink on the axis
+                # where the overlap is smaller (less shrinkage needed).
+                x_overlap = -x_gap  # positive
+                y_overlap = -y_gap
+                changed = True
+                if y_overlap <= x_overlap:
+                    # Shrink Y (less overlap)
+                    if oy1 >= new_pad[1]:
+                        new_pad[3] = min(new_pad[3], max(oy1 - M2_MIN_S, min_t))
+                    else:
+                        new_pad[1] = max(new_pad[1], min(oy2 + M2_MIN_S, min_b))
+                else:
+                    # Shrink X (less overlap)
+                    if ox1 >= new_pad[0]:
+                        new_pad[2] = min(new_pad[2], max(ox1 - M2_MIN_S, min_r))
+                    else:
+                        new_pad[0] = max(new_pad[0], min(ox2 + M2_MIN_S, min_l))
+
             elif x_gap > 0 and y_gap > 0:
                 diag = math.sqrt(x_gap ** 2 + y_gap ** 2)
                 if diag < M2_MIN_S:
