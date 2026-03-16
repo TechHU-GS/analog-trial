@@ -53,17 +53,17 @@
       "bridge_len": 105
     },
     {
-      "pin": "Mpb1.G",
+      "pin": "PM_pdiode.G",
       "net": "pmos_bias",
-      "ap_x": 93650,
-      "ap_y": 176130,
+      "ap_x": 50000,
+      "ap_y": 143130,
       "status": "FOUND",
-      "via2_x": 93500,
-      "via2_y": 175700,
-      "anchor_x": 93500,
-      "anchor_y": 176200,
+      "via2_x": 50050,
+      "via2_y": 147995,
+      "anchor_x": 51150,
+      "anchor_y": 148900,
       "anchor_layer": 3,
-      "bridge_len": 580
+      "bridge_len": 4915
     },
     {
       "pin": "Min_n.G",
@@ -71,12 +71,12 @@
       "ap_x": 47810,
       "ap_y": 77000,
       "status": "FOUND",
-      "via2_x": 47650,
-      "via2_y": 77745,
+      "via2_x": 48350,
+      "via2_y": 77150,
       "anchor_x": 47650,
       "anchor_y": 77150,
       "anchor_layer": 3,
-      "bridge_len": 905
+      "bridge_len": 690
     },
     {
       "pin": "Rdac.MINUS",
@@ -97,12 +97,12 @@
       "ap_x": 44180,
       "ap_y": 102500,
       "status": "FOUND",
-      "via2_x": 43750,
+      "via2_x": 43805,
       "via2_y": 102350,
       "anchor_x": 44150,
       "anchor_y": 102350,
       "anchor_layer": 3,
-      "bridge_len": 580
+      "bridge_len": 525
     },
     {
       "pin": "Mtail.G",
@@ -110,12 +110,12 @@
       "ap_x": 43810,
       "ap_y": 70500,
       "status": "FOUND",
-      "via2_x": 43800,
+      "via2_x": 43815,
       "via2_y": 71895,
       "anchor_x": 43800,
       "anchor_y": 70500,
       "anchor_layer": 3,
-      "bridge_len": 1405
+      "bridge_len": 1400
     },
     {
       "pin": "Mpu1.D",
@@ -188,12 +188,12 @@
       "ap_x": 122920,
       "ap_y": 170230,
       "status": "FOUND",
-      "via2_x": 123795,
-      "via2_y": 170250,
+      "via2_x": 123270,
+      "via2_y": 169650,
       "anchor_x": 123250,
       "anchor_y": 170250,
       "anchor_layer": 2,
-      "bridge_len": 895
+      "bridge_len": 930
     },
     {
       "pin": "Mpu3.G",
@@ -370,12 +370,12 @@
       "ap_x": 184420,
       "ap_y": 170230,
       "status": "FOUND",
-      "via2_x": 185395,
-      "via2_y": 170250,
+      "via2_x": 184845,
+      "via2_y": 169650,
       "anchor_x": 184850,
       "anchor_y": 170250,
       "anchor_layer": 2,
-      "bridge_len": 995
+      "bridge_len": 1005
     },
     {
       "pin": "Mpu2.S",
@@ -422,12 +422,12 @@
       "ap_x": 73200,
       "ap_y": 196630,
       "status": "FOUND",
-      "via2_x": 73255,
+      "via2_x": 72245,
       "via2_y": 196500,
       "anchor_x": 72500,
       "anchor_y": 196500,
       "anchor_layer": 3,
-      "bridge_len": 185
+      "bridge_len": 1085
     },
     {
       "pin": "T2I_m2.G",
@@ -553,11 +553,11 @@
       "ap_y": 180230,
       "status": "FOUND",
       "via2_x": 85955,
-      "via2_y": 180380,
+      "via2_y": 180415,
       "anchor_x": 84750,
       "anchor_y": 180400,
       "anchor_layer": 3,
-      "bridge_len": 1195
+      "bridge_len": 1230
     },
     {
       "pin": "T1I_m1.G",
@@ -644,11 +644,11 @@
       "ap_y": 88730,
       "status": "FOUND",
       "via2_x": 141100,
-      "via2_y": 90250,
+      "via2_y": 91115,
       "anchor_x": 141100,
       "anchor_y": 91150,
       "anchor_layer": 3,
-      "bridge_len": 2960
+      "bridge_len": 3825
     },
     {
       "pin": "SW2p.D",
@@ -657,11 +657,11 @@
       "ap_y": 90990,
       "status": "FOUND",
       "via2_x": 148100,
-      "via2_y": 90550,
+      "via2_y": 90515,
       "anchor_x": 148100,
       "anchor_y": 91150,
       "anchor_layer": 3,
-      "bridge_len": 510
+      "bridge_len": 545
     },
     {
       "pin": "T1I_m1.S",
@@ -682,12 +682,12 @@
       "ap_x": 65340,
       "ap_y": 199990,
       "status": "FOUND",
-      "via2_x": 65500,
-      "via2_y": 200600,
+      "via2_x": 66095,
+      "via2_y": 200000,
       "anchor_x": 65500,
       "anchor_y": 200000,
       "anchor_layer": 2,
-      "bridge_len": 770
+      "bridge_len": 765
     },
     {
       "pin": "T1I_m7.D",
@@ -760,12 +760,12 @@
       "ap_x": 71730,
       "ap_y": 191130,
       "status": "FOUND",
-      "via2_x": 71100,
+      "via2_x": 71145,
       "via2_y": 191250,
       "anchor_x": 71800,
       "anchor_y": 191250,
       "anchor_layer": 3,
-      "bridge_len": 750
+      "bridge_len": 705
     },
     {
       "pin": "T1Q_m2.S",
@@ -942,12 +942,12 @@
       "ap_x": 71730,
       "ap_y": 216130,
       "status": "FOUND",
-      "via2_x": 71800,
-      "via2_y": 215500,
+      "via2_x": 71145,
+      "via2_y": 216100,
       "anchor_x": 71800,
       "anchor_y": 216100,
       "anchor_layer": 3,
-      "bridge_len": 700
+      "bridge_len": 615
     },
     {
       "pin": "T2Q_m7.S",
@@ -955,12 +955,12 @@
       "ap_x": 59910,
       "ap_y": 226130,
       "status": "FOUND",
-      "via2_x": 60950,
+      "via2_x": 59255,
       "via2_y": 226250,
-      "anchor_x": 60950,
+      "anchor_x": 59900,
       "anchor_y": 226250,
       "anchor_layer": 3,
-      "bridge_len": 1160
+      "bridge_len": 775
     },
     {
       "pin": "T2Q_m8.D",
@@ -981,12 +981,12 @@
       "ap_x": 71730,
       "ap_y": 226130,
       "status": "FOUND",
-      "via2_x": 71800,
-      "via2_y": 225550,
+      "via2_x": 71145,
+      "via2_y": 226250,
       "anchor_x": 71800,
       "anchor_y": 226250,
       "anchor_layer": 3,
-      "bridge_len": 650
+      "bridge_len": 705
     },
     {
       "pin": "T3_m1.S",
@@ -994,12 +994,12 @@
       "ap_x": 82150,
       "ap_y": 191130,
       "status": "FOUND",
-      "via2_x": 81600,
-      "via2_y": 191250,
+      "via2_x": 82255,
+      "via2_y": 190550,
       "anchor_x": 82300,
       "anchor_y": 191250,
       "anchor_layer": 3,
-      "bridge_len": 670
+      "bridge_len": 685
     },
     {
       "pin": "T3_m3.G",
@@ -1007,12 +1007,12 @@
       "ap_x": 84970,
       "ap_y": 192000,
       "status": "FOUND",
-      "via2_x": 83200,
+      "via2_x": 83255,
       "via2_y": 191950,
       "anchor_x": 82300,
       "anchor_y": 191950,
       "anchor_layer": 3,
-      "bridge_len": 1820
+      "bridge_len": 1765
     },
     {
       "pin": "T3_m6.D",
@@ -1072,12 +1072,12 @@
       "ap_x": 86340,
       "ap_y": 199990,
       "status": "FOUND",
-      "via2_x": 86555,
+      "via2_x": 86855,
       "via2_y": 197300,
       "anchor_x": 86850,
       "anchor_y": 196500,
       "anchor_layer": 3,
-      "bridge_len": 2905
+      "bridge_len": 3205
     },
     {
       "pin": "T3_m6.G",
@@ -1085,12 +1085,12 @@
       "ap_x": 91900,
       "ap_y": 196630,
       "status": "FOUND",
-      "via2_x": 91150,
-      "via2_y": 196500,
+      "via2_x": 91785,
+      "via2_y": 197200,
       "anchor_x": 91750,
       "anchor_y": 196500,
       "anchor_layer": 3,
-      "bridge_len": 880
+      "bridge_len": 685
     },
     {
       "pin": "T3_m7.G",
@@ -1111,12 +1111,12 @@
       "ap_x": 98730,
       "ap_y": 191130,
       "status": "FOUND",
-      "via2_x": 98750,
+      "via2_x": 98745,
       "via2_y": 190650,
       "anchor_x": 98750,
       "anchor_y": 191250,
       "anchor_layer": 3,
-      "bridge_len": 500
+      "bridge_len": 495
     },
     {
       "pin": "T4I_m1.S",
@@ -1124,12 +1124,12 @@
       "ap_x": 82150,
       "ap_y": 206130,
       "status": "FOUND",
-      "via2_x": 82100,
+      "via2_x": 82055,
       "via2_y": 206300,
       "anchor_x": 82300,
       "anchor_y": 206300,
       "anchor_layer": 3,
-      "bridge_len": 220
+      "bridge_len": 265
     },
     {
       "pin": "T4I_m3.G",
@@ -1137,12 +1137,12 @@
       "ap_x": 84970,
       "ap_y": 207000,
       "status": "FOUND",
-      "via2_x": 82000,
+      "via2_x": 81955,
       "via2_y": 207000,
       "anchor_x": 82300,
       "anchor_y": 207000,
       "anchor_layer": 3,
-      "bridge_len": 2970
+      "bridge_len": 3015
     },
     {
       "pin": "T4I_m7.D",
@@ -1150,12 +1150,12 @@
       "ap_x": 87790,
       "ap_y": 209230,
       "status": "FOUND",
-      "via2_x": 87200,
+      "via2_x": 87155,
       "via2_y": 209100,
       "anchor_x": 87900,
       "anchor_y": 209100,
       "anchor_layer": 3,
-      "bridge_len": 720
+      "bridge_len": 765
     },
     {
       "pin": "T4I_s1.D",
@@ -1189,12 +1189,12 @@
       "ap_x": 86340,
       "ap_y": 214990,
       "status": "FOUND",
-      "via2_x": 86555,
+      "via2_x": 86855,
       "via2_y": 212250,
       "anchor_x": 86850,
       "anchor_y": 211550,
       "anchor_layer": 3,
-      "bridge_len": 2955
+      "bridge_len": 3255
     },
     {
       "pin": "T4I_m6.G",
@@ -1202,12 +1202,12 @@
       "ap_x": 91900,
       "ap_y": 211630,
       "status": "FOUND",
-      "via2_x": 91750,
+      "via2_x": 91785,
       "via2_y": 212250,
       "anchor_x": 91750,
       "anchor_y": 211550,
       "anchor_layer": 3,
-      "bridge_len": 770
+      "bridge_len": 735
     },
     {
       "pin": "T4I_m7.G",
@@ -1228,12 +1228,12 @@
       "ap_x": 86910,
       "ap_y": 206130,
       "status": "FOUND",
-      "via2_x": 87900,
+      "via2_x": 86255,
       "via2_y": 206300,
-      "anchor_x": 87900,
+      "anchor_x": 86850,
       "anchor_y": 206300,
       "anchor_layer": 3,
-      "bridge_len": 1160
+      "bridge_len": 825
     },
     {
       "pin": "T4I_m8.D",
@@ -1254,12 +1254,12 @@
       "ap_x": 98730,
       "ap_y": 206130,
       "status": "FOUND",
-      "via2_x": 98150,
+      "via2_x": 98145,
       "via2_y": 206300,
       "anchor_x": 98750,
       "anchor_y": 206300,
       "anchor_layer": 3,
-      "bridge_len": 750
+      "bridge_len": 755
     },
     {
       "pin": "T4Q_m1.S",
@@ -1267,12 +1267,12 @@
       "ap_x": 82150,
       "ap_y": 216130,
       "status": "FOUND",
-      "via2_x": 82900,
+      "via2_x": 82955,
       "via2_y": 216100,
       "anchor_x": 82300,
       "anchor_y": 216100,
       "anchor_layer": 3,
-      "bridge_len": 780
+      "bridge_len": 835
     },
     {
       "pin": "T4Q_m3.G",
@@ -1280,12 +1280,12 @@
       "ap_x": 84970,
       "ap_y": 217000,
       "status": "FOUND",
-      "via2_x": 83200,
+      "via2_x": 83255,
       "via2_y": 217050,
       "anchor_x": 82300,
       "anchor_y": 217150,
       "anchor_layer": 3,
-      "bridge_len": 1820
+      "bridge_len": 1765
     },
     {
       "pin": "T4Q_s1.D",
@@ -1320,11 +1320,11 @@
       "ap_y": 216130,
       "status": "FOUND",
       "via2_x": 98150,
-      "via2_y": 216130,
+      "via2_y": 216100,
       "anchor_x": 98750,
       "anchor_y": 216100,
       "anchor_layer": 3,
-      "bridge_len": 580
+      "bridge_len": 610
     },
     {
       "pin": "BUF_I_n.D",
@@ -1392,6 +1392,32 @@
       "bridge_len": 1185
     },
     {
+      "pin": "Mc_rst_dp.G",
+      "net": "comp_clk",
+      "ap_x": 42250,
+      "ap_y": 117630,
+      "status": "FOUND",
+      "via2_x": 43800,
+      "via2_y": 117750,
+      "anchor_x": 45900,
+      "anchor_y": 117750,
+      "anchor_layer": 2,
+      "bridge_len": 1670
+    },
+    {
+      "pin": "Mc_rst_dn.G",
+      "net": "comp_clk",
+      "ap_x": 44750,
+      "ap_y": 117630,
+      "status": "FOUND",
+      "via2_x": 43800,
+      "via2_y": 117750,
+      "anchor_x": 45900,
+      "anchor_y": 117750,
+      "anchor_layer": 2,
+      "bridge_len": 1070
+    },
+    {
       "pin": "Mc_rst_op.G",
       "net": "comp_clk",
       "ap_x": 47250,
@@ -1410,12 +1436,12 @@
       "ap_x": 49750,
       "ap_y": 117630,
       "status": "FOUND",
-      "via2_x": 50105,
+      "via2_x": 50080,
       "via2_y": 117350,
       "anchor_x": 50100,
       "anchor_y": 117750,
       "anchor_layer": 3,
-      "bridge_len": 635
+      "bridge_len": 610
     },
     {
       "pin": "M_da1_n.D",
@@ -1424,11 +1450,24 @@
       "ap_y": 74230,
       "status": "FOUND",
       "via2_x": 136100,
-      "via2_y": 74350,
+      "via2_y": 74295,
       "anchor_x": 135500,
       "anchor_y": 74350,
       "anchor_layer": 3,
-      "bridge_len": 890
+      "bridge_len": 835
+    },
+    {
+      "pin": "M_da2_n.G",
+      "net": "da1",
+      "ap_x": 136770,
+      "ap_y": 72000,
+      "status": "FOUND",
+      "via2_x": 135500,
+      "via2_y": 72095,
+      "anchor_x": 135500,
+      "anchor_y": 74350,
+      "anchor_layer": 3,
+      "bridge_len": 1365
     },
     {
       "pin": "M_da2_p.G",
@@ -1450,11 +1489,11 @@
       "ap_y": 74230,
       "status": "FOUND",
       "via2_x": 148750,
-      "via2_y": 74350,
+      "via2_y": 74295,
       "anchor_x": 148450,
       "anchor_y": 74350,
       "anchor_layer": 3,
-      "bridge_len": 840
+      "bridge_len": 785
     },
     {
       "pin": "M_db1_p.D",
@@ -1476,11 +1515,11 @@
       "ap_y": 77630,
       "status": "FOUND",
       "via2_x": 148800,
-      "via2_y": 78045,
+      "via2_y": 78100,
       "anchor_x": 148800,
       "anchor_y": 77500,
       "anchor_layer": 3,
-      "bridge_len": 2015
+      "bridge_len": 2070
     },
     {
       "pin": "T4I_m1.D",
@@ -1501,12 +1540,12 @@
       "ap_x": 83340,
       "ap_y": 214990,
       "status": "FOUND",
-      "via2_x": 83380,
-      "via2_y": 215645,
+      "via2_x": 83350,
+      "via2_y": 215650,
       "anchor_x": 83350,
       "anchor_y": 215050,
       "anchor_layer": 2,
-      "bridge_len": 695
+      "bridge_len": 670
     },
     {
       "pin": "T4I_s3.D",
@@ -1515,11 +1554,11 @@
       "ap_y": 209230,
       "status": "FOUND",
       "via2_x": 95850,
-      "via2_y": 209160,
+      "via2_y": 209100,
       "anchor_x": 97350,
       "anchor_y": 209100,
       "anchor_layer": 2,
-      "bridge_len": 1450
+      "bridge_len": 1510
     },
     {
       "pin": "T4I_s4.D",
@@ -1527,12 +1566,12 @@
       "ap_x": 100640,
       "ap_y": 214990,
       "status": "FOUND",
-      "via2_x": 98400,
+      "via2_x": 98445,
       "via2_y": 215050,
       "anchor_x": 98400,
       "anchor_y": 215050,
       "anchor_layer": 3,
-      "bridge_len": 2300
+      "bridge_len": 2255
     },
     {
       "pin": "T4Q_m1.D",
@@ -1579,12 +1618,12 @@
       "ap_x": 106200,
       "ap_y": 221630,
       "status": "FOUND",
-      "via2_x": 105500,
+      "via2_x": 105505,
       "via2_y": 221700,
       "anchor_x": 106100,
       "anchor_y": 221700,
       "anchor_layer": 3,
-      "bridge_len": 770
+      "bridge_len": 765
     },
     {
       "pin": "T4Q_s7.G",
@@ -1631,12 +1670,12 @@
       "ap_x": 82900,
       "ap_y": 196630,
       "status": "FOUND",
-      "via2_x": 81600,
+      "via2_x": 81655,
       "via2_y": 196500,
       "anchor_x": 81600,
       "anchor_y": 196500,
       "anchor_layer": 3,
-      "bridge_len": 1430
+      "bridge_len": 1375
     },
     {
       "pin": "T3_m8.G",
@@ -1717,6 +1756,19 @@
       "bridge_len": 1590
     },
     {
+      "pin": "T3_s4.G",
+      "net": "div8",
+      "ap_x": 100200,
+      "ap_y": 196630,
+      "status": "FOUND",
+      "via2_x": 97945,
+      "via2_y": 197200,
+      "anchor_x": 95600,
+      "anchor_y": 199300,
+      "anchor_layer": 2,
+      "bridge_len": 2825
+    },
+    {
       "pin": "T3_s6.D",
       "net": "div8",
       "ap_x": 106640,
@@ -1787,12 +1839,12 @@
       "ap_x": 150840,
       "ap_y": 80990,
       "status": "FOUND",
-      "via2_x": 151050,
-      "via2_y": 78245,
+      "via2_x": 151250,
+      "via2_y": 78300,
       "anchor_x": 151250,
       "anchor_y": 77500,
       "anchor_layer": 3,
-      "bridge_len": 2955
+      "bridge_len": 3100
     },
     {
       "pin": "M_nb_p2.G",
@@ -1806,6 +1858,19 @@
       "anchor_y": 77500,
       "anchor_layer": 3,
       "bridge_len": 620
+    },
+    {
+      "pin": "M_nb_n2.G",
+      "net": "f_exc_b_d",
+      "ap_x": 153230,
+      "ap_y": 72000,
+      "status": "FOUND",
+      "via2_x": 152000,
+      "via2_y": 72595,
+      "anchor_x": 150200,
+      "anchor_y": 72600,
+      "anchor_layer": 3,
+      "bridge_len": 1825
     },
     {
       "pin": "M_da2_n.D",
@@ -1847,6 +1912,32 @@
       "bridge_len": 2065
     },
     {
+      "pin": "M_na_n2.G",
+      "net": "f_exc_d",
+      "ap_x": 140530,
+      "ap_y": 72000,
+      "status": "FOUND",
+      "via2_x": 139250,
+      "via2_y": 72595,
+      "anchor_x": 137250,
+      "anchor_y": 74350,
+      "anchor_layer": 2,
+      "bridge_len": 1875
+    },
+    {
+      "pin": "Mp_load_p.D",
+      "net": "mid_p",
+      "ap_x": 45040,
+      "ap_y": 87490,
+      "status": "FOUND",
+      "via2_x": 43450,
+      "via2_y": 84515,
+      "anchor_x": 43450,
+      "anchor_y": 82750,
+      "anchor_layer": 3,
+      "bridge_len": 4565
+    },
+    {
       "pin": "Mp_load_p.G",
       "net": "mid_p",
       "ap_x": 42850,
@@ -1858,6 +1949,32 @@
       "anchor_y": 82050,
       "anchor_layer": 3,
       "bridge_len": 1580
+    },
+    {
+      "pin": "Mp_load_n.G",
+      "net": "mid_p",
+      "ap_x": 49150,
+      "ap_y": 82130,
+      "status": "FOUND",
+      "via2_x": 49040,
+      "via2_y": 84515,
+      "anchor_x": 49050,
+      "anchor_y": 82050,
+      "anchor_layer": 3,
+      "bridge_len": 2495
+    },
+    {
+      "pin": "Min_p.D",
+      "net": "mid_p",
+      "ap_x": 38210,
+      "ap_y": 80730,
+      "status": "FOUND",
+      "via2_x": 42750,
+      "via2_y": 80650,
+      "anchor_x": 42750,
+      "anchor_y": 82050,
+      "anchor_layer": 3,
+      "bridge_len": 4620
     },
     {
       "pin": "M_nb_n2.D",
@@ -1899,6 +2016,58 @@
       "bridge_len": 1565
     },
     {
+      "pin": "MS4.S",
+      "net": "probe_n",
+      "ap_x": 187090,
+      "ap_y": 65130,
+      "status": "FOUND",
+      "via2_x": 186950,
+      "via2_y": 63550,
+      "anchor_x": 186950,
+      "anchor_y": 65250,
+      "anchor_layer": 3,
+      "bridge_len": 1720
+    },
+    {
+      "pin": "MS4.S2",
+      "net": "probe_n",
+      "ap_x": 188850,
+      "ap_y": 65130,
+      "status": "FOUND",
+      "via2_x": 186950,
+      "via2_y": 63550,
+      "anchor_x": 186950,
+      "anchor_y": 65250,
+      "anchor_layer": 3,
+      "bridge_len": 3480
+    },
+    {
+      "pin": "MS2.S",
+      "net": "probe_p",
+      "ap_x": 179970,
+      "ap_y": 65130,
+      "status": "FOUND",
+      "via2_x": 179950,
+      "via2_y": 63550,
+      "anchor_x": 179950,
+      "anchor_y": 65250,
+      "anchor_layer": 3,
+      "bridge_len": 1600
+    },
+    {
+      "pin": "MS2.S2",
+      "net": "probe_p",
+      "ap_x": 181730,
+      "ap_y": 65130,
+      "status": "FOUND",
+      "via2_x": 179950,
+      "via2_y": 63550,
+      "anchor_x": 179950,
+      "anchor_y": 65250,
+      "anchor_layer": 3,
+      "bridge_len": 3360
+    },
+    {
       "pin": "MXfq_n2.S",
       "net": "ref_Q",
       "ap_x": 69020,
@@ -1930,12 +2099,12 @@
       "ap_x": 71250,
       "ap_y": 239130,
       "status": "FOUND",
-      "via2_x": 71800,
+      "via2_x": 71855,
       "via2_y": 239200,
       "anchor_x": 71100,
       "anchor_y": 239200,
       "anchor_layer": 3,
-      "bridge_len": 620
+      "bridge_len": 675
     },
     {
       "pin": "MXfq_p3.S",
@@ -1944,11 +2113,11 @@
       "ap_y": 247990,
       "status": "FOUND",
       "via2_x": 74600,
-      "via2_y": 248495,
+      "via2_y": 248550,
       "anchor_x": 74600,
       "anchor_y": 247950,
       "anchor_layer": 3,
-      "bridge_len": 565
+      "bridge_len": 620
     },
     {
       "pin": "MXiq_n3.D",
@@ -2025,13 +2194,6 @@
       "status": "BLOCKED"
     },
     {
-      "pin": "PM_pdiode.G",
-      "net": "pmos_bias",
-      "ap_x": 50000,
-      "ap_y": 143130,
-      "status": "BLOCKED"
-    },
-    {
       "pin": "Mpb5.G",
       "net": "pmos_bias",
       "ap_x": 175650,
@@ -2053,13 +2215,6 @@
       "status": "BLOCKED"
     },
     {
-      "pin": "Mbias_d.D",
-      "net": "bias_n",
-      "ap_x": 40320,
-      "ap_y": 75730,
-      "status": "BLOCKED"
-    },
-    {
       "pin": "MBp1.G",
       "net": "vco5",
       "ap_x": 195400,
@@ -2071,20 +2226,6 @@
       "net": "vco5",
       "ap_x": 195090,
       "ap_y": 168000,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mpb2.D",
-      "net": "ns2",
-      "ap_x": 115340,
-      "ap_y": 177990,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mpb4.D",
-      "net": "ns4",
-      "ap_x": 156340,
-      "ap_y": 177990,
       "status": "BLOCKED"
     },
     {
@@ -2172,13 +2313,6 @@
       "status": "BLOCKED"
     },
     {
-      "pin": "INV_VCO_p.D",
-      "net": "vco_b",
-      "ap_x": 85840,
-      "ap_y": 184990,
-      "status": "BLOCKED"
-    },
-    {
       "pin": "T1I_s8.G",
       "net": "vco_b",
       "ap_x": 74550,
@@ -2228,13 +2362,6 @@
       "status": "BLOCKED"
     },
     {
-      "pin": "T1Q_m3.G",
-      "net": "t1Q_m",
-      "ap_x": 57970,
-      "ap_y": 202000,
-      "status": "BLOCKED"
-    },
-    {
       "pin": "T1Q_m7.D",
       "net": "t1Q_m",
       "ap_x": 60790,
@@ -2260,13 +2387,6 @@
       "net": "t2I_m",
       "ap_x": 55150,
       "ap_y": 216130,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T2I_m3.G",
-      "net": "t2I_m",
-      "ap_x": 57970,
-      "ap_y": 217000,
       "status": "BLOCKED"
     },
     {
@@ -2368,31 +2488,10 @@
       "status": "BLOCKED"
     },
     {
-      "pin": "Mc_rst_dp.G",
-      "net": "comp_clk",
-      "ap_x": 42250,
-      "ap_y": 117630,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mc_rst_dn.G",
-      "net": "comp_clk",
-      "ap_x": 44750,
-      "ap_y": 117630,
-      "status": "BLOCKED"
-    },
-    {
       "pin": "M_da1_p.D",
       "net": "da1",
       "ap_x": 132540,
       "ap_y": 80990,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "M_da2_n.G",
-      "net": "da1",
-      "ap_x": 136770,
-      "ap_y": 72000,
       "status": "BLOCKED"
     },
     {
@@ -2466,13 +2565,6 @@
       "status": "BLOCKED"
     },
     {
-      "pin": "T3_s4.G",
-      "net": "div8",
-      "ap_x": 100200,
-      "ap_y": 196630,
-      "status": "BLOCKED"
-    },
-    {
       "pin": "T3_s7.D",
       "net": "div8",
       "ap_x": 99610,
@@ -2515,41 +2607,6 @@
       "status": "BLOCKED"
     },
     {
-      "pin": "M_nb_n2.G",
-      "net": "f_exc_b_d",
-      "ap_x": 153230,
-      "ap_y": 72000,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "M_na_n2.G",
-      "net": "f_exc_d",
-      "ap_x": 140530,
-      "ap_y": 72000,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mp_load_p.D",
-      "net": "mid_p",
-      "ap_x": 45040,
-      "ap_y": 87490,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mp_load_n.G",
-      "net": "mid_p",
-      "ap_x": 49150,
-      "ap_y": 82130,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Min_p.D",
-      "net": "mid_p",
-      "ap_x": 38210,
-      "ap_y": 80730,
-      "status": "BLOCKED"
-    },
-    {
       "pin": "M_nb_n1.S",
       "net": "nb_mid",
       "ap_x": 150910,
@@ -2568,62 +2625,6 @@
       "net": "phi_p",
       "ap_x": 187530,
       "ap_y": 66000,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS3.S",
-      "net": "probe_n",
-      "ap_x": 183530,
-      "ap_y": 65130,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS3.S2",
-      "net": "probe_n",
-      "ap_x": 185290,
-      "ap_y": 65130,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS4.S",
-      "net": "probe_n",
-      "ap_x": 187090,
-      "ap_y": 65130,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS4.S2",
-      "net": "probe_n",
-      "ap_x": 188850,
-      "ap_y": 65130,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS1.S",
-      "net": "probe_p",
-      "ap_x": 176410,
-      "ap_y": 65130,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS1.S2",
-      "net": "probe_p",
-      "ap_x": 178170,
-      "ap_y": 65130,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS2.S",
-      "net": "probe_p",
-      "ap_x": 179970,
-      "ap_y": 65130,
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS2.S2",
-      "net": "probe_p",
-      "ap_x": 181730,
-      "ap_y": 65130,
       "status": "BLOCKED"
     },
     {
@@ -2663,9 +2664,9 @@
     }
   ],
   "stats": {
-    "found": 178,
-    "blocked": 92,
+    "found": 202,
+    "blocked": 68,
     "total": 270,
-    "m2_rejected": 108879
+    "m2_rejected": 734432
   }
 }

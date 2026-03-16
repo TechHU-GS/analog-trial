@@ -27,8 +27,8 @@ from .pdk import (
 )
 from .paths import ROUTING_JSON
 
-ANCHOR_RADIUS = 1500
-MAX_M2_BRIDGE = 3000
+ANCHOR_RADIUS = 2500   # nm (was 1500: wider search finds +79 pins)
+MAX_M2_BRIDGE = 5000   # nm (was 3000: longer bridges reach more anchors)
 GRID_STEP = 100
 M2_BRIDGE_HW = M2_MIN_W // 2  # 100nm
 M2_ENDCAP = 145
