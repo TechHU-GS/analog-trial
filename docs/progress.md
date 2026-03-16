@@ -450,6 +450,24 @@ Solver 集成到 assembly pipeline 是下一步。
 4. **B 类 36 nets 深查** — 这些有 Via2 routing 但 LVS unmatched，可能是 device topology 问题
 5. **DRC 系统性修法** — M1.b(34), M3.d(38), M4.b(21)
 
+### SoilZ 前仿重建 (2026-03-16 20:00-20:30)
+
+**关键发现：SPICE 实例化必须用 X prefix（subcircuit call），不是 M prefix。**
+- IHP SG13G2 器件是 `.subckt`（PSP/OSDI compact model），不是 `.model`
+- L2 的 cmos_ptat_vco.sp 正确使用了 `X` prefix
+- gen_lvs_reference.py 用 `M` prefix（正确用于 KLayout LVS，但 ngspice 前仿需要 `X`）
+
+**已完成：**
+- `sim/soilz/` 目录创建，6 block SPICE + flat + presim 重建
+- `_soilz_presim.sp` 使用 X prefix，249 devices
+- ngspice 首次解析成功（DC OP 开始求解）
+- ⚠️ DC OP 收敛状态未确认（ngspice 在 gmin stepping 后进程消失，可能 crash 或 timeout）
+
+**下一步：**
+- 检查 DC OP 收敛问题（可能需要 `.nodeset` 初始化关键节点）
+- 清理 sim/ 目录临时文件
+- 如果 DC OP 通过 → 跑 transient 验证 VCO 振荡 + 信号链
+
 ### 教训（累积，每条都踩过坑）
 
 1. **先验证再定性** — 没有脚本输出/LVS证据不能说"确认"
