@@ -807,23 +807,23 @@
     "PM3": {
       "h_um": 1.12,
       "type": "pmos_mirror",
-      "w_um": 11.3,
-      "x_um": 25.9,
+      "w_um": 51.3,
+      "x_um": 3.0,
       "y_um": 154.5
     },
     "PM4": {
       "h_um": 1.12,
       "type": "pmos_mirror",
-      "w_um": 11.3,
-      "x_um": 38.2,
+      "w_um": 51.3,
+      "x_um": 56.0,
       "y_um": 154.5
     },
     "PM5": {
       "h_um": 1.12,
       "type": "pmos_mirror",
-      "w_um": 11.3,
-      "x_um": 62.8,
-      "y_um": 154.5
+      "w_um": 51.3,
+      "x_um": 3.0,
+      "y_um": 156.5
     },
     "PM_cas1": {
       "h_um": 1.62,
@@ -891,9 +891,9 @@
     "PM_ref": {
       "h_um": 1.12,
       "type": "pmos_mirror",
-      "w_um": 11.3,
-      "x_um": 50.5,
-      "y_um": 154.5
+      "w_um": 51.3,
+      "x_um": 56.0,
+      "y_um": 156.5
     },
     "Rdac": {
       "h_um": 2.26,
@@ -912,12 +912,12 @@
       "y_um": 59
     },
     "Rout": {
-      "h_um": 3.62,
+      "h_um": 101.31,
       "rotation": 90,
-      "type": "rppd_out",
-      "w_um": 27.36,
-      "x_um": 10.0,
-      "y_um": 137.0
+      "type": "rhigh_rout",
+      "w_um": 1.58,
+      "x_um": 11.0,
+      "y_um": 15.0
     },
     "Rptat": {
       "h_um": 135.54,
@@ -1752,6 +1752,65 @@
       "w_um": 1.18,
       "x_um": 100.96,
       "y_um": 217.0
+    },
+    "C_fb": {
+      "x_um": 30.0,
+      "y_um": 262.0,
+      "w_um": 27.2,
+      "h_um": 27.2,
+      "type": "cap_cmim_1p"
+    },
+    "Cbyp_n": {
+      "x_um": 72.0,
+      "y_um": 146.0,
+      "w_um": 6.2,
+      "h_um": 6.2,
+      "type": "cap_cmim_bypass"
+    },
+    "Cbyp_p": {
+      "x_um": 60.0,
+      "y_um": 139.0,
+      "w_um": 6.2,
+      "h_um": 6.2,
+      "type": "cap_cmim_bypass"
+    },
+    "M_bias_mir": {
+      "x_um": 31.0,
+      "y_um": 70.5,
+      "w_um": 3.3,
+      "h_um": 1.12,
+      "type": "pmos_cs",
+      "nwell_net": "vdd"
+    },
+    "INV_iso_n": {
+      "x_um": 88.0,
+      "y_um": 178.0,
+      "w_um": 1.18,
+      "h_um": 2.36,
+      "type": "nmos_buf1"
+    },
+    "INV_iso_p": {
+      "x_um": 88.0,
+      "y_um": 181.5,
+      "w_um": 1.8,
+      "h_um": 4.62,
+      "type": "pmos_buf1",
+      "nwell_net": "vdd"
+    },
+    "INV_isob_n": {
+      "x_um": 90.0,
+      "y_um": 178.0,
+      "w_um": 1.18,
+      "h_um": 1.36,
+      "type": "nmos_vco"
+    },
+    "INV_isob_p": {
+      "x_um": 90.0,
+      "y_um": 181.5,
+      "w_um": 1.8,
+      "h_um": 2.62,
+      "type": "pmos_vco",
+      "nwell_net": "vdd"
     }
   },
   "nwell_islands": [],
