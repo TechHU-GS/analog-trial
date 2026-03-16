@@ -407,6 +407,49 @@ Solver 集成到 assembly pipeline 是下一步。
 
 ⚠️ "推倒重做半天到一天" 是估计，未验证。placer 放松约束后能否出 FEASIBLE 解待测试。
 
+### Placer INFEASIBLE 根因 (2026-03-16 19:00)
+
+**Rptat = 9.06 × 135.54 µm（占芯片高度 55%）。** 49 rows 垂直堆叠总高 347µm，芯片只有 243µm。Row-based 模型无法表达"Rptat 旁边放设备"的 2D 布局。即使去掉所有约束（floorplan/sub_region/matching/isolation），仍然 INFEASIBLE。当前手工 placement 通过 2D 安排解决了这个问题，但 solver 做不到。
+
+### Pipeline 审计 + L2/SoilZ 分离 (2026-03-16 19:30-20:00)
+
+**文件完整性审计结果：**
+
+| 文件 | L2 | SoilZ | 状态 |
+|------|-----|-------|------|
+| 前仿 SPICE (原始) | sim/cmos_ptat_vco.sp (37 dev) ✅ | ❌ 分块 SPICE 未找到 | SoilZ 从未有完整前仿 |
+| netlist.json | — | ✅ 249 dev (soilz_v1) | SoilZ sole source of truth |
+| LVS SPICE | — | ✅ 自动生成 | 从 netlist.json 派生 |
+| 前仿验证 | ✅ 9/9 corners | ⚠️ 分块验证 (设计文档记录) | 全电路前仿从未做过 |
+
+**SoilZ 设计来源：LLM 直接写原理图 → 分块验证 → 手工/LLM 合并到 netlist.json。**
+分块 SPICE 文件（soilz_current_src.sp 等 6 个）在 soilz_design.md 有记录但文件不在磁盘上。
+
+**已完成的整理：**
+- `sim/soilz/soilz.sp` — 从 netlist.json 重建的 249-device SoilZ SPICE（新建）
+- `layout/ptat_vco_lvs.spice` — 重新生成的 LVS reference（subckt=ptat_vco 兼容 GDS）
+- LVS 验证：重建 SPICE 和旧 SPICE 产生相同结果（276），确认一致性
+
+### Session 最终数字 (2026-03-16 20:00)
+
+| 指标 | Session 起始 | Base GDS | +Solver Patch | 目标 |
+|------|-------------|----------|---------------|------|
+| LVS unmatched | 358 | **276** | **240** | 0 |
+| LVS comma merges | 1 | 2 | 2 | 0 |
+| Routing 碎片 | 79 | **0** | 0 | 0 |
+| DRC | ~208 | ~216 | 未测 | 0 |
+| Routing | 133/0 | 133/0 | 133/0 | 133/0 |
+
+**13 个 git commits 本 session。**
+
+### 下一 session 优先级
+
+1. **重建 SoilZ 分块前仿** — 从 soilz_design.md 重建 6 个 block SPICE + testbench，跑全电路前仿验证 netlist.json 正确性
+2. **修 PCell rotation** — pipeline-wide 决定：不旋转（当前行为）或全链路支持旋转
+3. **修 Rout↔Rptat 重叠** — 调整 placement
+4. **B 类 36 nets 深查** — 这些有 Via2 routing 但 LVS unmatched，可能是 device topology 问题
+5. **DRC 系统性修法** — M1.b(34), M3.d(38), M4.b(21)
+
 ### 教训（累积，每条都踩过坑）
 
 1. **先验证再定性** — 没有脚本输出/LVS证据不能说"确认"
