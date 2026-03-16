@@ -492,13 +492,47 @@ Solver 集成到 assembly pipeline 是下一步。
 **待验证**：全电路 253 devices presim（加数字块+comparator+H桥）
 **设备总数**：253 (246 MOS + 4 R + 3 C)
 
-### Session 总成果 (2026-03-16, 24 commits)
+### Session 总成果 (2026-03-16~17, 42 commits)
 
-1. **LVS**: 358→240 (base 276) — maze_router fix + Via2 solver
-2. **设计修复**: 5 个遗漏修复，core analog presim 通过
-3. **工具**: Via2 solver, L2N, fix_m2_overlap
-4. **审计**: pipeline 端到端一致性验证，L2/SoilZ 分离
-5. **SPICE 重建**: 6 block + flat + presim，253 devices
+**设计修复 (6 个遗漏 + 3 个参数修正)：**
+1. C_fb 1pF cap_cmim — ΣΔ 反馈电容（缺失）
+2. Cbyp_n/Cbyp_p bypass caps — bias 节点稳定（缺失，L2 有）
+3. M_bias_mir PMOS mirror — OTA bias 电流源（NMOS 不行，需要 PMOS）
+4. INV_iso ×4 — VCO→TFF isolation buffer（TFF charge injection 导致 crash）
+5. Mirror L: 10→50µm（频率匹配，PCell 宽度 51µm）
+6. Rout: rppd→rhigh l=100（VPTAT 12mV→123mV）
+7. cap_cmim pcell_name: cmim→cap_cmim
+8. device_lib: bbox, pins, classification 补全
+
+**前仿验证（ngspice 实测）：**
+- VCO: 10.4 MHz ✅ (72-dev clean), 4.5 MHz (208-dev cshunt=50fF)
+- VPTAT: 123 mV ✅
+- OTA: 0.614V ✅
+- TFF ÷2: VCO/2 精确 ✅
+- Core analog (72 dev): 20µs stable ✅
+- 全电路 (208 dev + cshunt): 15µs stable ✅
+- Ground bounce: 0.5mV（实测 TFF peak 155µA × 1Ω GND）
+
+**布局更新（257 devices）：**
+- Placement: 0 overlap, fits 202×314µm tile ✅
+- Ties: 7/7 PASS ✅
+- Routing: 133/0 (全通) ✅
+- Assembly: ⚠️ BLOCKED — 新器件类型需要 PCell shapes_by_layer probe
+
+**工具：**
+- Via2 constraint solver (solve_via2.py + apply_via2.py)
+- M2 overlap fix (fix_m2_overlap.py)
+- L2/SoilZ 分离，SPICE 重建
+- 可视化 (placement_v4.png)
+
+**LVS 进展（在旧 249-dev 设计上）：** 358→240 (-33%)
+
+### 下一步
+1. **PCell probe** — 填充 device_lib shapes_by_layer for cap_cmim_bypass, rhigh_rout
+2. **Assembly** — 跑通 GDS 生成
+3. **LVS/DRC** — 在完整设计（257 dev）上重测
+4. **Via2 solver** — 应用到新 GDS
+5. **目标**: LVS/DRC clean for TTIHP 26a submission
 
 ### 教训（累积，每条都踩过坑）
 
