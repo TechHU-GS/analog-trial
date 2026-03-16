@@ -1434,7 +1434,7 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
                 _scan_pos = None
                 _best_scan_d = 99999
                 _v3_endcap = VIA3_SZ // 2 + 90  # Via3 + M4.d encl.
-                _SCAN_RADIUS = 700  # nm search radius
+                _SCAN_RADIUS = 2000  # nm search radius (was 700; widened to reach more M3-clear positions)
 
                 for _seg in segs:
                     if _seg[4] != M4_LYR:
