@@ -3,7 +3,7 @@
 ** Auto-generated from netlist.json (design: soilz_v1)
 ** IHP SG13G2 130nm BiCMOS (CMOS-only)
 
-.subckt ptat_vco gnd vdd bias_n buf1 buf_ref_I
+.subckt soilz gnd vdd bias_n buf1 buf_ref_I
 + buf_ref_Q c_di_n c_di_p c_tail cas1 cas2 cas3 cas_ref chop_out comp_clk
 + comp_outn comp_outp da1 dac_hi dac_lo dac_out db1 div16_I div16_I_b div16_Q
 + div16_Q_b div2_I div2_I_b div2_Q div2_Q_b div4_I div4_I_b div4_Q div4_Q_b div8
@@ -269,4 +269,4 @@ MBUF_CK_p f_exc_b f_exc vdd vdd sg13_lv_pmos W=2u L=0.5u
 MINV_VCO_n vco_b vco_out gnd gnd sg13_lv_nmos W=1u L=0.5u
 MINV_VCO_p vco_b vco_out vdd vdd sg13_lv_pmos W=2u L=0.5u
 
-.ends ptat_vco
+.ends soilz

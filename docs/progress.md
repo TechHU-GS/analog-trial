@@ -393,6 +393,20 @@ Solver 集成到 assembly pipeline 是下一步。
 6. **klayout.db LayoutToNetlist.probe_net 是最精确的 net 查询工具** — 比 Region boolean 更准
 7. **Greedy sweep 虽慢（12分钟）但是唯一可靠的 merge-safe 过滤** — 纯几何检查误拒/漏检都有
 
+### Layout 健康检查结果 (2026-03-16 19:20)
+
+**placement 有根本性问题：**
+- **105 个 floorplan zone 违反** — 设备不在 netlist.json 定义的区域里
+- **3 个电阻旋转 bug** — PCell 未旋转但 bbox 是旋转后的
+- **Rout ↔ Rptat 物理重叠** — 9×3.6µm
+- **Placer INFEASIBLE** — 约束和实际 placement 不一致
+
+**结论：当前 MANUAL_V3.3b placement 是在有缺陷的基础上手工调整的。继续在这个 placement 上打补丁效率极低（session 已证明：358→240 但每步收益递减）。**
+
+**决策点：推倒重做 placement（修约束→重跑 placer→全 pipeline），还是继续在当前 placement 上修？**
+
+⚠️ "推倒重做半天到一天" 是估计，未验证。placer 放松约束后能否出 FEASIBLE 解待测试。
+
 ### 教训（累积，每条都踩过坑）
 
 1. **先验证再定性** — 没有脚本输出/LVS证据不能说"确认"
