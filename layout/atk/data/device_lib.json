@@ -11142,7 +11142,22 @@
       "ox_um": -0.6,
       "oy_um": -0.6
     },
-    "pins": {},
+    "pins": {
+      "PLUS": {
+        "pos_nm": [
+          13000,
+          13000
+        ],
+        "pin_role": "plus"
+      },
+      "MINUS": {
+        "pos_nm": [
+          13000,
+          13000
+        ],
+        "pin_role": "minus"
+      }
+    },
     "implant_bounds": {},
     "classification": {
       "device_class": "capacitor",
@@ -11164,7 +11179,29 @@
       "requires_ntap": false,
       "requires_ptap": false
     },
-    "pins": {}
+    "pins": {
+      "PLUS": {
+        "pos_nm": [
+          2500,
+          2500
+        ],
+        "pin_role": "plus"
+      },
+      "MINUS": {
+        "pos_nm": [
+          2500,
+          2500
+        ],
+        "pin_role": "minus"
+      }
+    },
+    "bbox": [
+      -600,
+      -600,
+      5600,
+      5600
+    ],
+    "bbox_nm": "6200x6200 nm"
   },
   "rhigh_rout": {
     "pcell": "rhigh",
@@ -11181,6 +11218,28 @@
       "requires_ntap": false,
       "requires_ptap": false
     },
-    "pins": {}
+    "pins": {
+      "PLUS": {
+        "pos_nm": [
+          500,
+          100000
+        ],
+        "pin_role": "plus"
+      },
+      "MINUS": {
+        "pos_nm": [
+          500,
+          500
+        ],
+        "pin_role": "minus"
+      }
+    },
+    "bbox": [
+      -290,
+      -605,
+      1290,
+      100705
+    ],
+    "bbox_nm": "1580x101310 nm"
   }
 }

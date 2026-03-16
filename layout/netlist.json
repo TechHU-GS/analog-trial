@@ -1501,22 +1501,26 @@
     {
       "name": "C_fb",
       "type": "cap_cmim_1p",
-      "nwell_net": null
+      "nwell_net": null,
+      "has_nwell": false
     },
     {
       "name": "Cbyp_n",
       "type": "cap_cmim_bypass",
-      "nwell_net": null
+      "nwell_net": null,
+      "has_nwell": false
     },
     {
       "name": "Cbyp_p",
       "type": "cap_cmim_bypass",
-      "nwell_net": null
+      "nwell_net": null,
+      "has_nwell": false
     },
     {
       "name": "M_bias_mir",
       "type": "pmos_cs",
-      "nwell_net": "vdd"
+      "nwell_net": "vdd",
+      "has_nwell": true
     }
   ],
   "nets": [
