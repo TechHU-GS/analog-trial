@@ -1497,6 +1497,11 @@
       "type": "pmos_vco",
       "has_nwell": true,
       "nwell_net": "vdd"
+    },
+    {
+      "name": "C_fb",
+      "type": "cap_cmim_1p",
+      "nwell_net": null
     }
   ],
   "nets": [
@@ -2728,7 +2733,8 @@
       "pins": [
         "Mp_load_n.D",
         "Min_n.D",
-        "Mc_inp.G"
+        "Mc_inp.G",
+        "C_fb.PLUS"
       ]
     },
     {
@@ -2904,7 +2910,8 @@
       "pins": [
         "Min_n.G",
         "Rin.MINUS",
-        "Rdac.MINUS"
+        "Rdac.MINUS",
+        "C_fb.MINUS"
       ]
     },
     {
