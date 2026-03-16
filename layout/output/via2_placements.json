@@ -579,11 +579,11 @@
       "ap_y": 196630,
       "status": "FOUND",
       "via2_x": 62985,
-      "via2_y": 196100,
+      "via2_y": 195900,
       "anchor_x": 63050,
       "anchor_y": 196500,
       "anchor_layer": 2,
-      "bridge_len": 1615
+      "bridge_len": 1815
     },
     {
       "pin": "T1I_s2.G",
@@ -597,19 +597,6 @@
       "anchor_y": 196500,
       "anchor_layer": 3,
       "bridge_len": 2045
-    },
-    {
-      "pin": "T1Q_m2.G",
-      "net": "vco_b",
-      "ap_x": 55900,
-      "ap_y": 206630,
-      "status": "FOUND",
-      "via2_x": 55450,
-      "via2_y": 206650,
-      "anchor_x": 56050,
-      "anchor_y": 206650,
-      "anchor_layer": 3,
-      "bridge_len": 470
     },
     {
       "pin": "T1Q_m8.G",
@@ -1254,12 +1241,12 @@
       "ap_x": 90170,
       "ap_y": 209230,
       "status": "FOUND",
-      "via2_x": 89985,
-      "via2_y": 207800,
+      "via2_x": 90070,
+      "via2_y": 207780,
       "anchor_x": 90000,
       "anchor_y": 208400,
       "anchor_layer": 2,
-      "bridge_len": 1615
+      "bridge_len": 1550
     },
     {
       "pin": "T4I_s7.S",
@@ -1424,11 +1411,11 @@
       "ap_y": 117630,
       "status": "FOUND",
       "via2_x": 50105,
-      "via2_y": 117750,
+      "via2_y": 117350,
       "anchor_x": 50100,
       "anchor_y": 117750,
       "anchor_layer": 3,
-      "bridge_len": 475
+      "bridge_len": 635
     },
     {
       "pin": "M_da1_n.D",
@@ -1761,12 +1748,12 @@
       "ap_x": 89730,
       "ap_y": 207000,
       "status": "FOUND",
-      "via2_x": 90085,
-      "via2_y": 207000,
+      "via2_x": 90685,
+      "via2_y": 206600,
       "anchor_x": 90700,
       "anchor_y": 207000,
       "anchor_layer": 2,
-      "bridge_len": 355
+      "bridge_len": 1355
     },
     {
       "pin": "T4I_s1.G",
@@ -1917,12 +1904,12 @@
       "ap_x": 69020,
       "ap_y": 239130,
       "status": "FOUND",
-      "via2_x": 69455,
+      "via2_x": 68445,
       "via2_y": 239200,
       "anchor_x": 69000,
       "anchor_y": 239200,
       "anchor_layer": 3,
-      "bridge_len": 505
+      "bridge_len": 645
     },
     {
       "pin": "MXfq_p2.S",
@@ -2031,253 +2018,654 @@
   ],
   "blocked": [
     {
-      "pin": "T4Q_m1.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mp_load_n.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "PM_cas2.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MXfi_p2.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T3_m1.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T2Q_s8.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mbias_d.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T1I_m6.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T2I_s5.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T4I_s8.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T2I_m1.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS2.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "BUF_Q_p.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS4.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T1I_s6.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T4Q_m2.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS4.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T4I_m2.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "M_da2_p.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T4Q_s2.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T4I_s6.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS1.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mc_tail.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "M_nb_n2.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T3_m2.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T3_s4.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T1I_m2.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mpd1.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS3.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "BUF_Q_n.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T3_m7.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mpd3.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Min_n.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS4.S2",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "M_db2_p.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "M_ib_p.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T2I_s1.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mc_inn.S2",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mc_rst_dp.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "M_na_n1.S",
+      "pin": "PM_pdiode.D",
+      "net": "pmos_bias",
+      "ap_x": 51190,
+      "ap_y": 144990,
       "status": "BLOCKED"
     },
     {
       "pin": "PM_pdiode.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Rin.MINUS",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T4Q_m5.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS2.S2",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T1Q_m7.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "M_da1_p.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T3_s7.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T1Q_m1.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T2I_s3.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T1Q_s2.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T1Q_s8.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS1.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T4Q_s8.G",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T4Q_s7.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T4Q_s4.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "Mp_load_p.D",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "T1I_s1.S",
-      "status": "BLOCKED"
-    },
-    {
-      "pin": "MS3.G",
+      "net": "pmos_bias",
+      "ap_x": 50000,
+      "ap_y": 143130,
       "status": "BLOCKED"
     },
     {
       "pin": "Mpb5.G",
+      "net": "pmos_bias",
+      "ap_x": 175650,
+      "ap_y": 176130,
       "status": "BLOCKED"
     },
     {
-      "pin": "MS1.S2",
+      "pin": "Rin.MINUS",
+      "net": "sum_n",
+      "ap_x": 25210,
+      "ap_y": 59330,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Min_n.D",
+      "net": "ota_out",
+      "ap_x": 49000,
+      "ap_y": 80730,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mbias_d.D",
+      "net": "bias_n",
+      "ap_x": 40320,
+      "ap_y": 75730,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MBp1.G",
+      "net": "vco5",
+      "ap_x": 195400,
+      "ap_y": 171645,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MBn1.G",
+      "net": "vco5",
+      "ap_x": 195090,
+      "ap_y": 168000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mpb2.D",
+      "net": "ns2",
+      "ap_x": 115340,
+      "ap_y": 177990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mpb4.D",
+      "net": "ns4",
+      "ap_x": 156340,
+      "ap_y": 177990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1I_s2.S",
+      "net": "div2_I",
+      "ap_x": 69760,
+      "ap_y": 199990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_m8.G",
+      "net": "div2_I",
+      "ap_x": 62730,
+      "ap_y": 217000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_s1.G",
+      "net": "div2_I",
+      "ap_x": 67410,
+      "ap_y": 217000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_s5.G",
+      "net": "div2_I",
+      "ap_x": 76200,
+      "ap_y": 221630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2Q_m5.G",
+      "net": "div2_I",
+      "ap_x": 61900,
+      "ap_y": 231630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2Q_s2.G",
+      "net": "div2_I",
+      "ap_x": 70200,
+      "ap_y": 231630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2Q_s8.G",
+      "net": "div2_I",
+      "ap_x": 74550,
+      "ap_y": 227000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "M_na_n1.S",
+      "net": "na_mid",
+      "ap_x": 138210,
+      "ap_y": 71130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "M_ib_p.D",
+      "net": "phi_n",
+      "ap_x": 158340,
+      "ap_y": 82990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS3.G",
+      "net": "phi_n",
+      "ap_x": 183970,
+      "ap_y": 66000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS2.G",
+      "net": "phi_n",
+      "ap_x": 180410,
+      "ap_y": 66000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4Q_m8.D",
+      "net": "t4Q_nmn",
+      "ap_x": 90170,
+      "ap_y": 219230,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "INV_VCO_p.D",
+      "net": "vco_b",
+      "ap_x": 85840,
+      "ap_y": 184990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1I_s8.G",
+      "net": "vco_b",
+      "ap_x": 74550,
+      "ap_y": 192000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "PM_cas2.D",
+      "net": "src2",
+      "ap_x": 130440,
+      "ap_y": 104990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1I_m2.S",
+      "net": "t1I_m",
+      "ap_x": 55460,
+      "ap_y": 199990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1I_m4.G",
+      "net": "t1I_m",
+      "ap_x": 58900,
+      "ap_y": 196630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1I_m6.G",
+      "net": "t1I_mb",
+      "ap_x": 64900,
+      "ap_y": 196630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1I_s8.D",
+      "net": "t1I_nsn",
+      "ap_x": 74990,
+      "ap_y": 194230,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1Q_m1.S",
+      "net": "t1Q_m",
+      "ap_x": 55150,
+      "ap_y": 201130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1Q_m3.G",
+      "net": "t1Q_m",
+      "ap_x": 57970,
+      "ap_y": 202000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1Q_m7.D",
+      "net": "t1Q_m",
+      "ap_x": 60790,
+      "ap_y": 204230,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1Q_s2.D",
+      "net": "t1Q_m",
+      "ap_x": 70640,
+      "ap_y": 209990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T1Q_s8.D",
+      "net": "t1Q_nsn",
+      "ap_x": 74990,
+      "ap_y": 204230,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_m1.S",
+      "net": "t2I_m",
+      "ap_x": 55150,
+      "ap_y": 216130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_m3.G",
+      "net": "t2I_m",
+      "ap_x": 57970,
+      "ap_y": 217000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_m4.G",
+      "net": "t2I_m",
+      "ap_x": 58900,
+      "ap_y": 221630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_m7.D",
+      "net": "t2I_m",
+      "ap_x": 60790,
+      "ap_y": 219230,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_s8.D",
+      "net": "t2I_nsn",
+      "ap_x": 74990,
+      "ap_y": 219230,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T3_m2.S",
+      "net": "t3_m",
+      "ap_x": 82460,
+      "ap_y": 199990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T3_m4.G",
+      "net": "t3_m",
+      "ap_x": 85900,
+      "ap_y": 196630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T3_s8.D",
+      "net": "t3_nsn",
+      "ap_x": 101990,
+      "ap_y": 194230,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4I_m2.S",
+      "net": "t4I_m",
+      "ap_x": 82460,
+      "ap_y": 214990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4I_m4.G",
+      "net": "t4I_m",
+      "ap_x": 85900,
+      "ap_y": 211630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4I_m6.D",
+      "net": "t4I_m",
+      "ap_x": 92340,
+      "ap_y": 214990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4I_s8.D",
+      "net": "t4I_nsn",
+      "ap_x": 101990,
+      "ap_y": 209230,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4Q_m2.S",
+      "net": "t4Q_m",
+      "ap_x": 82460,
+      "ap_y": 224990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4Q_m4.G",
+      "net": "t4Q_m",
+      "ap_x": 85900,
+      "ap_y": 221630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4Q_m6.D",
+      "net": "t4Q_m",
+      "ap_x": 92340,
+      "ap_y": 224990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mc_tail.G",
+      "net": "comp_clk",
+      "ap_x": 45560,
+      "ap_y": 97000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mc_rst_dp.G",
+      "net": "comp_clk",
+      "ap_x": 42250,
+      "ap_y": 117630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mc_rst_dn.G",
+      "net": "comp_clk",
+      "ap_x": 44750,
+      "ap_y": 117630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "M_da1_p.D",
+      "net": "da1",
+      "ap_x": 132540,
+      "ap_y": 80990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "M_da2_n.G",
+      "net": "da1",
+      "ap_x": 136770,
+      "ap_y": 72000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "M_db2_n.G",
+      "net": "db1",
+      "ap_x": 149470,
+      "ap_y": 72000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4I_s6.G",
+      "net": "div16_I_b",
+      "ap_x": 106200,
+      "ap_y": 211630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4I_s7.G",
+      "net": "div16_I_b",
+      "ap_x": 99170,
+      "ap_y": 207000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4Q_s4.D",
+      "net": "div16_Q_b",
+      "ap_x": 100640,
+      "ap_y": 224990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_s1.S",
+      "net": "div4_I",
+      "ap_x": 66970,
+      "ap_y": 216130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_s3.G",
+      "net": "div4_I",
+      "ap_x": 69790,
+      "ap_y": 217000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_s4.G",
+      "net": "div4_I",
+      "ap_x": 73200,
+      "ap_y": 221630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T2I_s7.D",
+      "net": "div4_I",
+      "ap_x": 72610,
+      "ap_y": 219230,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T3_s5.G",
+      "net": "div4_I",
+      "ap_x": 103200,
+      "ap_y": 196630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MXfi_p2.D",
+      "net": "div4_I",
+      "ap_x": 62190,
+      "ap_y": 247990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T3_s4.G",
+      "net": "div8",
+      "ap_x": 100200,
+      "ap_y": 196630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T3_s7.D",
+      "net": "div8",
+      "ap_x": 99610,
+      "ap_y": 194230,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4I_s5.G",
+      "net": "div8",
+      "ap_x": 103200,
+      "ap_y": 211630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4Q_m1.G",
+      "net": "div8",
+      "ap_x": 82590,
+      "ap_y": 217000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4Q_m5.G",
+      "net": "div8",
+      "ap_x": 88900,
+      "ap_y": 221630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4Q_s2.G",
+      "net": "div8",
+      "ap_x": 97200,
+      "ap_y": 221630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "T4Q_s8.G",
+      "net": "div8",
+      "ap_x": 101550,
+      "ap_y": 217000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "M_nb_n2.G",
+      "net": "f_exc_b_d",
+      "ap_x": 153230,
+      "ap_y": 72000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "M_na_n2.G",
+      "net": "f_exc_d",
+      "ap_x": 140530,
+      "ap_y": 72000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mp_load_p.D",
+      "net": "mid_p",
+      "ap_x": 45040,
+      "ap_y": 87490,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mp_load_n.G",
+      "net": "mid_p",
+      "ap_x": 49150,
+      "ap_y": 82130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Min_p.D",
+      "net": "mid_p",
+      "ap_x": 38210,
+      "ap_y": 80730,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "M_nb_n1.S",
+      "net": "nb_mid",
+      "ap_x": 150910,
+      "ap_y": 71130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS1.G",
+      "net": "phi_p",
+      "ap_x": 176850,
+      "ap_y": 66000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS4.G",
+      "net": "phi_p",
+      "ap_x": 187530,
+      "ap_y": 66000,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS3.S",
+      "net": "probe_n",
+      "ap_x": 183530,
+      "ap_y": 65130,
       "status": "BLOCKED"
     },
     {
       "pin": "MS3.S2",
+      "net": "probe_n",
+      "ap_x": 185290,
+      "ap_y": 65130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS4.S",
+      "net": "probe_n",
+      "ap_x": 187090,
+      "ap_y": 65130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS4.S2",
+      "net": "probe_n",
+      "ap_x": 188850,
+      "ap_y": 65130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS1.S",
+      "net": "probe_p",
+      "ap_x": 176410,
+      "ap_y": 65130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS1.S2",
+      "net": "probe_p",
+      "ap_x": 178170,
+      "ap_y": 65130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS2.S",
+      "net": "probe_p",
+      "ap_x": 179970,
+      "ap_y": 65130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "MS2.S2",
+      "net": "probe_p",
+      "ap_x": 181730,
+      "ap_y": 65130,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "BUF_Q_p.G",
+      "net": "ref_Q",
+      "ap_x": 103750,
+      "ap_y": 255630,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mchop2n.D",
+      "net": "sens_n",
+      "ap_x": 48030,
+      "ap_y": 66730,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mchop2p.D",
+      "net": "sens_n",
+      "ap_x": 50220,
+      "ap_y": 68990,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mchop1n.D",
+      "net": "sens_p",
+      "ap_x": 42350,
+      "ap_y": 66730,
+      "status": "BLOCKED"
+    },
+    {
+      "pin": "Mchop1p.D",
+      "net": "sens_p",
+      "ap_x": 44540,
+      "ap_y": 68990,
       "status": "BLOCKED"
     }
   ],
   "stats": {
-    "found": 156,
-    "total": 178,
-    "base_merges": 3
+    "found": 178,
+    "blocked": 92,
+    "total": 270,
+    "m2_rejected": 108879
   }
 }

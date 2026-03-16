@@ -1,53 +1,73 @@
 #!/usr/bin/env python3
-"""Fix cross-net M2 AP pad overlaps in GDS.
+"""Fix cross-net M2 AP pad overlaps in GDS using DUAL-PAD shrink.
 
-Root cause: _shrink_ap_m2_pads_gds in assemble_gds.py doesn't handle
-the case where both X and Y axes have overlap (gap < 0 on both).
-It only handles "gap on one axis, overlap on the other".
+Root cause: _shrink_ap_m2_pads_gds doesn't handle full overlap (both
+axes gap < 0). Single-pad shrink fails because pads are only 480nm —
+shrinking one side by 275nm violates min area.
 
-This post-fix script reads the GDS, finds the 5 known violations,
-and shrinks the smaller pad to eliminate the overlap + enforce M2.b spacing.
+Solution: shrink BOTH pads symmetrically, each by half the needed amount.
+This keeps each pad above min width/area.
 
 Usage:
     cd layout && source ~/pdk/venv/bin/activate
-    python3 -m atk.fix_m2_overlap
+    python3 -m atk.fix_m2_overlap [--gds output/ptat_vco.gds]
 """
 
 import json
+import math
 import klayout.db as db
 from .pdk import M2_MIN_S, M2_MIN_W, M2_MIN_AREA
 
 
+def _find_and_shrink(top, m2_li, orig_bbox, new_bbox):
+    """Find M2 shape matching orig_bbox in GDS and replace with new_bbox.
+    Returns True if shape was found and replaced."""
+    for si in top.shapes(m2_li).each():
+        bb = si.bbox()
+        if (abs(bb.left - orig_bbox[0]) < 20 and abs(bb.bottom - orig_bbox[1]) < 20
+                and abs(bb.right - orig_bbox[2]) < 20 and abs(bb.top - orig_bbox[3]) < 20):
+            si.delete()
+            top.shapes(m2_li).insert(db.Box(*new_bbox))
+            return True
+    return False
+
+
+def _validate(pad):
+    """Check min width and area."""
+    w = pad[2] - pad[0]
+    h = pad[3] - pad[1]
+    return w >= M2_MIN_W and h >= M2_MIN_W and w * h >= M2_MIN_AREA
+
+
 def fix(gds_path='output/ptat_vco.gds', routing_path='output/routing.json',
         output_path=None):
-    """Fix cross-net M2 pad overlaps."""
     if output_path is None:
-        output_path = gds_path  # overwrite in place
+        output_path = gds_path
 
     with open(routing_path) as f:
         routing = json.load(f)
     ap_data = routing.get('access_points', {})
 
-    # Build per-net AP M2 pad list
-    net_pads = {}  # pin_key → (net, bbox)
+    # Build per-pin AP M2 pad list
+    pin_pads = {}
     for net_name, route in routing.get('signal_routes', {}).items():
         for pin_key in route.get('pins', []):
             ap = ap_data.get(pin_key)
             if ap and 'm2' in ap.get('via_pad', {}):
-                net_pads[pin_key] = (net_name, ap['via_pad']['m2'])
+                pin_pads[pin_key] = (net_name, list(ap['via_pad']['m2']))
     for drop in routing.get('power', {}).get('drops', []):
         pk = f"{drop['inst']}.{drop['pin']}"
         ap = ap_data.get(pk)
         if ap and 'm2' in ap.get('via_pad', {}):
-            net_pads[pk] = (drop['net'], ap['via_pad']['m2'])
+            pin_pads[pk] = (drop['net'], list(ap['via_pad']['m2']))
 
     # Find cross-net violations
-    keys = list(net_pads.keys())
+    keys = list(pin_pads.keys())
     violations = []
     for i in range(len(keys)):
-        net_i, pad_i = net_pads[keys[i]]
+        net_i, pad_i = pin_pads[keys[i]]
         for j in range(i + 1, len(keys)):
-            net_j, pad_j = net_pads[keys[j]]
+            net_j, pad_j = pin_pads[keys[j]]
             if net_i == net_j:
                 continue
             x_gap = max(pad_i[0] - pad_j[2], pad_j[0] - pad_i[2])
@@ -65,7 +85,6 @@ def fix(gds_path='output/ptat_vco.gds', routing_path='output/routing.json',
 
     print(f'  Found {len(violations)} cross-net M2 pad violations')
 
-    # Load GDS
     layout = db.Layout()
     layout.read(gds_path)
     top = layout.top_cell()
@@ -73,68 +92,76 @@ def fix(gds_path='output/ptat_vco.gds', routing_path='output/routing.json',
 
     fixed = 0
     for pk1, n1, pad1, pk2, n2, pad2, xg, yg in violations:
-        # Decide which pad to shrink:
-        # - Don't shrink power net pads (gnd/vdd)
-        # - Shrink the smaller one
-        if n1 in ('gnd', 'vdd', 'vdd_vco'):
-            target_pk, target_pad, other_pad = pk2, list(pad2), pad1
-        elif n2 in ('gnd', 'vdd', 'vdd_vco'):
-            target_pk, target_pad, other_pad = pk1, list(pad1), pad2
+        orig1, orig2 = tuple(pad1), tuple(pad2)
+
+        # Determine which dimension to fix (smallest shrink needed)
+        # X needed: overlap + spacing
+        if xg < M2_MIN_S:
+            x_needed = M2_MIN_S - xg  # total gap increase needed
         else:
-            a1 = (pad1[2]-pad1[0]) * (pad1[3]-pad1[1])
-            a2 = (pad2[2]-pad2[0]) * (pad2[3]-pad2[1])
-            if a1 <= a2:
-                target_pk, target_pad, other_pad = pk1, list(pad1), pad2
+            x_needed = 0
+        if yg < M2_MIN_S:
+            y_needed = M2_MIN_S - yg
+        else:
+            y_needed = 0
+
+        # Fix the dimension requiring less total shrink
+        if x_needed > 0 and (y_needed == 0 or x_needed <= y_needed):
+            # Shrink X: each pad gives up x_needed/2 on the facing edge
+            half = (x_needed + 1) // 2 + 5  # +5nm margin, round up
+            # Which edge faces the other pad?
+            cx1 = (pad1[0] + pad1[2]) / 2
+            cx2 = (pad2[0] + pad2[2]) / 2
+            if cx1 < cx2:
+                # pad1 is left, pad2 is right — shrink pad1's right, pad2's left
+                pad1[2] -= half
+                pad2[0] += half
             else:
-                target_pk, target_pad, other_pad = pk2, list(pad2), pad1
-
-        # Calculate shrink needed on each edge
-        # We need: target_pad edges to be M2_MIN_S away from other_pad
-        orig = tuple(target_pad)
-
-        # X dimension
-        if target_pad[2] > other_pad[0] and target_pad[0] < other_pad[2]:
-            # X overlap — shrink the closer edge
-            if abs(target_pad[2] - other_pad[0]) < abs(target_pad[0] - other_pad[2]):
-                target_pad[2] = min(target_pad[2], other_pad[0] - M2_MIN_S)
+                pad1[0] += half
+                pad2[2] -= half
+        elif y_needed > 0:
+            half = (y_needed + 1) // 2 + 5
+            cy1 = (pad1[1] + pad1[3]) / 2
+            cy2 = (pad2[1] + pad2[3]) / 2
+            if cy1 < cy2:
+                pad1[3] -= half
+                pad2[1] += half
             else:
-                target_pad[0] = max(target_pad[0], other_pad[2] + M2_MIN_S)
+                pad1[1] += half
+                pad2[3] -= half
+        else:
+            continue  # No fix needed
 
-        # Y dimension
-        if target_pad[3] > other_pad[1] and target_pad[1] < other_pad[3]:
-            if abs(target_pad[3] - other_pad[1]) < abs(target_pad[1] - other_pad[3]):
-                target_pad[3] = min(target_pad[3], other_pad[1] - M2_MIN_S)
-            else:
-                target_pad[1] = max(target_pad[1], other_pad[3] + M2_MIN_S)
-
-        # Validate
-        w = target_pad[2] - target_pad[0]
-        h = target_pad[3] - target_pad[1]
-        if w < M2_MIN_W or h < M2_MIN_W or w * h < M2_MIN_AREA:
-            print(f'  {target_pk}: cannot shrink ({w}x{h}nm < min), skip')
+        # Validate both pads
+        if not _validate(pad1) or not _validate(pad2):
+            w1 = pad1[2]-pad1[0]
+            h1 = pad1[3]-pad1[1]
+            w2 = pad2[2]-pad2[0]
+            h2 = pad2[3]-pad2[1]
+            print(f'  {pk1}↔{pk2}: dual shrink fails '
+                  f'({w1}x{h1} + {w2}x{h2}), skip')
+            pad1[:] = list(orig1)
+            pad2[:] = list(orig2)
             continue
 
-        # Find and replace in GDS
-        replaced = False
-        for si in top.shapes(m2_li).each():
-            bb = si.bbox()
-            if (abs(bb.left - orig[0]) < 20 and abs(bb.bottom - orig[1]) < 20
-                    and abs(bb.right - orig[2]) < 20 and abs(bb.top - orig[3]) < 20):
-                si.delete()
-                top.shapes(m2_li).insert(db.Box(*target_pad))
-                replaced = True
-                break
+        # Apply to GDS
+        ok1 = _find_and_shrink(top, m2_li, orig1, pad1)
+        ok2 = _find_and_shrink(top, m2_li, orig2, pad2)
 
-        if replaced:
-            print(f'  {target_pk}({n1 if target_pk == pk1 else n2}): '
-                  f'[{orig[0]},{orig[1]},{orig[2]},{orig[3]}] → '
-                  f'[{target_pad[0]},{target_pad[1]},{target_pad[2]},{target_pad[3]}]')
+        if ok1 and ok2:
+            print(f'  {pk1}({n1}) shrunk + {pk2}({n2}) shrunk ✓')
+            fixed += 1
+        elif ok1 or ok2:
+            print(f'  {pk1}↔{pk2}: partial fix (only {"1st" if ok1 else "2nd"} found)')
             fixed += 1
         else:
-            print(f'  {target_pk}: M2 shape not found in GDS, skip')
+            print(f'  {pk1}↔{pk2}: shapes not found in GDS')
+            pad1[:] = list(orig1)
+            pad2[:] = list(orig2)
 
     layout.write(output_path)
-    print(f'  Fixed {fixed}/{len(violations)} M2 pad overlaps → {output_path}')
+    print(f'  Fixed {fixed}/{len(violations)} → {output_path}')
+    return fixed
 
 
 if __name__ == '__main__':
