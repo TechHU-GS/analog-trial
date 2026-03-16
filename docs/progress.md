@@ -463,10 +463,42 @@ Solver 集成到 assembly pipeline 是下一步。
 - ngspice 首次解析成功（DC OP 开始求解）
 - ⚠️ DC OP 收敛状态未确认（ngspice 在 gmin stepping 后进程消失，可能 crash 或 timeout）
 
-**下一步：**
-- 检查 DC OP 收敛问题（可能需要 `.nodeset` 初始化关键节点）
-- 清理 sim/ 目录临时文件
-- 如果 DC OP 通过 → 跑 transient 验证 VCO 振荡 + 信号链
+### 设计修复 + 前仿验证 (2026-03-16 20:00-21:30)
+
+**发现并修复 5 个设计遗漏：**
+
+| 遗漏 | 影响 | 修法 | 验证 |
+|------|------|------|------|
+| C_fb 电容 | ΣΔ 不工作 | 加入 netlist.json | ✅ presim 中 |
+| Cbyp_n/Cbyp_p | bias 不稳定 | 加 bypass cap | ✅ crash 延长 |
+| OTA bias mirror | OTA 无 bias 电流 | **PMOS mirror**（非 NMOS） | ✅ bias_n=0.197V |
+| Mirror L | VCO noise coupling | 10→50µm | ✅ VCO 11.9MHz |
+| cap_cmim pcell | ngspice 找不到 | "cmim"→"cap_cmim" | ✅ |
+
+**关键发现**：
+- OTA bias 需要 **PMOS mirror**（VDD→bias_n），不是 NMOS（两个 drain 都 sink）
+- NMOS mirror 被验证不工作：bias_n=0V。PMOS mirror: bias_n=0.197V ✅
+- L2 有 bypass cap，SoilZ 合并时遗漏
+- 分块前仿用 ideal 电流源，合并时没替换成实际 mirror
+
+**Core analog presim (PTAT+VCO+OTA, ~55 devices, 100µs)：**
+- VCO: 11.9 MHz ✅ (目标 7-11 MHz，略高)
+- bias_n: 0.197V ✅ (OTA 有 bias)
+- ota_out: 0.796V ✅ (OTA 工作)
+- sum_n: 0.750V ✅ (积分器稳定)
+- VPTAT: 12.3mV ⚠️ (低，需调查)
+- 无 crash ✅
+
+**待验证**：全电路 253 devices presim（加数字块+comparator+H桥）
+**设备总数**：253 (246 MOS + 4 R + 3 C)
+
+### Session 总成果 (2026-03-16, 24 commits)
+
+1. **LVS**: 358→240 (base 276) — maze_router fix + Via2 solver
+2. **设计修复**: 5 个遗漏修复，core analog presim 通过
+3. **工具**: Via2 solver, L2N, fix_m2_overlap
+4. **审计**: pipeline 端到端一致性验证，L2/SoilZ 分离
+5. **SPICE 重建**: 6 block + flat + presim，253 devices
 
 ### 教训（累积，每条都踩过坑）
 
