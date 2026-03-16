@@ -1521,6 +1521,30 @@
       "type": "pmos_cs",
       "nwell_net": "vdd",
       "has_nwell": true
+    },
+    {
+      "name": "INV_iso_n",
+      "type": "nmos_buf1",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "INV_iso_p",
+      "type": "pmos_buf1",
+      "has_nwell": true,
+      "nwell_net": "vdd"
+    },
+    {
+      "name": "INV_isob_n",
+      "type": "nmos_vco",
+      "has_nwell": false,
+      "nwell_net": null
+    },
+    {
+      "name": "INV_isob_p",
+      "type": "pmos_vco",
+      "has_nwell": true,
+      "nwell_net": "vdd"
     }
   ],
   "nets": [
@@ -2516,7 +2540,9 @@
         "BUF_Q_n.S",
         "BUF_CK_n.S",
         "Cbyp_n.MINUS",
-        "Cbyp_p.MINUS"
+        "Cbyp_p.MINUS",
+        "INV_iso_n.S",
+        "INV_isob_n.S"
       ]
     },
     {
@@ -3020,15 +3046,7 @@
       "type": "signal",
       "pins": [
         "INV_VCO_n.D",
-        "INV_VCO_p.D",
-        "T1I_m1.G",
-        "T1I_m5.G",
-        "T1I_s2.G",
-        "T1I_s8.G",
-        "T1Q_m2.G",
-        "T1Q_m8.G",
-        "T1Q_s1.G",
-        "T1Q_s5.G"
+        "INV_VCO_p.D"
       ]
     },
     {
@@ -3039,14 +3057,8 @@
         "MBn2.D",
         "INV_VCO_n.G",
         "INV_VCO_p.G",
-        "T1I_m2.G",
-        "T1I_m8.G",
-        "T1I_s1.G",
-        "T1I_s5.G",
-        "T1Q_m1.G",
-        "T1Q_m5.G",
-        "T1Q_s2.G",
-        "T1Q_s8.G"
+        "INV_iso_n.G",
+        "INV_iso_p.G"
       ]
     },
     {
@@ -3134,7 +3146,9 @@
         "BUF_I_p.S",
         "BUF_Q_p.S",
         "BUF_CK_p.S",
-        "M_bias_mir.S"
+        "M_bias_mir.S",
+        "INV_iso_p.S",
+        "INV_isob_p.S"
       ]
     },
     {
@@ -3157,6 +3171,40 @@
       "type": "signal",
       "pins": [
         "Min_p.G"
+      ]
+    },
+    {
+      "name": "vco_buf",
+      "type": "signal",
+      "pins": [
+        "INV_iso_n.D",
+        "INV_iso_p.D",
+        "INV_isob_n.G",
+        "INV_isob_p.G",
+        "T1I_m2.G",
+        "T1I_m8.G",
+        "T1I_s1.G",
+        "T1I_s5.G",
+        "T1Q_m1.G",
+        "T1Q_m5.G",
+        "T1Q_s2.G",
+        "T1Q_s8.G"
+      ]
+    },
+    {
+      "name": "vco_buf_b",
+      "type": "signal",
+      "pins": [
+        "INV_isob_n.D",
+        "INV_isob_p.D",
+        "T1I_m1.G",
+        "T1I_m5.G",
+        "T1I_s2.G",
+        "T1I_s8.G",
+        "T1Q_m2.G",
+        "T1Q_m8.G",
+        "T1Q_s1.G",
+        "T1Q_s5.G"
       ]
     }
   ],

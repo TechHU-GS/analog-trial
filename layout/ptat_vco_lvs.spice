@@ -1,7 +1,6 @@
-** SoilZ v1: 1-bit IQ Lock-In ΣΔ Impedance Analyzer
-** 249 devices: 121 NMOS, 124 PMOS, 4 R
-** Auto-generated from netlist.json (design: soilz_v1)
-** IHP SG13G2 130nm BiCMOS (CMOS-only)
+** Complete LVS reference netlist for ptat_vco
+** Auto-generated from netlist.json + device_lib.json
+** 257 devices: 123 NMOS, 127 PMOS, 4 R
 
 .subckt ptat_vco gnd vdd bias_n buf1 buf_ref_I
 + buf_ref_Q c_di_n c_di_p c_tail cas1 cas2 cas3 cas_ref chop_out comp_clk
@@ -17,19 +16,19 @@
 + t2I_nsn t2I_nsp t2Q_m t2Q_mb t2Q_nmn t2Q_nmp t2Q_nsn t2Q_nsp t3_m t3_mb
 + t3_nmn t3_nmp t3_nsn t3_nsp t4I_m t4I_mb t4I_nmn t4I_nmp t4I_nsn t4I_nsp
 + t4Q_m t4Q_mb t4Q_nmn t4Q_nmp t4Q_nsn t4Q_nsp tail vcas vco1 vco2
-+ vco3 vco4 vco5 vco_b vco_out vptat vref_comp vref_ota
++ vco3 vco4 vco5 vco_b vco_buf vco_buf_b vco_out vptat vref_comp vref_ota
 
-MPM3 net_c1 net_c1 vdd vdd sg13_lv_pmos W=0.5u L=10u
-MPM4 net_c2 net_c1 vdd vdd sg13_lv_pmos W=0.5u L=10u
+MPM3 net_c1 net_c1 vdd vdd sg13_lv_pmos W=0.5u L=50u
+MPM4 net_c2 net_c1 vdd vdd sg13_lv_pmos W=0.5u L=50u
 MMN1 net_c1 net_c1 gnd gnd sg13_lv_nmos W=2u L=4u
 MMN2 net_c2 net_c1 net_rptat gnd sg13_lv_nmos W=16u L=4u
 RRptat net_rptat gnd rhigh w=0.5u l=134.09u b=12 m=1
-MPM_ref nmos_bias net_c1 vdd vdd sg13_lv_pmos W=0.5u L=10u
+MPM_ref nmos_bias net_c1 vdd vdd sg13_lv_pmos W=0.5u L=50u
 MMN_diode nmos_bias nmos_bias gnd gnd sg13_lv_nmos W=1u L=2u
 MMN_pgen pmos_bias nmos_bias gnd gnd sg13_lv_nmos W=1u L=2u
 MPM_pdiode pmos_bias pmos_bias vdd vdd sg13_lv_pmos W=0.5u L=2u
-MPM5 vptat net_c1 vdd vdd sg13_lv_pmos W=0.5u L=10u
-RRout vptat gnd rppd w=0.5u l=25.915u b=4 m=1
+MPM5 vptat net_c1 vdd vdd sg13_lv_pmos W=0.5u L=50u
+RRout vptat gnd rhigh w=0.5u l=100.0u b=1 m=1
 MMpb1 ns1 pmos_bias vdd vdd sg13_lv_pmos W=4u L=2u
 MMpu1 vco1 vco5 ns1 vdd sg13_lv_pmos W=2u L=0.5u
 MMpd1 vco1 vco5 nb1 gnd sg13_lv_nmos W=1u L=0.5u
@@ -130,38 +129,38 @@ MMdac_tg2n dac_lo lat_qb dac_out gnd sg13_lv_nmos W=2u L=0.5u
 MMdac_tg2p dac_lo lat_q dac_out vdd sg13_lv_pmos W=4u L=0.5u
 RRin chop_out sum_n rhigh w=0.5u l=20.73u b=2 m=1
 RRdac dac_out sum_n rhigh w=0.5u l=20.73u b=2 m=1
-MT1I_m1 div2_I_b vco_b t1I_m gnd sg13_lv_nmos W=1u L=0.5u
-MT1I_m2 div2_I_b vco_out t1I_m vdd sg13_lv_pmos W=2u L=0.5u
+MT1I_m1 div2_I_b vco_buf_b t1I_m gnd sg13_lv_nmos W=1u L=0.5u
+MT1I_m2 div2_I_b vco_buf t1I_m vdd sg13_lv_pmos W=2u L=0.5u
 MT1I_m3 t1I_mb t1I_m gnd gnd sg13_lv_nmos W=1u L=0.5u
 MT1I_m4 t1I_mb t1I_m vdd vdd sg13_lv_pmos W=2u L=0.5u
-MT1I_m5 t1I_nmp vco_b vdd vdd sg13_lv_pmos W=2u L=0.5u
+MT1I_m5 t1I_nmp vco_buf_b vdd vdd sg13_lv_pmos W=2u L=0.5u
 MT1I_m6 t1I_m t1I_mb t1I_nmp vdd sg13_lv_pmos W=2u L=0.5u
 MT1I_m7 t1I_m t1I_mb t1I_nmn gnd sg13_lv_nmos W=1u L=0.5u
-MT1I_m8 t1I_nmn vco_out gnd gnd sg13_lv_nmos W=1u L=0.5u
-MT1I_s1 t1I_m vco_out div2_I gnd sg13_lv_nmos W=1u L=0.5u
-MT1I_s2 t1I_m vco_b div2_I vdd sg13_lv_pmos W=2u L=0.5u
+MT1I_m8 t1I_nmn vco_buf gnd gnd sg13_lv_nmos W=1u L=0.5u
+MT1I_s1 t1I_m vco_buf div2_I gnd sg13_lv_nmos W=1u L=0.5u
+MT1I_s2 t1I_m vco_buf_b div2_I vdd sg13_lv_pmos W=2u L=0.5u
 MT1I_s3 div2_I_b div2_I gnd gnd sg13_lv_nmos W=1u L=0.5u
 MT1I_s4 div2_I_b div2_I vdd vdd sg13_lv_pmos W=2u L=0.5u
-MT1I_s5 t1I_nsp vco_out vdd vdd sg13_lv_pmos W=2u L=0.5u
+MT1I_s5 t1I_nsp vco_buf vdd vdd sg13_lv_pmos W=2u L=0.5u
 MT1I_s6 div2_I div2_I_b t1I_nsp vdd sg13_lv_pmos W=2u L=0.5u
 MT1I_s7 div2_I div2_I_b t1I_nsn gnd sg13_lv_nmos W=1u L=0.5u
-MT1I_s8 t1I_nsn vco_b gnd gnd sg13_lv_nmos W=1u L=0.5u
-MT1Q_m1 div2_Q_b vco_out t1Q_m gnd sg13_lv_nmos W=1u L=0.5u
-MT1Q_m2 div2_Q_b vco_b t1Q_m vdd sg13_lv_pmos W=2u L=0.5u
+MT1I_s8 t1I_nsn vco_buf_b gnd gnd sg13_lv_nmos W=1u L=0.5u
+MT1Q_m1 div2_Q_b vco_buf t1Q_m gnd sg13_lv_nmos W=1u L=0.5u
+MT1Q_m2 div2_Q_b vco_buf_b t1Q_m vdd sg13_lv_pmos W=2u L=0.5u
 MT1Q_m3 t1Q_mb t1Q_m gnd gnd sg13_lv_nmos W=1u L=0.5u
 MT1Q_m4 t1Q_mb t1Q_m vdd vdd sg13_lv_pmos W=2u L=0.5u
-MT1Q_m5 t1Q_nmp vco_out vdd vdd sg13_lv_pmos W=2u L=0.5u
+MT1Q_m5 t1Q_nmp vco_buf vdd vdd sg13_lv_pmos W=2u L=0.5u
 MT1Q_m6 t1Q_m t1Q_mb t1Q_nmp vdd sg13_lv_pmos W=2u L=0.5u
 MT1Q_m7 t1Q_m t1Q_mb t1Q_nmn gnd sg13_lv_nmos W=1u L=0.5u
-MT1Q_m8 t1Q_nmn vco_b gnd gnd sg13_lv_nmos W=1u L=0.5u
-MT1Q_s1 t1Q_m vco_b div2_Q gnd sg13_lv_nmos W=1u L=0.5u
-MT1Q_s2 t1Q_m vco_out div2_Q vdd sg13_lv_pmos W=2u L=0.5u
+MT1Q_m8 t1Q_nmn vco_buf_b gnd gnd sg13_lv_nmos W=1u L=0.5u
+MT1Q_s1 t1Q_m vco_buf_b div2_Q gnd sg13_lv_nmos W=1u L=0.5u
+MT1Q_s2 t1Q_m vco_buf div2_Q vdd sg13_lv_pmos W=2u L=0.5u
 MT1Q_s3 div2_Q_b div2_Q gnd gnd sg13_lv_nmos W=1u L=0.5u
 MT1Q_s4 div2_Q_b div2_Q vdd vdd sg13_lv_pmos W=2u L=0.5u
-MT1Q_s5 t1Q_nsp vco_b vdd vdd sg13_lv_pmos W=2u L=0.5u
+MT1Q_s5 t1Q_nsp vco_buf_b vdd vdd sg13_lv_pmos W=2u L=0.5u
 MT1Q_s6 div2_Q div2_Q_b t1Q_nsp vdd sg13_lv_pmos W=2u L=0.5u
 MT1Q_s7 div2_Q div2_Q_b t1Q_nsn gnd sg13_lv_nmos W=1u L=0.5u
-MT1Q_s8 t1Q_nsn vco_out gnd gnd sg13_lv_nmos W=1u L=0.5u
+MT1Q_s8 t1Q_nsn vco_buf gnd gnd sg13_lv_nmos W=1u L=0.5u
 MT2I_m1 div4_I_b div2_I_b t2I_m gnd sg13_lv_nmos W=1u L=0.5u
 MT2I_m2 div4_I_b div2_I t2I_m vdd sg13_lv_pmos W=2u L=0.5u
 MT2I_m3 t2I_mb t2I_m gnd gnd sg13_lv_nmos W=1u L=0.5u
@@ -268,5 +267,14 @@ MBUF_CK_n f_exc_b f_exc gnd gnd sg13_lv_nmos W=1u L=0.5u
 MBUF_CK_p f_exc_b f_exc vdd vdd sg13_lv_pmos W=2u L=0.5u
 MINV_VCO_n vco_b vco_out gnd gnd sg13_lv_nmos W=1u L=0.5u
 MINV_VCO_p vco_b vco_out vdd vdd sg13_lv_pmos W=2u L=0.5u
+** SKIP: C_fb type=cap_cmim_1p class=capacitor
+** SKIP: Cbyp_n type=cap_cmim_bypass class=capacitor
+** SKIP: Cbyp_p type=cap_cmim_bypass class=capacitor
+MM_bias_mir bias_n pmos_bias vdd vdd sg13_lv_pmos W=0.5u L=2u
+MINV_iso_n vco_buf vco_out gnd gnd sg13_lv_nmos W=2u L=0.5u
+MINV_iso_p vco_buf vco_out vdd vdd sg13_lv_pmos W=4u L=0.5u
+MINV_isob_n vco_buf_b vco_buf gnd gnd sg13_lv_nmos W=1u L=0.5u
+MINV_isob_p vco_buf_b vco_buf vdd vdd sg13_lv_pmos W=2u L=0.5u
 
 .ends ptat_vco
+
