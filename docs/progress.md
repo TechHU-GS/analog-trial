@@ -287,9 +287,34 @@ Assembly post-processing cannot fix this.
 2. ✅ maze_router Via junction fix (routing 碎片 79→0, LVS 358→303)
 3. ✅ optimize.py Via2/Via3 保留（防御性修复）
 4. ⚠️ access.py rotation — 需要先手动验证 3 个旋转电阻的正确 pin 坐标，再写修复
-5. ⬜ 138 skipped Via2 根因 — 需要验证是否是 303 unmatched 主因
-6. ⬜ DRC 系统性修法（M1.b, M4.b, NWell/pSD）
-7. ⬜ 最终 DRC + LVS 验证
+5. ✅ Via2 constraint solver 构建并验证 (atk/solve_via2.py + atk/apply_via2.py)
+6. ⬜ Via2 solver 加 M2 bridge conflict check（当前 patch 引入 1 个 merge）
+7. ⬜ DRC 系统性修法（M1.b, M4.b, NWell/pSD）
+8. ⬜ 最终 DRC + LVS 验证
+
+### Via2 Constraint Solver 结果 (2026-03-16 16:15)
+
+**思路转变**：从"启发式 scan"转为"klayout.db 计算几何求解"。
+用 Region boolean ops 计算 M3 可用空间，对每个 pin 搜索最优 Via2 位置。
+
+**结果**：
+- 270 个 pin 需要 assembly Via2
+- Solver 找到 231 个可行位置（85%），39 个 truly blocked
+- Applied to GDS → LVS: 276 → **179** (-97, -35%)
+
+**问题**：patch 引入 1 个 merged net（gnd + 大量信号 net）。
+原因：solver 只检查 M3 spacing，没检查 M2 bridge 是否跨越其他 net 的 M2 shapes。
+修法：给 solver 加 M2 conflict check（同样用 klayout.db Region）。
+
+**LVS 完整进展**：
+| 阶段 | Unmatched | Delta |
+|------|-----------|-------|
+| Baseline | 358 | — |
+| maze_router fix | 303 | -55 |
+| SCAN_RADIUS 2000 | 276 | -82 |
+| Via2 solver patch | 179 (1 merge) | -179 |
+
+**⚠️ 179 包含 1 个 merged net，需要修 M2 约束后才是真实数字。**
 
 ### 教训（累积，每条都踩过坑）
 
