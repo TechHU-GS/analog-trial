@@ -207,6 +207,9 @@ CONT_ENC_M1_END = 50   # M1 endcap enclosure of Cont (nm)
 CNT_D_ENC  = 70        # Cnt.d: GatPoly enclosure of Cont ≥ 70nm
 CNT_E_SEP  = 140       # Cnt.e: Cont on GatPoly to Active spacing ≥ 140nm
 M1_MIN_AREA = 90000    # M1.d: Min Metal1 area ≥ 0.09 µm² = 90000 nm²
+M2_MIN_AREA = 144000   # M2.d: Min Metal2 area ≥ 0.144 µm² = 144000 nm²
+M3_MIN_AREA = 144000   # M3.d: Min Metal3 area ≥ 0.144 µm² = 144000 nm²
+M4_MIN_AREA = 144000   # M4.d: Min Metal4 area ≥ 0.144 µm² = 144000 nm²
 GATE_POLY_EXT = 230    # GatPoly extension below PCell poly_bot for gate contact
                        # = CNT_D_ENC + CONT_SZ + CNT_E_SEP - 180 (existing ext)
                        # Total extension: 180 + 230 = 410nm.  Contact at bottom.

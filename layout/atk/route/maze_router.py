@@ -307,18 +307,28 @@ class MazeRouter:
         """
         from collections import defaultdict
         pt_layers = defaultdict(set)
-        via_pts = set()
+        # Track existing vias by (point, via_code) to avoid duplicates
+        via_pts = defaultdict(set)  # pt → set of via codes present
         for seg in segs:
             x1, y1, x2, y2, layer = seg[0], seg[1], seg[2], seg[3], seg[4]
-            if layer == -1:
-                via_pts.add((x1, y1))
+            if layer < 0:
+                via_pts[(x1, y1)].add(layer)
             else:
                 pt_layers[(x1, y1)].add(layer)
                 pt_layers[(x2, y2)].add(layer)
         added = 0
+        # Via1: M1(0) ↔ M2(1), code -1
+        # Via2: M2(1) ↔ M3(2), code -2
+        # Via3: M3(2) ↔ M4(3), code -3
         for pt, layers in pt_layers.items():
-            if 0 in layers and 1 in layers and pt not in via_pts:
+            if 0 in layers and 1 in layers and -1 not in via_pts.get(pt, set()):
                 segs.append((pt[0], pt[1], pt[0], pt[1], -1))
+                added += 1
+            if 1 in layers and 2 in layers and -2 not in via_pts.get(pt, set()):
+                segs.append((pt[0], pt[1], pt[0], pt[1], -2))
+                added += 1
+            if 2 in layers and 3 in layers and -3 not in via_pts.get(pt, set()):
+                segs.append((pt[0], pt[1], pt[0], pt[1], -3))
                 added += 1
         if added:
             print(f'    Router: inserted {added} junction via(s)')
@@ -347,9 +357,14 @@ class MazeRouter:
             pt_seg = defaultdict(set)
             for i, seg in enumerate(segs):
                 lyr = seg[4]
-                if lyr == -1:
-                    for l in range(4):
-                        pt_seg[(seg[0], seg[1], l)].add(i)
+                if lyr < 0:
+                    # Via codes: -1=Via1(M1↔M2), -2=Via2(M2↔M3), -3=Via3(M3↔M4)
+                    # Register on BOTH connected metal layers so the graph
+                    # sees cross-layer connectivity.
+                    lo = (-lyr) - 1   # -1→0(M1), -2→1(M2), -3→2(M3)
+                    hi = lo + 1       # -1→1(M2), -2→2(M3), -3→3(M4)
+                    pt_seg[(seg[0], seg[1], lo)].add(i)
+                    pt_seg[(seg[0], seg[1], hi)].add(i)
                 else:
                     pt_seg[(seg[0], seg[1], lyr)].add(i)
                     pt_seg[(seg[2], seg[3], lyr)].add(i)

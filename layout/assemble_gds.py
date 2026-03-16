@@ -29,6 +29,7 @@ from atk.pdk import (
     UM, M1_SIG_W, M1_THIN, M2_SIG_W, M4_SIG_W, M3_PWR_W, M3_MIN_W,
     VIA1_SZ, VIA1_PAD, VIA1_PAD_M1, VIA1_GDS_M1, VIA1_GDS_M2, VIA2_SZ, VIA2_PAD, VIA2_PAD_M2, VIA2_PAD_M3, VIA3_SZ, VIA3_PAD,
     M1_MIN_W, M2_MIN_W, M2_MIN_S, M1_MIN_S, M3_MIN_S, M3_WIDE_S, M4_MIN_S, M4_MIN_W,
+    M3_MIN_AREA, M4_MIN_AREA,
     MAZE_GRID,
     GATE_POLY_EXT, CNT_D_ENC,
     s5,
@@ -1608,6 +1609,24 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
             mby1 = (_mby1 // 5) * 5
             mbx2 = ((_mbx2 + 4) // 5) * 5
             mby2 = ((_mby2 + 4) // 5) * 5
+            # Enforce M3.d minimum area — extend stub if too small
+            _mw = mbx2 - mbx1
+            _mh = mby2 - mby1
+            if _mw * _mh < M3_MIN_AREA:
+                # Extend the longer dimension to meet area requirement
+                _needed = (M3_MIN_AREA + max(_mw, _mh) - 1) // max(_mw, _mh)
+                if _mw >= _mh:
+                    # Extend height symmetrically
+                    _ext = (_needed - _mh + 1) // 2
+                    _ext = ((_ext + 4) // 5) * 5  # snap to 5nm grid
+                    mby1 -= _ext
+                    mby2 += _ext
+                else:
+                    # Extend width symmetrically
+                    _ext = (_needed - _mw + 1) // 2
+                    _ext = ((_ext + 4) // 5) * 5
+                    mbx1 -= _ext
+                    mbx2 += _ext
             draw_rect(top, li_m3, [mbx1, mby1, mbx2, mby2])
             m3_stubs_added += 1
             m3_bbox_stubs.append((mbx1, mby1, mbx2, mby2, net_name))

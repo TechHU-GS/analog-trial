@@ -211,7 +211,7 @@ from target vdd rail (gap 10µm+). These drops serve NWell islands for 15 PMOS.
 The devices are placed where no metal corridor exists for vdd power access.
 Assembly post-processing cannot fix this.
 
-### Final session status
+### Final session status (updated 2026-03-16 14:00)
 
 | Metric | Value | Status |
 |--------|-------|--------|
@@ -219,16 +219,60 @@ Assembly post-processing cannot fix this.
 | Device count | 245 MOS + 4 R | ✅ Match |
 | Pin count | 143 | ✅ Match |
 | PMOS wrong bulk | 15 | ❌ Upstream limitation |
-| Unmatched nets | 358 | ❌ Cascade from wrong-bulk |
-| DRC violations | 116 | ⚠️ Untouched |
+| Unmatched nets | 358 | ❌ Net fragmentation (not wrong-bulk cascade) |
+| DRC violations | **216** | ⚠️ Triage done, systematic fixes started |
 
-### Next steps (Phase 2/3 upstream)
+### DRC/LVS triage findings (2026-03-16)
 
-To fix 15 wrong-bulk, need upstream changes in:
-1. `solve_placement.py`: reserve vdd power corridors near isolated PMOS
-2. `solve_ties.py`: place ntap ties where vdd access exists
-3. `solve_routing.py`: route power drops before signal routing
-4. Or: accept as known limitation for this placement iteration
+**DRC 重新分析** (208→216 after first fix round):
+- M1.b(34): M1 spacing — routing code systematic
+- M3.d(38): M3 min area — stubs too small, partial fix applied
+- M4.b(21): M4 spacing — routing code
+- NW.c(23): NWell enclosure — placement/assembly
+- pSD.c(26): pSD enclosure — PCell/assembly
+- Cnt.b(15): Contact spacing — dense arrays
+- 硬错误已消除: Cnt.j, Gat.f, V1.a 在重新计数中未出现
+
+**LVS 重新分析**:
+- 358 unmatched 是 **net fragmentation**，不是 wrong-bulk 级联
+- 99 named nets + 259 anonymous fragments
+- 44 SPICE nets 完全未提取（TFF 内部节点）
+- 修 routing 连通性可以改善
+
+**已完成的修改**:
+1. pdk.py: 添加 M3_MIN_AREA, M4_MIN_AREA = 144000nm²
+2. assemble_gds.py: M3 bbox stub min-area enforcement
+3. constraint_placer.py: 修 add_max_aspect() + solve() return (placer 可跑但 INFEASIBLE)
+4. power.py: 添加 per-drop vbar truncation debug logging
+5. **maze_router.py**: 修 `_reconnect_components()` Via2/Via3 graph bug + `_insert_junction_vias()` M2↔M3, M3↔M4 junction 支持
+
+**Placer 状态**: 2 个 bug 已修，但当前约束集 INFEASIBLE。
+当前手工 placement (MANUAL_V3.3b) 是折衷方案。
+
+### maze_router Via junction fix 结果 (2026-03-16 15:00)
+
+**根因**: `_reconnect_components()` 只识别 Via1 (layer code -1)，Via2(-2) 和 Via3(-3) 对 graph 不可见 → M2↔M3, M3↔M4 连接断裂 → 79/133 signal nets 碎片化
+
+**修法**: `if lyr == -1:` → `if lyr < 0:`，按 via code 映射到上下两层 metal。同时在 `_insert_junction_vias()` 加 M2/M3 和 M3/M4 junction via 插入。
+
+**验证结果**:
+- Routing.json 碎片 nets: 79 → **0** ✅ (connectivity audit 验证)
+- LVS unmatched: 358 → **303** (-55) ✅ (lvsdb 解析验证)
+- Merged mega-nets: **0** (lvsdb 文本中无逗号分隔的长 net name)
+- Routing: 133/0 intact ✅
+
+**⚠️ 未验证**: 硬错误(Cnt.j/Gat.f/V1.a) 在新 DRC 中是否仍存在（需重新跑 DRC 确认）
+
+### Next steps
+
+1. ✅ M3 min-area enforcement (partial: 46→38)
+2. ✅ **maze_router Via junction fix** (routing 碎片 79→0, LVS -55)
+3. 🔄 继续调查剩余 303 LVS unmatched 来源
+4. ⬜ M1.b spacing root cause (72→34)
+5. ⬜ M4.b spacing
+6. ⬜ 硬错误 (Cnt.j, Gat.f, V1.a)
+7. ⬜ NWell/pSD/Contact
+8. ⬜ 最终 DRC + LVS 验证
 
 ### 教训（累积，每条都踩过坑）
 

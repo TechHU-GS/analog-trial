@@ -163,25 +163,44 @@ def _resolve_m3_vbar_rail_conflicts(drops, rails):
         nearest_ry1, nearest_ry2, nearest_rnet = conflicts[0]
         margin = M3_MIN_S + 300 + M3_MIN_S  # 720nm: spacing + signal wire + spacing
 
+        orig_vbar = list(vbar)
+        gap_to_rail = None
+        action = None
         if pin_y < rail_y:
             # Vbar goes upward — truncate below nearest cross-net rail
             new_top = nearest_ry1 - margin
             if new_top > pin_y + 200:  # minimum useful vbar length
                 drop['m3_vbar'] = [px, pin_y, px, new_top]
+                gap_to_rail = rail_y - new_top
+                action = 'truncated'
                 fixed += 1
             else:
                 # Vbar too short to be useful — skip entirely
                 drop['m3_vbar'] = [px, pin_y, px, pin_y]  # zero-length
+                gap_to_rail = rail_y - pin_y
+                action = 'eliminated'
                 skipped += 1
         else:
             # Vbar goes downward — truncate above nearest cross-net rail
             new_bot = nearest_ry2 + margin
             if new_bot < pin_y - 200:
                 drop['m3_vbar'] = [px, new_bot, px, pin_y]
+                gap_to_rail = new_bot - rail_y
+                action = 'truncated'
                 fixed += 1
             else:
                 drop['m3_vbar'] = [px, pin_y, px, pin_y]
+                gap_to_rail = abs(pin_y - rail_y)
+                action = 'eliminated'
                 skipped += 1
+        inst = drop.get('inst', '?')
+        pin = drop.get('pin', '?')
+        new_vbar = drop['m3_vbar']
+        print(f'    VBAR {action}: {inst}.{pin} ({drop_net}) x={px}'
+              f' orig_y=[{orig_vbar[1]},{orig_vbar[3]}]'
+              f' → [{new_vbar[1]},{new_vbar[3]}]'
+              f' blocked_by={nearest_rnet} rail=[{nearest_ry1},{nearest_ry2}]'
+              f' gap_to_target={gap_to_rail}nm')
 
     # Second pass: check vbar-vs-vbar cross-family conflicts
     vbar_fixed = 0

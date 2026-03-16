@@ -492,6 +492,23 @@ class ConstraintPlacer:
             self.model.add(self.x_vars[name] + wg + mg <= self.bb_max_x)
             self.model.add(self.y_vars[name] + hg + mg <= self.bb_max_y)
 
+    # ─── Aspect ratio ───
+
+    def add_max_aspect(self, max_ratio):
+        """Constrain bounding box aspect ratio: max(W/H, H/W) <= max_ratio.
+
+        Must be called AFTER minimize_area() or minimize_area_and_wirelength().
+        Uses integer arithmetic: H <= ratio_num * W and W <= ratio_num * H
+        where ratio_num = ceil(max_ratio * 100) and variables are scaled by 100.
+        """
+        # Use multiplied integer form to avoid division:
+        #   bb_max_y <= max_ratio * bb_max_x  (height not too tall)
+        #   bb_max_x <= max_ratio * bb_max_y  (width not too wide)
+        # Scale ratio to integer: multiply by 100, compare with 100x variables
+        ratio_100 = int(max_ratio * 100 + 0.5)
+        self.model.add(100 * self.bb_max_y <= ratio_100 * self.bb_max_x)
+        self.model.add(100 * self.bb_max_x <= ratio_100 * self.bb_max_y)
+
     # ─── Solve ───
 
     def solve(self, time_limit=30.0):
@@ -521,10 +538,11 @@ class ConstraintPlacer:
                 hpwl_um = self._to_um(hpwl_g)
                 print(f'  Total HPWL (X): {hpwl_um:.1f} um')
 
-            return result
+            return result, opt
         else:
-            print(f'  Placement FAILED: {solver.status_name(status)}')
-            return None
+            status_name = solver.status_name(status)
+            print(f'  Placement FAILED: {status_name}')
+            return None, status_name
 
     def print_summary(self):
         """Print device and constraint summary."""
