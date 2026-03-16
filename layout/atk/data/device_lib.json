@@ -11165,5 +11165,22 @@
       "requires_ptap": false
     },
     "pins": {}
+  },
+  "rhigh_rout": {
+    "pcell": "rhigh",
+    "pcell_name": "rhigh",
+    "params": {
+      "w": 0.5,
+      "l": 100.0,
+      "b": 1,
+      "m": 1
+    },
+    "classification": {
+      "device_class": "resistor",
+      "has_nwell": false,
+      "requires_ntap": false,
+      "requires_ptap": false
+    },
+    "pins": {}
   }
 }
