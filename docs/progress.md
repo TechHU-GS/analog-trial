@@ -314,7 +314,20 @@ Assembly post-processing cannot fix this.
 | SCAN_RADIUS 2000 | 276 | -82 |
 | Via2 solver patch | 179 (1 merge) | -179 |
 
-**⚠️ 179 包含 1 个 merged net，需要修 M2 约束后才是真实数字。**
+**最终结果 (v6 + greedy merge-safe filter):**
+- 178 viable positions found, 51 accepted (greedy filter rejects 127 to prevent merge)
+- Applied as GDS post-patch: `python3 -m atk.solve_via2 && python3 -m atk.apply_via2`
+- **LVS on patched GDS: 269 (merged=0)** ✅
+- Base GDS (without patch): 276
+
+**⚠️ 注意：269 需要跑 solver post-step，不是 assembly 自动生成的。**
+Solver 集成到 assembly pipeline 是下一步。
+
+**Solver 约束层**:
+1. M3 pad clearance (M3.b = 210nm + pad half = 190nm)
+2. M2 bridge cross-net check (connectivity-based net identification)
+3. M3 bridge feasibility (Via2→anchor M3 bridge vs cross-net M3)
+4. Greedy merge-safety filter (incremental M3 conflict check)
 
 ### 教训（累积，每条都踩过坑）
 
