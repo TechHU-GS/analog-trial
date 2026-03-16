@@ -3,7 +3,7 @@
     "pcell": "pmos",
     "params": {
       "w": 0.5,
-      "l": 10.0,
+      "l": 50.0,
       "ng": 1,
       "m": 1
     },
@@ -8692,7 +8692,7 @@
     }
   },
   "cap_cmim_1p": {
-    "pcell": "cmim",
+    "pcell": "cap_cmim",
     "params": {
       "w": 26.0,
       "l": 26.0
@@ -11137,7 +11137,7 @@
       "Via1_19_0": []
     },
     "ports": {},
-    "pcell_name": "cmim",
+    "pcell_name": "cap_cmim",
     "bbox_offset": {
       "ox_um": -0.6,
       "oy_um": -0.6
@@ -11150,5 +11150,20 @@
       "requires_ntap": false,
       "requires_ptap": false
     }
+  },
+  "cap_cmim_bypass": {
+    "pcell": "cap_cmim",
+    "pcell_name": "cap_cmim",
+    "params": {
+      "w": 5.0,
+      "l": 5.0
+    },
+    "classification": {
+      "device_class": "capacitor",
+      "has_nwell": false,
+      "requires_ntap": false,
+      "requires_ptap": false
+    },
+    "pins": {}
   }
 }

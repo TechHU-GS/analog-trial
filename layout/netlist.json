@@ -1502,6 +1502,21 @@
       "name": "C_fb",
       "type": "cap_cmim_1p",
       "nwell_net": null
+    },
+    {
+      "name": "Cbyp_n",
+      "type": "cap_cmim_bypass",
+      "nwell_net": null
+    },
+    {
+      "name": "Cbyp_p",
+      "type": "cap_cmim_bypass",
+      "nwell_net": null
+    },
+    {
+      "name": "M_bias_mir",
+      "type": "pmos_cs",
+      "nwell_net": "vdd"
     }
   ],
   "nets": [
@@ -1933,7 +1948,8 @@
       "pins": [
         "Mbias_d.D",
         "Mbias_d.G",
-        "Mtail.G"
+        "Mtail.G",
+        "M_bias_mir.D"
       ]
     },
     {
@@ -2494,7 +2510,9 @@
         "MXiq_n1.S",
         "BUF_I_n.S",
         "BUF_Q_n.S",
-        "BUF_CK_n.S"
+        "BUF_CK_n.S",
+        "Cbyp_n.MINUS",
+        "Cbyp_p.MINUS"
       ]
     },
     {
@@ -2684,7 +2702,8 @@
         "Mnb2.G",
         "Mnb3.G",
         "Mnb4.G",
-        "Mnb5.G"
+        "Mnb5.G",
+        "Cbyp_n.PLUS"
       ]
     },
     {
@@ -2768,7 +2787,9 @@
         "Mpb2.G",
         "Mpb3.G",
         "Mpb4.G",
-        "Mpb5.G"
+        "Mpb5.G",
+        "Cbyp_p.PLUS",
+        "M_bias_mir.G"
       ]
     },
     {
@@ -3108,7 +3129,8 @@
         "MXiq_p1.S",
         "BUF_I_p.S",
         "BUF_Q_p.S",
-        "BUF_CK_p.S"
+        "BUF_CK_p.S",
+        "M_bias_mir.S"
       ]
     },
     {
