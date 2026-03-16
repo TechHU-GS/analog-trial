@@ -360,12 +360,38 @@ Solver 集成到 assembly pipeline 是下一步。
 4. **optimize.py M3/M4 straighten_chains 不处理**
    → 扩展 `for ly in (0,1)` 到 `(0,1,2,3)`
 
+### 剩余 246 unmatched 分类 (2026-03-16 18:15)
+
+| 类别 | 数量 | 修法 |
+|------|------|------|
+| Solver-patched 但仍 unmatched | 39 | Via2→M3 连接不完整，需调查 |
+| Signal routing (非 Via2 问题) | 18 | 可能缺 Via2 或 M2 gap |
+| TFF 2-pin internal | 11 | stacked FET 内部节点 |
+| Wrong-bulk/cascode | 9 | placement 限制 |
+| Divider chain | 9 | 高 fanout net 部分 pin 未连通 |
+| Comparator/latch | 4 | comp_outn/p, lat_q/qb |
+| Single-pin (ext port) | 3 | sel0, sel1b, vref_ota — 无需路由 |
+| Excitation/NAND | 3 | 信号连通性 |
+| VCO internal | 2 | ns1, vco_out |
+
+### 已修复的 assembly bugs
+
+| Bug | 文件 | 修法 | 效果 |
+|-----|------|------|------|
+| `_try_shrink` 不处理双轴 overlap | assemble_gds.py:839 | 加 `elif x_gap < 0 and y_gap < 0:` 分支 | +1 pad shrink (48→49) |
+| PCell rotation degrees vs code | assemble_gds.py:2045 | 发现但未修（需 pipeline-wide 修改） | — |
+| M3_MIN_AREA 缺失 | pdk.py | 加 M3/M4_MIN_AREA = 144000 | M3.d 46→38 |
+| SCAN_RADIUS 过小 | assemble_gds.py:1437 | 700→2000nm | skip 137→107 |
+
 ### 本 session 教训
 
 1. **先查基线再建工具** — 没提前查 pre-existing comma-merges，导致 merge 检测反复修改
 2. **计算几何 >> 启发式** — klayout.db Region ops 秒级完成，assembly heuristic scan 失败率高
 3. **Via2 placement 的真正约束是 M3 层累积效应** — 独立安全 ≠ 组合安全
 4. **Post-patch 不是最终形态** — solver 结果需要集成到 assembly pipeline
+5. **PCell rotation 是 pipeline-wide 问题** — 不能只改一个环节
+6. **klayout.db LayoutToNetlist.probe_net 是最精确的 net 查询工具** — 比 Region boolean 更准
+7. **Greedy sweep 虽慢（12分钟）但是唯一可靠的 merge-safe 过滤** — 纯几何检查误拒/漏检都有
 
 ### 教训（累积，每条都踩过坑）
 
