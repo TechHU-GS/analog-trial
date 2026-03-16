@@ -1,0 +1,30 @@
+source("output/ptat_vco.gds", "ptat_vco")
+flat
+metal1 = input(8, 0); metal2 = input(10, 0); via1 = input(19, 0)
+via2 = input(29, 0); metal3 = input(30, 0)
+metal1_text = labels(8, 25); metal2_text = labels(10, 25); metal3_text = labels(30, 25)
+
+pb_m2 = metal2.interacting(metal2_text.texts("pmos_bias"))
+pb_m1 = metal1.interacting(via1.interacting(pb_m2))
+pb_m1_lbl = metal1.interacting(metal1_text.texts("pmos_bias"))
+pb_m1_all = pb_m1.join(pb_m1_lbl)
+pb_m2_2 = metal2.interacting(via1.interacting(pb_m1))
+pb_m1_all = pb_m1_all.join(metal1.interacting(via1.interacting(pb_m2_2)))
+
+gnd_m3 = metal3.interacting(metal3_text.texts("gnd"))
+gnd_m2 = metal2.interacting(via2.interacting(gnd_m3))
+gnd_m1 = metal1.interacting(via1.interacting(gnd_m2))
+
+# Find the specific M1 shapes that touch
+touch = pb_m1_all.interacting(gnd_m1)
+$stdout.puts "pmos_bias M1 touching gnd M1: #{touch.count}"
+touch.each do |p|
+  b = p.bbox
+  $stdout.puts "  PB_M1 [#{(b.left*1000).round},#{(b.bottom*1000).round}]-[#{(b.right*1000).round},#{(b.top*1000).round}]"
+end
+
+gnd_touched = gnd_m1.interacting(pb_m1_all)
+gnd_touched.each do |p|
+  b = p.bbox
+  $stdout.puts "  GND_M1 [#{(b.left*1000).round},#{(b.bottom*1000).round}]-[#{(b.right*1000).round},#{(b.top*1000).round}]"
+end

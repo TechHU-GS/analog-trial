@@ -1,0 +1,36 @@
+source("output/ptat_vco.gds", "ptat_vco")
+target_netlist("/tmp/debug_ptap_only.cir")
+flat
+activ = input(1, 0); gatpoly = input(5, 0); cont_drw = input(6, 0)
+psd_drw = input(14, 0); metal1 = input(8, 0); metal2 = input(10, 0)
+via1 = input(19, 0); via2 = input(29, 0); metal3 = input(30, 0)
+nwell_drw = input(31, 0); via3 = input(49, 0); metal4 = input(50, 0)
+metal1_text = labels(8, 25); metal2_text = labels(10, 25); metal3_text = labels(30, 25)
+nactiv = activ.not(psd_drw); pactiv = activ.and(psd_drw)
+chip = extent("*"); pwell = chip.not(nwell_drw)
+ntap = nactiv.and(nwell_drw).not(gatpoly)
+ptap = pactiv.and(pwell).not(gatpoly)
+nsd_fet = nactiv.and(pwell).not(gatpoly)
+psd_fet = pactiv.and(nwell_drw).not(gatpoly)
+poly_con = gatpoly.not(activ)
+
+connect(pwell, ptap)           # ADD BACK: pwell connects to ptap
+connect(nwell_drw, nwell_drw)  # nwell self-connect only
+# connect(nwell_drw, ntap)     # REMOVED
+connect(ntap, cont_drw)
+connect(ptap, cont_drw)
+connect(nsd_fet, cont_drw)
+connect(psd_fet, cont_drw)
+connect(poly_con, cont_drw)
+connect(cont_drw, metal1)
+connect(metal1, via1); connect(via1, metal2)
+connect(metal2, via2); connect(via2, metal3)
+connect(metal3, via3); connect(via3, metal4)
+connect(metal1, metal1_text); connect(metal2, metal2_text); connect(metal3, metal3_text)
+
+extract_devices(mos4("sg13_lv_nmos"), {"SD" => nsd_fet, "G" => nactiv.and(gatpoly), "W" => pwell,
+                                        "tS" => nsd_fet, "tD" => nsd_fet, "tG" => poly_con})
+extract_devices(mos4("sg13_lv_pmos"), {"SD" => psd_fet, "G" => pactiv.and(gatpoly), "W" => nwell_drw,
+                                        "tS" => psd_fet, "tD" => psd_fet, "tG" => poly_con})
+netlist.simplify
+$stdout.puts "=== pwell↔ptap ON, nwell↔ntap OFF ==="

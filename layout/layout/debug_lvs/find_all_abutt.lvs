@@ -1,0 +1,35 @@
+# Find ALL abutment locations with full coordinates
+source("output/ptat_vco.gds", "ptat_vco")
+flat
+activ = input(1, 0)
+gatpoly = input(5, 0)
+psd_drw = input(14, 0)
+nwell_drw = input(31, 0)
+salblock = input(28, 0)
+nsd_drw = input(7, 0)
+chip = extent("*")
+nactiv = activ.not(psd_drw)
+pactiv = activ.and(psd_drw)
+pwell = chip.not(nwell_drw)
+ntap = nactiv.and(nwell_drw).not(gatpoly)
+ptap = pactiv.and(pwell).not(gatpoly)
+nsd_fet = nactiv.and(pwell).not(gatpoly)
+psd_fet = pactiv.and(nwell_drw).not(gatpoly)
+ntap_sal = ntap.not(salblock)
+psd_sal = psd_fet.not(salblock)
+nsd_sal = nsd_fet.not(salblock)
+ptap_sal = ptap.not(salblock)
+
+abutt1 = psd_sal.edges.and(ntap_sal.edges).extended(:in => 10, :out => 10)
+abutt2 = nsd_sal.edges.and(ptap_sal.edges).extended(:in => 10, :out => 10)
+
+$stdout.puts "psd_ntap_abutt (extended 10nm): #{abutt1.count}"
+abutt1.each do |p|
+  b = p.bbox
+  $stdout.puts "  PSD_NTAP [#{(b.left*1000).round},#{(b.bottom*1000).round}]-[#{(b.right*1000).round},#{(b.top*1000).round}]"
+end
+$stdout.puts "nsd_ptap_abutt (extended 10nm): #{abutt2.count}"
+abutt2.each do |p|
+  b = p.bbox
+  $stdout.puts "  NSD_PTAP [#{(b.left*1000).round},#{(b.bottom*1000).round}]-[#{(b.right*1000).round},#{(b.top*1000).round}]"
+end
