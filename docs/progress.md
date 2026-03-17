@@ -80,6 +80,16 @@ SPICE X→M conversion → Netgen LVS → comp.out
 - 318 equiv records = 设备间直接连接 (全部通过 M1/ndiffc overlap)
 - Via1 size 95→100nm 修复 (避免 180nm rounding) 但对结果无影响
 
+**Endpoint alignment 调查结果 (已验证):**
+- routing segment endpoints 0% 精确在 AP 位置上，98% 距离 >50nm
+- 根因：maze router 在 grid 上 route，assemble_gds.py 负责 bridge grid→AP gap
+- Magic pipeline 没有 assemble_gds.py → gap 无人填
+- Snap 修正尝试失败：leaf-only same-net snap (380/387) 导致 163/255 (更差)
+- 全量 snap 更差 (124/255) — cross-net + junction 破坏
+- qrouter 编译成功但不适用（数字 router，不支持 analog pin layout）
+- magic_net_router.py bus routing 也失败 (16/255) — M2 cross-net
+- **结论：需要在 Magic pipeline 里实现 grid→AP bridge（类似 assemble_gds 的 M2 pad bridge 功能）**
+
 **当前瓶颈: routing solver quality**
 - 576 extracted nets vs 145 reference → 太多 low-fanout 碎片 net
 - 需要 routing solver 生成更长、更连通的 routes
