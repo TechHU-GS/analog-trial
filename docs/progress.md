@@ -780,3 +780,11 @@ device 识别 100% 成功（之前 KLayout LVS 只识别 87%）。
 9. 每完成 milestone 立即 commit
 10. 不在不完整 build 上声称 SUCCESS
 Netgen Tcl LVS working. Full loop: Magic→Netgen. 269 devices extracted, LVS mismatch (routing gap).
+
+### Final Session Results (2026-03-17 16:25)
+- abs_pin_nm Magic fix: origin=placement (no bbox offset) → AP delta = (0,0) ✅
+- 106 devices fully connected (39%), 19 none (7%), 149 partial
+- Netgen LVS: 274 extracted → 122 after merging vs 255 reference
+- Mega-net: 168 terminals (rptat routing area, cross-net overlap)
+- All milestones committed (57 commits ahead of origin)
+
