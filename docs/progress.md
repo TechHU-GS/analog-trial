@@ -795,3 +795,11 @@ Netgen Tcl LVS working. Full loop: Magic→Netgen. 269 devices extracted, LVS mi
 - Netgen: 126 merged vs 255 reference (from 122 before — less merge = better)
 - 81 full devices, 37 none — balanced connectivity vs isolation
 
+
+### Parallel merge analysis
+- Only 4 actual parallel groups (15 merged), not 148 as Netgen reports
+- Rptat: 11 NMOS on dev_rptat_0.R1 (residual cross-net)
+- OTA: 3+3 NMOS on min_n/min_p (routing overlap)
+- VCO: 2 PMOS on mbn2.G
+- Netgen 148 merge count likely includes topology-based merges (not just parallel)
+
