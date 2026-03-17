@@ -90,6 +90,13 @@ SPICE X→M conversion → Netgen LVS → comp.out
 - magic_net_router.py bus routing 也失败 (16/255) — M2 cross-net
 - **结论：需要在 Magic pipeline 里实现 grid→AP bridge（类似 assemble_gds 的 M2 pad bridge 功能）**
 
+**Bare-device baseline (关键验证):**
+- 完全无 routing（只有 device placement）: 18/255 = 7%
+- 有 routing: 204/255 = 80%
+- **Routing 贡献 +186 devices (+73pp)** — pipeline 方向正确
+- 剩余 51 devices 是 routing coverage 不足，不是架构问题
+- 下一步：定点分析 51 个 unmatched devices 缺哪些 net 的 routing
+
 **当前瓶颈: routing solver quality**
 - 576 extracted nets vs 145 reference → 太多 low-fanout 碎片 net
 - 需要 routing solver 生成更长、更连通的 routes
