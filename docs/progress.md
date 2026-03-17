@@ -80,10 +80,69 @@ TM1 (126/0) — analog pin + power stripe（min 1640nm 太粗）
 TM2 (134/0) — ❌ 禁止
 ```
 
+### Metal 分层策略调研 (2026-03-18 12:15)
+
+**Via stack reachability 分析** (M3 power rail 挡住 signal via2):
+- 629 signal pins, 546 clear, 83 blocked → **reachability = 86.8%**
+- OTA/chopper/H-bridge 关键 pin 被挡 → 不可接受
+- 结论: power 必须从 M3 移走，找缝隙是打补丁
+
+**IHP SG13G2 真实 tapeout 参考** (5 个设计, IHP Apr 2025 tapeout):
+```
+设计         M1    M2    M3    M4    M5    TM1   TM2
+Bandgap Ref  2.4%  2.4%  2.4%  2.9%  2.7%  16.0% 26.6%
+VCO 130nm    2.1%  6.0%  29.8% 28.2% 31.2%  4.7% 11.1%
+Mixer 5GHz   8.2%  8.3%  8.9%  8.1%  8.2%  8.6% 11.4%
+40GHz TIA   48.5% 38.8% 38.8% 38.8% 38.1% 37.8% 41.3%
+GPS LNA     16.6% 16.7% 15.6% 14.4% 15.6% 16.6% 23.7%
+```
+- **所有设计都用全部 7 层** — 我们只用 M1-M4 是不正常的
+- VCO (最相似): M1-M2 轻用 (2-6%), M3-M5 是信号骨干 (28-31%)
+- TM1+TM2 用于 power distribution
+- 多级 via stack 是标准做法 (GPS LNA 700K+ vias)
+
+**提出的分层方案:**
+```
+M1/M2    — device PCell（不碰）
+M3       — signal routing + via stack 过渡
+M4       — signal routing
+M5       — signal routing（cap_cmim 区域被 bottom plate 占用）
+TopMetal1 — power distribution（TM2 被 TTIHP 禁了）
+TopMetal2 — 禁止（TTIHP power grid）
+```
+
+**⚠️ cap_cmim 修正**: soilz_design.md 记载 cap_cmim 用 M5(bottom plate)↔TopMetal1(top plate)，
+不是参考设计的 M4↔M5。M5 在 3 个 cap 区域被占用，但 cap 只有 3 个 (27×27µm)，
+相对 202×261µm 芯片面积影响小。
+
+### Via Stack 可行性验证 (2026-03-18 12:30)
+
+**测试**: 单个 TM1→M1 power via stack (6 级), KLayout DRC
+```
+TM1     1640×1640nm (min width)
+TopVia1  420×420nm
+M5       620×620nm
+Via4     190×190nm
+M4       290×290nm
+Via3     190×190nm
+M3       290×290nm
+Via2     190×190nm
+M2       290×290nm
+Via1     190×190nm
+M1       290×290nm
+```
+**结果**: width/space 22/22 CLEAN, enclosure 10/10 CLEAN, **total = 0**
+**占地**: 1.64µm × 1.64µm (TM1 min width 决定)
+
+**⚠️ unverified**: 单个孤立 stack 测试。实际器件旁边时 TM1 pad 可能和邻近器件重叠，
+需要在真实 placement 上验证 power via stack 的 fit。
+
+**状态**: 分层策略 DRC 可行性确认 ✅ (孤立测试)
+
 ### 下一步
-- 讨论 metal 分层策略（signal routing 在 M4+M5）
-- 修 23 个 inter-device placement violations（M1.b=1, M2.b=5, V1.b=17）
-- 重新生成 routing（不再用 ATK routing.json 的 M1/M2 segments）
+1. 在实际 placement 上验证 power via stack fit（TM1 pad 不和邻居重叠）
+2. 设计 TM1 power rail → via stack → M1 device 的具体连接
+3. 在 ECS 上生成 M3+M4+M5 signal routing + GA 优化
 
 ---
 
