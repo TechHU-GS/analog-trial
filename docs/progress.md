@@ -740,10 +740,29 @@ device 识别 100% 成功（之前 KLayout LVS 只识别 87%）。
 - ❌ Routing connectivity 需要继续完善
 - ❌ NWell ties 需要加入 gen_magic_layout
 
+**NSD/PSD post-processing 成功 (2026-03-17 15:18):**
+- Magic GDS export 不写 NSD(7)/PSD(14) — 写 nBuLay(32) 代替
+- KLayout post-process: NSD = Activ & NWell, PSD = Activ - NWell
+- 结果: **wrong-bulk 127→0, comma merges 0, 151 unmatched nets**
+- 255 devices extracted (126P + 122N + 4R + 3C) — 接近 257
+- 只有 3 devices matched (3 CAP) — routing connectivity 不足导致 topology 不匹配
+
+**综合对比:**
+| 指标 | ATK pipeline (DRC 144) | **Magic pipeline** |
+|------|----------------------|-------------------|
+| Comma merges | 2 | **0** ✅ |
+| Wrong-bulk | 1 | **0** ✅ |
+| Devices extracted | 257 | **255** |
+| Devices matched | 246 | 3 (routing 限制) |
+| Nets unmatched | 315 | **151** |
+
+**结论**: Magic 路线解决了所有 ATK 的根本问题。
+**瓶颈**: routing connectivity (KLayout→Magic 坐标对齐)
+
 **下一步**:
-1. 加 NWell region + ntap ties 到 .mag (减少 127 wrong-bulk)
-2. 改进 routing 坐标对齐 (增加 nets matched)
-3. 迭代: 修 → KLayout LVS → diagnose_lvs → 修
+1. routing 坐标对齐 (S-pin shift 已验证 99 devices in Magic extraction)
+2. NSD/PSD post-process 集成到自动化
+3. 目标: device matched > 200
 
 ### 教训（累积，每条都踩过坑）
 

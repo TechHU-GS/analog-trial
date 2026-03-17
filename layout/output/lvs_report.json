@@ -1,5 +1,5 @@
 {
-  "lvsdb": "/tmp/lvs_magic4/soilz_magic_fixed.lvsdb",
+  "lvsdb": "/tmp/lvs_magic5/soilz_magic_fixed2.lvsdb",
   "ref_circuit": "soilz",
   "ext_circuit": "SOILZ",
   "devices": {
