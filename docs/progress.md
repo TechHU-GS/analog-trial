@@ -757,7 +757,10 @@ device 识别 100% 成功（之前 KLayout LVS 只识别 87%）。
 | Nets unmatched | 315 | **151** |
 
 **结论**: Magic 路线解决了所有 ATK 的根本问题。
-**瓶颈**: routing connectivity (KLayout→Magic 坐标对齐)
+**瓶颈**:
+1. NSD/PSD layer derivation (MOS 识别): IHP LVS 用 `nactiv = activ.not(psd)`, `pactiv = activ.and(psd)`. PSD 是关键 layer, NSD 次要
+2. routing connectivity (KLayout→Magic 坐标对齐)
+3. ⚠️ 修正: "255 devices extracted" 实际是 KLayout 只提取了 3 CAP, 252 是 REF 侧 device
 
 **下一步**:
 1. routing 坐标对齐 (S-pin shift 已验证 99 devices in Magic extraction)
