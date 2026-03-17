@@ -115,9 +115,14 @@ def abs_pin_nm(placement, inst_name):
     inst = placement['instances'][inst_name]
     dev_type = inst['type']
     dev = _DEVICES[dev_type]
-    # PCell origin = placement position - bbox offset (ox, oy are negative offsets)
-    origin_x = s5(inst['x_um']) - s5(dev['ox'])
-    origin_y = s5(inst['y_um']) - s5(dev['oy'])
+    if _use_magic:
+        # Magic: placement position IS PCell origin (no bbox offset)
+        origin_x = s5(inst['x_um'])
+        origin_y = s5(inst['y_um'])
+    else:
+        # KLayout: placement is bbox lower-left, origin = placement - bbox offset
+        origin_x = s5(inst['x_um']) - s5(dev['ox'])
+        origin_y = s5(inst['y_um']) - s5(dev['oy'])
     result = {}
     for pin_name, (px, py) in dev['pins'].items():
         result[pin_name] = (s5(origin_x / UM + px), s5(origin_y / UM + py))
