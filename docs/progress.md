@@ -788,3 +788,10 @@ Netgen Tcl LVS working. Full loop: Magic→Netgen. 269 devices extracted, LVS mi
 - Mega-net: 168 terminals (rptat routing area, cross-net overlap)
 - All milestones committed (57 commits ahead of origin)
 
+
+### Smart routing filter (2026-03-17 16:45)
+- Skip routing segments overlapping wrong-device bboxes (206/1608 = 13%)
+- Result: 1 mega-net (substrate 143), 72 multi, 39 well-connected
+- Netgen: 126 merged vs 255 reference (from 122 before — less merge = better)
+- 81 full devices, 37 none — balanced connectivity vs isolation
+
