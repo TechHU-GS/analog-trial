@@ -39,7 +39,7 @@ def _validate(pad):
     return w >= M2_MIN_W and h >= M2_MIN_W and w * h >= M2_MIN_AREA
 
 
-def fix(gds_path='output/ptat_vco.gds', routing_path='output/routing.json',
+def fix(gds_path='output/soilz.gds', routing_path='output/routing.json',
         output_path=None):
     if output_path is None:
         output_path = gds_path

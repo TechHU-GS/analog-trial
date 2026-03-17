@@ -23,7 +23,7 @@ import json
 import time
 import klayout.db as db
 from .pdk import (
-    M2_MIN_S, M3_MIN_S, VIA2_PAD_M3, M2_MIN_W,
+    M2_MIN_S, M3_MIN_S, M3_MIN_W, VIA2_PAD_M3, M2_MIN_W,
 )
 from .paths import ROUTING_JSON
 
@@ -52,7 +52,7 @@ def _bridge_box(px, py, vx, vy):
     return (bx1, by1, bx2, by2)
 
 
-def solve(gds_path='output/ptat_vco.gds', routing_path=None):
+def solve(gds_path='output/soilz.gds', routing_path=None):
     if routing_path is None:
         routing_path = ROUTING_JSON
 

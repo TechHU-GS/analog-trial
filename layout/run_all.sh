@@ -64,6 +64,13 @@ python3 "${PDK_ROOT}/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py" \
     --allow_unmatched_ports 2>&1 | tail -5 || true  # LVS result in summary
 echo ""
 
+# --- Phase 7: LVS Diagnosis ---
+echo "=== Phase 7: LVS Diagnosis ==="
+python3 -m atk.diagnose_lvs \
+    --lvsdb="${LVS_DIR}/${CELL}.lvsdb" \
+    --output=output/lvs_report.json 2>&1 || true
+echo ""
+
 # --- Summary ---
 echo "=== Results Summary ==="
 python3 -m atk.summary \

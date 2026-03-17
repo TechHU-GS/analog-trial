@@ -1,0 +1,740 @@
+{
+  "lvsdb": "/tmp/lvs_run/soilz.lvsdb",
+  "ref_circuit": "soilz",
+  "ext_circuit": "SOILZ",
+  "devices": {
+    "matched": 246,
+    "ref_only": [
+      {
+        "name": "$22",
+        "class": "cap_cmim",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "$21",
+        "class": "cap_cmim",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "$68",
+        "class": "cap_cmim",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "$15",
+        "class": "rhigh",
+        "terminals": {
+          "A": null,
+          "B": null
+        }
+      },
+      {
+        "name": "$14",
+        "class": "rhigh",
+        "terminals": {
+          "A": null,
+          "B": null
+        }
+      },
+      {
+        "name": "$13",
+        "class": "rhigh",
+        "terminals": {
+          "A": null,
+          "B": null
+        }
+      },
+      {
+        "name": "$151",
+        "class": "rhigh",
+        "terminals": {
+          "A": null,
+          "B": null
+        }
+      },
+      {
+        "name": "$95",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$255",
+          "G": "$252",
+          "D": "t3_m",
+          "B": "gnd"
+        }
+      },
+      {
+        "name": "$96",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "gnd",
+          "G": "$252",
+          "D": "t3_nmn",
+          "B": "gnd"
+        }
+      },
+      {
+        "name": "$223",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "t1I_nsp",
+          "G": "div2_I_b",
+          "D": "$296",
+          "B": "vdd"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "$240",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$160",
+          "G": "lat_qb",
+          "D": "$161",
+          "B": "$160"
+        },
+        "bulk_ok": false
+      }
+    ],
+    "ext_only": [
+      {
+        "name": "CBYP_N",
+        "class": "CAP_CMIM",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "CBYP_P",
+        "class": "CAP_CMIM",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "C_FB",
+        "class": "CAP_CMIM",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "RIN",
+        "class": "RHIGH",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "RDAC",
+        "class": "RHIGH",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "ROUT",
+        "class": "RHIGH",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "RPTAT",
+        "class": "RHIGH",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "M_IB_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "NAND_B",
+          "D": "PHI_N",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MBP1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "VCO5",
+          "D": "BUF1",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      }
+    ],
+    "ref_only_count": 11,
+    "ext_only_count": 9
+  },
+  "pmos_bulk": {
+    "ref_only_pmos": 2,
+    "wrong_bulk": [
+      {
+        "name": "$240",
+        "bulk": "$160"
+      }
+    ],
+    "correct_bulk_unmatched": 1
+  },
+  "device_classes": {
+    "ref_only": {
+      "cap_cmim": 3,
+      "rhigh": 4,
+      "sg13_lv_nmos": 2,
+      "sg13_lv_pmos": 2
+    },
+    "ext_only": {
+      "CAP_CMIM": 3,
+      "RHIGH": 4,
+      "SG13_LV_NMOS": 1,
+      "SG13_LV_PMOS": 1
+    }
+  },
+  "nets": {
+    "matched": 87,
+    "ref_only": 278,
+    "ext_only": 58,
+    "ref_only_named": [
+      "bias_n",
+      "buf1,vco5",
+      "buf_ref_Q",
+      "c_di_n",
+      "c_di_p",
+      "c_tail",
+      "chop_out",
+      "comp_clk",
+      "comp_outn",
+      "comp_outp",
+      "da1",
+      "dac_hi",
+      "dac_lo",
+      "dac_out",
+      "db1",
+      "div16_I_b",
+      "div16_Q",
+      "div16_Q_b",
+      "div2_I_b",
+      "div2_Q",
+      "div2_Q_b",
+      "div4_I",
+      "div4_I_b",
+      "div4_Q",
+      "div4_Q_b",
+      "div8",
+      "div8_b",
+      "f_exc",
+      "f_exc_b",
+      "f_exc_b_d",
+      "f_exc_d",
+      "freq_sel",
+      "iq_sel",
+      "lat_q",
+      "lat_qb",
+      "mid_p",
+      "mxfi_selb",
+      "mxfq_selb",
+      "mxiq_selb",
+      "na_mid",
+      "nand_a",
+      "nand_b",
+      "nb_mid",
+      "net_c1",
+      "net_rptat",
+      "ns5,vco_out",
+      "phi_n",
+      "phi_p",
+      "pmos_bias",
+      "probe_n",
+      "probe_p",
+      "ref_I",
+      "ref_Q",
+      "sens_n",
+      "sens_p",
+      "sum_n",
+      "t1I_mb",
+      "t1Q_m",
+      "t1Q_mb",
+      "t2I_m",
+      "t2I_mb",
+      "t2Q_mb",
+      "t2Q_nsn",
+      "t3_mb",
+      "t3_nsn",
+      "t4I_m",
+      "t4I_mb",
+      "t4Q_mb",
+      "vco_b",
+      "vco_buf",
+      "vco_buf_b"
+    ],
+    "ref_only_anon_count": 207,
+    "ext_only_named": [
+      "BUF1",
+      "BUF_REF_Q",
+      "CHOP_OUT",
+      "COMP_CLK",
+      "COMP_OUTN",
+      "C_DI_N",
+      "C_DI_P",
+      "C_TAIL",
+      "DA1",
+      "DAC_HI",
+      "DAC_LO",
+      "DAC_OUT",
+      "DB1",
+      "DIV16_I_B",
+      "DIV16_Q_B",
+      "DIV2_I_B",
+      "DIV2_Q_B",
+      "DIV4_I_B",
+      "DIV4_Q_B",
+      "DIV8_B",
+      "FREQ_SEL",
+      "F_EXC",
+      "F_EXC_B",
+      "F_EXC_B_D",
+      "F_EXC_D",
+      "IQ_SEL",
+      "LAT_QB",
+      "MXFI_SELB",
+      "MXFQ_SELB",
+      "MXIQ_SELB",
+      "NAND_A",
+      "NAND_B",
+      "NA_MID",
+      "NB_MID",
+      "NET_RPTAT",
+      "NS5",
+      "PHI_N",
+      "PHI_P",
+      "PROBE_N",
+      "PROBE_P",
+      "REF_I",
+      "REF_Q",
+      "SENS_N",
+      "SENS_P",
+      "T1I_MB",
+      "T1Q_MB",
+      "T2I_MB",
+      "T2Q_MB",
+      "T2Q_NSN",
+      "T3_MB",
+      "T3_NSN",
+      "T4I_MB",
+      "T4Q_MB",
+      "VCO_B",
+      "VCO_BUF",
+      "VCO_BUF_B",
+      "VCO_OUT",
+      "VPTAT"
+    ],
+    "comma_merges": [
+      "buf1,vco5",
+      "ns5,vco_out"
+    ],
+    "matched_pairs": [
+      {
+        "ref": "$32",
+        "ext": "BIAS_N"
+      },
+      {
+        "ref": "$156",
+        "ext": "COMP_OUTP"
+      },
+      {
+        "ref": "$396",
+        "ext": "DIV16_Q"
+      },
+      {
+        "ref": "$310",
+        "ext": "DIV2_Q"
+      },
+      {
+        "ref": "$374",
+        "ext": "DIV4_I"
+      },
+      {
+        "ref": "$423",
+        "ext": "DIV4_Q"
+      },
+      {
+        "ref": "$300",
+        "ext": "DIV8"
+      },
+      {
+        "ref": "$161",
+        "ext": "LAT_Q"
+      },
+      {
+        "ref": "$60",
+        "ext": "MID_P"
+      },
+      {
+        "ref": "$138",
+        "ext": "NET_C1"
+      },
+      {
+        "ref": "$162",
+        "ext": "PMOS_BIAS"
+      },
+      {
+        "ref": "$3",
+        "ext": "SUM_N"
+      },
+      {
+        "ref": "$312",
+        "ext": "T1Q_M"
+      },
+      {
+        "ref": "$390",
+        "ext": "T2I_M"
+      },
+      {
+        "ref": "$355",
+        "ext": "T4I_M"
+      },
+      {
+        "ref": "$199",
+        "ext": "VCO5"
+      },
+      {
+        "ref": "buf_ref_I",
+        "ext": "BUF_REF_I"
+      },
+      {
+        "ref": "cas1",
+        "ext": "CAS1"
+      },
+      {
+        "ref": "cas2",
+        "ext": "CAS2"
+      },
+      {
+        "ref": "cas3",
+        "ext": "CAS3"
+      },
+      {
+        "ref": "cas_ref",
+        "ext": "CAS_REF"
+      },
+      {
+        "ref": "div16_I",
+        "ext": "DIV16_I"
+      },
+      {
+        "ref": "div2_I",
+        "ext": "DIV2_I"
+      },
+      {
+        "ref": "exc_out",
+        "ext": "EXC_OUT"
+      },
+      {
+        "ref": "gnd",
+        "ext": "GND"
+      },
+      {
+        "ref": "n1_mid",
+        "ext": "N1_MID"
+      },
+      {
+        "ref": "n2_mid",
+        "ext": "N2_MID"
+      },
+      {
+        "ref": "nb1",
+        "ext": "NB1"
+      },
+      {
+        "ref": "nb2",
+        "ext": "NB2"
+      },
+      {
+        "ref": "nb3",
+        "ext": "NB3"
+      },
+      {
+        "ref": "nb4",
+        "ext": "NB4"
+      },
+      {
+        "ref": "nb5",
+        "ext": "NB5"
+      },
+      {
+        "ref": "net_c2",
+        "ext": "NET_C2"
+      },
+      {
+        "ref": "nmos_bias",
+        "ext": "NMOS_BIAS"
+      },
+      {
+        "ref": "ns1",
+        "ext": "NS1"
+      },
+      {
+        "ref": "ns2",
+        "ext": "NS2"
+      },
+      {
+        "ref": "ns3",
+        "ext": "NS3"
+      },
+      {
+        "ref": "ns4",
+        "ext": "NS4"
+      },
+      {
+        "ref": "ota_out",
+        "ext": "OTA_OUT"
+      },
+      {
+        "ref": "sel0",
+        "ext": "SEL0"
+      },
+      {
+        "ref": "sel0b",
+        "ext": "SEL0B"
+      },
+      {
+        "ref": "sel1",
+        "ext": "SEL1"
+      },
+      {
+        "ref": "sel1b",
+        "ext": "SEL1B"
+      },
+      {
+        "ref": "sel2",
+        "ext": "SEL2"
+      },
+      {
+        "ref": "sel2b",
+        "ext": "SEL2B"
+      },
+      {
+        "ref": "src1",
+        "ext": "SRC1"
+      },
+      {
+        "ref": "src2",
+        "ext": "SRC2"
+      },
+      {
+        "ref": "src3",
+        "ext": "SRC3"
+      },
+      {
+        "ref": "t1I_m",
+        "ext": "T1I_M"
+      },
+      {
+        "ref": "t1I_nmn",
+        "ext": "T1I_NMN"
+      },
+      {
+        "ref": "t1I_nmp",
+        "ext": "T1I_NMP"
+      },
+      {
+        "ref": "t1I_nsn",
+        "ext": "T1I_NSN"
+      },
+      {
+        "ref": "t1I_nsp",
+        "ext": "T1I_NSP"
+      },
+      {
+        "ref": "t1Q_nmn",
+        "ext": "T1Q_NMN"
+      },
+      {
+        "ref": "t1Q_nmp",
+        "ext": "T1Q_NMP"
+      },
+      {
+        "ref": "t1Q_nsn",
+        "ext": "T1Q_NSN"
+      },
+      {
+        "ref": "t1Q_nsp",
+        "ext": "T1Q_NSP"
+      },
+      {
+        "ref": "t2I_nmn",
+        "ext": "T2I_NMN"
+      },
+      {
+        "ref": "t2I_nmp",
+        "ext": "T2I_NMP"
+      },
+      {
+        "ref": "t2I_nsn",
+        "ext": "T2I_NSN"
+      },
+      {
+        "ref": "t2I_nsp",
+        "ext": "T2I_NSP"
+      },
+      {
+        "ref": "t2Q_m",
+        "ext": "T2Q_M"
+      },
+      {
+        "ref": "t2Q_nmn",
+        "ext": "T2Q_NMN"
+      },
+      {
+        "ref": "t2Q_nmp",
+        "ext": "T2Q_NMP"
+      },
+      {
+        "ref": "t2Q_nsp",
+        "ext": "T2Q_NSP"
+      },
+      {
+        "ref": "t3_m",
+        "ext": "T3_M"
+      },
+      {
+        "ref": "t3_nmn",
+        "ext": "T3_NMN"
+      },
+      {
+        "ref": "t3_nmp",
+        "ext": "T3_NMP"
+      },
+      {
+        "ref": "t3_nsp",
+        "ext": "T3_NSP"
+      },
+      {
+        "ref": "t4I_nmn",
+        "ext": "T4I_NMN"
+      },
+      {
+        "ref": "t4I_nmp",
+        "ext": "T4I_NMP"
+      },
+      {
+        "ref": "t4I_nsn",
+        "ext": "T4I_NSN"
+      },
+      {
+        "ref": "t4I_nsp",
+        "ext": "T4I_NSP"
+      },
+      {
+        "ref": "t4Q_m",
+        "ext": "T4Q_M"
+      },
+      {
+        "ref": "t4Q_nmn",
+        "ext": "T4Q_NMN"
+      },
+      {
+        "ref": "t4Q_nmp",
+        "ext": "T4Q_NMP"
+      },
+      {
+        "ref": "t4Q_nsn",
+        "ext": "T4Q_NSN"
+      },
+      {
+        "ref": "t4Q_nsp",
+        "ext": "T4Q_NSP"
+      },
+      {
+        "ref": "tail",
+        "ext": "TAIL"
+      },
+      {
+        "ref": "vcas",
+        "ext": "VCAS"
+      },
+      {
+        "ref": "vco1",
+        "ext": "VCO1"
+      },
+      {
+        "ref": "vco2",
+        "ext": "VCO2"
+      },
+      {
+        "ref": "vco3",
+        "ext": "VCO3"
+      },
+      {
+        "ref": "vco4",
+        "ext": "VCO4"
+      },
+      {
+        "ref": "vdd",
+        "ext": "VDD"
+      },
+      {
+        "ref": "vref_comp",
+        "ext": "VREF_COMP"
+      },
+      {
+        "ref": "vref_ota",
+        "ext": "VREF_OTA"
+      }
+    ]
+  },
+  "pins": {
+    "matched": 216,
+    "mismatched": 0
+  },
+  "summary": {
+    "devices_matched": 246,
+    "devices_unmatched": 20,
+    "nets_matched": 87,
+    "nets_unmatched": 336,
+    "comma_merges": 2,
+    "wrong_bulk_pmos": 1,
+    "pins_matched": 216,
+    "pins_mismatched": 0
+  }
+}

@@ -20,9 +20,9 @@ from .pdk import (
 )
 
 
-def apply(gds_path='output/ptat_vco.gds',
+def apply(gds_path='output/soilz.gds',
           placements_path='output/via2_placements.json',
-          output_path='output/ptat_vco_via2_patched.gds'):
+          output_path='output/soilz_via2_patched.gds'):
     """Patch GDS with solver Via2 placements."""
 
     with open(placements_path) as f:

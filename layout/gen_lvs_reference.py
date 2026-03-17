@@ -58,7 +58,7 @@ for net in nets:
 
 # Generate SPICE lines
 spice_lines = []
-spice_lines.append("** Complete LVS reference netlist for ptat_vco")
+spice_lines.append("** Complete LVS reference netlist for soilz")
 spice_lines.append("** Auto-generated from netlist.json + device_lib.json")
 spice_lines.append(f"** {len(devices)} devices: {nmos_count} NMOS, {pmos_count} PMOS, {res_count} R")
 spice_lines.append("")
@@ -71,7 +71,7 @@ all_ports = power_nets + signal_nets
 
 # Format subcircuit header with SPICE continuation lines
 # SPICE lines must be < ~80 chars; continuation lines start with '+'
-subckt_header = f".subckt ptat_vco {' '.join(all_ports[:5])}"
+subckt_header = f".subckt soilz {' '.join(all_ports[:5])}"
 spice_lines.append(subckt_header)
 remaining = all_ports[5:]
 while remaining:
@@ -128,7 +128,9 @@ for d in devices:
 
     elif cls == 'resistor':
         # Resistor: Rname n1 n2 model w=... l=... [b=...] [m=...]
-        # Pin names: PLUS and MINUS
+        # LVS extraction: RHIGH_1 = MINUS pin, RHIGH_2 = PLUS pin
+        # (KLayout PCell terminal order is reversed from routing convention)
+        # SPICE terminal order: n1=RHIGH_1(=MINUS), n2=RHIGH_2(=PLUS)
         plus_net = pin_to_net.get(f"{name}.PLUS", "?PLUS")
         minus_net = pin_to_net.get(f"{name}.MINUS", "?MINUS")
 
@@ -147,16 +149,28 @@ for d in devices:
         if pcell_name == 'rppd' and l_um in _RPPD_EXTRACTED_L:
             l_um = _RPPD_EXTRACTED_L[l_um]
 
+        # n1=MINUS (→RHIGH_1), n2=PLUS (→RHIGH_2) to match extraction order
         spice_lines.append(
-            f"R{name} {plus_net} {minus_net} {pcell_name} "
+            f"R{name} {minus_net} {plus_net} {pcell_name} "
             f"w={w_um}u l={l_um}u b={b} m={m}"
+        )
+
+    elif 'cap' in dtype.lower() or 'cmim' in dtype.lower():
+        # Capacitor: Cname n1 n2 cap_cmim w=... l=...
+        plus_net = pin_to_net.get(f"{name}.PLUS", "?PLUS")
+        minus_net = pin_to_net.get(f"{name}.MINUS", "?MINUS")
+        w_um = params.get('w', 5.0)
+        l_um = params.get('l', 5.0)
+        spice_lines.append(
+            f"C{name} {plus_net} {minus_net} cap_cmim "
+            f"w={w_um}u l={l_um}u"
         )
 
     else:
         spice_lines.append(f"** SKIP: {name} type={dtype} class={cls}")
 
 spice_lines.append("")
-spice_lines.append(".ends ptat_vco")
+spice_lines.append(".ends soilz")
 spice_lines.append("")
 
 # Check for missing connections
@@ -187,7 +201,7 @@ if missing:
         print(f"  ... and {len(missing)-20} more")
 
 # Write output
-outfile = 'ptat_vco_lvs.spice'
+outfile = 'soilz_lvs.spice'
 with open(outfile, 'w') as f:
     f.write('\n'.join(spice_lines) + '\n')
 print(f"\nWritten to {outfile}")

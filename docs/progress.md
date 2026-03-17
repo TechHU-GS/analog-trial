@@ -527,12 +527,177 @@ Solver 集成到 assembly pipeline 是下一步。
 
 **LVS 进展（在旧 249-dev 设计上）：** 358→240 (-33%)
 
-### 下一步
-1. **PCell probe** — 填充 device_lib shapes_by_layer for cap_cmim_bypass, rhigh_rout
-2. **Assembly** — 跑通 GDS 生成
-3. **LVS/DRC** — 在完整设计（257 dev）上重测
-4. **Via2 solver** — 应用到新 GDS
-5. **目标**: LVS/DRC clean for TTIHP 26a submission
+### Session 2026-03-17: Geometric Solver Pipeline
+
+**完成:**
+1. ✅ `ptat_vco` → `soilz` 全链路 rename (7 pipeline 文件 + gen_lvs_reference)
+2. ✅ Pipeline 跑通, 真实 baseline: LVS=299, DRC=280, 3 comma merges
+3. ✅ `atk/diagnose_geometric.py` — 0.1s 全景诊断 (DRC + L2N + merge)
+4. ✅ L2N 全量 probe: 65 connected / 69 fragmented (修正了 id() vs cluster_id bug)
+5. ✅ Via2 blocked 60 pins 根因: 46 M2 cross-net, 14 no anchor, 0 no M3 space
+6. ✅ 3 comma merge 精确根因:
+   - buf1↔vco5: **M2 AP pad overlap** 350×65nm (MBn1.D↔MBp1.G)
+   - da1↔f_exc_b: **M2 Via2 bridge** 跨入 AP pad 区域 (2 shapes, 600nm 高)
+   - ns5↔vco_out: **M3 cluster 75** 连通 (ns5+vco_out+vco5 三 net M3 合一)
+7. ✅ Phase B solve_min_area.py: 73/73 min-area violations fixed (M3.d=67, M1.d=4, M4.d=2)
+8. ⚠️ Phase A solve_merges.py: buf1↔vco5 pad shrink applied 但 LVS merge 未消除（多层路径）
+9. ✅ Phase A+B applied → DRC 280→217 (-63), M3.d 67→0
+10. ❌ Phase C (Via2 solver) 引入 34-net mega-merge — **不能直接 apply**
+
+**验证结果 (Phase A+B, 无 Via2 solver):**
+- DRC: 280→**217** (M3.d=0 ✅, 其余不变)
+- LVS: 299→299 (pad shrink 不够，merge 有 M1+M3 路径)
+- Comma merges: 3→3 (未消除)
+
+**关键发现 (LVS xref API 分析):**
+
+**LVS 299 unmatched 的精确根因分解 (LayoutVsSchematic xref):**
+- Device matched: **224/257** (87%)
+- Device unmatched: REF-only=32, EXT-only=28
+- Net matched: 46, Unmatched REF=302, Unmatched EXT=99
+
+**32 unmatched devices 的根因:**
+1. **23 PMOS wrong-bulk**: REF bulk=$internal_net, EXT bulk=VDD
+   - 包括 PM_CAS1-3, PM_CAS_DIODE, PM_CAS_REF, PM_MIR1-3, PM_REF, PM_PDIODE,
+     MPB1-5, M_BIAS_MIR, MBP2, INV_ISO_P, M_IA_P, MP_LOAD_P, PM3-5
+   - 根因: NWell island 没有独立 net, LVS 把所有 PMOS bulk 连到 VDD
+   - 修法: placement 级 NWell bridge (之前验证过 6/12 safe)
+2. **4 RHIGH terminal=none**: REF 和 EXT 都 A=none B=none
+   - 需要查为什么 terminal 为空
+3. **3 CAP_CMIM REF-only**: gen_lvs_reference.py 跳过 capacitor
+4. **2 NMOS REF-only**: $79 (div8 相关), $80 (ref_Q 相关)
+
+**3 comma merges 的 device-level 根因:**
+- buf1↔vco5: MBP1 的 G(=vco5) 和 D(=buf1) 在 GDS 中短路
+  (extracted: M$45 G=buf1|vco5 S=buf1|vco5, M$29 REF 同样)
+- da1↔f_exc_b: assembly Via2 M2 bridge 跨入其他 net AP pad 区域
+- ns5↔vco_out: 需要进一步分析（不是 M3 mega-polygon，L2N≠LVS）
+
+**之前的错误认知 (已修正):**
+- ❌ "只有 23 device matched" → ✅ 224 matched (之前误读 xref API)
+- ❌ "ns5↔vco_out 是 M3 mega-polygon" → ✅ LVS 有 FEOL 提取，和简单 L2N 不同
+- ❌ "M3 separation 能修 merges" → ✅ 反而引入 gnd↔vdd merge (破坏 assembly cleanup)
+
+**已验证的安全修法:**
+- Phase B (M3.d min-area): DRC 280→217, 73 violations → 0 ✅
+- Via2 solver: 199 found 但直接 apply 引入 mega-merge ❌ (需要 merge-safe)
+
+**IHP LVS Ruby 脚本关键发现:**
+- BEOL: pwell_sub→pwell→ptap→cont→M1→Via1→M2→Via2→M3→Via3→M4
+- PMOS bulk: nwell_drw→ntap→cont→M1→metal chain→VDD
+- RHIGH: 2-terminal (A,B), ports = gatpoly 5nm sliver at rhigh_res edge → poly_con → cont → M1
+- Salicide abutment: nsd_fet edge < 1nm from ptap → 直接短路 (可能是 comma merge 隐藏路径)
+- polyres_drw = (128,0), extblock_drw = (111,0), salblock_drw = (28,0)
+
+**RHIGH disconnected 精确根因:**
+- Rptat: rhigh_res 从 Y=147000 到 Y=149930，GatPoly 只在 Y=149930-150360 (顶端)
+- 底端 Y=147000 没有 GatPoly → 没有 rhigh_ports → 没有 poly_con → terminal B disconnected
+- 根因: PCell 单端 poly contact，assembly 没有画底端的 poly extension + cont + M1
+- 4 个电阻都有同样问题
+
+**3 comma merges:**
+- .cir 确认是 physical shorts (extraction 阶段合并)
+- .lvsdb 的 EXT 显示分开 (comparison 阶段 split 了)
+- 两个来源矛盾但 .cir 是 raw extraction，更可信
+
+**修正：**
+- RHIGH 不是 disconnected，是 terminal order 反了（已修 SPICE）+ Rout L=100.0→100.5 校准需加
+- 只有 **2 个 wrong-bulk PMOS**（$24 B=$33, $25 B=$151），不是 23 个
+- 14 个 PMOS 不匹配是 3 comma merges 的级联效应
+- 87 nets matched（加了 CAP+RHIGH fix 后）
+
+**3 comma merge per-layer 定位完成 (FEOL+BEOL L2N):**
+
+| Merge | 层 | 根因 | 修法 |
+|-------|-----|------|------|
+| da1↔f_exc_b | **M2** (FEOL+BEOL L2N 验证 cluster=1) | M2 assembly bridge shapes | 删除 M2 bridge |
+| ns5↔vco_out | **PSD→Cont** (断开 PSD→Cont 后 merge 消失) | ptap PSD bridge | assembly tie trim 增强 |
+| buf1↔vco5 | **未检测到** (FEOL L2N 无此 merge) | 可能 salicide abutment | 需加 salicide 层或查 .cir |
+
+**Bug 1 fix 已验证 (M2 bridge cross-net check):**
+- `assemble_gds.py::_add_missing_ap_via2()` 加 `_m2_bridge_conflict()` 检查
+- FALLBACK + SCAN 两处 M2 bridge 绘制前验证不 overlap cross-net M2
+- 启用了之前的死参数 `xnet_m2_wires` + 新增 AP M2 pad obstacles
+- **结果**: DRC 280→**144** (-136), da1↔f_exc_b merge **消除**, devices 231→**246** matched
+- 57 个有冲突的 bridge 被 skip, fallback_shapes 216→159
+
+**自动化诊断工具:**
+- `atk/diagnose_lvs.py` 新建，读 .lvsdb 输出 `output/lvs_report.json`
+- `run_all.sh` 集成 Phase 7 自动诊断
+
+### 当前状态 (Bug 1 fix 后)
+| 指标 | Before | After | Delta |
+|------|--------|-------|-------|
+| DRC | 280 | 144 | -136 |
+| Devices matched | 231 | 246 | +15 |
+| Devices unmatched | 49 | 20 | -29 |
+| Comma merges | 3 | 2 | -1 (da1↔f_exc_b 消除) |
+| Wrong-bulk PMOS | 2 | 1 | -1 |
+
+### 方向评估 (2026-03-17 11:00)
+
+**ATK pipeline LVS clean 评估**: 当前 LVS 315, DRC 144。
+- Bug 1 fix (M2 bridge cross-net) 有效：DRC 280→144, devices 231→246
+- Bug 2 fix 尝试失败：ns5↔vco_out overlap 来自多条代码路径，逐路径修是打地鼠
+- 结论：assembly 代码为 37-device L2 设计，257-device SoilZ 超出设计能力
+- **当前路径 LVS clean 非常困难**
+
+**方向转换**: 探索开源模拟 IC 布局工具
+
+**调研结果**:
+- **ALIGN**: 无 IHP port, FinFET 架构不适合 130nm bulk CMOS, 4-8 周适配
+- **GLayout (OpenFASoC)**: 有 IHP130 实验性 port, FET 不完善, 2-4 周
+- **Coriolis**: 已有 `coriolis-pdk-ihpsg13g2` 包, 零适配, 值得试
+- **Magic + Netgen**: IHP 官方支持, 完整 tech file + PCell + DRC + extraction
+  - 可 Tcl 批处理脚本化 (LLM 写 Tcl → batch 执行)
+  - 天然处理 well/tap/substrate (我们花大量时间解决的问题)
+- **GDSFactory**: IHP PDK 支持但不完善 (只有 README)
+- **LibreLane**: 数字 flow, shuttle 不支持 digital macro
+
+### Magic Layout Generation 成功 (2026-03-17 12:20)
+
+**工具链安装:**
+- Magic 8.3 rev 621 编译安装 ✅ (`~/.local/bin/magic`)
+- IHP SG13G2 PDK 加载成功 ✅ (tech version 1.0.0)
+- Netgen 编译失败 ⚠️（暂不需要）
+
+**gen_magic_layout.py 三阶段流程:**
+- Phase A: Magic Tcl 创建 257 device subcells (PCell .mag 文件) ✅
+- Phase B: Python 直接写 soilz.mag (use + transform + metal routing) ✅
+- Phase C: Magic 加载 soilz, DRC + hierarchical extract + GDS ✅
+
+**验证结果:**
+- 257 device subcells 全部提取 ✅
+- soilz.spice: 1292 行, 250 MOS + 4 RHIGH + 3 CAP = 257 devices ✅
+- GDS: 1.3 MB ✅
+- DRC: 10400 (包含 well/tap 缺失，正常——还没画 ties/guards)
+- Extraction warnings: 1705 (inter-cell connectivity)
+
+**关键突破**: Magic 原生处理 FEOL extraction，不需要自己实现 well/tap/substrate connectivity。
+device 识别 100% 成功（之前 KLayout LVS 只识别 87%）。
+
+**Routing connectivity 进展:**
+- magic_router.py 简单 Manhattan router 写完 ✅
+- Flat extraction: 274/257 devices 识别（比 hierarchical 更好）
+- 10 nets 连接了多个 terminal（substrate/power 生效）
+- 869 single-terminal nets（大部分 routing 还没连上 device contact）
+- 根因: 简单 chain routing 的 L-shaped wire 没覆盖所有 device pin
+
+**Routing.json 坐标变换方案验证成功 (2026-03-17 13:00):**
+- per-device-type offset table 确认 std=0 (100% 确定性变换) ✅
+- routing.json 1662 segments 变换到 Magic 坐标系 ✅
+- Flat extraction: 274 devices, **61 multi-terminal nets** (从 10 → 61) ✅
+- 32 nets ≥3 terminals (substrate + power + signal connectivity 生效)
+- 1 mega-net (210 terminals) — cross-net M2 overlap 导致，和 KLayout 同类问题
+- 525 unique nets (目标 ~150) — 碎片 + cross-net merge 混合
+
+**关键突破**: Magic 坐标变换有效，routing.json 的拓扑可以直接复用。
+**残留问题**: M2 cross-net spacing (和 KLayout 同类问题，但 Magic DRC 能即时报告)
+
+**下一步**:
+1. M2 cross-net spacing check (在变换后 routing 中加 spacing enforcement)
+2. 或: 用 Magic 内置 DRC 迭代修正
+3. 安装 Netgen 做 LVS 对比
 
 ### 教训（累积，每条都踩过坑）
 

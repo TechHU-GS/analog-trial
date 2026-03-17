@@ -2,7 +2,7 @@
 """ATK Results Summary: collect Phase 2-6 results into results_summary.json.
 
 Usage:
-    python -m atk.summary --placement=placement.json --drc-dir=/tmp/drc_run --lvs-dir=/tmp/lvs_run --cell=ptat_vco
+    python -m atk.summary --placement=placement.json --drc-dir=/tmp/drc_run --lvs-dir=/tmp/lvs_run --cell=soilz
 """
 
 import argparse
@@ -96,7 +96,7 @@ def main():
     parser.add_argument('--placement', default='placement.json')
     parser.add_argument('--drc-dir', default='/tmp/drc_run')
     parser.add_argument('--lvs-dir', default='/tmp/lvs_run')
-    parser.add_argument('--cell', default='ptat_vco')
+    parser.add_argument('--cell', default='soilz')
     parser.add_argument('--output', default='results_summary.json')
     args = parser.parse_args()
 

@@ -8,7 +8,7 @@ Inputs:
   routing.json    — access points + power + signals (Phase 4)
 
 Output:
-  $GDS_OUTPUT (default layout/output/ptat_vco.gds)
+  $GDS_OUTPUT (default layout/output/soilz.gds)
 """
 
 import os
@@ -1070,9 +1070,35 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
     then draw a short M3 stub to the route's M3/M4 vertex.
     If the route has only M4 at the vertex, also add Via3 there.
     Cross-net M3 conflict checks prevent shorts.
-    Cross-net M2 wire checks narrow Via2 M2 pads to avoid M2 merges.
+    Cross-net M2 bridge checks prevent M2 merges.
     """
     aps = routing.get('access_points', {})
+
+    # ── Build M2 cross-net obstacle list (wires + AP pads) ──
+    _m2_obs = []  # (x1, y1, x2, y2, net_name)
+    if xnet_m2_wires:
+        _m2_obs.extend(xnet_m2_wires)
+    # Collect all AP M2 pads as obstacles
+    for _pk, _ap in aps.items():
+        _m2pad = _ap.get('via_pad', {}).get('m2')
+        if _m2pad:
+            _ap_net = None
+            for _nn, _rt in routing.get('signal_routes', {}).items():
+                if _pk in _rt.get('pins', []):
+                    _ap_net = _nn
+                    break
+            if _ap_net:
+                _m2_obs.append((_m2pad[0], _m2pad[1], _m2pad[2], _m2pad[3], _ap_net))
+
+    def _m2_bridge_conflict(bx1, by1, bx2, by2, net):
+        """Check if M2 bridge box overlaps cross-net M2 (with M2_MIN_S margin)."""
+        s = M2_MIN_S
+        for ox1, oy1, ox2, oy2, onet in _m2_obs:
+            if onet == net:
+                continue
+            if bx2 + s > ox1 and bx1 - s < ox2 and by2 + s > oy1 and by1 - s < oy2:
+                return True
+        return False
     via_stack_pins = set()
     for drop in routing.get('power', {}).get('drops', []):
         if drop['type'] == 'via_stack':
@@ -1405,6 +1431,11 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
                     _bx2 = ((_bx2 + 4) // 5) * 5
                     _by2 = ((_by2 + 4) // 5) * 5
 
+                    # Cross-net M2 check: skip if bridge overlaps other-net M2
+                    if _m2_bridge_conflict(_bx1, _by1, _bx2, _by2, net_name):
+                        skipped += 1
+                        continue
+
                     # Record shapes for post-write fixup (KLayout PCell
                     # materialization loses shapes added to the top cell;
                     # these are re-added after GDS write+read).
@@ -1549,6 +1580,11 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
                     _by1 = (_by1 // 5) * 5
                     _bx2 = ((_bx2 + 4) // 5) * 5
                     _by2 = ((_by2 + 4) // 5) * 5
+
+                    # Cross-net M2 check: skip if bridge overlaps other-net M2
+                    if _m2_bridge_conflict(_bx1, _by1, _bx2, _by2, net_name):
+                        skipped += 1
+                        continue
 
                     # Record for post-write fixup
                     _v2_hs = VIA2_SZ // 2
@@ -2031,7 +2067,7 @@ def main():
 
     layout = klayout.db.Layout(True)
     layout.dbu = 0.001  # nm
-    top = layout.cell(layout.add_cell('ptat_vco'))
+    top = layout.cell(layout.add_cell('soilz'))
 
     # ── Layer indices ──
     li_m1 = layout.layer(*METAL1)
@@ -2193,6 +2229,14 @@ def main():
                     elif sy1 == sy2:  # horizontal
                         _via1_m1_obs.append((min(sx1, sx2) - _m1hw, sy1 - _m1hw,
                                             max(sx1, sx2) + _m1hw, sy1 + _m1hw, _vnet))
+                elif slyr == 1:  # M2 wire — index for drain bus bridge checks
+                    _m2hw = M2_SIG_W // 2
+                    if sx1 == sx2:  # vertical
+                        _via1_m2_obs.append((sx1 - _m2hw, min(sy1, sy2),
+                                            sx1 + _m2hw, max(sy1, sy2), _vnet))
+                    elif sy1 == sy2:  # horizontal
+                        _via1_m2_obs.append((min(sx1, sx2), sy1 - _m2hw,
+                                            max(sx1, sx2), sy1 + _m2hw, _vnet))
 
     _M1_MIN_AREA = 90000  # nm² (M1.d)
 
@@ -2513,11 +2557,35 @@ def main():
                                         _m3_clear = False
                                         break
                                 if _m3_clear:
+                                    # Check via endpoint M2 pads against
+                                    # cross-net M2 wires before drawing
+                                    _v2m2hp = VIA2_PAD // 2
+                                    _ep_m2_ok = True
                                     for vx in (d1_cx, d2_cx):
-                                        via1(top, li_v1, li_m1, li_m2, vx,
-                                             bus_cy, m1_pad=VIA1_GDS_M1)
-                                        via2(top, li_v2, li_m2, li_m3, vx,
-                                             bus_cy)
+                                        _ep = (vx - _v2m2hp, bus_cy - _v2m2hp,
+                                               vx + _v2m2hp, bus_cy + _v2m2hp)
+                                        for _obs_list in (_ap_via1_m2_obs,
+                                                          _via1_m2_obs):
+                                            for _o in _obs_list:
+                                                if _o[4] == bus_net:
+                                                    continue
+                                                if (_o[2] > _ep[0] and _o[0] < _ep[2]
+                                                        and _o[3] > _ep[1]
+                                                        and _o[1] < _ep[3]):
+                                                    _ep_m2_ok = False
+                                                    break
+                                            if not _ep_m2_ok:
+                                                break
+                                        if not _ep_m2_ok:
+                                            break
+                                    if not _ep_m2_ok:
+                                        pass  # skip M3 bridge — M2 pad conflict
+                                    else:
+                                        for vx in (d1_cx, d2_cx):
+                                            via1(top, li_v1, li_m1, li_m2, vx,
+                                                 bus_cy, m1_pad=VIA1_GDS_M1)
+                                            via2(top, li_v2, li_m2, li_m3, vx,
+                                                 bus_cy)
                                     hbar(top, li_m3, d1_cx, d2_cx, bus_cy,
                                          M1_SIG_W)
                                     _bus_m3_bridges.append((
@@ -4525,7 +4593,7 @@ def main():
     print(f'  Utilization: {area_um2/63399*100:.1f}%')
 
     # ═══ Write GDS ═══
-    default_gds = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'ptat_vco.gds')
+    default_gds = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'soilz.gds')
     output = os.environ.get('GDS_OUTPUT', default_gds)
     layout.write(output)
     print(f'\n  Written to {output}')
@@ -4541,7 +4609,7 @@ def main():
         _layout2.read(output)
         _top2 = None
         for _ci in range(_layout2.cells()):
-            if _layout2.cell(_ci).name == 'ptat_vco':
+            if _layout2.cell(_ci).name == 'soilz':
                 _top2 = _layout2.cell(_ci)
                 break
         if _top2:
