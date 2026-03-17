@@ -72,11 +72,24 @@ SPICE X→M conversion → Netgen LVS → comp.out
 **结论:** 54 topology-based merges 需要更丰富的 signal routing 区分 devices，
 不是 well/power 修法。当前 routing coverage 已 99%，但很多 net 碎片化 (462 vs 145)。
 
-**下一步:**
-1. 分析 462→145 net 碎片化的具体原因
-2. 可能需要修 routing solver 使路由在 M2 层正确连通
-3. 或修 M1 stub 对齐使更多 AP 连到 device M1
-4. 目标: net count 接近 145 → device match >90%
+**深层分析 (已验证):**
+- Hierarchical extraction 的 203 结果是 M1-M1 direct overlap (不经 via1→M2)
+- Parent cell's routing metal (M1/via1/M2) 在 hierarchical mode 不被提取 (parent .ext 只有 M4)
+- Flat extraction 中 M1 routing 被 device ndiffc 吸收 — 这是合法连接机制
+- 10 个 M1 nodes 有 M2 area → via1 连接在 flat mode 确实工作
+- 318 equiv records = 设备间直接连接 (全部通过 M1/ndiffc overlap)
+- Via1 size 95→100nm 修复 (避免 180nm rounding) 但对结果无影响
+
+**当前瓶颈: routing solver quality**
+- 576 extracted nets vs 145 reference → 太多 low-fanout 碎片 net
+- 需要 routing solver 生成更长、更连通的 routes
+- 这是 upstream (routing 阶段) 问题，不是 pipeline (Magic 提取) 问题
+
+**下一 session 优先级:**
+1. 分析 routing.json 的 segment 覆盖率 — 哪些 net 的路由没到达 device pin
+2. 改进 solve_routing.py 在 Magic 坐标系下的 AP 连接
+3. 考虑：是否需要重新运行 solve_routing.py with ATK_MAGIC=1
+4. 目标: net count 从 576 降到 <200 → device match >90%
 
 ---
 
