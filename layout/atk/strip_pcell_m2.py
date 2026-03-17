@@ -52,9 +52,18 @@ def strip_mag_file(path):
 def main(mag_dir):
     total_removed = 0
     file_count = 0
+    skipped = 0
+
+    # Skip resistors and capacitors — their via1/M2 is functional
+    # (connects terminal polycont/MIM to routing metal)
+    skip_prefixes = ('dev_rin', 'dev_rout', 'dev_rptat', 'dev_rdac',
+                     'dev_c_fb', 'dev_cbyp_n', 'dev_cbyp_p')
 
     for fn in sorted(os.listdir(mag_dir)):
         if fn.startswith('dev_') and fn.endswith('.mag'):
+            if any(fn.startswith(sp) for sp in skip_prefixes):
+                skipped += 1
+                continue
             path = os.path.join(mag_dir, fn)
             removed = strip_mag_file(path)
             if removed > 0:
@@ -62,7 +71,7 @@ def main(mag_dir):
                 total_removed += removed
 
     print(f'  Stripped via1+M2 from {file_count} device subcells '
-          f'({total_removed} lines removed)')
+          f'({total_removed} lines removed, {skipped} R/C skipped)')
 
 
 if __name__ == '__main__':
