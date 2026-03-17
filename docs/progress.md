@@ -692,12 +692,26 @@ device 识别 100% 成功（之前 KLayout LVS 只识别 87%）。
 - 525 unique nets (目标 ~150) — 碎片 + cross-net merge 混合
 
 **关键突破**: Magic 坐标变换有效，routing.json 的拓扑可以直接复用。
-**残留问题**: M2 cross-net spacing (和 KLayout 同类问题，但 Magic DRC 能即时报告)
+**坐标系不兼容分析 (2026-03-17 14:00):**
+- KLayout PCell 和 Magic PCell 的 pin 布局完全不同
+- 每个 pin (D, G, S) 的 offset 各不相同，无法用 global shift 对齐
+- 结论: 需要从 Magic PCell 提取正确的 device bbox + pin，然后整个 pipeline 用 Magic 坐标
 
-**下一步**:
-1. M2 cross-net spacing check (在变换后 routing 中加 spacing enforcement)
-2. 或: 用 Magic 内置 DRC 迭代修正
-3. 安装 Netgen 做 LVS 对比
+**routing 实验总结:**
+| 策略 | Multi-terminal nets | Single | Mega-net | 评价 |
+|------|-------------------|--------|----------|------|
+| Per-AP transform | 61 | 481 | 1 (210) | cross-net merge 严重 |
+| Global coords + stubs | 74 | 494 | 2 (84,142) | 最好但 stubs 太大 |
+| Minimal stubs | 74 | 494 | 2 (84,142) | 同上但无 M1 bridge |
+| Smart endpoint | 62 | 481 | 1 (149) | 比 global 差 |
+| ATK_MAGIC=1 routing | 38 | 754 | 1 (138) | 坐标混乱 |
+
+**下一步 (下个 session)**:
+1. 从 Magic PCell 提取正确 bbox (不含 checkpaint) + pin positions
+2. 更新 device_lib_magic.json 的 bbox
+3. 整个 pipeline (placement → ties → routing → assembly) 切换到 Magic 坐标
+4. 用 Magic DRC + extract 验证
+5. 安装 Netgen 做 LVS
 
 ### 教训（累积，每条都踩过坑）
 

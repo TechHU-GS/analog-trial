@@ -29,14 +29,20 @@ from atk.pdk import (
     M1_THIN,
 )
 from atk.device import load_device_lib, get_device_info as _dl_get_device_info
-from atk.paths import DEVICE_LIB_JSON, NETLIST_JSON
+from atk.paths import DEVICE_LIB_JSON, DEVICE_LIB_MAGIC_JSON, NETLIST_JSON
 import json
+import os
 
 # ═══════════════════════════════════════════════════
 # Load data from device_lib.json + netlist.json
+# Set ATK_MAGIC=1 to use Magic PCell coordinates
 # ═══════════════════════════════════════════════════
 
-_device_lib = load_device_lib(DEVICE_LIB_JSON)
+_use_magic = os.environ.get('ATK_MAGIC', '') == '1'
+_lib_path = DEVICE_LIB_MAGIC_JSON if (_use_magic and os.path.exists(DEVICE_LIB_MAGIC_JSON)) else DEVICE_LIB_JSON
+if _use_magic and _lib_path == DEVICE_LIB_MAGIC_JSON:
+    print(f'  access.py: using Magic PCell coordinates ({_lib_path})')
+_device_lib = load_device_lib(_lib_path)
 
 with open(NETLIST_JSON) as _f:
     _netlist = json.load(_f)
