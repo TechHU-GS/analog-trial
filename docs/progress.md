@@ -124,7 +124,28 @@ SPICE X→M conversion → Netgen LVS → comp.out
 - M2 wire width sweep (pad600): w100=219, w150=218, w200=210, w300=170
 - Filter on/off: pad400 filter=206 nofilter=206 (相同)
 - **最佳: M2 pad 950nm (±475nm) → 227/255 = 89%**
-- 从 session 开始 126 → 227 = **+101 devices (+40pp)**
+- 从 session 开始 126 → 228 = **+102 devices (+40pp)**
+
+**GA 进化路由 (ECS c8a.48xlarge 192C/384G, 已验证):**
+- Genetic Algorithm: 192 population × 50 generations = 9600 variants in 80 seconds
+- 进化曲线: 228→235→241→248→252, converged at Gen 29
+- **最终: 252/255 = 98.8% — 只差 3 devices!**
+- GA 发现: smart filter 过度过滤 + 保留了错误 segments
+  - 恢复 91 个被过滤的 segment
+  - 移除 225 个通过的 segment
+- Best genome saved: output/ga_best_genome.json
+- GA script: atk/ga_router.py
+
+**Session 总成果: 126→252, 49%→98.8%, +126 devices**
+
+**ECS 服务器:**
+- 实例: ecs.c8a.48xlarge (192C/384G)
+- 镜像: m-bp1ggcaq0hx2jsi2479m (ic-magic-20260317)
+- 36720-variant parameter sweep: 4 分钟
+- GA 50 代进化: 80 秒
+- 总费用: <10 CNY
+
+**下一步: 查最后 3 个 unmatched devices, 尝试 255/255**
 
 **当前瓶颈: routing solver quality**
 - 576 extracted nets vs 145 reference → 太多 low-fanout 碎片 net
