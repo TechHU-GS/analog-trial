@@ -1,11 +1,1480 @@
 {
-  "lvsdb": "/tmp/lvs_flat/soilz_flat_fixed.lvsdb",
+  "lvsdb": "/tmp/lvs_inv/soilz_flat_inverted.lvsdb",
   "ref_circuit": "soilz",
   "ext_circuit": "SOILZ",
   "devices": {
-    "matched": 3,
-    "ref_only": [],
+    "matched": 0,
+    "ref_only": [
+      {
+        "name": "$129",
+        "class": "cap_cmim",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "$130",
+        "class": "cap_cmim",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "$131",
+        "class": "cap_cmim",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "$47",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$581",
+          "G": "dev_mbn2_0.G",
+          "D": "$582",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$30",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mc_lp1_0.D",
+          "G": "dev_mc_lp1_0.G",
+          "D": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "B": "$354"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$33",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mc_lp2_0.D",
+          "G": "dev_mc_lp2_0.G",
+          "D": "dev_mc_lp2_0.S,dev_mc_rst_op_0.S",
+          "B": "$354"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$94",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4i_s6_0.D",
+          "G": "dev_t4i_s5_0.G,dev_t4i_s6_0.G",
+          "D": "dev_t4i_s6_0.S",
+          "B": "$1019"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$93",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4i_s5_0.D",
+          "G": "dev_t4i_s5_0.G,dev_t4i_s6_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1019"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$6",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_da2_p_0.D,dev_m_da2_p_0.G",
+          "G": "dev_m_da2_p_0.D,dev_m_da2_p_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$152"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$7",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_na_p1_0.D",
+          "G": "dev_m_na_p1_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$152"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$8",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_na_p2_0.D",
+          "G": "dev_m_na_p2_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$152"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$128",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_q_p_0.D",
+          "G": "dev_buf_q_p_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1410"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$10",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_db1_p_0.D",
+          "G": "dev_m_db1_p_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$156"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$11",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_db2_p_0.D",
+          "G": "dev_m_db2_p_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$156"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$12",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_nb_p1_0.D",
+          "G": "dev_m_nb_p1_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$156"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$13",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_nb_p2_0.D",
+          "G": "dev_m_nb_p2_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$156"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$127",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_i_p_0.D",
+          "G": "dev_buf_i_p_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1410"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$126",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mxiq_n2_0.D,dev_mxiq_n2_0.S,dev_mxiq_p3_0.D,dev_mxiq_p3_0.G,dev_mxiq_p3_0.S",
+          "G": "dev_mxiq_n2_0.D,dev_mxiq_n2_0.S,dev_mxiq_p3_0.D,dev_mxiq_p3_0.G,dev_mxiq_p3_0.S",
+          "D": "dev_mxiq_n2_0.D,dev_mxiq_n2_0.S,dev_mxiq_p3_0.D,dev_mxiq_p3_0.G,dev_mxiq_p3_0.S",
+          "B": "$1361"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$124",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2q_s6_0.D",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_t2q_s6_0.S",
+          "B": "$1262"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$123",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "G": "dev_t2q_s1_0.D,dev_t2q_s1_0.G,dev_t2q_s1_0.S,dev_t2q_s3_0.G,dev_t2q_s5_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1262"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$122",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mxfq_p3_0.D,dev_mxfq_p3_0.G,dev_mxfq_p3_0.S",
+          "G": "dev_mxfq_p3_0.D,dev_mxfq_p3_0.G,dev_mxfq_p3_0.S",
+          "D": "dev_mxfq_p3_0.D,dev_mxfq_p3_0.G,dev_mxfq_p3_0.S",
+          "B": "$1357"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$121",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2q_s4_0.D",
+          "G": "dev_t2q_s2_0.S,dev_t2q_s4_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1262"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$120",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mxfq_p2_0.D,dev_mxfq_p2_0.G,dev_mxfq_p2_0.S",
+          "G": "dev_mxfq_p2_0.D,dev_mxfq_p2_0.G,dev_mxfq_p2_0.S",
+          "D": "dev_mxfq_p2_0.D,dev_mxfq_p2_0.G,dev_mxfq_p2_0.S",
+          "B": "$1357"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$119",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2q_s2_0.D",
+          "G": "dev_t2q_s2_0.G",
+          "D": "dev_t2q_s2_0.S,dev_t2q_s4_0.G",
+          "B": "$1262"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$118",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mxfq_p1_0.D",
+          "G": "dev_mxfq_p1_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1357"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$117",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2q_m6_0.D",
+          "G": "dev_t2q_m6_0.G",
+          "D": "dev_t2q_m6_0.S",
+          "B": "$1257"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$116",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mxfi_p3_0.D,dev_mxfi_p3_0.G,dev_mxfi_p3_0.S",
+          "G": "dev_mxfi_p3_0.D,dev_mxfi_p3_0.G,dev_mxfi_p3_0.S",
+          "D": "dev_mxfi_p3_0.D,dev_mxfi_p3_0.G,dev_mxfi_p3_0.S",
+          "B": "$1354"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$115",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2q_m5_0.D",
+          "G": "dev_t2q_m5_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1257"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$114",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mxfi_p2_0.D,dev_mxfi_p2_0.G,dev_mxfi_p2_0.S",
+          "G": "dev_mxfi_p2_0.D,dev_mxfi_p2_0.G,dev_mxfi_p2_0.S",
+          "D": "dev_mxfi_p2_0.D,dev_mxfi_p2_0.G,dev_mxfi_p2_0.S",
+          "B": "$1354"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$113",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mxfi_p1_0.D",
+          "G": "dev_mxfi_p1_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1354"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$112",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2q_m4_0.D",
+          "G": "dev_t2q_m4_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1257"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$29",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mc_rst_dp_0.D",
+          "G": "dev_mc_rst_dp_0.G",
+          "D": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "B": "$379"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$4",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_inv0_p_0.D",
+          "G": "dev_m_inv0_p_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$149"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$31",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "G": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "D": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "B": "$379"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$32",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mc_rst_op_0.D",
+          "G": "dev_mc_rst_op_0.G",
+          "D": "dev_mc_lp2_0.S,dev_mc_rst_op_0.S",
+          "B": "$379"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$67",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$658"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$34",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mc_rst_on_0.D,dev_mc_rst_on_0.G",
+          "G": "dev_mc_rst_on_0.D,dev_mc_rst_on_0.G",
+          "D": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "B": "$379"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$35",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mp1a_0.D",
+          "G": "dev_mp1a_0.G",
+          "D": "dev_mp1a_0.S",
+          "B": "$429"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$36",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mp1b_0.D",
+          "G": "dev_mp1b_0.G",
+          "D": "dev_mp1b_0.S",
+          "B": "$429"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$37",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mp2a_0.D,dev_mp2a_0.G",
+          "G": "dev_mp2a_0.D,dev_mp2a_0.G",
+          "D": "dev_mp2a_0.S",
+          "B": "$430"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$38",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mp2b_0.D",
+          "G": "dev_mp2b_0.G,dev_mp2b_0.S",
+          "D": "dev_mp2b_0.G,dev_mp2b_0.S",
+          "B": "$430"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$111",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2q_m2_0.D",
+          "G": "dev_t2q_m2_0.G",
+          "D": "dev_t2q_m2_0.S",
+          "B": "$1257"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$110",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4q_s6_0.D",
+          "G": "dev_t4q_s6_0.G",
+          "D": "dev_t4q_s6_0.S",
+          "B": "$1138"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$109",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1138"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$108",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4q_s4_0.D",
+          "G": "dev_t4q_s4_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1138"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$107",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4q_s2_0.D",
+          "G": "dev_t4q_s2_0.G",
+          "D": "dev_t4q_s2_0.S",
+          "B": "$1138"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$106",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4q_m6_0.D,dev_t4q_m6_0.G",
+          "G": "dev_t4q_m6_0.D,dev_t4q_m6_0.G",
+          "D": "dev_t4q_m6_0.S",
+          "B": "$1136"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$105",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4q_m5_0.D",
+          "G": "dev_t4q_m5_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1136"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$104",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1136"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$65",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1i_s5_0.D,dev_t1i_s5_0.G",
+          "G": "dev_t1i_s5_0.D,dev_t1i_s5_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$808"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$48",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mpu1_0.D",
+          "G": "dev_mpu1_0.G",
+          "D": "dev_mpu1_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$49",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mpu2_0.D",
+          "G": "dev_mpu2_0.G",
+          "D": "dev_mpu2_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$50",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mpu3_0.D",
+          "G": "dev_mpu3_0.G",
+          "D": "dev_mpu3_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$51",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mpu4_0.D",
+          "G": "dev_mpu4_0.G",
+          "D": "dev_mpu4_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$52",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mpu5_0.D",
+          "G": "dev_mpu5_0.G",
+          "D": "dev_mpu5_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$103",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4q_m2_0.D",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1136"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$102",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2i_s6_0.D",
+          "G": "dev_t2i_s6_0.G",
+          "D": "dev_t2i_s6_0.S",
+          "B": "$1134"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$101",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1134"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$100",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2i_s4_0.D,dev_t2i_s4_0.G,dev_t2i_s7_0.D,dev_t2i_s7_0.G,dev_t2i_s7_0.S",
+          "G": "dev_t2i_s4_0.D,dev_t2i_s4_0.G,dev_t2i_s7_0.D,dev_t2i_s7_0.G,dev_t2i_s7_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1134"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$99",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2i_m6_0.D,dev_t2i_m6_0.S,dev_t2i_s2_0.D,dev_t2i_s2_0.G,dev_t2i_s2_0.S,dev_t2i_s3_0.D,dev_t2i_s3_0.G",
+          "G": "dev_t2i_m6_0.D,dev_t2i_m6_0.S,dev_t2i_s2_0.D,dev_t2i_s2_0.G,dev_t2i_s2_0.S,dev_t2i_s3_0.D,dev_t2i_s3_0.G",
+          "D": "dev_t2i_m6_0.D,dev_t2i_m6_0.S,dev_t2i_s2_0.D,dev_t2i_s2_0.G,dev_t2i_s2_0.S,dev_t2i_s3_0.D,dev_t2i_s3_0.G",
+          "B": "$1134"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$98",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2i_m6_0.D,dev_t2i_m6_0.S,dev_t2i_s2_0.D,dev_t2i_s2_0.G,dev_t2i_s2_0.S,dev_t2i_s3_0.D,dev_t2i_s3_0.G",
+          "G": "dev_t2i_m6_0.G",
+          "D": "dev_t2i_m6_0.D,dev_t2i_m6_0.S,dev_t2i_s2_0.D,dev_t2i_s2_0.G,dev_t2i_s2_0.S,dev_t2i_s3_0.D,dev_t2i_s3_0.G",
+          "B": "$1131"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$59",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1i_m2_0.D",
+          "G": "dev_t1i_m2_0.G,dev_t1q_m1_0.D,dev_t1q_m1_0.G,dev_t1q_m1_0.S",
+          "D": "dev_t1i_m2_0.S,dev_t1i_m4_0.G",
+          "B": "$806"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$60",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1i_m4_0.D",
+          "G": "dev_t1i_m2_0.S,dev_t1i_m4_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$806"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$61",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1i_m5_0.D",
+          "G": "dev_t1i_m5_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$806"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$62",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1i_m6_0.D",
+          "G": "dev_t1i_m6_0.G",
+          "D": "dev_t1i_m6_0.S",
+          "B": "$806"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$63",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1i_s2_0.D",
+          "G": "dev_t1i_s2_0.G",
+          "D": "dev_t1i_s2_0.S,dev_t1i_s4_0.D,dev_t1i_s4_0.G,dev_t1i_s6_0.G",
+          "B": "$808"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$64",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1i_s2_0.S,dev_t1i_s4_0.D,dev_t1i_s4_0.G,dev_t1i_s6_0.G",
+          "G": "dev_t1i_s2_0.S,dev_t1i_s4_0.D,dev_t1i_s4_0.G,dev_t1i_s6_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$808"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$97",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1131"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$66",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1i_s6_0.D",
+          "G": "dev_t1i_s2_0.S,dev_t1i_s4_0.D,dev_t1i_s4_0.G,dev_t1i_s6_0.G",
+          "D": "dev_t1i_s6_0.S",
+          "B": "$808"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$96",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2i_m4_0.D",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1131"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$68",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t3_m2_0.D",
+          "G": "dev_t3_m2_0.G,dev_t3_m2_0.S,dev_t3_m4_0.G",
+          "D": "dev_t3_m2_0.G,dev_t3_m2_0.S,dev_t3_m4_0.G",
+          "B": "$812"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$69",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_inv_vco_p_0.D",
+          "G": "dev_inv_vco_p_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$658"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$70",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t3_m4_0.D,dev_t3_s2_0.G",
+          "G": "dev_t3_m2_0.G,dev_t3_m2_0.S,dev_t3_m4_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$812"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$95",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t2i_m2_0.D",
+          "G": "dev_t2i_m2_0.G",
+          "D": "dev_t2i_m2_0.S",
+          "B": "$1131"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$72",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t3_m5_0.D",
+          "G": "dev_t3_m5_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$812"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$73",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_inv_isob_p_0.D",
+          "G": "dev_inv_iso_p_0.D,dev_inv_iso_p_0.G,dev_inv_iso_p_0.S,dev_inv_isob_p_0.G,dev_inv_isob_p_0.S",
+          "D": "dev_inv_iso_p_0.D,dev_inv_iso_p_0.G,dev_inv_iso_p_0.S,dev_inv_isob_p_0.G,dev_inv_isob_p_0.S",
+          "B": "$662"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$74",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t3_m6_0.D",
+          "G": "dev_t3_m6_0.G",
+          "D": "dev_t3_m6_0.S",
+          "B": "$812"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$75",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t3_s2_0.D",
+          "G": "dev_t3_m4_0.D,dev_t3_s2_0.G",
+          "D": "dev_t3_s2_0.S,dev_t3_s7_0.D,dev_t3_s7_0.G",
+          "B": "$815"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$76",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t3_s4_0.D",
+          "G": "dev_t3_s4_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$815"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$77",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "G": "dev_t3_s5_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$815"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$78",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t3_s6_0.D",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_t3_s6_0.S",
+          "B": "$815"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$79",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1q_m2_0.D",
+          "G": "dev_t1q_m2_0.G",
+          "D": "dev_t1q_m2_0.S",
+          "B": "$929"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$80",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1q_m4_0.D",
+          "G": "dev_t1q_m4_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$929"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$81",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1q_m5_0.D",
+          "G": "dev_t1q_m5_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$929"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$82",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1q_m6_0.D",
+          "G": "dev_t1q_m6_0.G",
+          "D": "dev_t1q_m6_0.S",
+          "B": "$929"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$83",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1q_s2_0.D,dev_t1q_s2_0.S,dev_t1q_s4_0.G,dev_t1q_s7_0.D,dev_t1q_s7_0.G,dev_t1q_s7_0.S",
+          "G": "dev_t1q_s2_0.G",
+          "D": "dev_t1q_s2_0.D,dev_t1q_s2_0.S,dev_t1q_s4_0.G,dev_t1q_s7_0.D,dev_t1q_s7_0.G,dev_t1q_s7_0.S",
+          "B": "$936"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$84",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1q_s4_0.D",
+          "G": "dev_t1q_s2_0.D,dev_t1q_s2_0.S,dev_t1q_s4_0.G,dev_t1q_s7_0.D,dev_t1q_s7_0.G,dev_t1q_s7_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$936"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$85",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1q_s5_0.D",
+          "G": "dev_t1q_s5_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$936"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$86",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t1q_s6_0.D",
+          "G": "dev_t1q_s6_0.G",
+          "D": "dev_t1q_s6_0.S",
+          "B": "$936"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$87",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4i_m2_0.D,dev_t4i_m2_0.G,dev_t4i_m2_0.S,dev_t4i_m4_0.G,dev_t4q_m1_0.D,dev_t4q_m1_0.G,dev_t4q_m1_0.S",
+          "G": "dev_t4i_m2_0.D,dev_t4i_m2_0.G,dev_t4i_m2_0.S,dev_t4i_m4_0.G,dev_t4q_m1_0.D,dev_t4q_m1_0.G,dev_t4q_m1_0.S",
+          "D": "dev_t4i_m2_0.D,dev_t4i_m2_0.G,dev_t4i_m2_0.S,dev_t4i_m4_0.G,dev_t4q_m1_0.D,dev_t4q_m1_0.G,dev_t4q_m1_0.S",
+          "B": "$1015"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$88",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4i_m4_0.D",
+          "G": "dev_t4i_m2_0.D,dev_t4i_m2_0.G,dev_t4i_m2_0.S,dev_t4i_m4_0.G,dev_t4q_m1_0.D,dev_t4q_m1_0.G,dev_t4q_m1_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1015"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$89",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4i_m5_0.D",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1015"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$90",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4i_m6_0.D",
+          "G": "dev_t4i_m6_0.G",
+          "D": "dev_t4i_m6_0.S",
+          "B": "$1015"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$91",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4i_s2_0.D",
+          "G": "dev_t4i_s2_0.G",
+          "D": "dev_t4i_s2_0.S,dev_t4i_s4_0.G",
+          "B": "$1019"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$92",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_t4i_s4_0.D",
+          "G": "dev_t4i_s2_0.S,dev_t4i_s4_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1019"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$5",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_da1_p_0.D",
+          "G": "dev_m_da1_p_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$152"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$1",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mchop1p_0.D",
+          "G": "dev_mchop1p_0.G,dev_mchop1p_0.S",
+          "D": "dev_mchop1p_0.G,dev_mchop1p_0.S",
+          "B": "$23"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$17",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mdac_tg2n_0.D,dev_mdac_tg2n_0.G,dev_mdac_tg2n_0.S,dev_mdac_tg2p_0.D,dev_mdac_tg2p_0.G,dev_rdac_0.R1",
+          "G": "dev_mdac_tg2n_0.D,dev_mdac_tg2n_0.G,dev_mdac_tg2n_0.S,dev_mdac_tg2p_0.D,dev_mdac_tg2p_0.G,dev_rdac_0.R1",
+          "D": "dev_mdac_tg2p_0.S",
+          "B": "$268"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$2",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mchop2p_0.D",
+          "G": "dev_mchop2p_0.G",
+          "D": "dev_mchop2p_0.S",
+          "B": "$28"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$58",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "G": "dev_mbn2_0.D,dev_mbp1_0.G",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$22",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_sw1p_0.D",
+          "G": "dev_sw1p_0.G",
+          "D": "dev_sw1p_0.S",
+          "B": "$233"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$23",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_sw2p_0.D",
+          "G": "dev_sw2p_0.G,dev_sw2p_0.S",
+          "D": "dev_sw2p_0.G,dev_sw2p_0.S",
+          "B": "$240"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$24",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_sw3p_0.D",
+          "G": "dev_sw3p_0.G",
+          "D": "dev_sw3p_0.S",
+          "B": "$247"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$71",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_inv_iso_p_0.D,dev_inv_iso_p_0.G,dev_inv_iso_p_0.S,dev_inv_isob_p_0.G,dev_inv_isob_p_0.S",
+          "G": "dev_inv_iso_p_0.D,dev_inv_iso_p_0.G,dev_inv_iso_p_0.S,dev_inv_isob_p_0.G,dev_inv_isob_p_0.S",
+          "D": "dev_inv_iso_p_0.D,dev_inv_iso_p_0.G,dev_inv_iso_p_0.S,dev_inv_isob_p_0.G,dev_inv_isob_p_0.S",
+          "B": "$662"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$16",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mdac_tg1n_0.S,dev_mdac_tg1p_0.D,dev_mdac_tg1p_0.G,dev_mdac_tg1p_0.S",
+          "G": "dev_mdac_tg1n_0.S,dev_mdac_tg1p_0.D,dev_mdac_tg1p_0.G,dev_mdac_tg1p_0.S",
+          "D": "dev_mdac_tg1n_0.S,dev_mdac_tg1p_0.D,dev_mdac_tg1p_0.G,dev_mdac_tg1p_0.S",
+          "B": "$265"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$125",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$1361"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$9",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_ia_p_0.D",
+          "G": "dev_m_ia_p_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$152"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$14",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "G": "dev_m_ib_p_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$156"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$46",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mbp2_0.D",
+          "G": "dev_mbp2_0.G,dev_mbp2_0.S",
+          "D": "dev_mbp2_0.G,dev_mbp2_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$3",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_m_bias_mir_0.S,dev_mbias_d_0.D",
+          "G": "dev_m_bias_mir_0.G",
+          "D": "dev_m_bias_mir_0.D",
+          "B": "$70"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$42",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm_pdiode_0.D",
+          "G": "dev_pm_pdiode_0.G",
+          "D": "dev_pm_pdiode_0.S",
+          "B": "$458"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$18",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm_cas_diode_0.D",
+          "G": "dev_pm_cas_diode_0.G",
+          "D": "dev_pm_cas_diode_0.S",
+          "B": "$308"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$19",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm_cas1_0.D",
+          "G": "dev_pm_cas1_0.G",
+          "D": "dev_pm_cas1_0.S",
+          "B": "$310"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$20",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm_cas2_0.D",
+          "G": "dev_pm_cas2_0.G",
+          "D": "dev_pm_cas2_0.S",
+          "B": "$312"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$53",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mpb1_0.D,dev_mpb1_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_mpb1_0.D,dev_mpb1_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$54",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mpb2_0.D,dev_mpb2_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_mpb2_0.D,dev_mpb2_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$55",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mpb3_0.D,dev_mpb3_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_mpb3_0.D,dev_mpb3_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$56",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mpb4_0.D,dev_mpb4_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_mpb4_0.D,dev_mpb4_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$57",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "G": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "D": "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+          "B": "$572"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$21",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm_cas3_0.D",
+          "G": "dev_pm_cas3_0.G",
+          "D": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "B": "$301"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$45",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mn2_0.D,dev_mn2_0.G,dev_mn2_0.S,dev_pm4_0.G,dev_pm_ref_0.G",
+          "G": "dev_mn2_0.D,dev_mn2_0.G,dev_mn2_0.S,dev_pm4_0.G,dev_pm_ref_0.G",
+          "D": "dev_mn2_0.D,dev_mn2_0.G,dev_mn2_0.S,dev_pm4_0.G,dev_pm_ref_0.G",
+          "B": "$490"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$41",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mn2_0.D,dev_mn2_0.G,dev_mn2_0.S,dev_pm4_0.G,dev_pm_ref_0.G",
+          "G": "dev_mn2_0.D,dev_mn2_0.G,dev_mn2_0.S,dev_pm4_0.G,dev_pm_ref_0.G",
+          "D": "dev_mn2_0.D,dev_mn2_0.G,dev_mn2_0.S,dev_pm4_0.G,dev_pm_ref_0.G",
+          "B": "$490"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$15",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mp_load_p_0.D",
+          "G": "dev_mp_load_p_0.G",
+          "D": "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+          "B": "$201"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$26",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm_mir1_0.D,dev_pm_mir1_0.G,dev_pm_mir2_0.D",
+          "G": "dev_pm_mir1_0.D,dev_pm_mir1_0.G,dev_pm_mir2_0.D",
+          "D": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "B": "$349"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$25",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm_cas_ref_0.D",
+          "G": "dev_pm_cas_ref_0.G",
+          "D": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "B": "$349"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$27",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm_mir1_0.D,dev_pm_mir1_0.G,dev_pm_mir2_0.D",
+          "G": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "D": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "B": "$349"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$28",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "G": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "D": "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+          "B": "$344"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$39",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm3_0.D",
+          "G": "dev_pm3_0.G",
+          "D": "dev_pm3_0.S,dev_pm4_0.S,dev_pm5_0.S,dev_pm_ref_0.S",
+          "B": "$490"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$43",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm5_0.D",
+          "G": "dev_pm5_0.G",
+          "D": "dev_pm3_0.S,dev_pm4_0.S,dev_pm5_0.S,dev_pm_ref_0.S",
+          "B": "$490"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$40",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm4_0.D",
+          "G": "dev_mn2_0.D,dev_mn2_0.G,dev_mn2_0.S,dev_pm4_0.G,dev_pm_ref_0.G",
+          "D": "dev_pm3_0.S,dev_pm4_0.S,dev_pm5_0.S,dev_pm_ref_0.S",
+          "B": "$490"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$44",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "dev_pm_ref_0.D",
+          "G": "dev_mn2_0.D,dev_mn2_0.G,dev_mn2_0.S,dev_pm4_0.G,dev_pm_ref_0.G",
+          "D": "dev_pm3_0.S,dev_pm4_0.S,dev_pm5_0.S,dev_pm_ref_0.S",
+          "B": "$490"
+        },
+        "bulk_ok": false
+      }
+    ],
     "ext_only": [
+      {
+        "name": "CBYP_N",
+        "class": "CAP_CMIM",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "CBYP_P",
+        "class": "CAP_CMIM",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
+      {
+        "name": "C_FB",
+        "class": "CAP_CMIM",
+        "terminals": {
+          "S": null,
+          "G": null,
+          "D": null,
+          "B": null
+        }
+      },
       {
         "name": "RIN",
         "class": "RHIGH",
@@ -2653,17 +4122,534 @@
         "bulk_ok": true
       }
     ],
-    "ref_only_count": 0,
-    "ext_only_count": 252
+    "ref_only_count": 131,
+    "ext_only_count": 255
   },
   "pmos_bulk": {
-    "ref_only_pmos": 0,
-    "wrong_bulk": [],
+    "ref_only_pmos": 128,
+    "wrong_bulk": [
+      {
+        "name": "$47",
+        "bulk": "$572"
+      },
+      {
+        "name": "$30",
+        "bulk": "$354"
+      },
+      {
+        "name": "$33",
+        "bulk": "$354"
+      },
+      {
+        "name": "$94",
+        "bulk": "$1019"
+      },
+      {
+        "name": "$93",
+        "bulk": "$1019"
+      },
+      {
+        "name": "$6",
+        "bulk": "$152"
+      },
+      {
+        "name": "$7",
+        "bulk": "$152"
+      },
+      {
+        "name": "$8",
+        "bulk": "$152"
+      },
+      {
+        "name": "$128",
+        "bulk": "$1410"
+      },
+      {
+        "name": "$10",
+        "bulk": "$156"
+      },
+      {
+        "name": "$11",
+        "bulk": "$156"
+      },
+      {
+        "name": "$12",
+        "bulk": "$156"
+      },
+      {
+        "name": "$13",
+        "bulk": "$156"
+      },
+      {
+        "name": "$127",
+        "bulk": "$1410"
+      },
+      {
+        "name": "$126",
+        "bulk": "$1361"
+      },
+      {
+        "name": "$124",
+        "bulk": "$1262"
+      },
+      {
+        "name": "$123",
+        "bulk": "$1262"
+      },
+      {
+        "name": "$122",
+        "bulk": "$1357"
+      },
+      {
+        "name": "$121",
+        "bulk": "$1262"
+      },
+      {
+        "name": "$120",
+        "bulk": "$1357"
+      },
+      {
+        "name": "$119",
+        "bulk": "$1262"
+      },
+      {
+        "name": "$118",
+        "bulk": "$1357"
+      },
+      {
+        "name": "$117",
+        "bulk": "$1257"
+      },
+      {
+        "name": "$116",
+        "bulk": "$1354"
+      },
+      {
+        "name": "$115",
+        "bulk": "$1257"
+      },
+      {
+        "name": "$114",
+        "bulk": "$1354"
+      },
+      {
+        "name": "$113",
+        "bulk": "$1354"
+      },
+      {
+        "name": "$112",
+        "bulk": "$1257"
+      },
+      {
+        "name": "$29",
+        "bulk": "$379"
+      },
+      {
+        "name": "$4",
+        "bulk": "$149"
+      },
+      {
+        "name": "$31",
+        "bulk": "$379"
+      },
+      {
+        "name": "$32",
+        "bulk": "$379"
+      },
+      {
+        "name": "$67",
+        "bulk": "$658"
+      },
+      {
+        "name": "$34",
+        "bulk": "$379"
+      },
+      {
+        "name": "$35",
+        "bulk": "$429"
+      },
+      {
+        "name": "$36",
+        "bulk": "$429"
+      },
+      {
+        "name": "$37",
+        "bulk": "$430"
+      },
+      {
+        "name": "$38",
+        "bulk": "$430"
+      },
+      {
+        "name": "$111",
+        "bulk": "$1257"
+      },
+      {
+        "name": "$110",
+        "bulk": "$1138"
+      },
+      {
+        "name": "$109",
+        "bulk": "$1138"
+      },
+      {
+        "name": "$108",
+        "bulk": "$1138"
+      },
+      {
+        "name": "$107",
+        "bulk": "$1138"
+      },
+      {
+        "name": "$106",
+        "bulk": "$1136"
+      },
+      {
+        "name": "$105",
+        "bulk": "$1136"
+      },
+      {
+        "name": "$104",
+        "bulk": "$1136"
+      },
+      {
+        "name": "$65",
+        "bulk": "$808"
+      },
+      {
+        "name": "$48",
+        "bulk": "$572"
+      },
+      {
+        "name": "$49",
+        "bulk": "$572"
+      },
+      {
+        "name": "$50",
+        "bulk": "$572"
+      },
+      {
+        "name": "$51",
+        "bulk": "$572"
+      },
+      {
+        "name": "$52",
+        "bulk": "$572"
+      },
+      {
+        "name": "$103",
+        "bulk": "$1136"
+      },
+      {
+        "name": "$102",
+        "bulk": "$1134"
+      },
+      {
+        "name": "$101",
+        "bulk": "$1134"
+      },
+      {
+        "name": "$100",
+        "bulk": "$1134"
+      },
+      {
+        "name": "$99",
+        "bulk": "$1134"
+      },
+      {
+        "name": "$98",
+        "bulk": "$1131"
+      },
+      {
+        "name": "$59",
+        "bulk": "$806"
+      },
+      {
+        "name": "$60",
+        "bulk": "$806"
+      },
+      {
+        "name": "$61",
+        "bulk": "$806"
+      },
+      {
+        "name": "$62",
+        "bulk": "$806"
+      },
+      {
+        "name": "$63",
+        "bulk": "$808"
+      },
+      {
+        "name": "$64",
+        "bulk": "$808"
+      },
+      {
+        "name": "$97",
+        "bulk": "$1131"
+      },
+      {
+        "name": "$66",
+        "bulk": "$808"
+      },
+      {
+        "name": "$96",
+        "bulk": "$1131"
+      },
+      {
+        "name": "$68",
+        "bulk": "$812"
+      },
+      {
+        "name": "$69",
+        "bulk": "$658"
+      },
+      {
+        "name": "$70",
+        "bulk": "$812"
+      },
+      {
+        "name": "$95",
+        "bulk": "$1131"
+      },
+      {
+        "name": "$72",
+        "bulk": "$812"
+      },
+      {
+        "name": "$73",
+        "bulk": "$662"
+      },
+      {
+        "name": "$74",
+        "bulk": "$812"
+      },
+      {
+        "name": "$75",
+        "bulk": "$815"
+      },
+      {
+        "name": "$76",
+        "bulk": "$815"
+      },
+      {
+        "name": "$77",
+        "bulk": "$815"
+      },
+      {
+        "name": "$78",
+        "bulk": "$815"
+      },
+      {
+        "name": "$79",
+        "bulk": "$929"
+      },
+      {
+        "name": "$80",
+        "bulk": "$929"
+      },
+      {
+        "name": "$81",
+        "bulk": "$929"
+      },
+      {
+        "name": "$82",
+        "bulk": "$929"
+      },
+      {
+        "name": "$83",
+        "bulk": "$936"
+      },
+      {
+        "name": "$84",
+        "bulk": "$936"
+      },
+      {
+        "name": "$85",
+        "bulk": "$936"
+      },
+      {
+        "name": "$86",
+        "bulk": "$936"
+      },
+      {
+        "name": "$87",
+        "bulk": "$1015"
+      },
+      {
+        "name": "$88",
+        "bulk": "$1015"
+      },
+      {
+        "name": "$89",
+        "bulk": "$1015"
+      },
+      {
+        "name": "$90",
+        "bulk": "$1015"
+      },
+      {
+        "name": "$91",
+        "bulk": "$1019"
+      },
+      {
+        "name": "$92",
+        "bulk": "$1019"
+      },
+      {
+        "name": "$5",
+        "bulk": "$152"
+      },
+      {
+        "name": "$1",
+        "bulk": "$23"
+      },
+      {
+        "name": "$17",
+        "bulk": "$268"
+      },
+      {
+        "name": "$2",
+        "bulk": "$28"
+      },
+      {
+        "name": "$58",
+        "bulk": "$572"
+      },
+      {
+        "name": "$22",
+        "bulk": "$233"
+      },
+      {
+        "name": "$23",
+        "bulk": "$240"
+      },
+      {
+        "name": "$24",
+        "bulk": "$247"
+      },
+      {
+        "name": "$71",
+        "bulk": "$662"
+      },
+      {
+        "name": "$16",
+        "bulk": "$265"
+      },
+      {
+        "name": "$125",
+        "bulk": "$1361"
+      },
+      {
+        "name": "$9",
+        "bulk": "$152"
+      },
+      {
+        "name": "$14",
+        "bulk": "$156"
+      },
+      {
+        "name": "$46",
+        "bulk": "$572"
+      },
+      {
+        "name": "$3",
+        "bulk": "$70"
+      },
+      {
+        "name": "$42",
+        "bulk": "$458"
+      },
+      {
+        "name": "$18",
+        "bulk": "$308"
+      },
+      {
+        "name": "$19",
+        "bulk": "$310"
+      },
+      {
+        "name": "$20",
+        "bulk": "$312"
+      },
+      {
+        "name": "$53",
+        "bulk": "$572"
+      },
+      {
+        "name": "$54",
+        "bulk": "$572"
+      },
+      {
+        "name": "$55",
+        "bulk": "$572"
+      },
+      {
+        "name": "$56",
+        "bulk": "$572"
+      },
+      {
+        "name": "$57",
+        "bulk": "$572"
+      },
+      {
+        "name": "$21",
+        "bulk": "$301"
+      },
+      {
+        "name": "$45",
+        "bulk": "$490"
+      },
+      {
+        "name": "$41",
+        "bulk": "$490"
+      },
+      {
+        "name": "$15",
+        "bulk": "$201"
+      },
+      {
+        "name": "$26",
+        "bulk": "$349"
+      },
+      {
+        "name": "$25",
+        "bulk": "$349"
+      },
+      {
+        "name": "$27",
+        "bulk": "$349"
+      },
+      {
+        "name": "$28",
+        "bulk": "$344"
+      },
+      {
+        "name": "$39",
+        "bulk": "$490"
+      },
+      {
+        "name": "$43",
+        "bulk": "$490"
+      },
+      {
+        "name": "$40",
+        "bulk": "$490"
+      },
+      {
+        "name": "$44",
+        "bulk": "$490"
+      }
+    ],
     "correct_bulk_unmatched": 0
   },
   "device_classes": {
-    "ref_only": {},
+    "ref_only": {
+      "cap_cmim": 3,
+      "sg13_lv_pmos": 128
+    },
     "ext_only": {
+      "CAP_CMIM": 3,
       "RHIGH": 4,
       "SG13_LV_NMOS": 122,
       "SG13_LV_PMOS": 126
@@ -2671,17 +4657,248 @@
   },
   "nets": {
     "matched": 0,
-    "ref_only": 6,
+    "ref_only": 284,
     "ext_only": 145,
     "ref_only_named": [
+      "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+      "dev_buf_i_p_0.D",
+      "dev_buf_i_p_0.G",
+      "dev_buf_q_p_0.D",
+      "dev_buf_q_p_0.G",
       "dev_c_fb_0.C1",
       "dev_c_fb_0.C2",
       "dev_cbyp_n_0.C1",
       "dev_cbyp_n_0.C2",
       "dev_cbyp_p_0.C1",
-      "dev_cbyp_p_0.C2"
+      "dev_cbyp_p_0.C2",
+      "dev_inv_iso_p_0.D,dev_inv_iso_p_0.G,dev_inv_iso_p_0.S,dev_inv_isob_p_0.G,dev_inv_isob_p_0.S",
+      "dev_inv_isob_p_0.D",
+      "dev_inv_vco_p_0.D",
+      "dev_inv_vco_p_0.G",
+      "dev_m_bias_mir_0.D",
+      "dev_m_bias_mir_0.G",
+      "dev_m_bias_mir_0.S,dev_mbias_d_0.D",
+      "dev_m_da1_p_0.D",
+      "dev_m_da1_p_0.G",
+      "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+      "dev_m_da2_p_0.D,dev_m_da2_p_0.G",
+      "dev_m_db1_p_0.D",
+      "dev_m_db1_p_0.G",
+      "dev_m_db2_p_0.D",
+      "dev_m_db2_p_0.G",
+      "dev_m_ia_p_0.D",
+      "dev_m_ia_p_0.G",
+      "dev_m_ib_p_0.G",
+      "dev_m_inv0_p_0.D",
+      "dev_m_inv0_p_0.G",
+      "dev_m_na_p1_0.D",
+      "dev_m_na_p1_0.G",
+      "dev_m_na_p2_0.D",
+      "dev_m_na_p2_0.G",
+      "dev_m_nb_p1_0.D",
+      "dev_m_nb_p1_0.G",
+      "dev_m_nb_p2_0.D",
+      "dev_m_nb_p2_0.G",
+      "dev_mbn2_0.D,dev_mbp1_0.G",
+      "dev_mbn2_0.G",
+      "dev_mbp2_0.D",
+      "dev_mbp2_0.G,dev_mbp2_0.S",
+      "dev_mc_lp1_0.D",
+      "dev_mc_lp1_0.G",
+      "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+      "dev_mc_lp2_0.D",
+      "dev_mc_lp2_0.G",
+      "dev_mc_lp2_0.S,dev_mc_rst_op_0.S",
+      "dev_mc_rst_dp_0.D",
+      "dev_mc_rst_dp_0.G",
+      "dev_mc_rst_on_0.D,dev_mc_rst_on_0.G",
+      "dev_mc_rst_op_0.D",
+      "dev_mc_rst_op_0.G",
+      "dev_mchop1p_0.D",
+      "dev_mchop1p_0.G,dev_mchop1p_0.S",
+      "dev_mchop2p_0.D",
+      "dev_mchop2p_0.G",
+      "dev_mchop2p_0.S",
+      "dev_mdac_tg1n_0.S,dev_mdac_tg1p_0.D,dev_mdac_tg1p_0.G,dev_mdac_tg1p_0.S",
+      "dev_mdac_tg2n_0.D,dev_mdac_tg2n_0.G,dev_mdac_tg2n_0.S,dev_mdac_tg2p_0.D,dev_mdac_tg2p_0.G,dev_rdac_0.R1",
+      "dev_mdac_tg2p_0.S",
+      "dev_mn2_0.D,dev_mn2_0.G,dev_mn2_0.S,dev_pm4_0.G,dev_pm_ref_0.G",
+      "dev_mp1a_0.D",
+      "dev_mp1a_0.G",
+      "dev_mp1a_0.S",
+      "dev_mp1b_0.D",
+      "dev_mp1b_0.G",
+      "dev_mp1b_0.S",
+      "dev_mp2a_0.D,dev_mp2a_0.G",
+      "dev_mp2a_0.S",
+      "dev_mp2b_0.D",
+      "dev_mp2b_0.G,dev_mp2b_0.S",
+      "dev_mp_load_p_0.D",
+      "dev_mp_load_p_0.G",
+      "dev_mpb1_0.D,dev_mpb1_0.S",
+      "dev_mpb2_0.D,dev_mpb2_0.S",
+      "dev_mpb3_0.D,dev_mpb3_0.S",
+      "dev_mpb4_0.D,dev_mpb4_0.S",
+      "dev_mpu1_0.D",
+      "dev_mpu1_0.G",
+      "dev_mpu1_0.S",
+      "dev_mpu2_0.D",
+      "dev_mpu2_0.G",
+      "dev_mpu2_0.S",
+      "dev_mpu3_0.D",
+      "dev_mpu3_0.G",
+      "dev_mpu3_0.S",
+      "dev_mpu4_0.D",
+      "dev_mpu4_0.G",
+      "dev_mpu4_0.S",
+      "dev_mpu5_0.D",
+      "dev_mpu5_0.G",
+      "dev_mpu5_0.S",
+      "dev_mxfi_p1_0.D",
+      "dev_mxfi_p1_0.G",
+      "dev_mxfi_p2_0.D,dev_mxfi_p2_0.G,dev_mxfi_p2_0.S",
+      "dev_mxfi_p3_0.D,dev_mxfi_p3_0.G,dev_mxfi_p3_0.S",
+      "dev_mxfq_p1_0.D",
+      "dev_mxfq_p1_0.G",
+      "dev_mxfq_p2_0.D,dev_mxfq_p2_0.G,dev_mxfq_p2_0.S",
+      "dev_mxfq_p3_0.D,dev_mxfq_p3_0.G,dev_mxfq_p3_0.S",
+      "dev_mxiq_n2_0.D,dev_mxiq_n2_0.S,dev_mxiq_p3_0.D,dev_mxiq_p3_0.G,dev_mxiq_p3_0.S",
+      "dev_pm3_0.D",
+      "dev_pm3_0.G",
+      "dev_pm3_0.S,dev_pm4_0.S,dev_pm5_0.S,dev_pm_ref_0.S",
+      "dev_pm4_0.D",
+      "dev_pm5_0.D",
+      "dev_pm5_0.G",
+      "dev_pm_cas1_0.D",
+      "dev_pm_cas1_0.G",
+      "dev_pm_cas1_0.S",
+      "dev_pm_cas2_0.D",
+      "dev_pm_cas2_0.G",
+      "dev_pm_cas2_0.S",
+      "dev_pm_cas3_0.D",
+      "dev_pm_cas3_0.G",
+      "dev_pm_cas_diode_0.D",
+      "dev_pm_cas_diode_0.G",
+      "dev_pm_cas_diode_0.S",
+      "dev_pm_cas_ref_0.D",
+      "dev_pm_cas_ref_0.G",
+      "dev_pm_mir1_0.D,dev_pm_mir1_0.G,dev_pm_mir2_0.D",
+      "dev_pm_pdiode_0.D",
+      "dev_pm_pdiode_0.G",
+      "dev_pm_pdiode_0.S",
+      "dev_pm_ref_0.D",
+      "dev_sw1p_0.D",
+      "dev_sw1p_0.G",
+      "dev_sw1p_0.S",
+      "dev_sw2p_0.D",
+      "dev_sw2p_0.G,dev_sw2p_0.S",
+      "dev_sw3p_0.D",
+      "dev_sw3p_0.G",
+      "dev_sw3p_0.S",
+      "dev_t1i_m2_0.D",
+      "dev_t1i_m2_0.G,dev_t1q_m1_0.D,dev_t1q_m1_0.G,dev_t1q_m1_0.S",
+      "dev_t1i_m2_0.S,dev_t1i_m4_0.G",
+      "dev_t1i_m4_0.D",
+      "dev_t1i_m5_0.D",
+      "dev_t1i_m5_0.G",
+      "dev_t1i_m6_0.D",
+      "dev_t1i_m6_0.G",
+      "dev_t1i_m6_0.S",
+      "dev_t1i_s2_0.D",
+      "dev_t1i_s2_0.G",
+      "dev_t1i_s2_0.S,dev_t1i_s4_0.D,dev_t1i_s4_0.G,dev_t1i_s6_0.G",
+      "dev_t1i_s5_0.D,dev_t1i_s5_0.G",
+      "dev_t1i_s6_0.D",
+      "dev_t1i_s6_0.S",
+      "dev_t1q_m2_0.D",
+      "dev_t1q_m2_0.G",
+      "dev_t1q_m2_0.S",
+      "dev_t1q_m4_0.D",
+      "dev_t1q_m4_0.G",
+      "dev_t1q_m5_0.D",
+      "dev_t1q_m5_0.G",
+      "dev_t1q_m6_0.D",
+      "dev_t1q_m6_0.G",
+      "dev_t1q_m6_0.S",
+      "dev_t1q_s2_0.D,dev_t1q_s2_0.S,dev_t1q_s4_0.G,dev_t1q_s7_0.D,dev_t1q_s7_0.G,dev_t1q_s7_0.S",
+      "dev_t1q_s2_0.G",
+      "dev_t1q_s4_0.D",
+      "dev_t1q_s5_0.D",
+      "dev_t1q_s5_0.G",
+      "dev_t1q_s6_0.D",
+      "dev_t1q_s6_0.G",
+      "dev_t1q_s6_0.S",
+      "dev_t2i_m2_0.D",
+      "dev_t2i_m2_0.G",
+      "dev_t2i_m2_0.S",
+      "dev_t2i_m4_0.D",
+      "dev_t2i_m6_0.D,dev_t2i_m6_0.S,dev_t2i_s2_0.D,dev_t2i_s2_0.G,dev_t2i_s2_0.S,dev_t2i_s3_0.D,dev_t2i_s3_0.G",
+      "dev_t2i_m6_0.G",
+      "dev_t2i_s4_0.D,dev_t2i_s4_0.G,dev_t2i_s7_0.D,dev_t2i_s7_0.G,dev_t2i_s7_0.S",
+      "dev_t2i_s6_0.D",
+      "dev_t2i_s6_0.G",
+      "dev_t2i_s6_0.S",
+      "dev_t2q_m2_0.D",
+      "dev_t2q_m2_0.G",
+      "dev_t2q_m2_0.S",
+      "dev_t2q_m4_0.D",
+      "dev_t2q_m4_0.G",
+      "dev_t2q_m5_0.D",
+      "dev_t2q_m5_0.G",
+      "dev_t2q_m6_0.D",
+      "dev_t2q_m6_0.G",
+      "dev_t2q_m6_0.S",
+      "dev_t2q_s1_0.D,dev_t2q_s1_0.G,dev_t2q_s1_0.S,dev_t2q_s3_0.G,dev_t2q_s5_0.G",
+      "dev_t2q_s2_0.D",
+      "dev_t2q_s2_0.G",
+      "dev_t2q_s2_0.S,dev_t2q_s4_0.G",
+      "dev_t2q_s4_0.D",
+      "dev_t2q_s6_0.D",
+      "dev_t2q_s6_0.S",
+      "dev_t3_m2_0.D",
+      "dev_t3_m2_0.G,dev_t3_m2_0.S,dev_t3_m4_0.G",
+      "dev_t3_m4_0.D,dev_t3_s2_0.G",
+      "dev_t3_m5_0.D",
+      "dev_t3_m5_0.G",
+      "dev_t3_m6_0.D",
+      "dev_t3_m6_0.G",
+      "dev_t3_m6_0.S",
+      "dev_t3_s2_0.D",
+      "dev_t3_s2_0.S,dev_t3_s7_0.D,dev_t3_s7_0.G",
+      "dev_t3_s4_0.D",
+      "dev_t3_s4_0.G",
+      "dev_t3_s5_0.G",
+      "dev_t3_s6_0.D",
+      "dev_t3_s6_0.S",
+      "dev_t4i_m2_0.D,dev_t4i_m2_0.G,dev_t4i_m2_0.S,dev_t4i_m4_0.G,dev_t4q_m1_0.D,dev_t4q_m1_0.G,dev_t4q_m1_0.S",
+      "dev_t4i_m4_0.D",
+      "dev_t4i_m5_0.D",
+      "dev_t4i_m6_0.D",
+      "dev_t4i_m6_0.G",
+      "dev_t4i_m6_0.S",
+      "dev_t4i_s2_0.D",
+      "dev_t4i_s2_0.G",
+      "dev_t4i_s2_0.S,dev_t4i_s4_0.G",
+      "dev_t4i_s4_0.D",
+      "dev_t4i_s5_0.D",
+      "dev_t4i_s5_0.G,dev_t4i_s6_0.G",
+      "dev_t4i_s6_0.D",
+      "dev_t4i_s6_0.S",
+      "dev_t4q_m2_0.D",
+      "dev_t4q_m5_0.D",
+      "dev_t4q_m5_0.G",
+      "dev_t4q_m6_0.D,dev_t4q_m6_0.G",
+      "dev_t4q_m6_0.S",
+      "dev_t4q_s2_0.D",
+      "dev_t4q_s2_0.G",
+      "dev_t4q_s2_0.S",
+      "dev_t4q_s4_0.D",
+      "dev_t4q_s4_0.G",
+      "dev_t4q_s6_0.D",
+      "dev_t4q_s6_0.G",
+      "dev_t4q_s6_0.S"
     ],
-    "ref_only_anon_count": 0,
+    "ref_only_anon_count": 47,
     "ext_only_named": [
       "BIAS_N",
       "BUF1",
@@ -2829,21 +5046,66 @@
       "VREF_COMP",
       "VREF_OTA"
     ],
-    "comma_merges": [],
+    "comma_merges": [
+      "dev_buf_ck_n_0.S,dev_buf_ck_p_0.D,dev_buf_ck_p_0.G,dev_buf_ck_p_0.S,dev_buf_i_p_0.S,dev_buf_q_p_0.S,dev_inv_isob_n_0.G,dev_inv_isob_n_0.S,dev_inv_vco_n_0.S,dev_inv_vco_p_0.S,dev_mbp1_0.D,dev_mbp1_0.S,dev_mpb1_0.G,dev_mpb2_0.G,dev_mpb3_0.G,dev_mpb4_0.G,dev_mpb5_0.D,dev_mpb5_0.G,dev_mpb5_0.S,dev_mxfi_p1_0.S,dev_mxfq_p1_0.S,dev_mxiq_p1_0.D,dev_mxiq_p1_0.G,dev_mxiq_p1_0.S,dev_mxiq_p2_0.D,dev_mxiq_p2_0.G,dev_mxiq_p2_0.S,dev_t1i_m4_0.S,dev_t1i_m5_0.S,dev_t1i_s4_0.S,dev_t1i_s5_0.S,dev_t1q_m4_0.S,dev_t1q_m5_0.S,dev_t1q_s4_0.S,dev_t1q_s5_0.S,dev_t2i_m3_0.D,dev_t2i_m3_0.G,dev_t2i_m4_0.G,dev_t2i_m4_0.S,dev_t2i_m5_0.D,dev_t2i_m5_0.G,dev_t2i_m5_0.S,dev_t2i_m7_0.D,dev_t2i_m7_0.G,dev_t2i_m7_0.S,dev_t2i_m8_0.D,dev_t2i_s4_0.S,dev_t2i_s5_0.D,dev_t2i_s5_0.G,dev_t2i_s5_0.S,dev_t2q_m4_0.S,dev_t2q_m5_0.S,dev_t2q_s4_0.S,dev_t2q_s5_0.D,dev_t2q_s5_0.S,dev_t2q_s6_0.G,dev_t2q_s7_0.D,dev_t2q_s7_0.G,dev_t3_m4_0.S,dev_t3_m5_0.S,dev_t3_s4_0.S,dev_t3_s5_0.D,dev_t3_s5_0.S,dev_t3_s6_0.G,dev_t4i_m4_0.S,dev_t4i_m5_0.G,dev_t4i_m5_0.S,dev_t4i_s4_0.S,dev_t4i_s5_0.S,dev_t4q_m2_0.G,dev_t4q_m2_0.S,dev_t4q_m4_0.D,dev_t4q_m4_0.G,dev_t4q_m4_0.S,dev_t4q_m5_0.S,dev_t4q_s4_0.S,dev_t4q_s5_0.D,dev_t4q_s5_0.G,dev_t4q_s5_0.S",
+      "dev_inv_iso_p_0.D,dev_inv_iso_p_0.G,dev_inv_iso_p_0.S,dev_inv_isob_p_0.G,dev_inv_isob_p_0.S",
+      "dev_m_bias_mir_0.S,dev_mbias_d_0.D",
+      "dev_m_da1_p_0.S,dev_m_da2_p_0.S,dev_m_db1_p_0.S,dev_m_db2_p_0.S,dev_m_ia_p_0.S,dev_m_ib_p_0.D,dev_m_ib_p_0.S,dev_m_inv0_p_0.S,dev_m_na_p1_0.S,dev_m_na_p2_0.S,dev_m_nb_p1_0.S,dev_m_nb_p2_0.S,dev_mp_load_n_0.S,dev_mp_load_p_0.S",
+      "dev_m_da2_p_0.D,dev_m_da2_p_0.G",
+      "dev_mbn2_0.D,dev_mbp1_0.G",
+      "dev_mbp2_0.G,dev_mbp2_0.S",
+      "dev_mc_lp1_0.S,dev_mc_rst_dn_0.D,dev_mc_rst_dn_0.G,dev_mc_rst_dn_0.S,dev_mc_rst_dp_0.S,dev_mc_rst_on_0.S,dev_pm_cas3_0.S,dev_pm_cas_ref_0.S,dev_pm_mir1_0.S,dev_pm_mir2_0.G,dev_pm_mir2_0.S,dev_pm_mir3_0.D,dev_pm_mir3_0.G,dev_pm_mir3_0.S",
+      "dev_mc_lp2_0.S,dev_mc_rst_op_0.S",
+      "dev_mc_rst_on_0.D,dev_mc_rst_on_0.G",
+      "dev_mchop1p_0.G,dev_mchop1p_0.S",
+      "dev_mdac_tg1n_0.S,dev_mdac_tg1p_0.D,dev_mdac_tg1p_0.G,dev_mdac_tg1p_0.S",
+      "dev_mdac_tg2n_0.D,dev_mdac_tg2n_0.G,dev_mdac_tg2n_0.S,dev_mdac_tg2p_0.D,dev_mdac_tg2p_0.G,dev_rdac_0.R1",
+      "dev_mn2_0.D,dev_mn2_0.G,dev_mn2_0.S,dev_pm4_0.G,dev_pm_ref_0.G",
+      "dev_mp2a_0.D,dev_mp2a_0.G",
+      "dev_mp2b_0.G,dev_mp2b_0.S",
+      "dev_mpb1_0.D,dev_mpb1_0.S",
+      "dev_mpb2_0.D,dev_mpb2_0.S",
+      "dev_mpb3_0.D,dev_mpb3_0.S",
+      "dev_mpb4_0.D,dev_mpb4_0.S",
+      "dev_mxfi_p2_0.D,dev_mxfi_p2_0.G,dev_mxfi_p2_0.S",
+      "dev_mxfi_p3_0.D,dev_mxfi_p3_0.G,dev_mxfi_p3_0.S",
+      "dev_mxfq_p2_0.D,dev_mxfq_p2_0.G,dev_mxfq_p2_0.S",
+      "dev_mxfq_p3_0.D,dev_mxfq_p3_0.G,dev_mxfq_p3_0.S",
+      "dev_mxiq_n2_0.D,dev_mxiq_n2_0.S,dev_mxiq_p3_0.D,dev_mxiq_p3_0.G,dev_mxiq_p3_0.S",
+      "dev_pm3_0.S,dev_pm4_0.S,dev_pm5_0.S,dev_pm_ref_0.S",
+      "dev_pm_mir1_0.D,dev_pm_mir1_0.G,dev_pm_mir2_0.D",
+      "dev_sw2p_0.G,dev_sw2p_0.S",
+      "dev_t1i_m2_0.G,dev_t1q_m1_0.D,dev_t1q_m1_0.G,dev_t1q_m1_0.S",
+      "dev_t1i_m2_0.S,dev_t1i_m4_0.G",
+      "dev_t1i_s2_0.S,dev_t1i_s4_0.D,dev_t1i_s4_0.G,dev_t1i_s6_0.G",
+      "dev_t1i_s5_0.D,dev_t1i_s5_0.G",
+      "dev_t1q_s2_0.D,dev_t1q_s2_0.S,dev_t1q_s4_0.G,dev_t1q_s7_0.D,dev_t1q_s7_0.G,dev_t1q_s7_0.S",
+      "dev_t2i_m6_0.D,dev_t2i_m6_0.S,dev_t2i_s2_0.D,dev_t2i_s2_0.G,dev_t2i_s2_0.S,dev_t2i_s3_0.D,dev_t2i_s3_0.G",
+      "dev_t2i_s4_0.D,dev_t2i_s4_0.G,dev_t2i_s7_0.D,dev_t2i_s7_0.G,dev_t2i_s7_0.S",
+      "dev_t2q_s1_0.D,dev_t2q_s1_0.G,dev_t2q_s1_0.S,dev_t2q_s3_0.G,dev_t2q_s5_0.G",
+      "dev_t2q_s2_0.S,dev_t2q_s4_0.G",
+      "dev_t3_m2_0.G,dev_t3_m2_0.S,dev_t3_m4_0.G",
+      "dev_t3_m4_0.D,dev_t3_s2_0.G",
+      "dev_t3_s2_0.S,dev_t3_s7_0.D,dev_t3_s7_0.G",
+      "dev_t4i_m2_0.D,dev_t4i_m2_0.G,dev_t4i_m2_0.S,dev_t4i_m4_0.G,dev_t4q_m1_0.D,dev_t4q_m1_0.G,dev_t4q_m1_0.S",
+      "dev_t4i_s2_0.S,dev_t4i_s4_0.G",
+      "dev_t4i_s5_0.G,dev_t4i_s6_0.G",
+      "dev_t4q_m6_0.D,dev_t4q_m6_0.G"
+    ],
     "matched_pairs": []
   },
   "pins": {
-    "matched": 151,
+    "matched": 382,
     "mismatched": 0
   },
   "summary": {
-    "devices_matched": 3,
-    "devices_unmatched": 252,
+    "devices_matched": 0,
+    "devices_unmatched": 386,
     "nets_matched": 0,
-    "nets_unmatched": 151,
-    "comma_merges": 0,
-    "wrong_bulk_pmos": 0,
-    "pins_matched": 151,
+    "nets_unmatched": 429,
+    "comma_merges": 44,
+    "wrong_bulk_pmos": 128,
+    "pins_matched": 382,
     "pins_mismatched": 0
   }
 }
