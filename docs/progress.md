@@ -155,11 +155,28 @@ SPICE X→M conversion → Netgen LVS → comp.out
 **服务器已释放。镜像保留: m-bp1ggcaq0hx2jsi2479m (ic-magic-20260317)**
 **总费用: ~10 CNY**
 
-**下一步:**
-1. 给 C_fb.MINUS 加 M2→sum_n (12µm)
-2. 给 Cbyp_n.PLUS 加 M2→nmos_bias (15µm)
-3. 给 Cbyp_n.MINUS + Cbyp_p.MINUS 加 M3→GND
-4. 目标: 255/255 + DRC 0 = LVS clean
+**⚠️ 重要修正 (2026-03-18):**
+- "DRC=0" 是 Magic DRC，不是 KLayout DRC (signoff standard)
+- KLayout DRC (strip): ~10K violations — strip PCell via1+M2 破坏 M1 geometry
+- KLayout DRC (no-strip): 2726 violations — PCell 完整，M1.a=0 ✅
+- **Strip 是错误路径** — PCell 必须完整才能通过 KLayout DRC
+- No-strip + GA best genome: LVS=172 (需要重新 GA 优化)
+
+**No-strip vs Strip 对比 (本地验证):**
+| | Strip | No Strip |
+|---|---|---|
+| LVS | 252 | 172 |
+| KLayout M1.a | 5596 | **0** |
+| KLayout M1.b | 4310 | 1827 |
+| KLayout M2.a | 747 | 549 |
+| KLayout total | ~10K | **2726** |
+
+**下一步 (下 session):**
+1. 开 ECS (image m-bp12fk5utga3kbvre90j)
+2. 跑 **no-strip GA**: fitness = LVS×10000 - KLayout_DRC
+3. python_drc 内联到 GA (fix multiprocessing)
+4. 找到 LVS ≥ 240 + KLayout DRC ≤ 100 的 Pareto optimal
+5. 然后再修剩余 DRC violations (M1.b placement, M2 routing)
 
 **当前瓶颈: routing solver quality**
 - 576 extracted nets vs 145 reference → 太多 low-fanout 碎片 net
