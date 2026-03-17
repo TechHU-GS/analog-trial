@@ -803,3 +803,4 @@ Netgen Tcl LVS working. Full loop: Magic→Netgen. 269 devices extracted, LVS mi
 - VCO: 2 PMOS on mbn2.G
 - Netgen 148 merge count likely includes topology-based merges (not just parallel)
 
+Session end: 62 commits, 81 full devices, 15 parallel merges, 0 merges, 0 wrong-bulk.
