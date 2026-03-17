@@ -1,5 +1,5 @@
 {
-  "lvsdb": "/tmp/lvs_magic5/soilz_magic_fixed2.lvsdb",
+  "lvsdb": "/tmp/lvs_flat/soilz_flat_fixed.lvsdb",
   "ref_circuit": "soilz",
   "ext_circuit": "SOILZ",
   "devices": {
@@ -2673,8 +2673,15 @@
     "matched": 0,
     "ref_only": 6,
     "ext_only": 145,
-    "ref_only_named": [],
-    "ref_only_anon_count": 6,
+    "ref_only_named": [
+      "dev_c_fb_0.C1",
+      "dev_c_fb_0.C2",
+      "dev_cbyp_n_0.C1",
+      "dev_cbyp_n_0.C2",
+      "dev_cbyp_p_0.C1",
+      "dev_cbyp_p_0.C2"
+    ],
+    "ref_only_anon_count": 0,
     "ext_only_named": [
       "BIAS_N",
       "BUF1",
