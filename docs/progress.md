@@ -110,7 +110,21 @@ SPICE X→M conversion → Netgen LVS → comp.out
 - 这不是 AP/bridge/filter 问题，是 **routing.json 本身的 M2 wire spacing violation**
 - 移除冲突 segment 给 203 (更差) — 因为同时断开了正确连接
 - 正确修法：缩短 segment 而不是删除，需要精确几何计算 overlap 起止点
-- 下一步：实现 M2 segment trimming (只切掉 overlap 部分)
+
+**ECS 服务器 parameter sweep (已验证, 41 变体并行):**
+- 实例: ecs.c8a.16xlarge (64C/128G), 镜像: m-bp1ggcaq0hx2jsi2479m
+- M2 pad half-size sweep 200-1000nm, step 25nm:
+  - pad240 (当前): 193
+  - pad400: 196
+  - **pad450: 227** ← BEST
+  - **pad475: 227** ← BEST (tied)
+  - pad500: 223
+  - pad600: 218
+  - pad800: 108 (太大→cross-net)
+- M2 wire width sweep (pad600): w100=219, w150=218, w200=210, w300=170
+- Filter on/off: pad400 filter=206 nofilter=206 (相同)
+- **最佳: M2 pad 950nm (±475nm) → 227/255 = 89%**
+- 从 session 开始 126 → 227 = **+101 devices (+40pp)**
 
 **当前瓶颈: routing solver quality**
 - 576 extracted nets vs 145 reference → 太多 low-fanout 碎片 net
