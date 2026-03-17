@@ -1,12 +1,12 @@
 {
-  "lvsdb": "/tmp/lvs_run/soilz.lvsdb",
+  "lvsdb": "/tmp/lvs_magic2/soilz_magic.lvsdb",
   "ref_circuit": "soilz",
   "ext_circuit": "SOILZ",
   "devices": {
-    "matched": 246,
+    "matched": 96,
     "ref_only": [
       {
-        "name": "$22",
+        "name": "$82",
         "class": "cap_cmim",
         "terminals": {
           "S": null,
@@ -16,7 +16,7 @@
         }
       },
       {
-        "name": "$21",
+        "name": "$237",
         "class": "cap_cmim",
         "terminals": {
           "S": null,
@@ -26,7 +26,7 @@
         }
       },
       {
-        "name": "$68",
+        "name": "$27",
         "class": "cap_cmim",
         "terminals": {
           "S": null,
@@ -36,76 +36,1505 @@
         }
       },
       {
-        "name": "$15",
-        "class": "rhigh",
+        "name": "$86",
+        "class": "sg13_lv_nmos",
         "terminals": {
-          "A": null,
-          "B": null
+          "S": "$210.D",
+          "G": "$210.G",
+          "D": "$210.S",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$134",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$114.D",
+          "G": "$114.G",
+          "D": "$114.S",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$147",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$428",
+          "G": "$93.G",
+          "D": "$1",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$17",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$15",
+          "G": "$15",
+          "D": "$15",
+          "B": "$1"
         }
       },
       {
         "name": "$14",
-        "class": "rhigh",
-        "terminals": {
-          "A": null,
-          "B": null
-        }
-      },
-      {
-        "name": "$13",
-        "class": "rhigh",
-        "terminals": {
-          "A": null,
-          "B": null
-        }
-      },
-      {
-        "name": "$151",
-        "class": "rhigh",
-        "terminals": {
-          "A": null,
-          "B": null
-        }
-      },
-      {
-        "name": "$95",
         "class": "sg13_lv_nmos",
         "terminals": {
-          "S": "$255",
-          "G": "$252",
-          "D": "t3_m",
-          "B": "gnd"
+          "S": "$15",
+          "G": "$12.G",
+          "D": "$15",
+          "B": "$1"
         }
+      },
+      {
+        "name": "$15",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$15",
+          "G": "$11.G",
+          "D": "$15",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$16",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$15",
+          "G": "$10.G",
+          "D": "$15",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$50",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$222",
+          "G": "$49.G",
+          "D": "$224",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$51",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$47.D",
+          "G": "$47.G",
+          "D": "$222",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$52",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$193",
+          "G": "$48.G",
+          "D": "$193",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$38",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$50.D",
+          "G": "$50.G",
+          "D": "$216",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$80",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$77.D",
+          "G": "$77.G",
+          "D": "$309",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$144",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$75.D",
+          "G": "$75.G",
+          "D": "$309",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$143",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$1",
+          "G": "$1",
+          "D": "$1",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$142",
+        "class": "sg13_lv_nmos",
+        "terminals": {
+          "S": "$252.D",
+          "G": "$252.G",
+          "D": "$309",
+          "B": "$1"
+        }
+      },
+      {
+        "name": "$45",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$64.D",
+          "G": "$64.G",
+          "D": "$270",
+          "B": "$267"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$46",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$62.D",
+          "G": "$62.G",
+          "D": "$182",
+          "B": "$267"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$3",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$31.D",
+          "G": "$87",
+          "D": "$98",
+          "B": "$122"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$205",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$96.D",
+          "G": "$96.G",
+          "D": "$96.S",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$116",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$220.D",
+          "G": "$220.G",
+          "D": "$434",
+          "B": "$946"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$117",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$221.D",
+          "G": "$221.G",
+          "D": "$221.S",
+          "B": "$946"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$236",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$593",
+          "G": "$593",
+          "D": "$434",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$114",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$223.D",
+          "G": "$945",
+          "D": "$434",
+          "B": "$951"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$235",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$160.D",
+          "G": "$160.G",
+          "D": "$434",
+          "B": "$713"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$112",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$155.D",
+          "G": "$155.G",
+          "D": "$434",
+          "B": "$709"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$111",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$1001",
+          "G": "$1001",
+          "D": "$1001",
+          "B": "$1014"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$109",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$1008",
+          "G": "$1008",
+          "D": "$1008",
+          "B": "$1014"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$107",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$235.D",
+          "G": "$235.G",
+          "D": "$434",
+          "B": "$1014"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$104",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$981",
+          "G": "$981",
+          "D": "$981",
+          "B": "$1018"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$102",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$238.D",
+          "G": "$238.G",
+          "D": "$434",
+          "B": "$1018"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$100",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$157.D",
+          "G": "$157.G",
+          "D": "$157.S",
+          "B": "$709"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$99",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$156.D",
+          "G": "$672",
+          "D": "$434",
+          "B": "$709"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$98",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$667",
+          "G": "$734",
+          "D": "$667",
+          "B": "$713"
+        },
+        "bulk_ok": false
       },
       {
         "name": "$96",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "gnd",
-          "G": "$252",
-          "D": "t3_nmn",
-          "B": "gnd"
-        }
-      },
-      {
-        "name": "$223",
         "class": "sg13_lv_pmos",
         "terminals": {
-          "S": "t1I_nsp",
-          "G": "div2_I_b",
-          "D": "$296",
-          "B": "vdd"
+          "S": "$1004",
+          "G": "$1004",
+          "D": "$1004",
+          "B": "$1018"
         },
-        "bulk_ok": true
+        "bulk_ok": false
       },
       {
-        "name": "$240",
+        "name": "$95",
         "class": "sg13_lv_pmos",
         "terminals": {
-          "S": "$160",
-          "G": "lat_qb",
-          "D": "$161",
-          "B": "$160"
+          "S": "$159.D",
+          "G": "$667",
+          "D": "$434",
+          "B": "$713"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$132",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$154.D",
+          "G": "$154.G",
+          "D": "$154.S",
+          "B": "$709"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$87",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$218.D",
+          "G": "$218.G",
+          "D": "$218.S",
+          "B": "$946"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$85",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$194.D",
+          "G": "$194.G",
+          "D": "$194.S",
+          "B": "$850"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$135",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$130.D",
+          "G": "$587",
+          "D": "$588",
+          "B": "$600"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$136",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$811",
+          "G": "$811",
+          "D": "$434",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$137",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$797",
+          "G": "$797",
+          "D": "$797",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$138",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$434",
+          "G": "$434",
+          "D": "$434",
+          "B": "$850"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$139",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$797",
+          "G": "$197.G",
+          "D": "$797",
+          "B": "$850"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$140",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$195.D",
+          "G": "$434",
+          "D": "$434",
+          "B": "$850"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$234",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$434",
+          "G": "$434",
+          "D": "$434",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$233",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$434",
+          "G": "$929",
+          "D": "$434",
+          "B": "$951"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$118",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$219.D",
+          "G": "$219.G",
+          "D": "$434",
+          "B": "$946"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$231",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$434",
+          "G": "$434",
+          "D": "$434",
+          "B": "$499"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$145",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$134.D",
+          "G": "$134.G",
+          "D": "$578",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$146",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$578",
+          "G": "$578",
+          "D": "$434",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$79",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$132.D",
+          "G": "$132.G",
+          "D": "$434",
+          "B": "$600"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$78",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$131.D",
+          "G": "$588",
+          "D": "$434",
+          "B": "$600"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$227",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$111.D",
+          "G": "$111.G",
+          "D": "$434",
+          "B": "$499"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$77",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$133.D",
+          "G": "$576",
+          "D": "$133.S",
+          "B": "$600"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$151",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$104.D",
+          "G": "$104.G",
+          "D": "$104.S",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$226",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$113.D",
+          "G": "$497",
+          "D": "$497",
+          "B": "$507"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$69",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$72.D",
+          "G": "$72.G",
+          "D": "$320",
+          "B": "$318"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$154",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$102.D",
+          "G": "$102.G",
+          "D": "$102.S",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$18",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$28.D",
+          "G": "$28.G",
+          "D": "$98",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$19",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$27.D",
+          "G": "$27.G",
+          "D": "$98",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$157",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$100.D",
+          "G": "$100.G",
+          "D": "$100.S",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$20",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$108",
+          "G": "$108",
+          "D": "$98",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$67",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$74.D",
+          "G": "$209",
+          "D": "$209",
+          "B": "$321"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$160",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$98.D",
+          "G": "$98.G",
+          "D": "$98.S",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$22",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$25.D",
+          "G": "$107",
+          "D": "$98",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$162",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$246.D",
+          "G": "$246.G",
+          "D": "$434",
+          "B": "$1058"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$163",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$247.D",
+          "G": "$247.G",
+          "D": "$434",
+          "B": "$1058"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$65",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$226",
+          "G": "$226",
+          "D": "$322",
+          "B": "$321"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$63",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$279",
+          "G": "$279",
+          "D": "$182",
+          "B": "$285"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$24",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$24.D",
+          "G": "$24.G",
+          "D": "$98",
+          "B": "$121"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$167",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$996",
+          "G": "$996",
+          "D": "$996",
+          "B": "$1021"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$216",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$137.D",
+          "G": "$578",
+          "D": "$137.S",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$60",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$71.D",
+          "G": "$71.G",
+          "D": "$319",
+          "B": "$318"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$170",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$225.D",
+          "G": "$434",
+          "D": "$225.S",
+          "B": "$951"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$171",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$434",
+          "G": "$434",
+          "D": "$434",
+          "B": "$870"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$172",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$209.D",
+          "G": "$209.G",
+          "D": "$209.S",
+          "B": "$870"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$173",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$207.D",
+          "G": "$207.G",
+          "D": "$434",
+          "B": "$870"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$174",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$206.D",
+          "G": "$206.G",
+          "D": "$206.S",
+          "B": "$870"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$175",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$839",
+          "G": "$839",
+          "D": "$205.S",
+          "B": "$863"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$176",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$434",
+          "G": "$434",
+          "D": "$434",
+          "B": "$863"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$177",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$204.D",
+          "G": "$204.G",
+          "D": "$434",
+          "B": "$863"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$178",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$202.D",
+          "G": "$434",
+          "D": "$434",
+          "B": "$863"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$58",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$61.D",
+          "G": "$61.G",
+          "D": "$182",
+          "B": "$285"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$180",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$201.D",
+          "G": "$201.G",
+          "D": "$201.S",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$214",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$138.D",
+          "G": "$596",
+          "D": "$596",
+          "B": "$609"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$213",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$140.D",
+          "G": "$597",
+          "D": "$434",
+          "B": "$609"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$212",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$580",
+          "G": "$596",
+          "D": "$434",
+          "B": "$609"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$47",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$182",
+          "G": "$182",
+          "D": "$182",
+          "B": "$285"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$44",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$65.D",
+          "G": "$65.G",
+          "D": "$270",
+          "B": "$285"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$42",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$30.D",
+          "G": "$101",
+          "D": "$98",
+          "B": "$122"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$41",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$33.D",
+          "G": "$33.G",
+          "D": "$98",
+          "B": "$122"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$40",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$32.D",
+          "G": "$32.G",
+          "D": "$98",
+          "B": "$122"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$189",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$176.D",
+          "G": "$749",
+          "D": "$434",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$190",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$752",
+          "G": "$749",
+          "D": "$177.S",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$191",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$175.D",
+          "G": "$762",
+          "D": "$434",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$192",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$174.D",
+          "G": "$703",
+          "D": "$762",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$193",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$173.D",
+          "G": "$173.G",
+          "D": "$173.S",
+          "B": "$758"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$194",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$171.D",
+          "G": "$755",
+          "D": "$434",
+          "B": "$758"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$195",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$172.D",
+          "G": "$434",
+          "D": "$434",
+          "B": "$758"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$196",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$755",
+          "G": "$755",
+          "D": "$755",
+          "B": "$758"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$211",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$141.D",
+          "G": "$141.G",
+          "D": "$141.S",
+          "B": "$609"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$210",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$143.D",
+          "G": "$143.G",
+          "D": "$434",
+          "B": "$613"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$209",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$142.D",
+          "G": "$580",
+          "D": "$544",
+          "B": "$613"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$208",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$145.D",
+          "G": "$434",
+          "D": "$145.S",
+          "B": "$613"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$207",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$434",
+          "G": "$144.G",
+          "D": "$434",
+          "B": "$613"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$206",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$161.D",
+          "G": "$161.G",
+          "D": "$161.S",
+          "B": "$713"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$115",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$222.D",
+          "G": "$942",
+          "D": "$945",
+          "B": "$951"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$4",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$29.D",
+          "G": "$102",
+          "D": "$98",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$229",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$497",
+          "G": "$497",
+          "D": "$497",
+          "B": "$507"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$149",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$434",
+          "G": "$428",
+          "D": "$434",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$34",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$42.D",
+          "G": "$42.G",
+          "D": "$42.S",
+          "B": "$192"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$35",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$40.D",
+          "G": "$172",
+          "D": "$172",
+          "B": "$191"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$36",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$38.D",
+          "G": "$38.G",
+          "D": "$38.S",
+          "B": "$190"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$39",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$98",
+          "G": "$34.G",
+          "D": "$98",
+          "B": "$122"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$53",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$187",
+          "G": "$187",
+          "D": "$187",
+          "B": "$126"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$55",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$6.D",
+          "G": "$13",
+          "D": "$13",
+          "B": "$30"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$68",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$126",
+          "G": "$126",
+          "D": "$46.S",
+          "B": "$207"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$166",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$434",
+          "G": "$434",
+          "D": "$434",
+          "B": "$1021"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$62",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$8.D",
+          "G": "$11",
+          "D": "$8.S",
+          "B": "$31"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$1",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$435",
+          "G": "$436",
+          "D": "$436",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$81",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$76.D",
+          "G": "$76.G",
+          "D": "$340",
+          "B": "$338"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$2",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$63",
+          "G": "$I2",
+          "D": "$72",
+          "B": "$63"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$33",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$52.D",
+          "G": "$52.G",
+          "D": "$52.S",
+          "B": "$229"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$31",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$53.D",
+          "G": "$53.G",
+          "D": "$53.S",
+          "B": "$230"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$29",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$54.D",
+          "G": "$225",
+          "D": "$54.S",
+          "B": "$237"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$28",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$186",
+          "G": "$51.G",
+          "D": "$182",
+          "B": "$238"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$215",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$452",
+          "G": "$434",
+          "D": "$452",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$161",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$442",
+          "G": "$434",
+          "D": "$442",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$158",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$456",
+          "G": "$434",
+          "D": "$456",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$155",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$446",
+          "G": "$434",
+          "D": "$446",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$152",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$434",
+          "G": "$434",
+          "D": "$434",
+          "B": "$439"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$57",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$35.D",
+          "G": "$35.G",
+          "D": "$98",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$26",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$57.D",
+          "G": "$57.G",
+          "D": "$182",
+          "B": "$257"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$32",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$253",
+          "G": "$253",
+          "D": "$182",
+          "B": "$257"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$30",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$253",
+          "G": "$182",
+          "D": "$182",
+          "B": "$257"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$13",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$182",
+          "G": "$182",
+          "D": "$182",
+          "B": "$266"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$83",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$80.D",
+          "G": "$80.G",
+          "D": "$363",
+          "B": "$1"
+        },
+        "bulk_ok": false
+      },
+      {
+        "name": "$84",
+        "class": "sg13_lv_pmos",
+        "terminals": {
+          "S": "$81.D",
+          "G": "$81.G",
+          "D": "$363",
+          "B": "$1"
         },
         "bulk_ok": false
       }
@@ -192,6 +1621,1279 @@
         }
       },
       {
+        "name": "MN1A",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "COMP_OUTP",
+          "D": "N1_MID",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "M_NB_N2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "F_EXC_B_D",
+          "D": "NB_MID",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "M_NA_N1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "NA_MID",
+          "G": "F_EXC",
+          "D": "NAND_A",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MS2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "PROBE_P",
+          "G": "PHI_N",
+          "D": "GND",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MS3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "PROBE_N",
+          "G": "PHI_N",
+          "D": "EXC_OUT",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MS4",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "PROBE_N",
+          "G": "PHI_P",
+          "D": "GND",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MC_INN",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "C_TAIL",
+          "G": "VREF_COMP",
+          "D": "C_DI_N",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MC_INP",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "C_TAIL",
+          "G": "OTA_OUT",
+          "D": "C_DI_P",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MC_TAIL",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "COMP_CLK",
+          "D": "C_TAIL",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MBN2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "BUF1",
+          "D": "VCO_OUT",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MS1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "PROBE_P",
+          "G": "PHI_P",
+          "D": "EXC_OUT",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MN_CAS_LOAD",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "VCAS",
+          "D": "VCAS",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MN_DIODE",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "NMOS_BIAS",
+          "D": "NMOS_BIAS",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MN_PGEN",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "NMOS_BIAS",
+          "D": "PMOS_BIAS",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MNB2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "NMOS_BIAS",
+          "D": "NB2",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MNB1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "NMOS_BIAS",
+          "D": "NB1",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MNB5",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "NMOS_BIAS",
+          "D": "NB5",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MNB4",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "NMOS_BIAS",
+          "D": "NB4",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MNB3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "NMOS_BIAS",
+          "D": "NB3",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MIN_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "TAIL",
+          "G": "SUM_N",
+          "D": "OTA_OUT",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MIN_P",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "TAIL",
+          "G": "VREF_OTA",
+          "D": "MID_P",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MN1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "NET_C1",
+          "D": "NET_C1",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MBIAS_D",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "BIAS_N",
+          "D": "BIAS_N",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MTAIL",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "BIAS_N",
+          "D": "TAIL",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MN2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "NET_RPTAT",
+          "G": "NET_C1",
+          "D": "NET_C2",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MC_LP1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "COMP_OUTN",
+          "D": "COMP_OUTP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MC_LP2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "COMP_OUTP",
+          "D": "COMP_OUTN",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "INV_ISOB_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "VCO_BUF",
+          "D": "VCO_BUF_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4Q_S2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "DIV16_Q",
+          "G": "DIV8",
+          "D": "T4Q_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1I_S5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "VCO_BUF",
+          "D": "T1I_NSP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1I_S4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV2_I",
+          "D": "DIV2_I_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1Q_M2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T1Q_M",
+          "G": "VCO_BUF_B",
+          "D": "DIV2_Q_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1I_S2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "DIV2_I",
+          "G": "VCO_BUF_B",
+          "D": "T1I_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1Q_M4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "T1Q_M",
+          "D": "T1Q_MB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1Q_M5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "VCO_BUF",
+          "D": "T1Q_NMP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1Q_M6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T1Q_NMP",
+          "G": "T1Q_MB",
+          "D": "T1Q_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1I_M6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T1I_NMP",
+          "G": "T1I_MB",
+          "D": "T1I_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1I_M5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "VCO_BUF_B",
+          "D": "T1I_NMP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1I_M4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "T1I_M",
+          "D": "T1I_MB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1Q_S2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "DIV2_Q",
+          "G": "VCO_BUF",
+          "D": "T1Q_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1I_M2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T1I_M",
+          "G": "VCO_BUF",
+          "D": "DIV2_I_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1Q_S4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV2_Q",
+          "D": "DIV2_Q_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1Q_S5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "VCO_BUF_B",
+          "D": "T1Q_NSP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1Q_S6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T1Q_NSP",
+          "G": "DIV2_Q_B",
+          "D": "DIV2_Q",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "INV_VCO_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "VCO_OUT",
+          "D": "VCO_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "BUF_Q_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "REF_Q",
+          "D": "BUF_REF_Q",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "BUF_I_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "REF_I",
+          "D": "BUF_REF_I",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2I_M2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T2I_M",
+          "G": "DIV2_I",
+          "D": "DIV4_I_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MXIQ_P3",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "F_EXC",
+          "G": "MXIQ_SELB",
+          "D": "REF_Q",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2I_M4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "T2I_M",
+          "D": "T2I_MB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2I_M5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV2_I_B",
+          "D": "T2I_NMP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2I_M6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T2I_NMP",
+          "G": "T2I_MB",
+          "D": "T2I_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MP2B",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "LAT_Q",
+          "D": "LAT_QB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MP2A",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "COMP_OUTN",
+          "D": "LAT_QB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MP1B",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "LAT_QB",
+          "D": "LAT_Q",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2I_S2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "DIV4_I",
+          "G": "DIV2_I_B",
+          "D": "T2I_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MP1A",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "COMP_OUTP",
+          "D": "LAT_Q",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2I_S4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV4_I",
+          "D": "DIV4_I_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2I_S5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV2_I",
+          "D": "T2I_NSP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2I_S6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T2I_NSP",
+          "G": "DIV4_I_B",
+          "D": "DIV4_I",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MC_RST_ON",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "COMP_CLK",
+          "D": "COMP_OUTN",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MC_RST_OP",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "COMP_CLK",
+          "D": "COMP_OUTP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MC_RST_DN",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "COMP_CLK",
+          "D": "C_DI_N",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2Q_M2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T2Q_M",
+          "G": "DIV2_I_B",
+          "D": "DIV4_Q_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MC_RST_DP",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "COMP_CLK",
+          "D": "C_DI_P",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2Q_M4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "T2Q_M",
+          "D": "T2Q_MB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2Q_M5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV2_I",
+          "D": "T2Q_NMP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2Q_M6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T2Q_NMP",
+          "G": "T2Q_MB",
+          "D": "T2Q_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MXIQ_P2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "F_EXC",
+          "G": "IQ_SEL",
+          "D": "REF_I",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MXIQ_P1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "IQ_SEL",
+          "D": "MXIQ_SELB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MPU1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "NS1",
+          "G": "VCO5",
+          "D": "VCO1",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2Q_S2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "DIV4_Q",
+          "G": "DIV2_I",
+          "D": "T2Q_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MXFQ_P3",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "REF_Q",
+          "G": "MXFQ_SELB",
+          "D": "DIV16_Q",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2Q_S4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV4_Q",
+          "D": "DIV4_Q_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2Q_S5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV2_I_B",
+          "D": "T2Q_NSP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T2Q_S6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T2Q_NSP",
+          "G": "DIV4_Q_B",
+          "D": "DIV4_Q",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MXFQ_P2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "REF_Q",
+          "G": "FREQ_SEL",
+          "D": "DIV4_Q",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_NB_P2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "F_EXC_B_D",
+          "D": "NAND_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_NB_P1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "F_EXC_B",
+          "D": "NAND_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T3_M2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T3_M",
+          "G": "DIV4_I",
+          "D": "DIV8_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MPU2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "NS2",
+          "G": "VCO1",
+          "D": "VCO2",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T3_M4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "T3_M",
+          "D": "T3_MB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T3_M5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV4_I_B",
+          "D": "T3_NMP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T3_M6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T3_NMP",
+          "G": "T3_MB",
+          "D": "T3_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_NA_P2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "F_EXC_D",
+          "D": "NAND_A",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_NA_P1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "F_EXC",
+          "D": "NAND_A",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_DB2_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DB1",
+          "D": "F_EXC_B_D",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T3_S2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "DIV8",
+          "G": "DIV4_I_B",
+          "D": "T3_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_DB1_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "F_EXC_B",
+          "D": "DB1",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T3_S4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV8",
+          "D": "DIV8_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T3_S5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV4_I",
+          "D": "T3_NSP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T3_S6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T3_NSP",
+          "G": "DIV8_B",
+          "D": "DIV8",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_DA2_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DA1",
+          "D": "F_EXC_D",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T1I_S6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T1I_NSP",
+          "G": "DIV2_I_B",
+          "D": "DIV2_I",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MXFQ_P1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "FREQ_SEL",
+          "D": "MXFQ_SELB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4I_M2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T4I_M",
+          "G": "DIV8",
+          "D": "DIV16_I_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MXFI_P3",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "REF_I",
+          "G": "MXFI_SELB",
+          "D": "DIV16_I",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4I_M4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "T4I_M",
+          "D": "T4I_MB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4I_M5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV8_B",
+          "D": "T4I_NMP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4I_M6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T4I_NMP",
+          "G": "T4I_MB",
+          "D": "T4I_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MPU3",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "NS3",
+          "G": "VCO2",
+          "D": "VCO3",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MXFI_P2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "REF_I",
+          "G": "FREQ_SEL",
+          "D": "DIV4_I",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MXFI_P1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "FREQ_SEL",
+          "D": "MXFI_SELB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4I_S2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "DIV16_I",
+          "G": "DIV8_B",
+          "D": "T4I_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MPU4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "NS4",
+          "G": "VCO3",
+          "D": "VCO4",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4I_S4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV16_I",
+          "D": "DIV16_I_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4I_S5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV8",
+          "D": "T4I_NSP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4I_S6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T4I_NSP",
+          "G": "DIV16_I_B",
+          "D": "DIV16_I",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MPU5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "NS5",
+          "G": "VCO4",
+          "D": "VCO5",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4Q_S6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T4Q_NSP",
+          "G": "DIV16_Q_B",
+          "D": "DIV16_Q",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4Q_S5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV8_B",
+          "D": "T4Q_NSP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4Q_M2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T4Q_M",
+          "G": "DIV8_B",
+          "D": "DIV16_Q_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4Q_S4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV16_Q",
+          "D": "DIV16_Q_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4Q_M4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "T4Q_M",
+          "D": "T4Q_MB",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4Q_M5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "DIV8",
+          "D": "T4Q_NMP",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "T4Q_M6",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "T4Q_NMP",
+          "G": "T4Q_MB",
+          "D": "T4Q_M",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_DA1_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "F_EXC",
+          "D": "DA1",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MDAC_TG1P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "DAC_OUT",
+          "G": "LAT_QB",
+          "D": "DAC_HI",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
         "name": "MBP1",
         "class": "SG13_LV_PMOS",
         "terminals": {
@@ -201,119 +2903,893 @@
           "B": "VDD"
         },
         "bulk_ok": true
+      },
+      {
+        "name": "INV_ISO_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "VCO_OUT",
+          "D": "VCO_BUF",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "SW1P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "EXC_OUT",
+          "G": "SEL0B",
+          "D": "SRC1",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "SW2P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "EXC_OUT",
+          "G": "SEL1B",
+          "D": "SRC2",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "SW3P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "EXC_OUT",
+          "G": "SEL2B",
+          "D": "SRC3",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_INV0_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "F_EXC",
+          "D": "F_EXC_B",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_IA_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "NAND_A",
+          "D": "PHI_P",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MCHOP2P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "CHOP_OUT",
+          "G": "F_EXC",
+          "D": "SENS_N",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MCHOP1P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "CHOP_OUT",
+          "G": "F_EXC_B",
+          "D": "SENS_P",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_IB_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "NAND_B",
+          "D": "PHI_N",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MDAC_TG2P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "DAC_OUT",
+          "G": "LAT_Q",
+          "D": "DAC_LO",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MBP2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "BUF1",
+          "D": "VCO_OUT",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM_PDIODE",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "PMOS_BIAS",
+          "D": "PMOS_BIAS",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "M_BIAS_MIR",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "PMOS_BIAS",
+          "D": "BIAS_N",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM_CAS1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "CAS1",
+          "G": "VCAS",
+          "D": "SRC1",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM_CAS_DIODE",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "CAS_REF",
+          "G": "VCAS",
+          "D": "VCAS",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM_CAS2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "CAS2",
+          "G": "VCAS",
+          "D": "SRC2",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MPB5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "PMOS_BIAS",
+          "D": "NS5",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM_CAS3",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "CAS3",
+          "G": "VCAS",
+          "D": "SRC3",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MPB4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "PMOS_BIAS",
+          "D": "NS4",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MPB3",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "PMOS_BIAS",
+          "D": "NS3",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MPB2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "PMOS_BIAS",
+          "D": "NS2",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MPB1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "PMOS_BIAS",
+          "D": "NS1",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MP_LOAD_P",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "MID_P",
+          "D": "MID_P",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "MP_LOAD_N",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "MID_P",
+          "D": "OTA_OUT",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM_CAS_REF",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "NET_C1",
+          "D": "CAS_REF",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM_MIR1",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "NET_C1",
+          "D": "CAS1",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM_MIR2",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "NET_C1",
+          "D": "CAS2",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM_MIR3",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "NET_C1",
+          "D": "CAS3",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM5",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "NET_C1",
+          "D": "VPTAT",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM_REF",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "NET_C1",
+          "D": "NMOS_BIAS",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM4",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "NET_C1",
+          "D": "NET_C2",
+          "B": "VDD"
+        },
+        "bulk_ok": true
+      },
+      {
+        "name": "PM3",
+        "class": "SG13_LV_PMOS",
+        "terminals": {
+          "S": "VDD",
+          "G": "NET_C1",
+          "D": "NET_C1",
+          "B": "VDD"
+        },
+        "bulk_ok": true
       }
     ],
-    "ref_only_count": 11,
-    "ext_only_count": 9
+    "ref_only_count": 141,
+    "ext_only_count": 159
   },
   "pmos_bulk": {
-    "ref_only_pmos": 2,
+    "ref_only_pmos": 123,
     "wrong_bulk": [
       {
-        "name": "$240",
-        "bulk": "$160"
+        "name": "$45",
+        "bulk": "$267"
+      },
+      {
+        "name": "$46",
+        "bulk": "$267"
+      },
+      {
+        "name": "$3",
+        "bulk": "$122"
+      },
+      {
+        "name": "$205",
+        "bulk": "$439"
+      },
+      {
+        "name": "$116",
+        "bulk": "$946"
+      },
+      {
+        "name": "$117",
+        "bulk": "$946"
+      },
+      {
+        "name": "$236",
+        "bulk": "$1"
+      },
+      {
+        "name": "$114",
+        "bulk": "$951"
+      },
+      {
+        "name": "$235",
+        "bulk": "$713"
+      },
+      {
+        "name": "$112",
+        "bulk": "$709"
+      },
+      {
+        "name": "$111",
+        "bulk": "$1014"
+      },
+      {
+        "name": "$109",
+        "bulk": "$1014"
+      },
+      {
+        "name": "$107",
+        "bulk": "$1014"
+      },
+      {
+        "name": "$104",
+        "bulk": "$1018"
+      },
+      {
+        "name": "$102",
+        "bulk": "$1018"
+      },
+      {
+        "name": "$100",
+        "bulk": "$709"
+      },
+      {
+        "name": "$99",
+        "bulk": "$709"
+      },
+      {
+        "name": "$98",
+        "bulk": "$713"
+      },
+      {
+        "name": "$96",
+        "bulk": "$1018"
+      },
+      {
+        "name": "$95",
+        "bulk": "$713"
+      },
+      {
+        "name": "$132",
+        "bulk": "$709"
+      },
+      {
+        "name": "$87",
+        "bulk": "$946"
+      },
+      {
+        "name": "$85",
+        "bulk": "$850"
+      },
+      {
+        "name": "$135",
+        "bulk": "$600"
+      },
+      {
+        "name": "$136",
+        "bulk": "$1"
+      },
+      {
+        "name": "$137",
+        "bulk": "$1"
+      },
+      {
+        "name": "$138",
+        "bulk": "$850"
+      },
+      {
+        "name": "$139",
+        "bulk": "$850"
+      },
+      {
+        "name": "$140",
+        "bulk": "$850"
+      },
+      {
+        "name": "$234",
+        "bulk": "$1"
+      },
+      {
+        "name": "$233",
+        "bulk": "$951"
+      },
+      {
+        "name": "$118",
+        "bulk": "$946"
+      },
+      {
+        "name": "$231",
+        "bulk": "$499"
+      },
+      {
+        "name": "$145",
+        "bulk": "$1"
+      },
+      {
+        "name": "$146",
+        "bulk": "$1"
+      },
+      {
+        "name": "$79",
+        "bulk": "$600"
+      },
+      {
+        "name": "$78",
+        "bulk": "$600"
+      },
+      {
+        "name": "$227",
+        "bulk": "$499"
+      },
+      {
+        "name": "$77",
+        "bulk": "$600"
+      },
+      {
+        "name": "$151",
+        "bulk": "$439"
+      },
+      {
+        "name": "$226",
+        "bulk": "$507"
+      },
+      {
+        "name": "$69",
+        "bulk": "$318"
+      },
+      {
+        "name": "$154",
+        "bulk": "$439"
+      },
+      {
+        "name": "$18",
+        "bulk": "$1"
+      },
+      {
+        "name": "$19",
+        "bulk": "$1"
+      },
+      {
+        "name": "$157",
+        "bulk": "$439"
+      },
+      {
+        "name": "$20",
+        "bulk": "$1"
+      },
+      {
+        "name": "$67",
+        "bulk": "$321"
+      },
+      {
+        "name": "$160",
+        "bulk": "$439"
+      },
+      {
+        "name": "$22",
+        "bulk": "$1"
+      },
+      {
+        "name": "$162",
+        "bulk": "$1058"
+      },
+      {
+        "name": "$163",
+        "bulk": "$1058"
+      },
+      {
+        "name": "$65",
+        "bulk": "$321"
+      },
+      {
+        "name": "$63",
+        "bulk": "$285"
+      },
+      {
+        "name": "$24",
+        "bulk": "$121"
+      },
+      {
+        "name": "$167",
+        "bulk": "$1021"
+      },
+      {
+        "name": "$216",
+        "bulk": "$1"
+      },
+      {
+        "name": "$60",
+        "bulk": "$318"
+      },
+      {
+        "name": "$170",
+        "bulk": "$951"
+      },
+      {
+        "name": "$171",
+        "bulk": "$870"
+      },
+      {
+        "name": "$172",
+        "bulk": "$870"
+      },
+      {
+        "name": "$173",
+        "bulk": "$870"
+      },
+      {
+        "name": "$174",
+        "bulk": "$870"
+      },
+      {
+        "name": "$175",
+        "bulk": "$863"
+      },
+      {
+        "name": "$176",
+        "bulk": "$863"
+      },
+      {
+        "name": "$177",
+        "bulk": "$863"
+      },
+      {
+        "name": "$178",
+        "bulk": "$863"
+      },
+      {
+        "name": "$58",
+        "bulk": "$285"
+      },
+      {
+        "name": "$180",
+        "bulk": "$1"
+      },
+      {
+        "name": "$214",
+        "bulk": "$609"
+      },
+      {
+        "name": "$213",
+        "bulk": "$609"
+      },
+      {
+        "name": "$212",
+        "bulk": "$609"
+      },
+      {
+        "name": "$47",
+        "bulk": "$285"
+      },
+      {
+        "name": "$44",
+        "bulk": "$285"
+      },
+      {
+        "name": "$42",
+        "bulk": "$122"
+      },
+      {
+        "name": "$41",
+        "bulk": "$122"
+      },
+      {
+        "name": "$40",
+        "bulk": "$122"
+      },
+      {
+        "name": "$189",
+        "bulk": "$1"
+      },
+      {
+        "name": "$190",
+        "bulk": "$1"
+      },
+      {
+        "name": "$191",
+        "bulk": "$1"
+      },
+      {
+        "name": "$192",
+        "bulk": "$1"
+      },
+      {
+        "name": "$193",
+        "bulk": "$758"
+      },
+      {
+        "name": "$194",
+        "bulk": "$758"
+      },
+      {
+        "name": "$195",
+        "bulk": "$758"
+      },
+      {
+        "name": "$196",
+        "bulk": "$758"
+      },
+      {
+        "name": "$211",
+        "bulk": "$609"
+      },
+      {
+        "name": "$210",
+        "bulk": "$613"
+      },
+      {
+        "name": "$209",
+        "bulk": "$613"
+      },
+      {
+        "name": "$208",
+        "bulk": "$613"
+      },
+      {
+        "name": "$207",
+        "bulk": "$613"
+      },
+      {
+        "name": "$206",
+        "bulk": "$713"
+      },
+      {
+        "name": "$115",
+        "bulk": "$951"
+      },
+      {
+        "name": "$4",
+        "bulk": "$1"
+      },
+      {
+        "name": "$229",
+        "bulk": "$507"
+      },
+      {
+        "name": "$149",
+        "bulk": "$439"
+      },
+      {
+        "name": "$34",
+        "bulk": "$192"
+      },
+      {
+        "name": "$35",
+        "bulk": "$191"
+      },
+      {
+        "name": "$36",
+        "bulk": "$190"
+      },
+      {
+        "name": "$39",
+        "bulk": "$122"
+      },
+      {
+        "name": "$53",
+        "bulk": "$126"
+      },
+      {
+        "name": "$55",
+        "bulk": "$30"
+      },
+      {
+        "name": "$68",
+        "bulk": "$207"
+      },
+      {
+        "name": "$166",
+        "bulk": "$1021"
+      },
+      {
+        "name": "$62",
+        "bulk": "$31"
+      },
+      {
+        "name": "$1",
+        "bulk": "$439"
+      },
+      {
+        "name": "$81",
+        "bulk": "$338"
+      },
+      {
+        "name": "$2",
+        "bulk": "$63"
+      },
+      {
+        "name": "$33",
+        "bulk": "$229"
+      },
+      {
+        "name": "$31",
+        "bulk": "$230"
+      },
+      {
+        "name": "$29",
+        "bulk": "$237"
+      },
+      {
+        "name": "$28",
+        "bulk": "$238"
+      },
+      {
+        "name": "$215",
+        "bulk": "$439"
+      },
+      {
+        "name": "$161",
+        "bulk": "$439"
+      },
+      {
+        "name": "$158",
+        "bulk": "$439"
+      },
+      {
+        "name": "$155",
+        "bulk": "$439"
+      },
+      {
+        "name": "$152",
+        "bulk": "$439"
+      },
+      {
+        "name": "$57",
+        "bulk": "$1"
+      },
+      {
+        "name": "$26",
+        "bulk": "$257"
+      },
+      {
+        "name": "$32",
+        "bulk": "$257"
+      },
+      {
+        "name": "$30",
+        "bulk": "$257"
+      },
+      {
+        "name": "$13",
+        "bulk": "$266"
+      },
+      {
+        "name": "$83",
+        "bulk": "$1"
+      },
+      {
+        "name": "$84",
+        "bulk": "$1"
       }
     ],
-    "correct_bulk_unmatched": 1
+    "correct_bulk_unmatched": 0
   },
   "device_classes": {
     "ref_only": {
       "cap_cmim": 3,
-      "rhigh": 4,
-      "sg13_lv_nmos": 2,
-      "sg13_lv_pmos": 2
+      "sg13_lv_nmos": 15,
+      "sg13_lv_pmos": 123
     },
     "ext_only": {
       "CAP_CMIM": 3,
       "RHIGH": 4,
-      "SG13_LV_NMOS": 1,
-      "SG13_LV_PMOS": 1
+      "SG13_LV_NMOS": 26,
+      "SG13_LV_PMOS": 126
     }
   },
   "nets": {
-    "matched": 87,
-    "ref_only": 278,
-    "ext_only": 58,
-    "ref_only_named": [
-      "bias_n",
-      "buf1,vco5",
-      "buf_ref_Q",
-      "c_di_n",
-      "c_di_p",
-      "c_tail",
-      "chop_out",
-      "comp_clk",
-      "comp_outn",
-      "comp_outp",
-      "da1",
-      "dac_hi",
-      "dac_lo",
-      "dac_out",
-      "db1",
-      "div16_I_b",
-      "div16_Q",
-      "div16_Q_b",
-      "div2_I_b",
-      "div2_Q",
-      "div2_Q_b",
-      "div4_I",
-      "div4_I_b",
-      "div4_Q",
-      "div4_Q_b",
-      "div8",
-      "div8_b",
-      "f_exc",
-      "f_exc_b",
-      "f_exc_b_d",
-      "f_exc_d",
-      "freq_sel",
-      "iq_sel",
-      "lat_q",
-      "lat_qb",
-      "mid_p",
-      "mxfi_selb",
-      "mxfq_selb",
-      "mxiq_selb",
-      "na_mid",
-      "nand_a",
-      "nand_b",
-      "nb_mid",
-      "net_c1",
-      "net_rptat",
-      "ns5,vco_out",
-      "phi_n",
-      "phi_p",
-      "pmos_bias",
-      "probe_n",
-      "probe_p",
-      "ref_I",
-      "ref_Q",
-      "sens_n",
-      "sens_p",
-      "sum_n",
-      "t1I_mb",
-      "t1Q_m",
-      "t1Q_mb",
-      "t2I_m",
-      "t2I_mb",
-      "t2Q_mb",
-      "t2Q_nsn",
-      "t3_mb",
-      "t3_nsn",
-      "t4I_m",
-      "t4I_mb",
-      "t4Q_mb",
-      "vco_b",
-      "vco_buf",
-      "vco_buf_b"
-    ],
-    "ref_only_anon_count": 207,
+    "matched": 0,
+    "ref_only": 491,
+    "ext_only": 145,
+    "ref_only_named": [],
+    "ref_only_anon_count": 491,
     "ext_only_named": [
+      "BIAS_N",
       "BUF1",
+      "BUF_REF_I",
       "BUF_REF_Q",
+      "CAS1",
+      "CAS2",
+      "CAS3",
+      "CAS_REF",
       "CHOP_OUT",
       "COMP_CLK",
       "COMP_OUTN",
+      "COMP_OUTP",
       "C_DI_N",
       "C_DI_P",
       "C_TAIL",
@@ -322,419 +3798,147 @@
       "DAC_LO",
       "DAC_OUT",
       "DB1",
+      "DIV16_I",
       "DIV16_I_B",
+      "DIV16_Q",
       "DIV16_Q_B",
+      "DIV2_I",
       "DIV2_I_B",
+      "DIV2_Q",
       "DIV2_Q_B",
+      "DIV4_I",
       "DIV4_I_B",
+      "DIV4_Q",
       "DIV4_Q_B",
+      "DIV8",
       "DIV8_B",
+      "EXC_OUT",
       "FREQ_SEL",
       "F_EXC",
       "F_EXC_B",
       "F_EXC_B_D",
       "F_EXC_D",
+      "GND",
       "IQ_SEL",
+      "LAT_Q",
       "LAT_QB",
+      "MID_P",
       "MXFI_SELB",
       "MXFQ_SELB",
       "MXIQ_SELB",
+      "N1_MID",
+      "N2_MID",
       "NAND_A",
       "NAND_B",
       "NA_MID",
+      "NB1",
+      "NB2",
+      "NB3",
+      "NB4",
+      "NB5",
       "NB_MID",
+      "NET_C1",
+      "NET_C2",
       "NET_RPTAT",
+      "NMOS_BIAS",
+      "NS1",
+      "NS2",
+      "NS3",
+      "NS4",
       "NS5",
+      "OTA_OUT",
       "PHI_N",
       "PHI_P",
+      "PMOS_BIAS",
       "PROBE_N",
       "PROBE_P",
       "REF_I",
       "REF_Q",
+      "SEL0",
+      "SEL0B",
+      "SEL1",
+      "SEL1B",
+      "SEL2",
+      "SEL2B",
       "SENS_N",
       "SENS_P",
+      "SRC1",
+      "SRC2",
+      "SRC3",
+      "SUM_N",
+      "T1I_M",
       "T1I_MB",
+      "T1I_NMN",
+      "T1I_NMP",
+      "T1I_NSN",
+      "T1I_NSP",
+      "T1Q_M",
       "T1Q_MB",
+      "T1Q_NMN",
+      "T1Q_NMP",
+      "T1Q_NSN",
+      "T1Q_NSP",
+      "T2I_M",
       "T2I_MB",
+      "T2I_NMN",
+      "T2I_NMP",
+      "T2I_NSN",
+      "T2I_NSP",
+      "T2Q_M",
       "T2Q_MB",
+      "T2Q_NMN",
+      "T2Q_NMP",
       "T2Q_NSN",
+      "T2Q_NSP",
+      "T3_M",
       "T3_MB",
+      "T3_NMN",
+      "T3_NMP",
       "T3_NSN",
+      "T3_NSP",
+      "T4I_M",
       "T4I_MB",
+      "T4I_NMN",
+      "T4I_NMP",
+      "T4I_NSN",
+      "T4I_NSP",
+      "T4Q_M",
       "T4Q_MB",
+      "T4Q_NMN",
+      "T4Q_NMP",
+      "T4Q_NSN",
+      "T4Q_NSP",
+      "TAIL",
+      "VCAS",
+      "VCO1",
+      "VCO2",
+      "VCO3",
+      "VCO4",
+      "VCO5",
       "VCO_B",
       "VCO_BUF",
       "VCO_BUF_B",
       "VCO_OUT",
-      "VPTAT"
+      "VDD",
+      "VPTAT",
+      "VREF_COMP",
+      "VREF_OTA"
     ],
-    "comma_merges": [
-      "buf1,vco5",
-      "ns5,vco_out"
-    ],
-    "matched_pairs": [
-      {
-        "ref": "$32",
-        "ext": "BIAS_N"
-      },
-      {
-        "ref": "$156",
-        "ext": "COMP_OUTP"
-      },
-      {
-        "ref": "$396",
-        "ext": "DIV16_Q"
-      },
-      {
-        "ref": "$310",
-        "ext": "DIV2_Q"
-      },
-      {
-        "ref": "$374",
-        "ext": "DIV4_I"
-      },
-      {
-        "ref": "$423",
-        "ext": "DIV4_Q"
-      },
-      {
-        "ref": "$300",
-        "ext": "DIV8"
-      },
-      {
-        "ref": "$161",
-        "ext": "LAT_Q"
-      },
-      {
-        "ref": "$60",
-        "ext": "MID_P"
-      },
-      {
-        "ref": "$138",
-        "ext": "NET_C1"
-      },
-      {
-        "ref": "$162",
-        "ext": "PMOS_BIAS"
-      },
-      {
-        "ref": "$3",
-        "ext": "SUM_N"
-      },
-      {
-        "ref": "$312",
-        "ext": "T1Q_M"
-      },
-      {
-        "ref": "$390",
-        "ext": "T2I_M"
-      },
-      {
-        "ref": "$355",
-        "ext": "T4I_M"
-      },
-      {
-        "ref": "$199",
-        "ext": "VCO5"
-      },
-      {
-        "ref": "buf_ref_I",
-        "ext": "BUF_REF_I"
-      },
-      {
-        "ref": "cas1",
-        "ext": "CAS1"
-      },
-      {
-        "ref": "cas2",
-        "ext": "CAS2"
-      },
-      {
-        "ref": "cas3",
-        "ext": "CAS3"
-      },
-      {
-        "ref": "cas_ref",
-        "ext": "CAS_REF"
-      },
-      {
-        "ref": "div16_I",
-        "ext": "DIV16_I"
-      },
-      {
-        "ref": "div2_I",
-        "ext": "DIV2_I"
-      },
-      {
-        "ref": "exc_out",
-        "ext": "EXC_OUT"
-      },
-      {
-        "ref": "gnd",
-        "ext": "GND"
-      },
-      {
-        "ref": "n1_mid",
-        "ext": "N1_MID"
-      },
-      {
-        "ref": "n2_mid",
-        "ext": "N2_MID"
-      },
-      {
-        "ref": "nb1",
-        "ext": "NB1"
-      },
-      {
-        "ref": "nb2",
-        "ext": "NB2"
-      },
-      {
-        "ref": "nb3",
-        "ext": "NB3"
-      },
-      {
-        "ref": "nb4",
-        "ext": "NB4"
-      },
-      {
-        "ref": "nb5",
-        "ext": "NB5"
-      },
-      {
-        "ref": "net_c2",
-        "ext": "NET_C2"
-      },
-      {
-        "ref": "nmos_bias",
-        "ext": "NMOS_BIAS"
-      },
-      {
-        "ref": "ns1",
-        "ext": "NS1"
-      },
-      {
-        "ref": "ns2",
-        "ext": "NS2"
-      },
-      {
-        "ref": "ns3",
-        "ext": "NS3"
-      },
-      {
-        "ref": "ns4",
-        "ext": "NS4"
-      },
-      {
-        "ref": "ota_out",
-        "ext": "OTA_OUT"
-      },
-      {
-        "ref": "sel0",
-        "ext": "SEL0"
-      },
-      {
-        "ref": "sel0b",
-        "ext": "SEL0B"
-      },
-      {
-        "ref": "sel1",
-        "ext": "SEL1"
-      },
-      {
-        "ref": "sel1b",
-        "ext": "SEL1B"
-      },
-      {
-        "ref": "sel2",
-        "ext": "SEL2"
-      },
-      {
-        "ref": "sel2b",
-        "ext": "SEL2B"
-      },
-      {
-        "ref": "src1",
-        "ext": "SRC1"
-      },
-      {
-        "ref": "src2",
-        "ext": "SRC2"
-      },
-      {
-        "ref": "src3",
-        "ext": "SRC3"
-      },
-      {
-        "ref": "t1I_m",
-        "ext": "T1I_M"
-      },
-      {
-        "ref": "t1I_nmn",
-        "ext": "T1I_NMN"
-      },
-      {
-        "ref": "t1I_nmp",
-        "ext": "T1I_NMP"
-      },
-      {
-        "ref": "t1I_nsn",
-        "ext": "T1I_NSN"
-      },
-      {
-        "ref": "t1I_nsp",
-        "ext": "T1I_NSP"
-      },
-      {
-        "ref": "t1Q_nmn",
-        "ext": "T1Q_NMN"
-      },
-      {
-        "ref": "t1Q_nmp",
-        "ext": "T1Q_NMP"
-      },
-      {
-        "ref": "t1Q_nsn",
-        "ext": "T1Q_NSN"
-      },
-      {
-        "ref": "t1Q_nsp",
-        "ext": "T1Q_NSP"
-      },
-      {
-        "ref": "t2I_nmn",
-        "ext": "T2I_NMN"
-      },
-      {
-        "ref": "t2I_nmp",
-        "ext": "T2I_NMP"
-      },
-      {
-        "ref": "t2I_nsn",
-        "ext": "T2I_NSN"
-      },
-      {
-        "ref": "t2I_nsp",
-        "ext": "T2I_NSP"
-      },
-      {
-        "ref": "t2Q_m",
-        "ext": "T2Q_M"
-      },
-      {
-        "ref": "t2Q_nmn",
-        "ext": "T2Q_NMN"
-      },
-      {
-        "ref": "t2Q_nmp",
-        "ext": "T2Q_NMP"
-      },
-      {
-        "ref": "t2Q_nsp",
-        "ext": "T2Q_NSP"
-      },
-      {
-        "ref": "t3_m",
-        "ext": "T3_M"
-      },
-      {
-        "ref": "t3_nmn",
-        "ext": "T3_NMN"
-      },
-      {
-        "ref": "t3_nmp",
-        "ext": "T3_NMP"
-      },
-      {
-        "ref": "t3_nsp",
-        "ext": "T3_NSP"
-      },
-      {
-        "ref": "t4I_nmn",
-        "ext": "T4I_NMN"
-      },
-      {
-        "ref": "t4I_nmp",
-        "ext": "T4I_NMP"
-      },
-      {
-        "ref": "t4I_nsn",
-        "ext": "T4I_NSN"
-      },
-      {
-        "ref": "t4I_nsp",
-        "ext": "T4I_NSP"
-      },
-      {
-        "ref": "t4Q_m",
-        "ext": "T4Q_M"
-      },
-      {
-        "ref": "t4Q_nmn",
-        "ext": "T4Q_NMN"
-      },
-      {
-        "ref": "t4Q_nmp",
-        "ext": "T4Q_NMP"
-      },
-      {
-        "ref": "t4Q_nsn",
-        "ext": "T4Q_NSN"
-      },
-      {
-        "ref": "t4Q_nsp",
-        "ext": "T4Q_NSP"
-      },
-      {
-        "ref": "tail",
-        "ext": "TAIL"
-      },
-      {
-        "ref": "vcas",
-        "ext": "VCAS"
-      },
-      {
-        "ref": "vco1",
-        "ext": "VCO1"
-      },
-      {
-        "ref": "vco2",
-        "ext": "VCO2"
-      },
-      {
-        "ref": "vco3",
-        "ext": "VCO3"
-      },
-      {
-        "ref": "vco4",
-        "ext": "VCO4"
-      },
-      {
-        "ref": "vdd",
-        "ext": "VDD"
-      },
-      {
-        "ref": "vref_comp",
-        "ext": "VREF_COMP"
-      },
-      {
-        "ref": "vref_ota",
-        "ext": "VREF_OTA"
-      }
-    ]
+    "comma_merges": [],
+    "matched_pairs": []
   },
   "pins": {
-    "matched": 216,
+    "matched": 486,
     "mismatched": 0
   },
   "summary": {
-    "devices_matched": 246,
-    "devices_unmatched": 20,
-    "nets_matched": 87,
-    "nets_unmatched": 336,
-    "comma_merges": 2,
-    "wrong_bulk_pmos": 1,
-    "pins_matched": 216,
+    "devices_matched": 96,
+    "devices_unmatched": 300,
+    "nets_matched": 0,
+    "nets_unmatched": 636,
+    "comma_merges": 0,
+    "wrong_bulk_pmos": 123,
+    "pins_matched": 486,
     "pins_mismatched": 0
   }
 }
