@@ -26,7 +26,8 @@ Spin up an Aliyun ECS spot instance for Magic VLSI IC layout routing and LVS ver
 | VSwitch | vsw-bp17mn8ivkpxno8wfatrz | cn-hangzhou-j |
 | Security Group | sg-bp1a7pk4m1umj1nejjs4 | SSH 22 open |
 | Key Pair | gem-verify | Private: `~/.ssh/gem-verify.pem` |
-| Custom Image | m-bp1ggcaq0hx2jsi2479m | ic-magic-20260317 (Magic8.3+Netgen+IHP-PDK+Python3) |
+| Custom Image | m-bp12fk5utga3kbvre90j | ic-magic-klayout-20260318 (Magic+Netgen+KLayout+IHP-PDK) |
+| Old Image | m-bp1ggcaq0hx2jsi2479m | ic-magic-20260317 (no KLayout) |
 | SSH shorthand | `ssh -i ~/.ssh/gem-verify.pem root@<IP>` | |
 
 ## Instance Specs
