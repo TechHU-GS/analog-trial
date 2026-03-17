@@ -26,6 +26,7 @@ Spin up an Aliyun ECS spot instance for Magic VLSI IC layout routing and LVS ver
 | VSwitch | vsw-bp17mn8ivkpxno8wfatrz | cn-hangzhou-j |
 | Security Group | sg-bp1a7pk4m1umj1nejjs4 | SSH 22 open |
 | Key Pair | gem-verify | Private: `~/.ssh/gem-verify.pem` |
+| Custom Image | m-bp1ggcaq0hx2jsi2479m | ic-magic-20260317 (Magic8.3+Netgen+IHP-PDK+Python3) |
 | SSH shorthand | `ssh -i ~/.ssh/gem-verify.pem root@<IP>` | |
 
 ## Instance Specs
@@ -50,6 +51,7 @@ aliyun ecs DescribeImages --RegionId cn-hangzhou --ImageOwnerAlias self \
 ```
 
 - If `ic-magic-*` image exists → use it (skip Step 3 setup)
+- Current image: `m-bp1ggcaq0hx2jsi2479m` (ic-magic-20260317)
 - If no image → use base: `ubuntu_22_04_x64_20G_alibase_20260213.vhd`
 
 #### Step 2: Create spot instance
