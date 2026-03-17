@@ -364,10 +364,10 @@ def generate(netlist_path='netlist.json',
                 mag.append(f'rect {nm(m1[0])} {nm(m1[1])} {nm(m1[2])} {nm(m1[3])}')
             m2 = via_pad.get('m2')
             if m2:
-                # Expand M2 pad to 950nm (±475nm) — server sweep found optimal
+                # M2 pad ±440nm — 192-core sweep of 36720 variants, peak at 440
                 cx = (m2[0] + m2[2]) // 2
                 cy = (m2[1] + m2[3]) // 2
-                M2_HS = 475  # half-size nm, swept 200-1000, peak at 450-475
+                M2_HS = 440  # swept 200-1000nm, peak 440 (228/255)
                 emit_layer('metal2')
                 mag.append(f'rect {nm(cx-M2_HS)} {nm(cy-M2_HS)} '
                            f'{nm(cx+M2_HS)} {nm(cy+M2_HS)}')
