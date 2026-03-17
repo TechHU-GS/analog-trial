@@ -2,6 +2,101 @@
 
 > Read this after compact to restore context.
 
+## ★ COMPACT 入口 (2026-03-18 Session 2+3 成果)
+
+### 核心成果
+- **LVS**: 126/255 (49%) → 252/255 (98.8%) [strip PCell M2] 或 230/255 (90%) [no-strip]
+- **KLayout DRC**: ~10K [strip] 或 2164-4006 [no-strip]
+- **GA 进化路由**: 192-core ECS, 50 gen × 1.6s = 80s 完成
+- **Magic + Netgen LVS pipeline 全自动**
+- **84 commits**
+
+### 当前瓶颈: Metal 层分配错误
+
+**ATK routing.json 的 signal routing 55% 在 M1+M2 (device 层), 44% 在 M3+M4:**
+```
+M1: 93 segments  ← device PCell 也用 M1 → 冲突
+M2: 747 segments ← device PCell 也用 M2 → 冲突 (核心问题)
+M3: 223 segments (主要是 power)
+M4: 443 segments
+M5-M7: 0 ← 3层完全空闲!
+```
+
+**Strip M2 vs No-strip trade-off (不可调和):**
+| | Strip PCell M2 | No Strip (正确) |
+|---|---|---|
+| LVS (GA) | 252/255 ✅ | 230/255 |
+| KLayout DRC | ~10K ❌ (M1 geometry broken) | 2164-4006 |
+| 可制造 | ❌ 缺 via1+M2 | ✅ PCell 完整 |
+
+**结论: strip 是错误路径。no-strip 是唯一可行方向。但 no-strip 下 M2 routing 和 device M2 冲突导致 LVS-DRC 互斥。**
+
+### 已验证的技术 (可复用)
+1. **GA evolutionary router** — 192 population, segment include/exclude, 50 gen 收敛
+2. **strip_pcell_m2.py** — PCell via1+M2 strip (LVS 有效但 DRC 不行)
+3. **M1 stubs** — device pin → AP via1 连接 (gen_magic_layout.py)
+4. **M2 pad size sweep** — 36720 variants, optimal 440nm
+5. **KLayout Python DRC** — check_drc.py via subprocess (M1.a/b, M2.a/b, V1.a)
+6. **SPICE X→M conversion** — convert_spice_for_netgen()
+7. **Parasitic filter** — remove W<100nm or L<100nm devices
+
+### 待解决的核心问题
+**Signal routing 需要从 M1/M2 移到更高层 (M4/M5 或 M3/M4)**
+
+这不是参数调优能解决的 — GA 已证明 ATK routing.json 的 Pareto 极限。
+需要重新生成 routing 在正确的 metal 层上。
+
+**具体挑战:**
+1. Via stack: device M2 → via2 → M3 → via3 → M4 — M3 有 power rails 可能挡路
+2. M4+M5 routing 的 cross-net — 需要 H+V 分层或 obstacle avoidance
+3. 没有现成的 M4+M5 maze router — ATK 不支持，qrouter 不适合模拟
+4. IHP 有 7 层 metal (M1-M5 + TopMetal1/2) 但我们只用了 M1-M4
+
+**可能的方向:**
+- A) 改 ATK maze router 的层分配 (M2 routing → M4, 保留 M3 power)
+- B) 写新 router 直接在 M4+M5 上 route (用 GA 优化)
+- C) Power 移到 M5/TopMetal, 腾出 M3 给 signal via stack
+- D) 用 GA 直接进化 routing geometry (不限于现有 segments)
+
+### Pipeline (当前)
+```
+netlist.json + placement.json + device_lib_magic.json
+    ↓
+gen_magic_layout.py → soilz.mag (devices + routing from routing.json)
+    ↓ (可选)
+strip_pcell_m2.py → 去掉 MOSFET via1+M2
+    ↓
+Magic flatten → extract → ext2spice → soilz_flat.spice
+    ↓
+convert X→M + parasitic filter → soilz_clean.spice
+    ↓
+Netgen LVS: soilz_clean vs soilz_lvs.spice → comp.out
+    ↓
+KLayout Python DRC: check_drc.py on GDS → violation count
+```
+
+### ECS 服务器
+- **Image**: m-bp12fk5utga3kbvre90j (Magic+Netgen+KLayout+IHP-PDK)
+- **推荐**: ecs.c8a.48xlarge (192C/384G) ~3 CNY/h spot
+- **Skill**: .claude/skills/ecs-magic.md
+- **GA 性能**: 50 gen × 192 pop = 9600 variants in 80s (LVS-only) 或 ~13min (LVS+DRC)
+
+### 关键文件
+| 文件 | 作用 |
+|------|------|
+| layout/atk/gen_magic_layout.py | JSON → soilz.mag (devices + routing) |
+| layout/atk/strip_pcell_m2.py | Strip PCell via1+M2 (LVS 用, DRC 不行) |
+| layout/atk/ga_router.py | GA evolutionary router |
+| layout/atk/magic_net_router.py | Direct chain router (失败, 16/255) |
+| layout/output/ga_best_genome.json | GA 最佳 genome (strip 252) |
+| layout/output/nostrip_ga_best.json | GA 最佳 genome (no-strip 230) |
+| /tmp/check_drc.py | KLayout Python DRC (需要在 server 重建) |
+
+### #155 教训 (HARD RULE)
+- 所有 DRC violations 归因于自身 routing/placement, 不归因 PDK
+- PDK PCell 正确使用时 DRC clean, 不需要 waiver
+- 不编造验证结果, 不改写工具输出
+
 ---
 
 ## Current Status (2026-03-17 — Session 2, continued)
