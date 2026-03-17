@@ -175,8 +175,24 @@ SPICE X→M conversion → Netgen LVS → comp.out
 1. 开 ECS (image m-bp12fk5utga3kbvre90j)
 2. 跑 **no-strip GA**: fitness = LVS×10000 - KLayout_DRC
 3. python_drc 内联到 GA (fix multiprocessing)
-4. 找到 LVS ≥ 240 + KLayout DRC ≤ 100 的 Pareto optimal
-5. 然后再修剩余 DRC violations (M1.b placement, M2 routing)
+4. ✅ No-strip combined GA 已跑 (192C, 50 gen)
+
+**No-strip GA 结果 (PCell 完整, KLayout DRC, 已验证):**
+| GA 权重 | LVS | KLayout DRC |
+|---------|-----|-------------|
+| DRC-only | ~200 | **2164** |
+| Balanced (×5000) | **230** | 4006 |
+| LVS-heavy (×10000) | 227 | 3638 |
+
+**Pareto 极限已明确：当前 routing.json 下 LVS 和 DRC 互相矛盾。**
+- 更多 routing → LVS ↑ 但 DRC ↑（M2 routing 和 device M2 冲突）
+- 更少 routing → DRC ↓ 但 LVS ↓（连接断开）
+- 突破需要：routing 在 M3+ 层走（避开 device M2），或 placement 调整（M1 spacing）
+
+**下一步：**
+1. 分析 DRC 2164 中多少是 M1.b (placement) vs M2 (routing) — 决定是改 placement 还是改 routing 层
+2. 考虑 M3 signal routing（device M2 不冲突，但需要 via2 stack）
+3. 或调整 placement 增加 device 间距（减少 M1.b violations）
 
 **当前瓶颈: routing solver quality**
 - 576 extracted nets vs 145 reference → 太多 low-fanout 碎片 net
