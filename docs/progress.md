@@ -779,3 +779,4 @@ device 识别 100% 成功（之前 KLayout LVS 只识别 87%）。
 8. 修改前先 `cp file file.bak`
 9. 每完成 milestone 立即 commit
 10. 不在不完整 build 上声称 SUCCESS
+Netgen Tcl LVS working. Full loop: Magic→Netgen. 269 devices extracted, LVS mismatch (routing gap).
