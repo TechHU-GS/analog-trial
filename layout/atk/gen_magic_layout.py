@@ -253,7 +253,7 @@ def generate(netlist_path='netlist.json',
         placed += 1
 
     # Metal routing
-    WIRE_HW = {0: 150, 1: 150, 2: 150, 3: 150}  # nm
+    WIRE_HW = {0: 150, 1: 125, 2: 150, 3: 150}  # M2=125nm from 36720-variant sweep
     VIA_HS = {-1: 100, -2: 100, -3: 100}  # 100nm → 200nm via, avoids 180nm rounding
     LAYER_NAME = {0: 'metal1', 1: 'metal2', 2: 'metal3', 3: 'metal4',
                   -1: 'via1', -2: 'via2', -3: 'via3'}
