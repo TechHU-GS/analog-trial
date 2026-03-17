@@ -145,7 +145,21 @@ SPICE X→M conversion → Netgen LVS → comp.out
 - GA 50 代进化: 80 秒
 - 总费用: <10 CNY
 
-**下一步: 查最后 3 个 unmatched devices, 尝试 255/255**
+**Combined LVS+DRC GA (192C, 已验证):**
+- fitness = LVS×1000 - DRC, 100 generations
+- 结果: **LVS:252 + DRC:0** — 全部 100 代一致
+- DRC=0 因为 strip PCell M2 消除了 device 内部 DRC 源，routing DRC clean
+- 手动 SPICE fix 验证: 修 R/C terminal nets → 256/255 (全 match)
+- **255/255 拓扑可达，剩余 3 cap 需 routing 连到 pin (12-15µm gap)**
+
+**服务器已释放。镜像保留: m-bp1ggcaq0hx2jsi2479m (ic-magic-20260317)**
+**总费用: ~10 CNY**
+
+**下一步:**
+1. 给 C_fb.MINUS 加 M2→sum_n (12µm)
+2. 给 Cbyp_n.PLUS 加 M2→nmos_bias (15µm)
+3. 给 Cbyp_n.MINUS + Cbyp_p.MINUS 加 M3→GND
+4. 目标: 255/255 + DRC 0 = LVS clean
 
 **当前瓶颈: routing solver quality**
 - 576 extracted nets vs 145 reference → 太多 low-fanout 碎片 net
