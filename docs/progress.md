@@ -2,6 +2,91 @@
 
 > Read this after compact to restore context.
 
+## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
+
+### 关键发现
+
+1. **PDK 没问题（铁律确认）**
+   - 单个 PCell KLayout DRC: M1.a/b, M2.a/b, V1.a/b 全 CLEAN
+   - 验证: /tmp/pcell_drc_test/ 对照组 vs 实验组，IHP 官方 DRC 值
+
+2. **Magic DRC 不可靠 — 以后只用 KLayout DRC**
+   - Magic DRC 对单个正确 PCell 报 18-24 errors（M1.a/M1.b/M2.b）
+   - KLayout DRC 同一 PCell 报 0 errors（除 M1.d min area 4 个）
+   - 原因: Magic tech file DRC 规则和 IHP signoff 标准不一致
+
+3. **之前的 dev_*.mag 被 strip 过**
+   - /tmp/magic_soilz/dev_mn1.mag: 60 行，缺 via1+metal2
+   - Fresh PDK PCell: 82 行，完整 via1+metal2
+   - "bare placement 8158 errors" 是无效测试（测的被破坏的 PCell）
+
+4. **Placement 基本 clean**
+   - Clean PCell bare placement KLayout DRC: M1.b=1, M2.b=5, V1.b=17（共 23 inter-device）
+   - M1.d=998, M2.d=995 是 PCell 内部 min area（~4/device × 257）
+   - 23 个 inter-device violations 可微调解决，不是硬伤
+
+5. **IHP 官方 DRC 值（从 sg13g2_tech_default.json）**
+   - M1: width≥160nm, space≥180nm
+   - M2-M5: width≥200nm, space≥210nm
+   - V1-V4: width=190nm, space≥220nm
+   - TopMetal1: width≥1640nm, space≥1640nm
+   - TopMetal2: 禁止使用（TT power grid）
+
+### Placement Sweep (2026-03-18 11:45)
+
+**问题**: bare placement KLayout DRC = 23 inter-device violations (M1.b=1, M2.b=5, V1.b=17)
+
+**热点定位** (KLayout violation 坐标 → 器件映射):
+- Hot spot A: MBn2↔MBp2 区域 (X≈197, Y≈168-171) — 20 violations
+- Hot spot B: INV_isob_n↔Mpb1 区域 (X≈91, Y≈178) — 3 violations
+
+**Sweep 数据**:
+```
+Combined sweep: INV_isob dy=+1.0, MBp1+MBp2 dy=+N
+MBp_dy  M1.b  M2.b  V1.b  total
+  0.0     0     4    16     20
+  1.0     0     4     7     11
+  2.0     0     4     1      5
+  3.0     0     2     0      2
+  3.2     0     0     0      0  ← minimum clean
+  4.0     0     0     0      0
+```
+
+**修复方案** (sweep 验证, 最小位移):
+- MBp1 (194.5, 171.515) → (194.5, 174.715) [Y+3.2µm]
+- MBp2 (197.0, 171.5) → (197.0, 174.7) [Y+3.2µm]
+- INV_isob_n (90.0, 178.0) → (90.0, 179.0) [Y+1.0µm]
+- INV_isob_p (90.0, 181.5) → (90.0, 182.5) [Y+1.0µm]
+
+**验收**: bare placement KLayout DRC: M1.b=0, M2.b=0, V1.b=0, **total=0**
+**状态**: ⚠️ sweep 验证通过，placement.json 待写入（等用户确认）
+
+### 分区合理性分析 (2026-03-18 11:25)
+
+- 比较器输入对 2.76µm 纯 X 偏移 — 好
+- OTA 差分对 10.79µm 无共质心 — 30dB OTA 可接受 (assumption)
+- VCO↔OTA 边距 ~105µm — 足够
+- 数字分频↔OTA 同 Y 带 75µm — 中等风险，后续可加 guard ring
+- **结论: 分区功能合理，无硬伤**
+
+### Metal Stack 全貌
+```
+M1  (8/0)  — device PCell 占用，不能自由走线
+M2  (10/0) — device PCell via1+M2 占用
+M3  (30/0) — 当前 power rails
+M4  (50/0) — 部分 routing + 数字 pin 层
+M5  (67/0) — 空闲（但 cap_cmim bottom plate 在此层）
+TM1 (126/0) — analog pin + power stripe（min 1640nm 太粗）
+TM2 (134/0) — ❌ 禁止
+```
+
+### 下一步
+- 讨论 metal 分层策略（signal routing 在 M4+M5）
+- 修 23 个 inter-device placement violations（M1.b=1, M2.b=5, V1.b=17）
+- 重新生成 routing（不再用 ATK routing.json 的 M1/M2 segments）
+
+---
+
 ## ★ COMPACT 入口 (2026-03-18 Session 2+3 成果)
 
 ### 核心成果
