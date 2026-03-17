@@ -706,12 +706,29 @@ device 识别 100% 成功（之前 KLayout LVS 只识别 87%）。
 | Smart endpoint | 62 | 481 | 1 (149) | 比 global 差 |
 | ATK_MAGIC=1 routing | 38 | 754 | 1 (138) | 坐标混乱 |
 
-**下一步 (下个 session)**:
-1. 从 Magic PCell 提取正确 bbox (不含 checkpaint) + pin positions
-2. 更新 device_lib_magic.json 的 bbox
-3. 整个 pipeline (placement → ties → routing → assembly) 切换到 Magic 坐标
-4. 用 Magic DRC + extract 验证
-5. 安装 Netgen 做 LVS
+**Correct bbox extraction + shifted placement (2026-03-17 14:30):**
+- device_lib_magic.json bbox 从 geometry layers 提取 (排除 checkpaint) ✅
+- Shifted placement: per-type average offset 补偿 KLayout→Magic pin 差异
+- 结果: 68 devices fully connected (≥3 terminals), 152 partial, 18 none
+  - 1 mega-net (substrate 142) + 1 signal mega (82, net_c1 区域)
+  - ⚠️ "fully connected" 未验证是否连到正确 net
+
+**routing 策略实验汇总 (7 次迭代):**
+| # | 策略 | Full(≥3) | None | Mega | 评价 |
+|---|------|---------|------|------|------|
+| 1 | 简单 chain router | 0 | 274 | 0 | M1 覆盖但无 connectivity |
+| 2 | Global (无 transform) | 38 | 34 | 2(84,142) | 最佳无 mega |
+| 3 | Per-AP transform | - | - | 1(210) | cross-net merge |
+| 4 | Global + giant stubs | - | - | 2(481,320) | stubs 太大 |
+| 5 | Minimal stubs | 38 | 34 | 2(84,142) | 同 #2 |
+| 6 | ATK_MAGIC routing | 29 | 49 | 1(142) | 坐标混乱 |
+| 7 | **Shifted placement** | **68** | **18** | 2(82,142) | **最佳 connectivity** |
+
+**下一步**:
+1. Per-pin weighted shift (减少 mega-net, 优化 S pin 对齐)
+2. 或: 直接用 Magic pin 坐标重写 routing solver
+3. 安装 Netgen → LVS 验证已连接 nets 的正确性
+4. 迭代直到 LVS 指标稳定下降
 
 ### 教训（累积，每条都踩过坑）
 

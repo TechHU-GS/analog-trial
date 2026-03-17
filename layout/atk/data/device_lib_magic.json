@@ -1,10 +1,10 @@
 {
   "pmos_mirror": {
     "bbox": [
-      -35650,
-      -10620,
-      35650,
-      10620
+      -25650,
+      -620,
+      25650,
+      620
     ],
     "pins": {
       "D": {
@@ -38,7 +38,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 0.5,
@@ -49,10 +49,10 @@
   },
   "nmos_vittoz": {
     "bbox": [
-      -12350,
-      -11370,
-      12350,
-      11370
+      -2350,
+      -1370,
+      2350,
+      1370
     ],
     "pins": {
       "D": {
@@ -86,7 +86,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 2.0,
@@ -97,10 +97,10 @@
   },
   "nmos_vittoz8": {
     "bbox": [
-      -12350,
-      -18370,
-      12350,
-      18370
+      -2350,
+      -8370,
+      2350,
+      8370
     ],
     "pins": {
       "D": {
@@ -134,7 +134,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 16.0,
@@ -145,10 +145,10 @@
   },
   "rhigh_ptat": {
     "bbox": [
-      -11270,
-      -77950,
-      11270,
-      77950
+      -1270,
+      -67950,
+      1270,
+      67950
     ],
     "pins": {
       "B": {
@@ -170,7 +170,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "rhigh",
     "params": {
       "w": 0.5,
@@ -180,10 +180,10 @@
   },
   "nmos_bias": {
     "bbox": [
-      -11350,
-      -10870,
-      11350,
-      10870
+      -1350,
+      -870,
+      1350,
+      870
     ],
     "pins": {
       "D": {
@@ -217,7 +217,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 1.0,
@@ -228,10 +228,10 @@
   },
   "pmos_cs": {
     "bbox": [
-      -11650,
-      -10620,
-      11650,
-      10620
+      -1650,
+      -620,
+      1650,
+      620
     ],
     "pins": {
       "D": {
@@ -265,7 +265,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 0.5,
@@ -276,10 +276,10 @@
   },
   "rhigh_rout": {
     "bbox": [
-      -11270,
-      -61450,
-      11270,
-      61450
+      -1270,
+      -51450,
+      1270,
+      51450
     ],
     "pins": {
       "B": {
@@ -301,7 +301,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "rhigh",
     "params": {
       "w": 0.5,
@@ -312,10 +312,10 @@
   },
   "pmos_cs8": {
     "bbox": [
-      -11650,
-      -12370,
-      11650,
-      12370
+      -1650,
+      -2370,
+      1650,
+      2370
     ],
     "pins": {
       "D": {
@@ -349,7 +349,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 4.0,
@@ -360,10 +360,10 @@
   },
   "pmos_vco": {
     "bbox": [
-      -10900,
-      -11370,
-      10900,
-      11370
+      -900,
+      -1370,
+      900,
+      1370
     ],
     "pins": {
       "D": {
@@ -397,7 +397,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 2.0,
@@ -408,10 +408,10 @@
   },
   "nmos_vco": {
     "bbox": [
-      -10600,
-      -10870,
-      10600,
-      10870
+      -600,
+      -870,
+      600,
+      870
     ],
     "pins": {
       "D": {
@@ -445,7 +445,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 1.0,
@@ -456,10 +456,10 @@
   },
   "nmos_bias8": {
     "bbox": [
-      -11350,
-      -14370,
-      11350,
-      14370
+      -1350,
+      -4370,
+      1350,
+      4370
     ],
     "pins": {
       "D": {
@@ -493,7 +493,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 8.0,
@@ -504,10 +504,10 @@
   },
   "pmos_buf1": {
     "bbox": [
-      -10900,
-      -12370,
-      10900,
-      12370
+      -900,
+      -2370,
+      900,
+      2370
     ],
     "pins": {
       "D": {
@@ -541,7 +541,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 4.0,
@@ -552,10 +552,10 @@
   },
   "nmos_buf1": {
     "bbox": [
-      -10600,
-      -11370,
-      10600,
-      11370
+      -600,
+      -1370,
+      600,
+      1370
     ],
     "pins": {
       "D": {
@@ -589,7 +589,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 2.0,
@@ -600,10 +600,10 @@
   },
   "pmos_buf2": {
     "bbox": [
-      -10900,
-      -14370,
-      10900,
-      14370
+      -900,
+      -4370,
+      900,
+      4370
     ],
     "pins": {
       "D": {
@@ -637,7 +637,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 8.0,
@@ -648,10 +648,10 @@
   },
   "nmos_buf2": {
     "bbox": [
-      -10600,
-      -12370,
-      10600,
-      12370
+      -600,
+      -2370,
+      600,
+      2370
     ],
     "pins": {
       "D": {
@@ -685,7 +685,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 4.0,
@@ -696,10 +696,10 @@
   },
   "pmos_cas_mir1": {
     "bbox": [
-      -15650,
-      -10870,
-      15650,
-      10870
+      -5650,
+      -870,
+      5650,
+      870
     ],
     "pins": {
       "D": {
@@ -733,7 +733,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 1.0,
@@ -744,10 +744,10 @@
   },
   "pmos_cas1": {
     "bbox": [
-      -11650,
-      -10870,
-      11650,
-      10870
+      -1650,
+      -870,
+      1650,
+      870
     ],
     "pins": {
       "D": {
@@ -781,7 +781,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 1.0,
@@ -792,10 +792,10 @@
   },
   "nmos_cas_load": {
     "bbox": [
-      -11350,
-      -10620,
-      11350,
-      10620
+      -1350,
+      -620,
+      1350,
+      620
     ],
     "pins": {
       "D": {
@@ -829,7 +829,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 0.5,
@@ -840,10 +840,10 @@
   },
   "pmos_cas_mir2": {
     "bbox": [
-      -15650,
-      -11370,
-      15650,
-      11370
+      -5650,
+      -1370,
+      5650,
+      1370
     ],
     "pins": {
       "D": {
@@ -877,7 +877,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 2.0,
@@ -888,10 +888,10 @@
   },
   "pmos_cas2": {
     "bbox": [
-      -11650,
-      -11370,
-      11650,
-      11370
+      -1650,
+      -1370,
+      1650,
+      1370
     ],
     "pins": {
       "D": {
@@ -925,7 +925,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 2.0,
@@ -936,10 +936,10 @@
   },
   "pmos_cas_mir4": {
     "bbox": [
-      -15650,
-      -12370,
-      15650,
-      12370
+      -5650,
+      -2370,
+      5650,
+      2370
     ],
     "pins": {
       "D": {
@@ -973,7 +973,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 4.0,
@@ -984,10 +984,10 @@
   },
   "pmos_cas4": {
     "bbox": [
-      -11650,
-      -12370,
-      11650,
-      12370
+      -1650,
+      -2370,
+      1650,
+      2370
     ],
     "pins": {
       "D": {
@@ -1021,7 +1021,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 4.0,
@@ -1032,10 +1032,10 @@
   },
   "nmos_ota_bias": {
     "bbox": [
-      -12350,
-      -12370,
-      12350,
-      12370
+      -2350,
+      -2370,
+      2350,
+      2370
     ],
     "pins": {
       "D": {
@@ -1069,7 +1069,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 4.0,
@@ -1080,10 +1080,10 @@
   },
   "pmos_ota_load": {
     "bbox": [
-      -12650,
-      -12370,
-      12650,
-      12370
+      -2650,
+      -2370,
+      2650,
+      2370
     ],
     "pins": {
       "D": {
@@ -1117,7 +1117,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 4.0,
@@ -1128,10 +1128,10 @@
   },
   "nmos_ota_input": {
     "bbox": [
-      -11350,
-      -15370,
-      11350,
-      15370
+      -1350,
+      -5370,
+      1350,
+      5370
     ],
     "pins": {
       "D": {
@@ -1165,7 +1165,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 10.0,
@@ -1176,10 +1176,10 @@
   },
   "nmos_ota_tail": {
     "bbox": [
-      -12350,
-      -14370,
-      12350,
-      14370
+      -2350,
+      -4370,
+      2350,
+      4370
     ],
     "pins": {
       "D": {
@@ -1213,7 +1213,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_nmos",
     "params": {
       "w": 8.0,
@@ -1224,10 +1224,10 @@
   },
   "pmos_comp_latch": {
     "bbox": [
-      -10900,
-      -10870,
-      10900,
-      10870
+      -900,
+      -870,
+      900,
+      870
     ],
     "pins": {
       "D": {
@@ -1261,7 +1261,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "sg13_lv_pmos",
     "params": {
       "w": 1.0,
@@ -1272,10 +1272,10 @@
   },
   "rhigh_200k": {
     "bbox": [
-      -11270,
-      -21450,
-      11270,
-      21450
+      -1270,
+      -11450,
+      1270,
+      11450
     ],
     "pins": {
       "B": {
@@ -1297,7 +1297,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "rhigh",
     "params": {
       "w": 0.5,
@@ -1307,10 +1307,10 @@
   },
   "cap_cmim_1p": {
     "bbox": [
-      -23600,
-      -23600,
-      23600,
-      23600
+      -13600,
+      -13600,
+      13600,
+      13600
     ],
     "pins": {
       "PLUS": {
@@ -1326,7 +1326,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "cap_cmim",
     "params": {
       "w": 26.0,
@@ -1335,10 +1335,10 @@
   },
   "cap_cmim_bypass": {
     "bbox": [
-      -13100,
-      -13100,
-      13100,
-      13100
+      -3100,
+      -3100,
+      3100,
+      3100
     ],
     "pins": {
       "PLUS": {
@@ -1354,7 +1354,7 @@
         ]
       }
     },
-    "source": "magic_pcell",
+    "source": "magic_pcell_geo",
     "pcell_name": "cap_cmim",
     "params": {
       "w": 5.0,

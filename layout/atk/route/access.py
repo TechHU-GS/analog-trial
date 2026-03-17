@@ -92,12 +92,21 @@ def get_access_mode(dev_type, pin_name):
 
 
 def inst_bbox_nm(placement, inst_name):
-    """Return (left, bot, right, top) in nm for a placed instance."""
+    """Return (left, bot, right, top) in nm for a placed instance.
+
+    When ATK_MAGIC=1, uses Magic PCell bbox (from device_lib_magic.json)
+    instead of placement.json w_um/h_um (which are KLayout values).
+    """
     inst = placement['instances'][inst_name]
     x = s5(inst['x_um'])
     y = s5(inst['y_um'])
-    w = s5(inst['w_um'])
-    h = s5(inst['h_um'])
+    if _use_magic and inst['type'] in _DEVICES:
+        dev = _DEVICES[inst['type']]
+        w = s5(dev['w'])
+        h = s5(dev['h'])
+    else:
+        w = s5(inst['w_um'])
+        h = s5(inst['h_um'])
     return (x, y, x + w, y + h)
 
 
