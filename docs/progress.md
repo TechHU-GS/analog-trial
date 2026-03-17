@@ -95,7 +95,9 @@ SPICE X→M conversion → Netgen LVS → comp.out
 - 有 routing: 204/255 = 80%
 - **Routing 贡献 +186 devices (+73pp)** — pipeline 方向正确
 - 剩余 51 devices 是 routing coverage 不足，不是架构问题
-- 下一步：定点分析 51 个 unmatched devices 缺哪些 net 的 routing
+- 后续尝试均失败 (bus 16, snap 124/163, bridges 202) — guess-and-check 不行
+- Bare device baseline: 18/255 (7%) → routing 贡献 +186 devices，pipeline 方向正确
+- 下一步：先诊断（comp.out + 几何验证），再定点修，一个一个来
 
 **当前瓶颈: routing solver quality**
 - 576 extracted nets vs 145 reference → 太多 low-fanout 碎片 net
