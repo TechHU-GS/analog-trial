@@ -1,1575 +1,11 @@
 {
-  "lvsdb": "/tmp/lvs_magic2/soilz_magic.lvsdb",
+  "lvsdb": "/tmp/lvs_magic4/soilz_magic_fixed.lvsdb",
   "ref_circuit": "soilz",
   "ext_circuit": "SOILZ",
   "devices": {
-    "matched": 96,
-    "ref_only": [
-      {
-        "name": "$82",
-        "class": "cap_cmim",
-        "terminals": {
-          "S": null,
-          "G": null,
-          "D": null,
-          "B": null
-        }
-      },
-      {
-        "name": "$237",
-        "class": "cap_cmim",
-        "terminals": {
-          "S": null,
-          "G": null,
-          "D": null,
-          "B": null
-        }
-      },
-      {
-        "name": "$27",
-        "class": "cap_cmim",
-        "terminals": {
-          "S": null,
-          "G": null,
-          "D": null,
-          "B": null
-        }
-      },
-      {
-        "name": "$86",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$210.D",
-          "G": "$210.G",
-          "D": "$210.S",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$134",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$114.D",
-          "G": "$114.G",
-          "D": "$114.S",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$147",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$428",
-          "G": "$93.G",
-          "D": "$1",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$17",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$15",
-          "G": "$15",
-          "D": "$15",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$14",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$15",
-          "G": "$12.G",
-          "D": "$15",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$15",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$15",
-          "G": "$11.G",
-          "D": "$15",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$16",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$15",
-          "G": "$10.G",
-          "D": "$15",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$50",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$222",
-          "G": "$49.G",
-          "D": "$224",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$51",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$47.D",
-          "G": "$47.G",
-          "D": "$222",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$52",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$193",
-          "G": "$48.G",
-          "D": "$193",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$38",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$50.D",
-          "G": "$50.G",
-          "D": "$216",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$80",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$77.D",
-          "G": "$77.G",
-          "D": "$309",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$144",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$75.D",
-          "G": "$75.G",
-          "D": "$309",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$143",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$1",
-          "G": "$1",
-          "D": "$1",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$142",
-        "class": "sg13_lv_nmos",
-        "terminals": {
-          "S": "$252.D",
-          "G": "$252.G",
-          "D": "$309",
-          "B": "$1"
-        }
-      },
-      {
-        "name": "$45",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$64.D",
-          "G": "$64.G",
-          "D": "$270",
-          "B": "$267"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$46",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$62.D",
-          "G": "$62.G",
-          "D": "$182",
-          "B": "$267"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$3",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$31.D",
-          "G": "$87",
-          "D": "$98",
-          "B": "$122"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$205",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$96.D",
-          "G": "$96.G",
-          "D": "$96.S",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$116",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$220.D",
-          "G": "$220.G",
-          "D": "$434",
-          "B": "$946"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$117",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$221.D",
-          "G": "$221.G",
-          "D": "$221.S",
-          "B": "$946"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$236",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$593",
-          "G": "$593",
-          "D": "$434",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$114",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$223.D",
-          "G": "$945",
-          "D": "$434",
-          "B": "$951"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$235",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$160.D",
-          "G": "$160.G",
-          "D": "$434",
-          "B": "$713"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$112",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$155.D",
-          "G": "$155.G",
-          "D": "$434",
-          "B": "$709"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$111",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$1001",
-          "G": "$1001",
-          "D": "$1001",
-          "B": "$1014"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$109",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$1008",
-          "G": "$1008",
-          "D": "$1008",
-          "B": "$1014"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$107",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$235.D",
-          "G": "$235.G",
-          "D": "$434",
-          "B": "$1014"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$104",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$981",
-          "G": "$981",
-          "D": "$981",
-          "B": "$1018"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$102",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$238.D",
-          "G": "$238.G",
-          "D": "$434",
-          "B": "$1018"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$100",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$157.D",
-          "G": "$157.G",
-          "D": "$157.S",
-          "B": "$709"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$99",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$156.D",
-          "G": "$672",
-          "D": "$434",
-          "B": "$709"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$98",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$667",
-          "G": "$734",
-          "D": "$667",
-          "B": "$713"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$96",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$1004",
-          "G": "$1004",
-          "D": "$1004",
-          "B": "$1018"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$95",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$159.D",
-          "G": "$667",
-          "D": "$434",
-          "B": "$713"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$132",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$154.D",
-          "G": "$154.G",
-          "D": "$154.S",
-          "B": "$709"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$87",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$218.D",
-          "G": "$218.G",
-          "D": "$218.S",
-          "B": "$946"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$85",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$194.D",
-          "G": "$194.G",
-          "D": "$194.S",
-          "B": "$850"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$135",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$130.D",
-          "G": "$587",
-          "D": "$588",
-          "B": "$600"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$136",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$811",
-          "G": "$811",
-          "D": "$434",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$137",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$797",
-          "G": "$797",
-          "D": "$797",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$138",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$434",
-          "G": "$434",
-          "D": "$434",
-          "B": "$850"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$139",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$797",
-          "G": "$197.G",
-          "D": "$797",
-          "B": "$850"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$140",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$195.D",
-          "G": "$434",
-          "D": "$434",
-          "B": "$850"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$234",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$434",
-          "G": "$434",
-          "D": "$434",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$233",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$434",
-          "G": "$929",
-          "D": "$434",
-          "B": "$951"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$118",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$219.D",
-          "G": "$219.G",
-          "D": "$434",
-          "B": "$946"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$231",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$434",
-          "G": "$434",
-          "D": "$434",
-          "B": "$499"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$145",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$134.D",
-          "G": "$134.G",
-          "D": "$578",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$146",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$578",
-          "G": "$578",
-          "D": "$434",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$79",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$132.D",
-          "G": "$132.G",
-          "D": "$434",
-          "B": "$600"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$78",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$131.D",
-          "G": "$588",
-          "D": "$434",
-          "B": "$600"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$227",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$111.D",
-          "G": "$111.G",
-          "D": "$434",
-          "B": "$499"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$77",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$133.D",
-          "G": "$576",
-          "D": "$133.S",
-          "B": "$600"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$151",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$104.D",
-          "G": "$104.G",
-          "D": "$104.S",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$226",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$113.D",
-          "G": "$497",
-          "D": "$497",
-          "B": "$507"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$69",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$72.D",
-          "G": "$72.G",
-          "D": "$320",
-          "B": "$318"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$154",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$102.D",
-          "G": "$102.G",
-          "D": "$102.S",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$18",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$28.D",
-          "G": "$28.G",
-          "D": "$98",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$19",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$27.D",
-          "G": "$27.G",
-          "D": "$98",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$157",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$100.D",
-          "G": "$100.G",
-          "D": "$100.S",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$20",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$108",
-          "G": "$108",
-          "D": "$98",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$67",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$74.D",
-          "G": "$209",
-          "D": "$209",
-          "B": "$321"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$160",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$98.D",
-          "G": "$98.G",
-          "D": "$98.S",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$22",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$25.D",
-          "G": "$107",
-          "D": "$98",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$162",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$246.D",
-          "G": "$246.G",
-          "D": "$434",
-          "B": "$1058"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$163",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$247.D",
-          "G": "$247.G",
-          "D": "$434",
-          "B": "$1058"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$65",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$226",
-          "G": "$226",
-          "D": "$322",
-          "B": "$321"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$63",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$279",
-          "G": "$279",
-          "D": "$182",
-          "B": "$285"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$24",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$24.D",
-          "G": "$24.G",
-          "D": "$98",
-          "B": "$121"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$167",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$996",
-          "G": "$996",
-          "D": "$996",
-          "B": "$1021"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$216",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$137.D",
-          "G": "$578",
-          "D": "$137.S",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$60",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$71.D",
-          "G": "$71.G",
-          "D": "$319",
-          "B": "$318"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$170",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$225.D",
-          "G": "$434",
-          "D": "$225.S",
-          "B": "$951"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$171",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$434",
-          "G": "$434",
-          "D": "$434",
-          "B": "$870"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$172",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$209.D",
-          "G": "$209.G",
-          "D": "$209.S",
-          "B": "$870"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$173",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$207.D",
-          "G": "$207.G",
-          "D": "$434",
-          "B": "$870"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$174",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$206.D",
-          "G": "$206.G",
-          "D": "$206.S",
-          "B": "$870"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$175",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$839",
-          "G": "$839",
-          "D": "$205.S",
-          "B": "$863"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$176",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$434",
-          "G": "$434",
-          "D": "$434",
-          "B": "$863"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$177",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$204.D",
-          "G": "$204.G",
-          "D": "$434",
-          "B": "$863"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$178",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$202.D",
-          "G": "$434",
-          "D": "$434",
-          "B": "$863"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$58",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$61.D",
-          "G": "$61.G",
-          "D": "$182",
-          "B": "$285"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$180",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$201.D",
-          "G": "$201.G",
-          "D": "$201.S",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$214",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$138.D",
-          "G": "$596",
-          "D": "$596",
-          "B": "$609"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$213",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$140.D",
-          "G": "$597",
-          "D": "$434",
-          "B": "$609"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$212",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$580",
-          "G": "$596",
-          "D": "$434",
-          "B": "$609"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$47",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$182",
-          "G": "$182",
-          "D": "$182",
-          "B": "$285"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$44",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$65.D",
-          "G": "$65.G",
-          "D": "$270",
-          "B": "$285"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$42",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$30.D",
-          "G": "$101",
-          "D": "$98",
-          "B": "$122"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$41",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$33.D",
-          "G": "$33.G",
-          "D": "$98",
-          "B": "$122"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$40",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$32.D",
-          "G": "$32.G",
-          "D": "$98",
-          "B": "$122"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$189",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$176.D",
-          "G": "$749",
-          "D": "$434",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$190",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$752",
-          "G": "$749",
-          "D": "$177.S",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$191",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$175.D",
-          "G": "$762",
-          "D": "$434",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$192",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$174.D",
-          "G": "$703",
-          "D": "$762",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$193",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$173.D",
-          "G": "$173.G",
-          "D": "$173.S",
-          "B": "$758"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$194",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$171.D",
-          "G": "$755",
-          "D": "$434",
-          "B": "$758"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$195",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$172.D",
-          "G": "$434",
-          "D": "$434",
-          "B": "$758"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$196",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$755",
-          "G": "$755",
-          "D": "$755",
-          "B": "$758"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$211",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$141.D",
-          "G": "$141.G",
-          "D": "$141.S",
-          "B": "$609"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$210",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$143.D",
-          "G": "$143.G",
-          "D": "$434",
-          "B": "$613"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$209",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$142.D",
-          "G": "$580",
-          "D": "$544",
-          "B": "$613"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$208",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$145.D",
-          "G": "$434",
-          "D": "$145.S",
-          "B": "$613"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$207",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$434",
-          "G": "$144.G",
-          "D": "$434",
-          "B": "$613"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$206",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$161.D",
-          "G": "$161.G",
-          "D": "$161.S",
-          "B": "$713"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$115",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$222.D",
-          "G": "$942",
-          "D": "$945",
-          "B": "$951"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$4",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$29.D",
-          "G": "$102",
-          "D": "$98",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$229",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$497",
-          "G": "$497",
-          "D": "$497",
-          "B": "$507"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$149",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$434",
-          "G": "$428",
-          "D": "$434",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$34",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$42.D",
-          "G": "$42.G",
-          "D": "$42.S",
-          "B": "$192"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$35",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$40.D",
-          "G": "$172",
-          "D": "$172",
-          "B": "$191"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$36",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$38.D",
-          "G": "$38.G",
-          "D": "$38.S",
-          "B": "$190"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$39",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$98",
-          "G": "$34.G",
-          "D": "$98",
-          "B": "$122"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$53",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$187",
-          "G": "$187",
-          "D": "$187",
-          "B": "$126"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$55",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$6.D",
-          "G": "$13",
-          "D": "$13",
-          "B": "$30"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$68",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$126",
-          "G": "$126",
-          "D": "$46.S",
-          "B": "$207"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$166",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$434",
-          "G": "$434",
-          "D": "$434",
-          "B": "$1021"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$62",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$8.D",
-          "G": "$11",
-          "D": "$8.S",
-          "B": "$31"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$1",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$435",
-          "G": "$436",
-          "D": "$436",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$81",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$76.D",
-          "G": "$76.G",
-          "D": "$340",
-          "B": "$338"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$2",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$63",
-          "G": "$I2",
-          "D": "$72",
-          "B": "$63"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$33",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$52.D",
-          "G": "$52.G",
-          "D": "$52.S",
-          "B": "$229"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$31",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$53.D",
-          "G": "$53.G",
-          "D": "$53.S",
-          "B": "$230"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$29",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$54.D",
-          "G": "$225",
-          "D": "$54.S",
-          "B": "$237"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$28",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$186",
-          "G": "$51.G",
-          "D": "$182",
-          "B": "$238"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$215",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$452",
-          "G": "$434",
-          "D": "$452",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$161",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$442",
-          "G": "$434",
-          "D": "$442",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$158",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$456",
-          "G": "$434",
-          "D": "$456",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$155",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$446",
-          "G": "$434",
-          "D": "$446",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$152",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$434",
-          "G": "$434",
-          "D": "$434",
-          "B": "$439"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$57",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$35.D",
-          "G": "$35.G",
-          "D": "$98",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$26",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$57.D",
-          "G": "$57.G",
-          "D": "$182",
-          "B": "$257"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$32",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$253",
-          "G": "$253",
-          "D": "$182",
-          "B": "$257"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$30",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$253",
-          "G": "$182",
-          "D": "$182",
-          "B": "$257"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$13",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$182",
-          "G": "$182",
-          "D": "$182",
-          "B": "$266"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$83",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$80.D",
-          "G": "$80.G",
-          "D": "$363",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      },
-      {
-        "name": "$84",
-        "class": "sg13_lv_pmos",
-        "terminals": {
-          "S": "$81.D",
-          "G": "$81.G",
-          "D": "$363",
-          "B": "$1"
-        },
-        "bulk_ok": false
-      }
-    ],
+    "matched": 3,
+    "ref_only": [],
     "ext_only": [
-      {
-        "name": "CBYP_N",
-        "class": "CAP_CMIM",
-        "terminals": {
-          "S": null,
-          "G": null,
-          "D": null,
-          "B": null
-        }
-      },
-      {
-        "name": "CBYP_P",
-        "class": "CAP_CMIM",
-        "terminals": {
-          "S": null,
-          "G": null,
-          "D": null,
-          "B": null
-        }
-      },
-      {
-        "name": "C_FB",
-        "class": "CAP_CMIM",
-        "terminals": {
-          "S": null,
-          "G": null,
-          "D": null,
-          "B": null
-        }
-      },
       {
         "name": "RIN",
         "class": "RHIGH",
@@ -1608,6 +44,966 @@
           "G": null,
           "D": null,
           "B": null
+        }
+      },
+      {
+        "name": "INV_ISOB_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "VCO_BUF",
+          "D": "VCO_BUF_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1I_S8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "VCO_BUF_B",
+          "D": "T1I_NSN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2Q_M8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV2_I_B",
+          "D": "T2Q_NMN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "BUF_Q_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "REF_Q",
+          "D": "BUF_REF_Q",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "BUF_I_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "REF_I",
+          "D": "BUF_REF_I",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MXIQ_N3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "F_EXC",
+          "G": "IQ_SEL",
+          "D": "REF_Q",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MXIQ_N2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "F_EXC",
+          "G": "MXIQ_SELB",
+          "D": "REF_I",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MXIQ_N1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "IQ_SEL",
+          "D": "MXIQ_SELB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MPD1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "NB1",
+          "G": "VCO5",
+          "D": "VCO1",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MXFQ_N3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "REF_Q",
+          "G": "FREQ_SEL",
+          "D": "DIV16_Q",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MXFQ_N2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "REF_Q",
+          "G": "MXFQ_SELB",
+          "D": "DIV4_Q",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MPD2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "NB2",
+          "G": "VCO1",
+          "D": "VCO2",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MXFQ_N1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "FREQ_SEL",
+          "D": "MXFQ_SELB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1Q_M1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T1Q_M",
+          "G": "VCO_BUF",
+          "D": "DIV2_Q_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1I_S3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV2_I",
+          "D": "DIV2_I_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1Q_M3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "T1Q_M",
+          "D": "T1Q_MB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1I_S1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "DIV2_I",
+          "G": "VCO_BUF",
+          "D": "T1I_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1I_M8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "VCO_BUF",
+          "D": "T1I_NMN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1I_M7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T1I_NMN",
+          "G": "T1I_MB",
+          "D": "T1I_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1Q_M7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T1Q_NMN",
+          "G": "T1Q_MB",
+          "D": "T1Q_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MXFI_N3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "REF_I",
+          "G": "FREQ_SEL",
+          "D": "DIV16_I",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MPD3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "NB3",
+          "G": "VCO2",
+          "D": "VCO3",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1Q_M8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "VCO_BUF_B",
+          "D": "T1Q_NMN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MXFI_N2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "REF_I",
+          "G": "MXFI_SELB",
+          "D": "DIV4_I",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MXFI_N1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "FREQ_SEL",
+          "D": "MXFI_SELB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MPD4",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "NB4",
+          "G": "VCO3",
+          "D": "VCO4",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1Q_S1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "DIV2_Q",
+          "G": "VCO_BUF_B",
+          "D": "T1Q_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4Q_S8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV8",
+          "D": "T4Q_NSN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4Q_S7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T4Q_NSN",
+          "G": "DIV16_Q_B",
+          "D": "DIV16_Q",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MPD5",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "NB5",
+          "G": "VCO4",
+          "D": "VCO5",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1I_M3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "T1I_M",
+          "D": "T1I_MB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4Q_S3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV16_Q",
+          "D": "DIV16_Q_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1Q_S3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV2_Q",
+          "D": "DIV2_Q_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4Q_S1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "DIV16_Q",
+          "G": "DIV8_B",
+          "D": "T4Q_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1I_M1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T1I_M",
+          "G": "VCO_BUF_B",
+          "D": "DIV2_I_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4Q_M8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV8_B",
+          "D": "T4Q_NMN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4Q_M7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T4Q_NMN",
+          "G": "T4Q_MB",
+          "D": "T4Q_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1Q_S7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T1Q_NSN",
+          "G": "DIV2_Q_B",
+          "D": "DIV2_Q",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4Q_M3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "T4Q_M",
+          "D": "T4Q_MB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4Q_M1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T4Q_M",
+          "G": "DIV8",
+          "D": "DIV16_Q_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4I_S8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV8_B",
+          "D": "T4I_NSN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4I_S7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T4I_NSN",
+          "G": "DIV16_I_B",
+          "D": "DIV16_I",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4I_S3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV16_I",
+          "D": "DIV16_I_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4I_S1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "DIV16_I",
+          "G": "DIV8",
+          "D": "T4I_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1Q_S8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "VCO_BUF",
+          "D": "T1Q_NSN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4I_M8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV8",
+          "D": "T4I_NMN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2I_M1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T2I_M",
+          "G": "DIV2_I_B",
+          "D": "DIV4_I_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4I_M7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T4I_NMN",
+          "G": "T4I_MB",
+          "D": "T4I_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2I_M3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "T2I_M",
+          "D": "T2I_MB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4I_M3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "T4I_M",
+          "D": "T4I_MB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2I_M7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T2I_NMN",
+          "G": "T2I_MB",
+          "D": "T2I_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T4I_M1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T4I_M",
+          "G": "DIV8_B",
+          "D": "DIV16_I_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "M_DA1_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "F_EXC",
+          "D": "DA1",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T3_S8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV4_I_B",
+          "D": "T3_NSN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "M_DA2_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DA1",
+          "D": "F_EXC_D",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T3_S7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T3_NSN",
+          "G": "DIV8_B",
+          "D": "DIV8",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "M_DB1_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "F_EXC_B",
+          "D": "DB1",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T3_S3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV8",
+          "D": "DIV8_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "M_DB2_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DB1",
+          "D": "F_EXC_B_D",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T3_S1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "DIV8",
+          "G": "DIV4_I",
+          "D": "T3_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T3_M8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV4_I",
+          "D": "T3_NMN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T3_M7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T3_NMN",
+          "G": "T3_MB",
+          "D": "T3_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T1I_S7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T1I_NSN",
+          "G": "DIV2_I_B",
+          "D": "DIV2_I",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "INV_VCO_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "VCO_OUT",
+          "D": "VCO_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2I_M8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV2_I",
+          "D": "T2I_NMN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T3_M3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "T3_M",
+          "D": "T3_MB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T3_M1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T3_M",
+          "G": "DIV4_I_B",
+          "D": "DIV8_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2Q_S8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV2_I",
+          "D": "T2Q_NSN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2I_S1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "DIV4_I",
+          "G": "DIV2_I",
+          "D": "T2I_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2I_S3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV4_I",
+          "D": "DIV4_I_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2I_S7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T2I_NSN",
+          "G": "DIV4_I_B",
+          "D": "DIV4_I",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2Q_S7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T2Q_NSN",
+          "G": "DIV4_Q_B",
+          "D": "DIV4_Q",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2I_S8",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV2_I_B",
+          "D": "T2I_NSN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MC_LN2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "C_DI_N",
+          "G": "COMP_OUTP",
+          "D": "COMP_OUTN",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MC_LN1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "C_DI_P",
+          "G": "COMP_OUTN",
+          "D": "COMP_OUTP",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2Q_M1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T2Q_M",
+          "G": "DIV2_I",
+          "D": "DIV4_Q_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2Q_M3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "T2Q_M",
+          "D": "T2Q_MB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2Q_S3",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "DIV4_Q",
+          "D": "DIV4_Q_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2Q_M7",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "T2Q_NMN",
+          "G": "T2Q_MB",
+          "D": "T2Q_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "T2Q_S1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "DIV4_Q",
+          "G": "DIV2_I_B",
+          "D": "T2Q_M",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "M_NA_N2",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "F_EXC_D",
+          "D": "NA_MID",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MN1B",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "N1_MID",
+          "G": "LAT_QB",
+          "D": "LAT_Q",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MCHOP2N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "CHOP_OUT",
+          "G": "F_EXC_B",
+          "D": "SENS_N",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "INV_ISO_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "VCO_OUT",
+          "D": "VCO_BUF",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MBN1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "VCO5",
+          "D": "BUF1",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "SW1N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "EXC_OUT",
+          "G": "SEL0",
+          "D": "SRC1",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "SW2N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "EXC_OUT",
+          "G": "SEL1",
+          "D": "SRC2",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MDAC_TG2N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "DAC_OUT",
+          "G": "LAT_QB",
+          "D": "DAC_LO",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "SW3N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "EXC_OUT",
+          "G": "SEL2",
+          "D": "SRC3",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MCHOP1N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "CHOP_OUT",
+          "G": "F_EXC",
+          "D": "SENS_P",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MDAC_TG1N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "DAC_OUT",
+          "G": "LAT_Q",
+          "D": "DAC_HI",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "M_INV0_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "F_EXC",
+          "D": "F_EXC_B",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MN2B",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "N2_MID",
+          "G": "LAT_Q",
+          "D": "LAT_QB",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "M_IA_N",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "NAND_A",
+          "D": "PHI_P",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "MN2A",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "GND",
+          "G": "COMP_OUTN",
+          "D": "N2_MID",
+          "B": "GND"
+        }
+      },
+      {
+        "name": "M_NB_N1",
+        "class": "SG13_LV_NMOS",
+        "terminals": {
+          "S": "NB_MID",
+          "G": "F_EXC_B",
+          "D": "NAND_B",
+          "B": "GND"
         }
       },
       {
@@ -3257,526 +2653,28 @@
         "bulk_ok": true
       }
     ],
-    "ref_only_count": 141,
-    "ext_only_count": 159
+    "ref_only_count": 0,
+    "ext_only_count": 252
   },
   "pmos_bulk": {
-    "ref_only_pmos": 123,
-    "wrong_bulk": [
-      {
-        "name": "$45",
-        "bulk": "$267"
-      },
-      {
-        "name": "$46",
-        "bulk": "$267"
-      },
-      {
-        "name": "$3",
-        "bulk": "$122"
-      },
-      {
-        "name": "$205",
-        "bulk": "$439"
-      },
-      {
-        "name": "$116",
-        "bulk": "$946"
-      },
-      {
-        "name": "$117",
-        "bulk": "$946"
-      },
-      {
-        "name": "$236",
-        "bulk": "$1"
-      },
-      {
-        "name": "$114",
-        "bulk": "$951"
-      },
-      {
-        "name": "$235",
-        "bulk": "$713"
-      },
-      {
-        "name": "$112",
-        "bulk": "$709"
-      },
-      {
-        "name": "$111",
-        "bulk": "$1014"
-      },
-      {
-        "name": "$109",
-        "bulk": "$1014"
-      },
-      {
-        "name": "$107",
-        "bulk": "$1014"
-      },
-      {
-        "name": "$104",
-        "bulk": "$1018"
-      },
-      {
-        "name": "$102",
-        "bulk": "$1018"
-      },
-      {
-        "name": "$100",
-        "bulk": "$709"
-      },
-      {
-        "name": "$99",
-        "bulk": "$709"
-      },
-      {
-        "name": "$98",
-        "bulk": "$713"
-      },
-      {
-        "name": "$96",
-        "bulk": "$1018"
-      },
-      {
-        "name": "$95",
-        "bulk": "$713"
-      },
-      {
-        "name": "$132",
-        "bulk": "$709"
-      },
-      {
-        "name": "$87",
-        "bulk": "$946"
-      },
-      {
-        "name": "$85",
-        "bulk": "$850"
-      },
-      {
-        "name": "$135",
-        "bulk": "$600"
-      },
-      {
-        "name": "$136",
-        "bulk": "$1"
-      },
-      {
-        "name": "$137",
-        "bulk": "$1"
-      },
-      {
-        "name": "$138",
-        "bulk": "$850"
-      },
-      {
-        "name": "$139",
-        "bulk": "$850"
-      },
-      {
-        "name": "$140",
-        "bulk": "$850"
-      },
-      {
-        "name": "$234",
-        "bulk": "$1"
-      },
-      {
-        "name": "$233",
-        "bulk": "$951"
-      },
-      {
-        "name": "$118",
-        "bulk": "$946"
-      },
-      {
-        "name": "$231",
-        "bulk": "$499"
-      },
-      {
-        "name": "$145",
-        "bulk": "$1"
-      },
-      {
-        "name": "$146",
-        "bulk": "$1"
-      },
-      {
-        "name": "$79",
-        "bulk": "$600"
-      },
-      {
-        "name": "$78",
-        "bulk": "$600"
-      },
-      {
-        "name": "$227",
-        "bulk": "$499"
-      },
-      {
-        "name": "$77",
-        "bulk": "$600"
-      },
-      {
-        "name": "$151",
-        "bulk": "$439"
-      },
-      {
-        "name": "$226",
-        "bulk": "$507"
-      },
-      {
-        "name": "$69",
-        "bulk": "$318"
-      },
-      {
-        "name": "$154",
-        "bulk": "$439"
-      },
-      {
-        "name": "$18",
-        "bulk": "$1"
-      },
-      {
-        "name": "$19",
-        "bulk": "$1"
-      },
-      {
-        "name": "$157",
-        "bulk": "$439"
-      },
-      {
-        "name": "$20",
-        "bulk": "$1"
-      },
-      {
-        "name": "$67",
-        "bulk": "$321"
-      },
-      {
-        "name": "$160",
-        "bulk": "$439"
-      },
-      {
-        "name": "$22",
-        "bulk": "$1"
-      },
-      {
-        "name": "$162",
-        "bulk": "$1058"
-      },
-      {
-        "name": "$163",
-        "bulk": "$1058"
-      },
-      {
-        "name": "$65",
-        "bulk": "$321"
-      },
-      {
-        "name": "$63",
-        "bulk": "$285"
-      },
-      {
-        "name": "$24",
-        "bulk": "$121"
-      },
-      {
-        "name": "$167",
-        "bulk": "$1021"
-      },
-      {
-        "name": "$216",
-        "bulk": "$1"
-      },
-      {
-        "name": "$60",
-        "bulk": "$318"
-      },
-      {
-        "name": "$170",
-        "bulk": "$951"
-      },
-      {
-        "name": "$171",
-        "bulk": "$870"
-      },
-      {
-        "name": "$172",
-        "bulk": "$870"
-      },
-      {
-        "name": "$173",
-        "bulk": "$870"
-      },
-      {
-        "name": "$174",
-        "bulk": "$870"
-      },
-      {
-        "name": "$175",
-        "bulk": "$863"
-      },
-      {
-        "name": "$176",
-        "bulk": "$863"
-      },
-      {
-        "name": "$177",
-        "bulk": "$863"
-      },
-      {
-        "name": "$178",
-        "bulk": "$863"
-      },
-      {
-        "name": "$58",
-        "bulk": "$285"
-      },
-      {
-        "name": "$180",
-        "bulk": "$1"
-      },
-      {
-        "name": "$214",
-        "bulk": "$609"
-      },
-      {
-        "name": "$213",
-        "bulk": "$609"
-      },
-      {
-        "name": "$212",
-        "bulk": "$609"
-      },
-      {
-        "name": "$47",
-        "bulk": "$285"
-      },
-      {
-        "name": "$44",
-        "bulk": "$285"
-      },
-      {
-        "name": "$42",
-        "bulk": "$122"
-      },
-      {
-        "name": "$41",
-        "bulk": "$122"
-      },
-      {
-        "name": "$40",
-        "bulk": "$122"
-      },
-      {
-        "name": "$189",
-        "bulk": "$1"
-      },
-      {
-        "name": "$190",
-        "bulk": "$1"
-      },
-      {
-        "name": "$191",
-        "bulk": "$1"
-      },
-      {
-        "name": "$192",
-        "bulk": "$1"
-      },
-      {
-        "name": "$193",
-        "bulk": "$758"
-      },
-      {
-        "name": "$194",
-        "bulk": "$758"
-      },
-      {
-        "name": "$195",
-        "bulk": "$758"
-      },
-      {
-        "name": "$196",
-        "bulk": "$758"
-      },
-      {
-        "name": "$211",
-        "bulk": "$609"
-      },
-      {
-        "name": "$210",
-        "bulk": "$613"
-      },
-      {
-        "name": "$209",
-        "bulk": "$613"
-      },
-      {
-        "name": "$208",
-        "bulk": "$613"
-      },
-      {
-        "name": "$207",
-        "bulk": "$613"
-      },
-      {
-        "name": "$206",
-        "bulk": "$713"
-      },
-      {
-        "name": "$115",
-        "bulk": "$951"
-      },
-      {
-        "name": "$4",
-        "bulk": "$1"
-      },
-      {
-        "name": "$229",
-        "bulk": "$507"
-      },
-      {
-        "name": "$149",
-        "bulk": "$439"
-      },
-      {
-        "name": "$34",
-        "bulk": "$192"
-      },
-      {
-        "name": "$35",
-        "bulk": "$191"
-      },
-      {
-        "name": "$36",
-        "bulk": "$190"
-      },
-      {
-        "name": "$39",
-        "bulk": "$122"
-      },
-      {
-        "name": "$53",
-        "bulk": "$126"
-      },
-      {
-        "name": "$55",
-        "bulk": "$30"
-      },
-      {
-        "name": "$68",
-        "bulk": "$207"
-      },
-      {
-        "name": "$166",
-        "bulk": "$1021"
-      },
-      {
-        "name": "$62",
-        "bulk": "$31"
-      },
-      {
-        "name": "$1",
-        "bulk": "$439"
-      },
-      {
-        "name": "$81",
-        "bulk": "$338"
-      },
-      {
-        "name": "$2",
-        "bulk": "$63"
-      },
-      {
-        "name": "$33",
-        "bulk": "$229"
-      },
-      {
-        "name": "$31",
-        "bulk": "$230"
-      },
-      {
-        "name": "$29",
-        "bulk": "$237"
-      },
-      {
-        "name": "$28",
-        "bulk": "$238"
-      },
-      {
-        "name": "$215",
-        "bulk": "$439"
-      },
-      {
-        "name": "$161",
-        "bulk": "$439"
-      },
-      {
-        "name": "$158",
-        "bulk": "$439"
-      },
-      {
-        "name": "$155",
-        "bulk": "$439"
-      },
-      {
-        "name": "$152",
-        "bulk": "$439"
-      },
-      {
-        "name": "$57",
-        "bulk": "$1"
-      },
-      {
-        "name": "$26",
-        "bulk": "$257"
-      },
-      {
-        "name": "$32",
-        "bulk": "$257"
-      },
-      {
-        "name": "$30",
-        "bulk": "$257"
-      },
-      {
-        "name": "$13",
-        "bulk": "$266"
-      },
-      {
-        "name": "$83",
-        "bulk": "$1"
-      },
-      {
-        "name": "$84",
-        "bulk": "$1"
-      }
-    ],
+    "ref_only_pmos": 0,
+    "wrong_bulk": [],
     "correct_bulk_unmatched": 0
   },
   "device_classes": {
-    "ref_only": {
-      "cap_cmim": 3,
-      "sg13_lv_nmos": 15,
-      "sg13_lv_pmos": 123
-    },
+    "ref_only": {},
     "ext_only": {
-      "CAP_CMIM": 3,
       "RHIGH": 4,
-      "SG13_LV_NMOS": 26,
+      "SG13_LV_NMOS": 122,
       "SG13_LV_PMOS": 126
     }
   },
   "nets": {
     "matched": 0,
-    "ref_only": 491,
+    "ref_only": 6,
     "ext_only": 145,
     "ref_only_named": [],
-    "ref_only_anon_count": 491,
+    "ref_only_anon_count": 6,
     "ext_only_named": [
       "BIAS_N",
       "BUF1",
@@ -3928,17 +2826,17 @@
     "matched_pairs": []
   },
   "pins": {
-    "matched": 486,
+    "matched": 151,
     "mismatched": 0
   },
   "summary": {
-    "devices_matched": 96,
-    "devices_unmatched": 300,
+    "devices_matched": 3,
+    "devices_unmatched": 252,
     "nets_matched": 0,
-    "nets_unmatched": 636,
+    "nets_unmatched": 151,
     "comma_merges": 0,
-    "wrong_bulk_pmos": 123,
-    "pins_matched": 486,
+    "wrong_bulk_pmos": 0,
+    "pins_matched": 151,
     "pins_mismatched": 0
   }
 }
