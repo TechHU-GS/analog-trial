@@ -139,10 +139,28 @@ M1       290×290nm
 
 **状态**: 分层策略 DRC 可行性确认 ✅ (孤立测试)
 
+### Power Via Stack 实际 Placement 验证 (2026-03-18 12:40)
+
+**V1 (失败)**: 153 drops 各放完整 TM1→M1 via stack → 133 violations
+- V1.b=93 (新 Via1 和 device PCell 已有 Via1 冲突)
+- TM1.b=40 (TM1 独立 pad 互相太近)
+
+**V2 (成功)**: 两处根因修复:
+1. 去掉 Via1+M1（device PCell 已有 M1→Via1→M2，不需要重建）
+2. TM1 用 stripe 代替独立 pad（同 Y 带 drops 共享一条横条）
+
+**结果**: 153 power drops + 257 devices, **KLayout DRC = 0** (所有 metal space + via space + TM1 width)
+
+**⚠️ unverified**:
+- V2 的 M2 pad 是否真的和 device PCell M2 在同一位置（via_x/via_y 来自 ATK routing.json）
+- TM1 stripe 是否和 TTIHP tile 已有的 TM1 power stripe 冲突
+
+**状态**: power on TM1 实际可行性确认 ✅
+
 ### 下一步
-1. 在实际 placement 上验证 power via stack fit（TM1 pad 不和邻居重叠）
-2. 设计 TM1 power rail → via stack → M1 device 的具体连接
-3. 在 ECS 上生成 M3+M4+M5 signal routing + GA 优化
+1. 设计 signal routing 在 M3+M4+M5 上
+2. 开 ECS 跑 GA 优化
+3. KLayout DRC + Netgen LVS 验证
 
 ---
 
