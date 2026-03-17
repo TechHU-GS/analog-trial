@@ -100,8 +100,17 @@ SPICE X→M conversion → Netgen LVS → comp.out
 - 诊断方法论验证成功：comp.out→51 unmatched→30 gap→9 safe bridges→204→206
 - 9 verified bridges: DRC-safe (M2 spacing 210nm check), +2 NMOS
 - 21 bridges rejected (cross-net M2 conflict)
-- **新 baseline: 206/255 = 81%**
-- 下一步：继续用相同方法定点修剩余 49 unmatched
+- **新 baseline: 206/255 = 81%** (with 9 verified M2 bridges)
+
+**根因精确定位 (已验证，非猜测)：**
+- 51 unmatched devices 全部列出 (comp.out): 44 NMOS + 4R + 3C, 0 PMOS
+- 72/132 pins 有 correct M2 overlap (connections exist) 但 devices 仍 unmatched
+- 原因：8 对 routing M2 cross-net overlap 将 reference nets 合并
+  - freq_sel ↔ ref_I, div16_Q ↔ ref_Q, div2_I_b ↔ div4_I_b, etc.
+- 这不是 AP/bridge/filter 问题，是 **routing.json 本身的 M2 wire spacing violation**
+- 移除冲突 segment 给 203 (更差) — 因为同时断开了正确连接
+- 正确修法：缩短 segment 而不是删除，需要精确几何计算 overlap 起止点
+- 下一步：实现 M2 segment trimming (只切掉 overlap 部分)
 
 **当前瓶颈: routing solver quality**
 - 576 extracted nets vs 145 reference → 太多 low-fanout 碎片 net
