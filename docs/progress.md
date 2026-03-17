@@ -4,7 +4,83 @@
 
 ---
 
-## Current Status (2026-03-15 20:00)
+## Current Status (2026-03-17 — Session 2, continued)
+
+### Magic Pipeline — LVS 126→197 突破 ✅ (已验证)
+
+**两个上游修法 + 验证结果：**
+
+1. **Strip PCell via1+M2** (`atk/strip_pcell_m2.py`)
+   - IHP PCell 在 S/D 画了 via1+M2 enclosure pad (convenience routing)
+   - 所有 257 devices 都是 nf=1，M2 不做 multi-finger strap → 100% 安全 strip
+   - 效果：消除 routing M2 和 device M2 的意外短路
+
+2. **画 M1 stub** (gen_magic_layout.py AP section)
+   - 1011 个 AP 有 m1_stub 字段（连接 device pin M1 到 AP via1）
+   - **之前从未画出** → device pin 和 routing 之间没有金属连接
+   - 效果：建立正确的 device→AP→routing 连接链
+
+**验证结果 (pipeline 实际输出):**
+```
+Phase A: 257 device subcells → strip via1+M2 (254 files, 5548 lines)
+Phase B: soilz.mag 13204 lines (routing 1388 seg, 220 filtered)
+Phase C: flatten → extract → 274 devices (267 MOS + 4R + 3C)
+Phase D: X→M conversion → soilz_netgen.spice
+Phase E: Netgen LVS → 197 vs 255 (77% match)
+```
+
+| 指标 | Session 开始 | 现在 | 改善 |
+|------|-------------|------|------|
+| After merge | 126 | **197** | **+71 (+56%)** |
+| Parallel merges | 148 | **77** | **-71 (-48%)** |
+| rptat refs | 14 | **0** | **完全消除** |
+| D=G=S devices | 36 | 22 | -14 |
+| Match rate | 49% | **77%** | +28pp |
+| Comma merges | 0 | 0 | 保持 |
+
+**Pipeline (全自动):**
+```
+gen_magic_layout.py → soilz.mag (smart filter + M1 stubs)
+    ↓
+Phase A (PCell subcells) → strip_pcell_m2.py → Phase C (flatten+extract)
+    ↓
+SPICE X→M conversion → Netgen LVS → comp.out
+```
+
+**代码修改 (已验证):**
+- gen_magic_layout.py: smart filter (Magic bbox) + M1 stub drawing + SPICE X→M + flat extraction
+- atk/strip_pcell_m2.py: 新建，strip device subcell via1+M2
+
+**Hierarchical extraction 进一步改善 (已验证):**
+- Inline dev_* subckts → M-format: 257 raw (= reference), 203 after merge, 54 merges
+- Flat extraction: 259 raw (去 parasitic), 196 after merge, 63 merges
+- **Hierarchical 更好: 203/255 = 80%**
+
+**54 merges 根因分析:**
+- 462 extracted nets vs 145 reference — net 碎片化
+- .ext merge records: 1065 merges, 1015 ports connected
+- ⚠️ 758/764 signal ports appear in merge chains (99%), 但很多连到碎片 net（不是正确的 signal net）
+- **主因: 没有 ntap/ptap ties** → NWell/pwell 不连接 vdd/gnd → power topology 不匹配
+  - NWell net w_n90_n131# 有 92 fanout 但和 vdd (dev_mpb5_0/S, 39 fanout) 分离
+- D=G=S: 只有 5 个（hierarchical 比 flat 的 22 干净很多）
+- Parasitic devices: 0（hierarchical 天然无 parasitic）
+
+**尝试过但失败的方向:**
+- Physical ties (ntapc/ptapc in .mag): Magic ext2spice 挂起 (10+ min timeout)
+- Well net post-process merge: 反效果 (203→197)，合并 well 使更多 PMOS 看起来一样
+
+**结论:** 54 topology-based merges 需要更丰富的 signal routing 区分 devices，
+不是 well/power 修法。当前 routing coverage 已 99%，但很多 net 碎片化 (462 vs 145)。
+
+**下一步:**
+1. 分析 462→145 net 碎片化的具体原因
+2. 可能需要修 routing solver 使路由在 M2 层正确连通
+3. 或修 M1 stub 对齐使更多 AP 连到 device M1
+4. 目标: net count 接近 145 → device match >90%
+
+---
+
+## Previous Status (2026-03-15 20:00)
 
 ### FREEZE BACKUP FOUND — SoilZ 完整版可恢复
 

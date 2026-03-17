@@ -13,6 +13,7 @@ Usage:
 
 import json
 import os
+import re
 import time
 
 SCALE = 10  # 1 Magic unit = 10nm; our pipeline uses nm
@@ -20,6 +21,128 @@ SCALE = 10  # 1 Magic unit = 10nm; our pipeline uses nm
 
 def nm(val):
     return int(round(val / SCALE))
+
+
+def _build_smart_filter(netlist, placement, device_lib_magic_path=None):
+    """Build data structures for smart routing filter.
+
+    Uses device_lib_magic.json bboxes (centered on PCell origin) for accurate
+    overlap detection in Magic coordinate system.
+
+    Returns (device_bboxes, net_devices) where:
+      device_bboxes: dict dev_name → (x1_nm, y1_nm, x2_nm, y2_nm)
+      net_devices:   dict net_name → set of device names on that net
+    """
+    instances = placement.get('instances', {})
+
+    # Load Magic device bboxes if available
+    magic_lib = {}
+    if device_lib_magic_path and os.path.exists(device_lib_magic_path):
+        with open(device_lib_magic_path) as f:
+            magic_lib = json.load(f)
+
+    # Device bboxes in nm — use Magic centered bbox + placement origin
+    device_bboxes = {}
+    for name, inst in instances.items():
+        dev_type = inst.get('type', '')
+        x = int(round(inst.get('x_um', 0) * 1000))  # PCell origin in nm
+        y = int(round(inst.get('y_um', 0) * 1000))
+
+        magic_info = magic_lib.get(dev_type)
+        if magic_info and 'bbox' in magic_info:
+            bb = magic_info['bbox']  # [x1, y1, x2, y2] centered on origin
+            device_bboxes[name] = (x + bb[0], y + bb[1], x + bb[2], y + bb[3])
+        else:
+            # Fallback to placement w/h
+            w = int(round(inst.get('w_um', 0) * 1000))
+            h = int(round(inst.get('h_um', 0) * 1000))
+            if w > 0 and h > 0:
+                device_bboxes[name] = (x, y, x + w, y + h)
+
+    # Net → set of device names
+    net_devices = {}
+    for net in netlist.get('nets', []):
+        devs = set()
+        for pin in net.get('pins', []):
+            dev_name = pin.split('.')[0]
+            devs.add(dev_name)
+        net_devices[net['name']] = devs
+
+    return device_bboxes, net_devices
+
+
+def _seg_overlaps_wrong_device(seg_bbox, net_name, device_bboxes, net_devices):
+    """Check if segment bbox overlaps any device NOT on net_name."""
+    allowed = net_devices.get(net_name, set())
+    sx1, sy1, sx2, sy2 = seg_bbox
+    for dev_name, (dx1, dy1, dx2, dy2) in device_bboxes.items():
+        if dev_name in allowed:
+            continue
+        if sx2 > dx1 and sx1 < dx2 and sy2 > dy1 and sy1 < dy2:
+            return True
+    return False
+
+
+def convert_spice_for_netgen(input_path, output_path):
+    """Convert Magic ext2spice output (X-format) to Netgen-compatible M/R/C format.
+
+    Magic ext2spice outputs X (subcircuit) instances with S,G,D,B pin order.
+    Netgen expects M (MOSFET) with D,G,S,B order for proper device recognition.
+    """
+    with open(input_path) as f:
+        lines = f.readlines()
+
+    out = []
+    stats = {'nmos': 0, 'pmos': 0, 'rhigh': 0, 'cap': 0}
+
+    for line in lines:
+        if not line.startswith('X'):
+            out.append(line)
+            continue
+
+        parts = line.split()
+        inst_num = parts[0][1:]
+
+        if 'sg13_lv_nmos' in parts or 'sg13_lv_pmos' in parts:
+            model = 'sg13_lv_nmos' if 'sg13_lv_nmos' in parts else 'sg13_lv_pmos'
+            s, g, d, b = parts[1], parts[2], parts[3], parts[4]
+            w_val = l_val = ''
+            for p in parts:
+                if p.startswith('w='):
+                    w_val = p.split('=')[1]
+                elif p.startswith('l='):
+                    l_val = p.split('=')[1]
+            out.append(f'M{inst_num} {d} {g} {s} {b} {model} W={w_val} L={l_val}\n')
+            stats['nmos' if model == 'sg13_lv_nmos' else 'pmos'] += 1
+
+        elif 'rhigh' in parts:
+            pin_a, pin_b = parts[1], parts[2]
+            w_val = l_val = ''
+            for p in parts:
+                if p.startswith('w='):
+                    w_val = p.split('=')[1]
+                elif p.startswith('l='):
+                    l_val = p.split('=')[1]
+            out.append(f'R{inst_num} {pin_a} {pin_b} rhigh W={w_val} L={l_val}\n')
+            stats['rhigh'] += 1
+
+        elif 'cap_cmim' in parts:
+            pin1, pin2 = parts[1], parts[2]
+            w_val = l_val = ''
+            for p in parts:
+                if p.startswith('w='):
+                    w_val = p.split('=')[1]
+                elif p.startswith('l='):
+                    l_val = p.split('=')[1]
+            out.append(f'C{inst_num} {pin1} {pin2} cap_cmim W={w_val} L={l_val}\n')
+            stats['cap'] += 1
+        else:
+            out.append(line)
+
+    with open(output_path, 'w') as f:
+        f.writelines(out)
+
+    return stats
 
 
 def generate(netlist_path='netlist.json',
@@ -135,7 +258,14 @@ def generate(netlist_path='netlist.json',
     LAYER_NAME = {0: 'metal1', 1: 'metal2', 2: 'metal3', 3: 'metal4',
                   -1: 'via1', -2: 'via2', -3: 'via3'}
 
+    # Smart routing filter: skip segments overlapping wrong-device bboxes
+    magic_lib_path = os.path.join(os.path.dirname(device_lib_path),
+                                  'device_lib_magic.json')
+    dev_bboxes, net_devs = _build_smart_filter(netlist, placement,
+                                               magic_lib_path)
+
     seg_count = 0
+    seg_filtered = 0
     current_layer = None
 
     def emit_layer(layer_name):
@@ -154,8 +284,24 @@ def generate(netlist_path='netlist.json',
             if not layer_name:
                 continue
 
+            # Compute segment bbox for smart filter check
             if lyr >= 0:
                 hw = WIRE_HW.get(lyr, 150)
+                if x1 == x2:
+                    seg_bbox = (x1 - hw, min(y1, y2), x1 + hw, max(y1, y2))
+                else:
+                    seg_bbox = (min(x1, x2), y1 - hw, max(x1, x2), y1 + hw)
+            else:
+                hs = VIA_HS.get(lyr, 95)
+                seg_bbox = (x1 - hs, y1 - hs, x1 + hs, y1 + hs)
+
+            # Skip segment if it overlaps a device NOT on this net
+            if _seg_overlaps_wrong_device(seg_bbox, net_name,
+                                          dev_bboxes, net_devs):
+                seg_filtered += 1
+                continue
+
+            if lyr >= 0:
                 if x1 == x2:
                     emit_layer(layer_name)
                     mag.append(f'rect {nm(x1-hw)} {nm(min(y1,y2))} '
@@ -203,21 +349,36 @@ def generate(netlist_path='netlist.json',
                 mag.append(f'rect {nm(vx-95)} {nm(vy-95)} '
                            f'{nm(vx+95)} {nm(vy+95)}')
 
-    # AP via stacks
+    # AP via stacks + M1 stubs connecting device pins to AP via locations
     ap_count = 0
+    stub_count = 0
     for pin_key, ap in routing.get('access_points', {}).items():
         px, py = ap['x'], ap['y']
         via_pad = ap.get('via_pad', {})
-        emit_layer('via1')
-        mag.append(f'rect {nm(px-95)} {nm(py-95)} {nm(px+95)} {nm(py+95)}')
-        m1 = via_pad.get('m1')
-        if m1:
+        if via_pad:
+            emit_layer('via1')
+            mag.append(f'rect {nm(px-95)} {nm(py-95)} {nm(px+95)} {nm(py+95)}')
+            m1 = via_pad.get('m1')
+            if m1:
+                emit_layer('metal1')
+                mag.append(f'rect {nm(m1[0])} {nm(m1[1])} {nm(m1[2])} {nm(m1[3])}')
+            m2 = via_pad.get('m2')
+            if m2:
+                emit_layer('metal2')
+                mag.append(f'rect {nm(m2[0])} {nm(m2[1])} {nm(m2[2])} {nm(m2[3])}')
+        # M1 stub: bridges device pin M1 to AP via1 M1 pad
+        m1_stub = ap.get('m1_stub')
+        if m1_stub:
             emit_layer('metal1')
-            mag.append(f'rect {nm(m1[0])} {nm(m1[1])} {nm(m1[2])} {nm(m1[3])}')
-        m2 = via_pad.get('m2')
-        if m2:
+            mag.append(f'rect {nm(m1_stub[0])} {nm(m1_stub[1])} '
+                       f'{nm(m1_stub[2])} {nm(m1_stub[3])}')
+            stub_count += 1
+        # M2 stub: for m2_below mode (bridges via M2 pad to PCell M2)
+        m2_stub = ap.get('m2_stub')
+        if m2_stub:
             emit_layer('metal2')
-            mag.append(f'rect {nm(m2[0])} {nm(m2[1])} {nm(m2[2])} {nm(m2[3])}')
+            mag.append(f'rect {nm(m2_stub[0])} {nm(m2_stub[1])} '
+                       f'{nm(m2_stub[2])} {nm(m2_stub[3])}')
         ap_count += 1
 
     mag.append('<< end >>')
@@ -225,10 +386,16 @@ def generate(netlist_path='netlist.json',
     with open(os.path.join(output_dir, 'soilz.mag'), 'w') as f:
         f.write('\n'.join(mag) + '\n')
 
-    # ═══ Phase C: Tcl script for DRC + extract ═══
-    tcl_c = ['# Phase C: Load, DRC, Extract',
+    # ═══ Phase C: Tcl script for DRC + flat extract (for Netgen LVS) ═══
+    tcl_c = ['# Phase C: Load, flatten, DRC, Extract',
              'load soilz',
              'select top cell',
+             '',
+             '# Flatten for clean extraction',
+             'flatten soilz_flat',
+             'load soilz_flat',
+             'select top cell',
+             '',
              'drc check',
              'drc catchup',
              'puts "DRC errors: [drc list count total]"',
@@ -236,10 +403,11 @@ def generate(netlist_path='netlist.json',
              'extract unique',
              'extract all',
              'ext2spice lvs',
-             'ext2spice hierarchy on',
              'ext2spice',
-             'puts "SPICE: soilz.spice"',
+             'puts "SPICE: soilz_flat.spice"',
              '',
+             '# Also write GDS from hierarchical cell',
+             'load soilz',
              'gds write soilz_magic.gds',
              'puts "GDS: soilz_magic.gds"',
              'puts "=== DONE ==="',
@@ -252,6 +420,11 @@ def generate(netlist_path='netlist.json',
     magic_cmd = ('CAD_ROOT=$HOME/.local/lib $HOME/.local/bin/magic '
                  '-noconsole -dnull '
                  '-T ~/pdk/IHP-Open-PDK/ihp-sg13g2/libs.tech/magic/ihp-sg13g2')
+
+    ref_spice = os.path.abspath('soilz_lvs.spice')
+    setup_tcl = os.path.expanduser(
+        '~/pdk/IHP-Open-PDK/ihp-sg13g2/libs.tech/netgen/ihp-sg13g2_setup.tcl')
+    netgen_cmd = '~/.local/lib/netgen/tcl/netgenexec'
 
     run = ['#!/bin/bash',
            'set -e',
@@ -266,10 +439,24 @@ def generate(netlist_path='netlist.json',
            'echo "=== Phase C: DRC + Extract ==="',
            f'{magic_cmd} < phase_c.tcl 2>&1 | grep -E "DRC|SPICE|GDS|DONE|Extracting|error"',
            '',
+           'echo "=== Phase D: SPICE conversion (X→M format) ==="',
+           f'python3 -c "',
+           f'import sys; sys.path.insert(0, \\"{os.path.abspath(".")}\\");',
+           f'from atk.gen_magic_layout import convert_spice_for_netgen;',
+           f's = convert_spice_for_netgen(\\"soilz_flat.spice\\", \\"soilz_netgen.spice\\");',
+           f'print(f\\"  Converted: {{s}}\\")',
+           f'"',
+           '',
+           'echo "=== Phase E: Netgen LVS ==="',
+           f'echo "source ~/.local/lib/netgen/tcl/netgen.tcl',
+           f'set setup_file {setup_tcl}',
+           f'lvs {{soilz_netgen.spice soilz_flat}} {{{ref_spice} soilz}} \\$setup_file comp.out',
+           f'quit" | {netgen_cmd} 2>&1 | grep -E "Merged|Mismatch|instances|Number of|Final|Result"',
+           '',
            'echo "=== Results ==="',
-           'wc -l soilz.spice 2>/dev/null || echo "No SPICE output"',
-           'grep "sg13_lv\\|rhigh\\|cap_cmim" soilz.spice 2>/dev/null | wc -l',
-           'echo "devices recognized"',
+           'wc -l soilz_flat.spice 2>/dev/null || echo "No SPICE output"',
+           'grep -c "sg13_lv\\|rhigh\\|cap_cmim" soilz_flat.spice 2>/dev/null || echo 0',
+           'echo "devices extracted"',
            'ls -la soilz_magic.gds 2>/dev/null || echo "No GDS"']
 
     with open(os.path.join(output_dir, 'run_magic.sh'), 'w') as f:
@@ -278,7 +465,7 @@ def generate(netlist_path='netlist.json',
 
     print(f'  Output: {output_dir}')
     print(f'  Devices: {placed}')
-    print(f'  Routing segments: {seg_count}')
+    print(f'  Routing: {seg_count} segments ({seg_filtered} filtered by smart filter)')
     print(f'  Power drops: {drop_count}')
     print(f'  AP via stacks: {ap_count}')
     print(f'  soilz.mag: {len(mag)} lines')
