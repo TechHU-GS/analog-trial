@@ -724,11 +724,26 @@ device 识别 100% 成功（之前 KLayout LVS 只识别 87%）。
 | 6 | ATK_MAGIC routing | 29 | 49 | 1(142) | 坐标混乱 |
 | 7 | **Shifted placement** | **68** | **18** | 2(82,142) | **最佳 connectivity** |
 
+**KLayout LVS on Magic GDS (2026-03-17 15:07):**
+- Netgen: 编译安装但无 Tcl 支持 (non-Tcl mode 不兼容 IHP setup.tcl)
+- **用 KLayout LVS 验证 Magic GDS** ← 最快验证路径
+- 结果:
+  - Devices matched: **115** (vs ATK pipeline 246)
+  - **Comma merges: 0** ← 巨大胜利！ATK pipeline 有 2-3 个无法消除
+  - Wrong-bulk PMOS: 127 (没画 NWell + ntap ties)
+  - Nets matched: 0 (routing connectivity 不足)
+  - Pins matched: 501
+
+**结论**: Magic 路线的优势确认:
+- ✅ 0 comma merges (well/tap 原生处理)
+- ✅ 115 devices matched (device 提取正确)
+- ❌ Routing connectivity 需要继续完善
+- ❌ NWell ties 需要加入 gen_magic_layout
+
 **下一步**:
-1. Per-pin weighted shift (减少 mega-net, 优化 S pin 对齐)
-2. 或: 直接用 Magic pin 坐标重写 routing solver
-3. 安装 Netgen → LVS 验证已连接 nets 的正确性
-4. 迭代直到 LVS 指标稳定下降
+1. 加 NWell region + ntap ties 到 .mag (减少 127 wrong-bulk)
+2. 改进 routing 坐标对齐 (增加 nets matched)
+3. 迭代: 修 → KLayout LVS → diagnose_lvs → 修
 
 ### 教训（累积，每条都踩过坑）
 
