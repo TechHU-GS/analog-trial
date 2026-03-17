@@ -254,7 +254,7 @@ def generate(netlist_path='netlist.json',
 
     # Metal routing
     WIRE_HW = {0: 150, 1: 150, 2: 150, 3: 150}  # nm
-    VIA_HS = {-1: 95, -2: 95, -3: 95}
+    VIA_HS = {-1: 100, -2: 100, -3: 100}  # 100nm → 200nm via, avoids 180nm rounding
     LAYER_NAME = {0: 'metal1', 1: 'metal2', 2: 'metal3', 3: 'metal4',
                   -1: 'via1', -2: 'via2', -3: 'via3'}
 
@@ -357,7 +357,7 @@ def generate(netlist_path='netlist.json',
         via_pad = ap.get('via_pad', {})
         if via_pad:
             emit_layer('via1')
-            mag.append(f'rect {nm(px-95)} {nm(py-95)} {nm(px+95)} {nm(py+95)}')
+            mag.append(f'rect {nm(px-100)} {nm(py-100)} {nm(px+100)} {nm(py+100)}')
             m1 = via_pad.get('m1')
             if m1:
                 emit_layer('metal1')
