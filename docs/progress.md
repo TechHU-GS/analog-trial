@@ -157,10 +157,74 @@ M1       290×290nm
 
 **状态**: power on TM1 实际可行性确认 ✅
 
+### Signal Router Step 1: Pin 位置确认 (2026-03-18 13:00)
+
+**发现**: device_lib_magic.json 的 pos_nm 是 M1 级 pin center，NOT M2 pad 位置。
+Via2 放在 pos_nm 上无法接触 device M2 geometry（6 种 device type 验证全部 ❌）。
+
+**解决**: 使用 ATK routing.json access_points 的 (x,y) 作为 Via2 连接点。
+ATK AP 有 M1 stub + Via1 + M2 pad (880nm)，Via2 直接落在 M2 pad 上。
+
+**验证**: 1268 ATK APs + 257 unstripped devices → KLayout DRC = 0
+- M1.b/M2.b/V1.b 全 CLEAN
+
+**结论**: 复用 ATK access_points 位置，废弃的只是 routing segments。
+
+### Signal Router Step 2: Candidate Generation (2026-03-18 13:15)
+
+- signal_router.py: `compute_pin_positions()` 用 ATK AP (x,y)，`generate_candidates()` 生成 L-routes
+- 135 nets → 618 candidates (2-pin: 2-3 variants, multi-pin: 6 variants)
+- **DRC 验证**: 12 条 candidates (2/4/8-pin, 多种变体) 全部 KLayout DRC = 0 ✅
+
+### Via2→M3 电气连通验证 (2026-03-18 13:25)
+
+**测试**: Mtail device + AP (M1 stub+Via1+M2 pad) + Via2 + M3 pad → Magic extract
+**结果**: SPICE output `X0 ... TEST_M3 ...` — Drain terminal = M3 label
+**结论**: device M1 → M1 stub → Via1 → M2 → Via2 → M3 电气连通 ✅
+
+### TM1 Power Via Stack 电气连通验证 (2026-03-18 13:35)
+
+**测试**: Mtail device + AP (M1 stub+Via1+M2) + Via2→M3→Via3→M4→Via4→M5→Via5→TM1
+**第一次失败**: Magic 输出 `dev_mtail_0.S`（未连通）
+**原因**: Magic 层名错误 — `topvia1` 不存在，应为 `via5`
+**修正后**: SPICE `X0 PWR_TM1 ...` — Source = TM1 label ✅
+
+**Magic 层名映射 (必须用这些写 .mag)**:
+```
+Via4     → << via4 >>
+Metal5   → << metal5 >>
+TopVia1  → << via5 >>      ← 不是 topvia1!
+TopMetal1 → << met6 >>     ← 不是 topmetal1!
+```
+
+**教训**: KLayout DRC (GDS layer 125/0) clean ≠ Magic .mag 正确。两套体系，都要验。
+
+### Signal Router Step 3: build_soilz_mag() (2026-03-18 13:50)
+
+- genome = {net: 0 for all 135 nets} (candidate 0 for every net)
+- 输出: 19423 行 .mag, 257 devices, 1268 APs, 153 power via stacks, 135 route sets
+- Magic load ✅, flatten ✅, GDS 1.3MB ✅
+- Power drops: 153/153 有匹配 AP ✅, 257/257 devices 在 .mag ✅
+
+### Signal Router Step 4: 本机 LVS Pipeline (2026-03-18 14:05)
+
+**测试**: soilz.mag (candidate 0 for all 135 nets) → Magic extract → SPICE X→M → Netgen LVS
+**结果**:
+- Magic ext2spice: 成功（macOS 未 hang）, 260 devices extracted
+- SPICE 转换: 248 real (241 MOS + 4 R + 3 C), 11 parasitic filtered
+- Netgen LVS: **57/255 devices matched** (baseline, 无 GA 优化)
+- Mega-net: `dev_rin_0.B` 715 connections (substrate/cross-net merging)
+
+**分析**: 57/255 是 candidate 0 的 baseline。cross-net shorts 来自 135 routes 全选 candidate 0
+互相冲突。GA 优化应能显著提高。
+
+**⚠️ unverified**: 没跑 bare (无 signal routing) 的 LVS baseline 做对比。
+57 可能比 bare 还差（如果 routing 引入了更多 cross-net 比它连接的还多）。
+
 ### 下一步
-1. 设计 signal routing 在 M3+M4+M5 上
-2. 开 ECS 跑 GA 优化
-3. KLayout DRC + Netgen LVS 验证
+1. commit 当前进展 + signal_router.py
+2. 写 ga_signal_router.py (新文件，复用 GA 框架)
+3. 开 ECS 跑 GA + bare baseline 对比
 
 ---
 
