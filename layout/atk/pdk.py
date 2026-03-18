@@ -35,17 +35,22 @@ METAL1      = (8, 0)
 METAL2      = (10, 0)
 METAL3      = (30, 0)
 METAL4      = (50, 0)
+METAL5      = (67, 0)
 VIA1        = (19, 0)
 VIA2        = (29, 0)
 VIA3        = (49, 0)
+VIA4        = (66, 0)
+TOPVIA1     = (125, 0)
 METAL1_PIN  = (8, 2)
 METAL2_PIN  = (10, 2)
 METAL3_PIN  = (30, 2)
 METAL4_PIN  = (50, 2)
+METAL5_PIN  = (67, 2)
 METAL1_LBL  = (8, 1)
 METAL2_LBL  = (10, 1)
 METAL3_LBL  = (30, 1)
 METAL4_LBL  = (50, 1)
+METAL5_LBL  = (67, 1)
 TOPMETAL1   = (126, 0)
 TOPMETAL1_PIN = (126, 2)
 
@@ -95,6 +100,36 @@ V3_SIZE     = 190     # V3.a: via square dimension
 V3_MIN_S    = 220     # V3.b: minimum spacing between vias
 V3_ENC_M3   = 90      # M3 enclosure of Via3
 V3_ENC_M4   = 90      # M4 enclosure of Via3
+
+# Metal5 (same generic Mn rules as M2-M4)
+M5_MIN_W    = 200     # M5.a: minimum width
+M5_MIN_S    = 210     # M5.b: minimum spacing
+M5_MIN_S_10 = 280     # M5.b2: spacing for ≥ 10µm run length
+M5_VIA_ENC  = 90      # M5.d: enclosure of Via4
+M5_MIN_AREA = 144000  # M5.d: min area ≥ 0.144 µm²
+
+# Via4 (Metal4 ↔ Metal5) — same generic Vn rules as Via2/Via3
+V4_SIZE     = 190     # V4.a: via square dimension (IHP §5.20)
+V4_MIN_S    = 220     # V4.b: minimum spacing (IHP §5.20)
+V4_ENC_M4   = 50      # Vn.c1: M4 endcap enclosure of Via4 (IHP §5.20, 0.05µm)
+V4_ENC_M5   = 50      # Vn.c1: M5 endcap enclosure of Via4 (IHP §5.20, 0.05µm)
+                       # NOTE: Vn.c (non-endcap) = 5nm, but endcap governs pad size
+
+# TopVia1 (Metal5 ↔ TopMetal1)
+TV1_SIZE    = 420     # TV1.a: via square dimension
+TV1_MIN_S   = 420     # TV1.b: minimum spacing
+TV1_ENC_M5  = 100     # M5 enclosure of TopVia1
+TV1_ENC_TM1 = 420     # TopMetal1 enclosure of TopVia1
+
+# TopMetal1
+TM1_MIN_W   = 1640    # TM1.a: minimum width
+TM1_MIN_S   = 1640    # TM1.b: minimum spacing
+
+# Via4 pad sizes
+VIA4_SZ     = V4_SIZE
+VIA4_PAD    = ((V4_SIZE + 2 * max(V4_ENC_M4, V4_ENC_M5) + 4) // 5) * 5  # = 370nm
+VIA4_PAD_M4 = ((V4_SIZE + 2 * V4_ENC_M4 + 4) // 5) * 5  # = 370nm
+VIA4_PAD_M5 = ((V4_SIZE + 2 * V4_ENC_M5 + 4) // 5) * 5  # = 370nm
 
 # Device geometry (from PCell measurements)
 GATE_OFFSET = 180     # Gate pin sits this far below MOSFET bbox bottom
