@@ -223,13 +223,23 @@ class MazeRouter:
                 return path
 
             gx, gy, layer = cur
-            # Cardinal neighbors
+            # Cardinal neighbors — with H/V direction cost bias
+            # Layer 0 (M3) prefers HORIZONTAL: vertical steps cost more
+            # Layer 1 (M4) prefers VERTICAL: horizontal steps cost more
+            # Layer 2 (M5) prefers VERTICAL: horizontal steps cost more
             for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
                 nx, ny = gx + dx, gy + dy
                 if 0 <= nx < self.nx and 0 <= ny < self.ny:
                     nb = (nx, ny, layer)
                     if _passable(nb):
-                        nc = cost + 1
+                        # Non-preferred direction: 4x cost penalty
+                        is_horizontal = (dx != 0)
+                        if layer == M1_LYR and not is_horizontal:  # M3: H preferred
+                            nc = cost + 4
+                        elif layer in (M2_LYR, M3_LYR) and is_horizontal:  # M4,M5: V preferred
+                            nc = cost + 4
+                        else:
+                            nc = cost + 1
                         if nc < g_score.get(nb, float('inf')):
                             g_score[nb] = nc
                             came_from[nb] = cur
