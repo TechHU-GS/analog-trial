@@ -210,10 +210,31 @@ routing wire (M3/M4) 画了但浮空（不连 M2）→ 干扰 KLayout LVS extrac
 - 更多 Via2 ≠ 更好 LVS（PCell M1 限制）
 - 需要: 只画有 Via2 的 route wire, 跳过浮空 route
 
+### Via2 策略收敛 (验证)
+- Layer fix (M3/M4/M5 search) + 2100nm reach: 291 Via2 → LVS 116 (too many → M3 overlap)
+- Simple Via2 everywhere: 567 Via2 → LVS 114 + 4 merges (PCell S/D M1 连通)
+- **回退到保守版 (M5-only + 500nm): 81 Via2 + 删 floating routes → 246 matched ✅**
+
+两步流程:
+1. 跑 assembly (全部 129 routes) → _add_missing_ap_via2 放 81 Via2
+2. GDS 检查哪些 route 有 Via2 → 删无 Via2 的 81 routes → 重跑 assembly
+→ 48 routes drawn, 246 matched, 0 WB, 0 CM ✅
+
+### Session 5 最终结果
+```
+DRC:     4227 → 待 re-check
+LVS:     96 → 246/257 matched (95.7%)
+Nets:    0 → 17 matched
+Merges:  79 → 0
+WB PMOS: 126 → 0
+Routes:  48/129 connected (37%)
+```
+
 ### 下一步
-1. assemble_gds.py: skip floating route wire drawing
-2. DRC re-check
-3. 然后考虑 GA/sweep
+1. DRC re-check (当前 ~400, 需要确认 48-route 版本)
+2. 查 11 unmatched devices (3 cap, 4 res, 4 MOS)
+3. DRC clean (M3.b spacing, M5.b, M1.b 等)
+4. 然后 sweep/GA 找最优 Via2 子集
 
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 

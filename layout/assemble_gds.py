@@ -1329,14 +1329,15 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
             else:
                 _is_bypass = False
 
-            # Find nearest route vertex on M3/M4/M5/Via3/Via4
-            # NOTE: M1_LYR=0=M3, M2_LYR=1=M4, M3_LYR=2=M5 after layer remap.
-            # Was searching only M3_LYR(=M5) — missed M3/M4 segments entirely.
+            # Find nearest route vertex on M5/Via3 (conservative — M3/M4 search
+            # causes too many Via2 in PCell M1 connected areas → cross-net merge).
+            # TODO(via2_layers): expanding to M3/M4 requires PCell M1 connectivity
+            # awareness to avoid placing Via2 at S/D pins of same device.
             best_dist = float('inf')
             best_pos = None
             for seg in segs:
                 lyr = seg[4]
-                if lyr not in (M1_LYR, M2_LYR, M3_LYR, -1, -2, -3):
+                if lyr not in (M3_LYR, M4_LYR, -3):
                     continue
                 for px, py in ((seg[0], seg[1]), (seg[2], seg[3])):
                     dist = abs(px - ap_x) + abs(py - ap_y)
@@ -1344,11 +1345,9 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
                         best_dist = dist
                         best_pos = (px, py)
 
-            # TODO(via2_reach): 原值 500nm 只够 1.4 grid steps，导致 78% Via2 放置失败。
-            # 改为 6*MAZE_GRID 覆盖 router bridge + grid snap 偏移。
-            # 理想值应从 pdk.py 引用，不硬编码。
-            _VIA2_REACH = 6 * MAZE_GRID  # 2100nm — was 500nm
-            if not best_pos or best_dist > _VIA2_REACH:
+            # TODO(via2_reach): conservative 500nm works with M5-only search.
+            # Expanding requires PCell M1 awareness (see via2_layers TODO).
+            if not best_pos or best_dist > 500:
                 continue
 
             rx, ry = best_pos
@@ -4479,20 +4478,40 @@ def main():
                       drawn_vias=drawn_vias, li_m3=li_route_2, li_v2=li_via_12)
         print(f'    Pre-route {net_name}: {len(segs)} segments')
 
-    # Signal routes (drawn_vias prevents duplicate Via at access point positions)
+    # Determine which routes will get Via2 connections (pre-scan).
+    # Routes without Via2 produce floating M3/M4 wire → interferes with LVS.
+    # Only draw wire for routes that _add_missing_ap_via2 can connect.
+    _via_stack_pins_pre = set()
+    for _d in routing.get('power', {}).get('drops', []):
+        if _d['type'] == 'via_stack':
+            _via_stack_pins_pre.add(f"{_d['inst']}.{_d['pin']}")
+    _aps_pre = routing.get('access_points', {})
+    _pos_pre = {}
+    for _ak, _av in _aps_pre.items():
+        _pos_pre.setdefault((_av['x'], _av['y']), []).append(_ak)
+    _shared_pre = set()
+    for _pos, _keys in _pos_pre.items():
+        if len(_keys) >= 2:
+            _shared_pre.update(_keys)
+
+    # Signal routes — skip floating (marked by two-pass Via2 check)
     total_segs = 0
     via1_before = len(drawn_vias)
     total_via_segs = 0
+    _skipped_floating = 0
     for net_name, route in routing.get('signal_routes', {}).items():
+        if route.get('_floating'):
+            _skipped_floating += 1
+            continue
         segs = route.get('segments', [])
         total_via_segs += sum(1 for s in segs if s[4] < 0)
-        # Route layers remapped: router 0→M3, 1→M4, 2→M5, via -1→Via3, -2→Via4
         draw_segments(top, li_route_0, li_route_1, li_via_01, segs, M2_SIG_W,
                       drawn_vias=drawn_vias, li_m3=li_route_2, li_v2=li_via_12)
         total_segs += len(segs)
     new_vias = len(drawn_vias) - via1_before
     skipped_vias = total_via_segs - new_vias
-    print(f'  Drew {len(routing.get("signal_routes", {}))} signal nets, '
+    print(f'  Drew {len(routing.get("signal_routes", {})) - _skipped_floating} signal nets '
+          f'(skipped {_skipped_floating} floating), '
           f'{total_segs} segments ({new_vias} new vias, '
           f'{skipped_vias} deduped)')
 
