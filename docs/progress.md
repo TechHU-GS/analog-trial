@@ -425,10 +425,33 @@ TopMetal2 — 禁止 (TTIHP)
 5. H/V direction cost bias
 6. 并行: 188 核 random net ordering → A* routing → Magic LVS → 选最优
 
-### 下一步 (下个 session)
-1. 改 ATK maze router (pdk.py + maze_router.py + solver.py)
-2. 本机验证 (单 net → 全 nets → LVS baseline)
-3. 开 ECS 188 核 sweep (pop=nproc-4, ESSD PL1, 监控≤30s)
+### ATK Maze Router 改造 (2026-03-18 18:00)
+
+**已完成的代码改动:**
+- pdk.py: +M5/Via4/TopVia1/TM1 constants (IHP PDK 值, V4_ENC=50nm not 90nm)
+- maze_router.py: 4-layer→3-layer (0=M3, 1=M4, 2=M5), N_ROUTING_LAYERS=3
+  - range(4)→range(N_ROUTING_LAYERS)
+  - VIA_PAIRS: {(0,1), (1,2)} = Via3 + Via4
+  - junction vias 通用化 (不再 hard-code layer 3)
+  - **H/V direction cost bias**: M3=H(1x) M4/M5=V(1x), wrong dir=4x penalty
+- solver.py: 禁用 device bbox/tie/M3 power 阻塞，加 _block_power_pads_m345()
+  - 153 power pad obstacles on M3/M4/M5
+  - 3 cap_cmim obstacles on M5
+
+**单 net 测试 (50×50µm grid):**
+- Route found: 172 steps, H=85 V=85, Via=1
+- H/V discipline: 0 violations ✅
+- Obstacle avoidance: power pad avoided ✅
+
+**未完成:**
+- assemble_gds.py GDS 层映射 (router code 0→M3, 1→M4, 2→M5, -1→Via3, -2→Via4)
+- 真实 135 nets 全量测试
+- 188 核并行化脚本
+
+### 下一步
+1. 改 assemble_gds.py 层映射
+2. 本机全量 135 nets routing + LVS
+3. 188 核 net ordering sweep
 
 ---
 
