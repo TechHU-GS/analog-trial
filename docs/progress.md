@@ -238,10 +238,95 @@ TopMetal1 → << met6 >>     ← 不是 topmetal1!
 **assumption**: "GA 搜索空间足够" — L-route candidates + M3/M4 两层能否支撑 135 nets
 不 cross-net，需要 ECS 实际跑才知道。
 
+### GA 首跑 + 失败分析 (2026-03-18 15:00)
+
+**GA 跑到 Gen 34, alltime best = 83**（bare baseline = 73）。
+
+**问题 1: score 含义搞错了**
+- GA 返回的 83 = extracted circuit 的 post-merge device count（不是 matched device count）
+- 255 = reference 的 device count（无 merge）
+- 83 意味着 routing 只多区分了 10 个 device（83-73），远不够
+
+**问题 2: ECS 运维失败**
+- pop=192 = nproc → SSH daemon 无 CPU → 无法监控
+- Popen + poll loop → Magic 僵尸进程累积 → load 6767 → 内存满
+- 应该: pop=nproc-4, subprocess.run+timeout, 共享 PCell symlink
+
+**问题 3: L-route candidates 没有严格 H/V 分层**
+- Variant C (all M3) 和 Variant D (all M4) 违反 H/V 纪律
+- 严格 H/V: M3 只水平, M4 只垂直 → 交叉不 short → 减少 cross-net
+
+**问题 4: evaluate 函数 3 次修改 (mole-whacking)**
+- echo→file redirect→poll+kill，根因是没在本机充分测试
+- 教训: **在本机完整跑通 evaluate 一次再上 ECS**
+
+**教训汇总:**
+1. Score 的含义必须在本机验证后再 GA
+2. ECS 运维纪律: pop=nproc-4, 监控≤30s, 高IO云盘
+3. 本机完整测试 evaluate → 确认返回值正确 → 再上 ECS
+4. L-route 必须严格 H/V 分层
+
+### 当前讨论: 分层策略的正确使用方式
+- M3 只水平, M4 只垂直, Via3 在交叉点
+- 交叉不 short（不同层）, 冲突只发生在同方向 parallel 线
+- M5 作为第三层可进一步缓解拥挤
+- 需要重新设计 candidate generator 严格遵守 H/V
+
+### Routability 分析 (2026-03-18 15:55)
+
+**容量 (M3+M4 only):**
+- M3 tracks: 636, M4 tracks: 492
+- 需要 segments: 476 (nearest-neighbor chain)
+- M3 利用率: 74.8%, **M4 利用率: 96.7%** ← 瓶颈！
+- M3 无优化 parallel conflicts: 263 对
+- 最拥挤 Y-band: 18 segments (VCO 区域 Y≈200µm)
+
+**对比参考设计 (IHP VCO tapeout):**
+- M3: 29.8%, M4: 28.2%, M5: 31.2% — 三层均匀使用
+- 我们只用 M3+M4 → M4 96.7% → 策略定了但没落实
+
+**加 M5 后:**
+- 三层 total tracks: 1764, 需要 476 → **利用率 27%** → 充裕
+- M5 上有 cap_cmim 占部分面积 (assumption: 影响小)
+
+### 分层策略确定 (2026-03-18 16:10)
+
+**三层 H/V 分配（routability 分析验证）：**
+```
+M3 = Horizontal (水平)  — 636 tracks
+M4 = Vertical   (垂直)  — 492 tracks
+M5 = Vertical   (垂直)  — 492 tracks (cap_cmim 仅占 1.5%)
+```
+
+**方案对比（选 M5-V 的原因）：**
+| 方案 | H 利用率 | V 利用率 | 判断 |
+|------|---------|---------|------|
+| M3H+M4V (两层) | 74.8% | 96.7% | M4 爆 ❌ |
+| M3H+M4V+M5H | 37.4% | 96.7% | M4 仍爆 ❌ |
+| **M3H+M4V+M5V** | **74.8%** | **48.4%** | **平衡 ✅** |
+
+**容量验证：**
+- 需要: 476 H-segments + 476 V-segments
+- H tracks (M3): 636, 利用率 74.8%
+- V tracks (M4+M5): 984, 利用率 48.4%
+- cap_cmim 占 M5 面积: 1.5%（3 个 cap, 816 um²/52722 um²）
+- **结论: 容量充足，两方向均衡**
+
+### 完整分层策略（冻结）
+```
+M1/M2    — device PCell（不碰）
+M3       — signal routing HORIZONTAL
+M4       — signal routing VERTICAL
+M5       — signal routing VERTICAL（避开 3 个 cap_cmim 区域）
+TopMetal1 — power distribution (TM1 stripes)
+TopMetal2 — 禁止 (TTIHP)
+```
+
 ### 下一步
-1. 写 ga_signal_router.py (新文件)
-2. 开 ECS 跑 GA
-3. 如果 GA 上限不够高，扩展 candidates (加 M5, 加更多变体)
+1. 重新设计 candidate generator (M3-H + M4/M5-V, 严格 H/V)
+2. 修好 evaluate (本机完整跑通再上 ECS)
+3. ECS 运维修好 (pop-4, timeout, 高IO云盘)
+4. 重跑 routing
 
 ---
 
