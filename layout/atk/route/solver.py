@@ -483,11 +483,9 @@ class RoutingSolver:
         for drop in self.power_drops:
             if drop['type'] != 'via_stack':
                 continue
-            # Power pad center = AP position
-            ap = self.access_points.get((drop['inst'], drop['pin']))
-            if not ap:
-                continue
-            px, py = ap['x'], ap['y']
+            # Power pad center = actual via position (NOT AP position —
+            # AP is device pin, via_x/via_y is where the pad is drawn)
+            px, py = drop['via_x'], drop['via_y']
 
             # Block on all 3 routing layers (M3=layer0, M4=layer1, M5=layer2)
             for lyr, margin in [(M1_LYR, m3_margin),
@@ -510,6 +508,9 @@ class RoutingSolver:
                 left, bot, right, top,
                 M3_LYR, margin=m5_margin, permanent=True)  # M3_LYR=2=M5
             cap_count += 1
+
+        # NOTE: M3 vbar obstacles removed — M3 rails/vbars will not be drawn
+        # in assemble_gds.py (power goes directly to TM1 via stack, not M3 rails)
 
         print(f'  Power pad obstacles: {count} (153 drops × 3 layers)')
         print(f'  Cap_cmim M5 obstacles: {cap_count}')

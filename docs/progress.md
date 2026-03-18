@@ -2,6 +2,111 @@
 
 > Read this after compact to restore context.
 
+## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
+
+### 核心发现
+
+1. **Label 层映射 bug 确认修复 (验证)**
+   - 原因: assemble_gds.py label 代码把 router layer 0/1 当 M1/M2 → label 放到 M2 text layer 但金属在 M4 → net 无名
+   - 修复: label 放在 AP via_pad M2 位置（M2 金属实际存在），通过 Via2→M3→routing wire 传播
+   - 验证结果: nets matched 0→13, comma merges 79→0, wrong-bulk PMOS 126→10, devices matched 96→113
+
+2. **对角线 bridge → L 形修复 (验证)**
+   - 原因: last-mile bridge 生成对角线段 → KLayout Path 多边形角点 off 5nm grid + 投影宽度 < 200nm
+   - 修复: maze_router.py 对角线拆成两段正交 L 形
+   - 验证结果: OffGrid 1592→0 ✅, 总 DRC 4227→2157
+
+3. **DRC 仍有 2157 violations**
+   - M3.a(width)=1211, M4.a=271, M5.a=137 — 主要是 L 形短边 < 200nm (假设, 未验证)
+   - M3.b(spacing)=298, M1.b=74, 其他各类小数
+   - OffGrid 全部消除 ✅
+
+4. **LVS 113/404 devices matched**
+   - 13 nets matched (从 0 提升)
+   - 0 comma merges (从 79 消除)
+   - 10 wrong-bulk PMOS (从 126 降低, 可能是需要独立 NW 岛的 PMOS)
+   - 291 devices unmatched — 需要继续分析
+
+5. **Reference SPICE 分析**
+   - 257 devices: 127 PMOS, 123 NMOS, 4 rhigh, 3 cap_cmim
+   - ~40 PMOS 的 bulk 不是 vdd（VCO source-follower, TG, CML latch）→ 需独立 NW 岛
+   - 所有 NMOS bulk = gnd
+   - KLayout LVS 无 connect_global → bulk 纯靠物理几何
+
+6. **Sweep 判断: 现在不做**
+   - 80% DRC violations 是系统性的（wire width, grid snap）→ 每个 seed 都一样
+   - 先修 routing DRC，再 sweep
+
+### Pipeline 执行情况
+
+```
+solve_placement.py  — INFEASIBLE (已有 placement.json, 跳过)
+solve_ties.py       — PASS 7/7 ✅
+solve_routing.py    — 131/143 nets, 4 failed (gate 2/6)
+optimize.py         — 3203→3198 segments
+assemble_gds.py     — soilz.gds written, 131+14+3=148 labels ✅
+DRC                 — 2157 violations
+LVS                 — 113 matched, 13 nets, 0 merges
+```
+
+### 代码修改 (本 session)
+
+| 文件 | 修改 | 状态 |
+|------|------|------|
+| assemble_gds.py | signal_routes + pre_routes label 放 AP via_pad M2 | ✅ 验证: 0→13 nets |
+| maze_router.py | 对角线 bridge → L 形正交 | ✅ 验证: OffGrid 1592→0 |
+
+### M3.a=1211 修复 (验证)
+- 原因：L 形 bridge 短边 < 200nm（router grid 350nm，max offset 175nm < 200nm min width）
+- 修复：bridge 短边延长到 M3_MIN_W=200nm（pdk.py 引用）
+- 验证：M3.a 1211→2, M4.a 271→0, M5.a 137→0, 总 DRC 2157→533
+
+### Power pad 位置修正 (验证)
+- 发现：150/153 power drops 的 AP 位置和实际 via 位置差 1430-2180nm (Y方向)
+- solver._block_power_pads_m345() 阻塞了 AP 位置（错），没挡实际 pad 位置
+- 修复：用 drop['via_x'], drop['via_y'] 替代 ap['x'], ap['y']
+- 验证：signal-power overlap 56→0
+
+### Power M3 vbar 分析 (验证)
+- 发现：1089 signal-power M3 vbar 重叠 — vbar 完全没被阻塞
+- 加 vbar obstacle：GND mega-merge 18→5 nets，但 routing 131→74（M3 空间不够）
+- solver 部分 seed 超时 >120s（obstacle 太多，A* 搜索空间爆炸）
+
+### 核心矛盾发现 ⚠️
+**M3 power rail/vbar 和 M3 signal routing 冲突**
+- 8 条全宽 M3 power rail + 151 条 M3 vbar 占大量 M3 空间
+- 分层策略说 M3=signal routing H, TM1=power distribution
+- 但 assemble_gds.py 的 power via stack 只到 M3！没有 Via3→M4→Via4→M5→TopVia1→TM1
+- Session 4 的 "Power on TM1 ✅" 是独立测试，从未集成到 pipeline
+- 这是改分层时欠的技术债
+
+### 快速验证：删 M3 rail/vbar (验证)
+- routing: 74→132/135 ✅ (M3 空间释放)
+- DRC: 533→246 ✅
+- 但 wrong-bulk PMOS: 23→131 ❌ (NW 拿不到 vdd label，因为 M3 rail 是 vdd 的分配通道)
+- **结论**：不能简单删 M3 rail，需要 TM1 via stack 替代
+
+### 下一步：TM1 Power Via Stack 集成
+1. assemble_gds.py：给每个 power drop 加 Via3→M4→Via4→M5→TopVia1→TM1
+2. assemble_gds.py：加 TM1 stripe（共享 Y-band 横条）
+3. assemble_gds.py：删 M3 rail + vbar（TM1 接替后不再需要）
+4. solver.py：只阻塞 via stack 小 pad（不需要阻塞 M3 rail/vbar 因为不存在了）
+5. 验证 DRC + LVS
+
+已知参数（Session 4 验证，pdk.py 有）：
+```
+Via3  190nm, M3 pad 290nm, M4 pad 290nm
+Via4  190nm, M4 pad 370nm, M5 pad 620nm
+TV1   420nm, M5 pad 620nm
+TM1   ≥1640nm stripe
+```
+
+代码现状：
+- via3() 存在（line 147），via4()/topvia1() 不存在
+- li_m5, li_v4, li_v3 已定义
+- li_tm1, li_tv1 未定义
+- pdk.py 有全部常量（TOPVIA1, TV1_SIZE, TM1_MIN_W 等）
+
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 
 ### 关键发现

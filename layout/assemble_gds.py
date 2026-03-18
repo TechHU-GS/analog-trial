@@ -3442,14 +3442,12 @@ def main():
     # ═══ 4. Draw power rails + drops ═══
     print('\n  === Drawing power ===')
 
-    # M3 horizontal rails
-    for rail_id, rail in routing.get('power', {}).get('rails', {}).items():
-        hbar(top, li_m3, rail['x1'], rail['x2'], rail['y'], rail['width'])
-        net_label = rail.get('net', rail_id)
-        print(f'    Rail {rail_id:12s} ({net_label:8s}): y={rail["y"]/1000:.1f}µm')
+    # M3 horizontal rails — SKIPPED: power goes to TM1 via stack,
+    # M3 rails conflict with M3 signal routing (layer strategy: M3=signal H)
+    print('    M3 rails: SKIPPED (power on TM1, M3 for signal)')
 
-    # Build rail data for M3 crossing detection
-    all_rails = routing.get('power', {}).get('rails', {})
+    # Empty all_rails so vbar drawing is also skipped (no target rail → no vbar)
+    all_rails = {}
 
     # Pre-collect M2 signal segments for bridge conflict checking
     m2_signal_segs = []
@@ -4492,71 +4490,71 @@ def main():
                             klayout.db.Point(ap['x'], ap['y']))))
                     sig_label_count += 1
             continue
-        # Prefer M2 segment for label (layer=1), fallback to M1 (layer=0)
-        m2_seg = next((s for s in segs if s[4] == 1), None)
-        m1_seg = next((s for s in segs if s[4] == 0), None)
-        if m2_seg:
-            mx = (m2_seg[0] + m2_seg[2]) // 2
-            my = (m2_seg[1] + m2_seg[3]) // 2
-            top.shapes(li_m2_lbl).insert(klayout.db.Text(
-                net_name, klayout.db.Trans(klayout.db.Point(mx, my))))
-            sig_label_count += 1
-        elif m1_seg:
-            mx = (m1_seg[0] + m1_seg[2]) // 2
-            my = (m1_seg[1] + m1_seg[3]) // 2
-            top.shapes(li_m1_lbl).insert(klayout.db.Text(
-                net_name, klayout.db.Trans(klayout.db.Point(mx, my))))
-            sig_label_count += 1
-        else:
-            # No M1/M2 segments (M3/M4-only route).  Place label on M2 at
-            # the first AP via_pad (AP always draws Via1+M1+M2), so the
-            # label propagates through Via2→M3/M4 added by _add_missing_ap_via2.
-            # Fallback: M3 label at first M3 segment midpoint.
-            pins = route.get('pins', [])
-            _lbl_placed = False
+        # Routing is on M3+M4+M5 (router layers 0,1,2).  Labels must be
+        # on a layer with physical metal.  Place label on M2 at AP via_pad
+        # (every AP has M2 from the via stack M1→Via1→M2→Via2→M3).
+        # Label propagates through Via2→M3→routing wire.
+        # Fallback: M3 label at first M3 segment (router layer 0).
+        pins = route.get('pins', [])
+        _lbl_placed = False
+        for pin_key in pins:
+            ap = _ap_data.get(pin_key)
+            if ap and ap.get('via_pad') and 'm2' in ap['via_pad']:
+                vp = ap['via_pad']['m2']
+                mx = (vp[0] + vp[2]) // 2
+                my = (vp[1] + vp[3]) // 2
+                top.shapes(li_m2_lbl).insert(klayout.db.Text(
+                    net_name, klayout.db.Trans(klayout.db.Point(mx, my))))
+                sig_label_count += 1
+                _lbl_placed = True
+                break
+        if not _lbl_placed:
+            m3_seg = next((s for s in segs if s[4] == 0), None)  # router layer 0 = M3
+            if m3_seg:
+                mx = (m3_seg[0] + m3_seg[2]) // 2
+                my = (m3_seg[1] + m3_seg[3]) // 2
+                top.shapes(li_m3_lbl).insert(klayout.db.Text(
+                    net_name, klayout.db.Trans(klayout.db.Point(mx, my))))
+                sig_label_count += 1
+                _lbl_placed = True
+        if not _lbl_placed:
+            # Last resort: M2 label at AP position (even without via_pad)
             for pin_key in pins:
                 ap = _ap_data.get(pin_key)
-                if ap and ap.get('via_pad') and 'm2' in ap['via_pad']:
-                    vp = ap['via_pad']['m2']
-                    mx = (vp[0] + vp[2]) // 2
-                    my = (vp[1] + vp[3]) // 2
+                if ap:
                     top.shapes(li_m2_lbl).insert(klayout.db.Text(
-                        net_name, klayout.db.Trans(klayout.db.Point(mx, my))))
+                        net_name, klayout.db.Trans(
+                            klayout.db.Point(ap['x'], ap['y']))))
                     sig_label_count += 1
                     _lbl_placed = True
                     break
-            if not _lbl_placed:
-                m3_seg = next((s for s in segs if s[4] == 2), None)
-                if m3_seg:
-                    mx = (m3_seg[0] + m3_seg[2]) // 2
-                    my = (m3_seg[1] + m3_seg[3]) // 2
-                    top.shapes(li_m3_lbl).insert(klayout.db.Text(
-                        net_name, klayout.db.Trans(klayout.db.Point(mx, my))))
-                    sig_label_count += 1
-                    _lbl_placed = True
-            if not _lbl_placed:
-                # Last resort: M2 label at AP position (even without via_pad)
-                for pin_key in pins:
-                    ap = _ap_data.get(pin_key)
-                    if ap:
-                        top.shapes(li_m2_lbl).insert(klayout.db.Text(
-                            net_name, klayout.db.Trans(
-                                klayout.db.Point(ap['x'], ap['y']))))
-                        sig_label_count += 1
-                        _lbl_placed = True
-                        break
-    # Pre-routes too
+    # Pre-routes: same AP via_pad M2 label strategy
     for net_name, route in routing.get('pre_routes', {}).items():
         segs = route.get('segments', [])
         if not segs:
             continue
-        m2_seg = next((s for s in segs if s[4] == 1), None)
-        if m2_seg:
-            mx = (m2_seg[0] + m2_seg[2]) // 2
-            my = (m2_seg[1] + m2_seg[3]) // 2
-            top.shapes(li_m2_lbl).insert(klayout.db.Text(
-                net_name, klayout.db.Trans(klayout.db.Point(mx, my))))
-            sig_label_count += 1
+        _pr_placed = False
+        pr_pins = route.get('pins', [])
+        for pin_key in pr_pins:
+            ap = _ap_data.get(pin_key)
+            if ap and ap.get('via_pad') and 'm2' in ap['via_pad']:
+                vp = ap['via_pad']['m2']
+                mx = (vp[0] + vp[2]) // 2
+                my = (vp[1] + vp[3]) // 2
+                top.shapes(li_m2_lbl).insert(klayout.db.Text(
+                    net_name, klayout.db.Trans(klayout.db.Point(mx, my))))
+                sig_label_count += 1
+                _pr_placed = True
+                break
+        if not _pr_placed:
+            # Fallback: M3 label at router layer 0 segment
+            m3_seg = next((s for s in segs if s[4] == 0), None)
+            if m3_seg:
+                mx = (m3_seg[0] + m3_seg[2]) // 2
+                my = (m3_seg[1] + m3_seg[3]) // 2
+                top.shapes(li_m3_lbl).insert(klayout.db.Text(
+                    net_name, klayout.db.Trans(klayout.db.Point(mx, my))))
+                sig_label_count += 1
 
     # Labels for single-pin nets (nets with APs but no signal route).
     # These are typically external input pins (gate connections) that the

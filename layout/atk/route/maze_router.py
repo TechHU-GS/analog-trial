@@ -337,8 +337,23 @@ class MazeRouter:
                     if seg[4] >= 0:  # metal, not via
                         bridge_layer = seg[4]
                         break
-            # Add bridge segment from pin exact to grid-snapped position
-            segs.append((pin_x, pin_y, grid_x, grid_y, bridge_layer))
+            # Add L-shaped bridge (two orthogonal segments, no diagonals).
+            # Each leg must be >= M3_MIN_W (200nm) to avoid width violations.
+            # Short legs are extended past the grid point (overlaps same-net
+            # router segment — safe).
+            from atk.pdk import M3_MIN_W as _MIN_W
+            dx = grid_x - pin_x
+            dy = grid_y - pin_y
+            if dx != 0:
+                end_x = grid_x
+                if abs(dx) < _MIN_W:
+                    end_x = pin_x + (_MIN_W if dx > 0 else -_MIN_W)
+                segs.append((pin_x, pin_y, end_x, pin_y, bridge_layer))
+            if dy != 0:
+                end_y = grid_y
+                if abs(dy) < _MIN_W:
+                    end_y = pin_y + (_MIN_W if dy > 0 else -_MIN_W)
+                segs.append((grid_x, pin_y, grid_x, end_y, bridge_layer))
 
         return segs
 
