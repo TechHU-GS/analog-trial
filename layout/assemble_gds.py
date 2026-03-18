@@ -1329,12 +1329,14 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
             else:
                 _is_bypass = False
 
-            # Find nearest route vertex on M3/M4/Via3
+            # Find nearest route vertex on M3/M4/M5/Via3/Via4
+            # NOTE: M1_LYR=0=M3, M2_LYR=1=M4, M3_LYR=2=M5 after layer remap.
+            # Was searching only M3_LYR(=M5) — missed M3/M4 segments entirely.
             best_dist = float('inf')
             best_pos = None
             for seg in segs:
                 lyr = seg[4]
-                if lyr not in (M3_LYR, M4_LYR, -3):
+                if lyr not in (M1_LYR, M2_LYR, M3_LYR, -1, -2, -3):
                     continue
                 for px, py in ((seg[0], seg[1]), (seg[2], seg[3])):
                     dist = abs(px - ap_x) + abs(py - ap_y)
