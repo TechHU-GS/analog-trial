@@ -312,6 +312,14 @@ M5 = Vertical   (垂直)  — 492 tracks (cap_cmim 仅占 1.5%)
 - cap_cmim 占 M5 面积: 1.5%（3 个 cap, 816 um²/52722 um²）
 - **结论: 容量充足，两方向均衡**
 
+### M5-V Route 验证 (2026-03-18 16:15)
+
+**测试**: M3-H → Via3 → M4 pad → Via4 → M5-V → Via4 → M4 → Via3 → M3 → Via2 → M2
+**电气连通**: Magic extract `equiv "PIN1_M2" "PIN2_M2"` ✅
+**KLayout DRC**: M2-M5 + V2-V4 全 CLEAN ✅
+
+M5-V 需要 Via3+Via4 两级跳，比 M4-V (Via3 一级) 多一级，但无额外 DRC 风险。
+
 ### 完整分层策略（冻结）
 ```
 M1/M2    — device PCell（不碰）
@@ -322,11 +330,47 @@ TopMetal1 — power distribution (TM1 stripes)
 TopMetal2 — 禁止 (TTIHP)
 ```
 
+### 贪心 Track Assignment (2026-03-18 16:25)
+
+**结果**: 476 H + 476 V segments, **0 conflicts** (<1 秒)
+- H conflicts (M3): 263 → 0
+- M4: 449 segments, M5: 27 segments (5.7%)
+- 之前 "M4 96.7% = 瓶颈" 是错误结论（没考虑空间分布）
+
+**⚠️ M5 干预决策点:**
+当前不干预。如果后续 M4 via pad DRC 冲突 → 回来把部分 M4 移到 M5。
+
+**⚠️ 0 conflicts ≠ DRC clean:**
+只检查了 parallel wire spacing，没检查 via pad 冲突、power via stack 冲突。
+
+### Routing 障碍验证 (2026-03-18 17:00)
+
+**贪心 H/V routing LVS = 51/255** — routing 引入 cross-net 比 bare (73) 更差。
+
+**根因分析 (两个假设验证):**
+- H1: Signal M3 wire 碰 power via stack M3 pad → **146 处 overlap ✅ 主因**
+- H2: M3/M4 穿过 device bbox → **Device PCell 无 M3/M4 geometry ✅ 不是问题**
+
+**验证：Device PCell M3/M4/M5 geometry**
+- MOSFET (mn1, pm3, mtail): 无 M3/M4/M5 ✅
+- 电阻 (rptat, rin, rout, rdac): 无 M3/M4/M5 ✅
+- **cap_cmim (C_fb, Cbyp_n, Cbyp_p): 有 M5 (bottom plate)** ✅
+
+**Routing 障碍清单 (事实，全部验证):**
+```
+必须绕开:
+1. 153 power via stack pads — M3+M4+M5 上各有 290nm pad
+2. 3 cap_cmim — M5 上有 bottom plate geometry
+不需要绕开:
+3. Device bboxes — PCell 无 M3/M4 geometry，穿过不 short
+4. 电阻 PCell — 同上
+```
+
 ### 下一步
-1. 重新设计 candidate generator (M3-H + M4/M5-V, 严格 H/V)
-2. 修好 evaluate (本机完整跑通再上 ECS)
-3. ECS 运维修好 (pop-4, timeout, 高IO云盘)
-4. 重跑 routing
+1. 在贪心 track assignment 里加 power pad obstacle avoidance
+2. M5 routing 避开 cap_cmim 区域
+3. 重新生成 routing → LVS 验证
+4. 如果贪心够好 → 完成；不够 → 192核 sweep net ordering
 
 ---
 
