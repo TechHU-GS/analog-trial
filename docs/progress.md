@@ -147,10 +147,32 @@ WB PMOS: 126 → 16
 Bare:    245/257 (无 routing 上限)
 ```
 
+### 245→113 Drop 根因定位 (验证) ⚠️ 重大突破
+
+**Binary search:** 0→40 routes=246, 60 routes=113. 精确到第 60 条 net=nmos_bias。
+
+**根因:** 4 个 cap/resistor 的 PLUS 和 MINUS pin 共享同一块 M2 pad：
+```
+Cbyp_n: PLUS(nmos_bias) & MINUS(gnd) → M2=[74860,152830,75340,153310] 完全相同
+Cbyp_p: PLUS(pmos_bias) & MINUS(gnd) → 同上
+C_fb:   PLUS(ota_out) & MINUS(sum_n) → 同上
+Rout:   PLUS(vptat) & MINUS(gnd) → 同上
+```
+Routing 给 PLUS M2 标 signal name → 同一 M2 也连 MINUS (gnd) → signal=gnd → cascade → 133 devices unmatch
+
+**验证:** 去掉 4 个 conflict net route → **246 matched, 0 wrong-bulk, 20 nets** ✅
+```
+128 routes (去掉4): matched=246, WB=0, nets=20
+132 routes (全部):   matched=113, WB=16, nets=18
+```
+
+**修复方向:** solver 在 routing 这 4 net 时排除 shared-M2 cap/res pin，通过其他 pin 连通。
+不是 PDK 问题 — cap M2 pad 共享是 PCell 正确行为，是我们的 routing 不该走这个 pin。
+
 ### 下一步
-1. 验证 M2 proximity 假设 — 查 t1I_m/t1Q_m/t2I_m/t2Q_m AP 的 M2 pad 是否近 ntap M2
-2. 如果确认 → 缩小 Via2 M2 pad 或检查 M2 cross-net spacing
-3. 修完 M2 → LVS 接近 bare 的 245 → 然后 sweep 有意义
+1. solver 实现 dual-pin AP 检测 + 排除
+2. 重跑 routing + LVS 验证 246 在完整 routing 下保持
+3. 然后 DRC clean + sweep 才有意义
 
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 
