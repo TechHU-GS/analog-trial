@@ -120,15 +120,37 @@ routing 引入 cross-net short（-133 devices）。Wrong-bulk: 无routing=2, 有
 - 修复: TopVia1 移到 stripe Y 位置 (rail_y)，M5 vbar 从 drop 延伸到 stripe
 - 验证: comma merges 2→0, wrong-bulk 110→16, devices matched 112→113
 
+### M5 vbar obstacle blocking (实验 — 未帮助)
+- solver.py 加了 M5 vbar blocking → routing 132→130，LVS 不变 (113)
+- M5 vbar overlap 不是 LVS drop 的主因
+
+### 132 device drop 根因分析 (进行中)
+bare 245 → routed 113 的 drop 分解:
+- +124 ref-only PMOS（2→126）— 几乎所有 PMOS 失配
+- +10 ref-only NMOS（4→14）
+- GND matched pair: `gnd,t1I_m,t1Q_m,t2I_m,t2Q_m,vdd` — routing 把 4 signal merge 进 gnd/vdd
+- 所有 PMOS bulk = 这个 merged net → wrong-bulk → unmatch
+- routing wire 本身不碰 power geometry（验证: 0 overlap）
+
+**推断（未验证）:** Via2 连接放大了 M2 proximity。bare 时 AP M2 pad 孤立，
+routing 加 Via2→M3→wire→M3→Via2→M2 形成 chain，chain 中某 AP M2
+离 ntap M2 (vdd) 太近 → 整条 chain merge 进 vdd。
+
 ### Session 5 最终结果
 ```
-DRC:     4227 → 399 (-90%)
-Routing: 131 → 132/135
+DRC:     4227 → ~400
+Routing: 132/135 → 130/135
 Devices: 96 → 113 matched
 Nets:    0 → 18 matched
-Merges:  79 → 0
+Merges:  79 → 0 (diagnose_lvs count)
 WB PMOS: 126 → 16
+Bare:    245/257 (无 routing 上限)
 ```
+
+### 下一步
+1. 验证 M2 proximity 假设 — 查 t1I_m/t1Q_m/t2I_m/t2Q_m AP 的 M2 pad 是否近 ntap M2
+2. 如果确认 → 缩小 Via2 M2 pad 或检查 M2 cross-net spacing
+3. 修完 M2 → LVS 接近 bare 的 245 → 然后 sweep 有意义
 
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 

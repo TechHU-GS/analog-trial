@@ -509,8 +509,26 @@ class RoutingSolver:
                 M3_LYR, margin=m5_margin, permanent=True)  # M3_LYR=2=M5
             cap_count += 1
 
-        # NOTE: M3 vbar obstacles removed — M3 rails/vbars will not be drawn
-        # in assemble_gds.py (power goes directly to TM1 via stack, not M3 rails)
+        # Block M5 vbars (vertical connection from drop to TM1 stripe rail_y)
+        # on M5 (router layer 2 = M3_LYR). M5 is vertical, vbars are vertical
+        # → direction-aligned, minimal fragmentation.
+        m5_vbar_count = 0
+        from ..pdk import VIA4_PAD_M5
+        m5_vbar_hw = VIA4_PAD_M5 // 2  # 185nm half-width
+        for drop in self.power_drops:
+            rail_y = drop.get('rail_y')
+            if rail_y is None:
+                continue
+            px = drop['via_x']
+            py = drop['via_y']
+            y1 = min(py, rail_y)
+            y2 = max(py, rail_y)
+            if y2 - y1 < 10:  # skip near-zero vbars
+                continue
+            self.router.block_rect(
+                px - m5_vbar_hw, y1, px + m5_vbar_hw, y2,
+                M3_LYR, margin=m5_margin, permanent=True)  # M3_LYR=2=M5
+            m5_vbar_count += 1
 
         print(f'  Power pad obstacles: {count} (153 drops × 3 layers)')
         print(f'  Cap_cmim M5 obstacles: {cap_count}')
