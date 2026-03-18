@@ -51,8 +51,8 @@ class RoutingSolver:
         self.signal_routes = {}
         self.errors = []
 
-    def solve(self):
-        """Run full routing pipeline."""
+    def solve(self, seed=None):
+        """Run full routing pipeline. seed controls net ordering for parallel sweep."""
         print('=== Phase 4: Routing ===')
         print()
 
@@ -106,8 +106,8 @@ class RoutingSolver:
         self._pre_route_hbt()
 
         # 5. Maze route signal nets
-        print('[5] Routing signal nets...')
-        self._route_signals()
+        print(f'[5] Routing signal nets (seed={seed})...')
+        self._route_signals(seed=seed)
 
         print()
         return self
@@ -719,8 +719,13 @@ class RoutingSolver:
 
     # ─── Signal routing ───
 
-    def _route_signals(self):
-        """Route all signal nets via maze router."""
+    def _route_signals(self, seed=None):
+        """Route all signal nets via maze router.
+
+        If seed is not None, shuffle net ordering for parallel diversity.
+        Different orderings → different obstacle states → different routes.
+        """
+        import random
         nets = {}
         for net in self.netlist['nets']:
             if net['type'] == 'signal':
@@ -734,6 +739,9 @@ class RoutingSolver:
         for net_name in nets:
             if net_name not in route_order:
                 route_order.append(net_name)
+
+        if seed is not None:
+            random.Random(seed).shuffle(route_order)
 
         pre_routed_cfg = self.netlist['constraints'].get('pre_routed_pins', [])
         pre_routed = set()
