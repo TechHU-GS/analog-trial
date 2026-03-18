@@ -193,10 +193,27 @@ routing wire (M3/M4) 画了但浮空（不连 M2）→ 干扰 KLayout LVS extrac
 - 只保留 51 connected routes → 246 matched, 0 WB ✅
 - 78 routes 仍浮空 — 196 pins 的 route 完全没 M3/M4 segments (router 层面问题)
 
+### Layer search fix (验证)
+- _add_missing_ap_via2 搜索 M3_LYR(=M5 only) → 改为 M1_LYR/M2_LYR/M3_LYR (M3/M4/M5)
+- Via2: 98→291, connected routes: 51→117 (91%)
+- LVS: 116 matched, 34 nets, 1 merge (ns3,vco3)
+
+### Simple Via2 测试 (失败, 回退)
+- 567 Via2 without conflict check → 4 comma merges, 114 matched
+- 根因: PCell 内部 M1 连接同 device 的 S/D → Via2 at both → merge
+- 和 PMOS source-ntap 问题同类 — PCell M1 connectivity 超出 reference 假设
+- 回退到 _add_missing_ap_via2 (conservative conflict check)
+
+### 结论
+- _add_missing_ap_via2 的保守性是必要的（防止 PCell M1 短路）
+- 51 connected routes = 246 matched 是当前最优解
+- 更多 Via2 ≠ 更好 LVS（PCell M1 限制）
+- 需要: 只画有 Via2 的 route wire, 跳过浮空 route
+
 ### 下一步
-1. assemble_gds.py: 只画有 Via2 connected 的 route wire (方案 2, 安全)
-2. 然后查为什么 78 routes 没有 M3/M4 segments (router 层面)
-3. DRC re-check
+1. assemble_gds.py: skip floating route wire drawing
+2. DRC re-check
+3. 然后考虑 GA/sweep
 
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 
