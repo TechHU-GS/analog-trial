@@ -102,10 +102,33 @@ TM1   ≥1640nm stripe
 ```
 
 代码现状：
-- via3() 存在（line 147），via4()/topvia1() 不存在
-- li_m5, li_v4, li_v3 已定义
-- li_tm1, li_tv1 未定义
-- pdk.py 有全部常量（TOPVIA1, TV1_SIZE, TM1_MIN_W 等）
+- via3()/via4()/topvia1() 全部实现（commit 27906fb）
+- li_m5, li_v4, li_v3, li_tv1, li_tm1 全部定义
+- TM1 stripes (8条) + via stack (151 drops) 已集成
+
+### Bare LVS = 245/257 (重要发现)
+无 signal routing 时 matched=245（有 routing 仅 112）。
+routing 引入 cross-net short（-133 devices）。Wrong-bulk: 无routing=2, 有routing=110。
+
+### Sweep: seed 0/2/5/8 LVS 完全一样 (112/19/2/110)
+瓶颈是系统性的，不在 routing ordering。
+
+### gnd-vdd 短路修复 (验证)
+- Binary search: 无drops→cm=0, VDD-only/GND-only→cm=0
+- 定位: INV_VCO_n.S + BUF_CK_n.S (gnd) TM1 pad 和 vdd_vco TM1 stripe 重叠 580nm
+- 原因: topvia1() 在 drop 位置画 TM1 pad (1640nm正方形)，碰到异 net stripe
+- 修复: TopVia1 移到 stripe Y 位置 (rail_y)，M5 vbar 从 drop 延伸到 stripe
+- 验证: comma merges 2→0, wrong-bulk 110→16, devices matched 112→113
+
+### Session 5 最终结果
+```
+DRC:     4227 → 399 (-90%)
+Routing: 131 → 132/135
+Devices: 96 → 113 matched
+Nets:    0 → 18 matched
+Merges:  79 → 0
+WB PMOS: 126 → 16
+```
 
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 

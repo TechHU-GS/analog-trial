@@ -3825,7 +3825,19 @@ def main():
                 # (TM1 stripe drawn separately after all drops)
                 via3(top, li_v3, li_m3, li_m4, v2[0], v2[1])
                 via4(top, li_v4, li_m4, li_m5, v2[0], v2[1])
-                topvia1(top, li_tv1, li_m5, li_tm1, v2[0], v2[1])
+                # M5 vbar from drop to rail_y, TopVia1 at rail_y (inside TM1 stripe).
+                # Don't draw TM1 pad at drop — would overlap cross-net stripes.
+                _drop_rail_y = drop.get('rail_y')
+                if _drop_rail_y is not None:
+                    vbar(top, li_m5, v2[0], v2[1], _drop_rail_y, VIA4_PAD_M5)
+                    _hs_tv1 = TV1_SIZE // 2
+                    _hp_m5_tv1 = _hs_tv1 + TV1_ENC_M5
+                    top.shapes(li_tv1).insert(klayout.db.Box(
+                        v2[0] - _hs_tv1, _drop_rail_y - _hs_tv1,
+                        v2[0] + _hs_tv1, _drop_rail_y + _hs_tv1))
+                    top.shapes(li_m5).insert(klayout.db.Box(
+                        v2[0] - _hp_m5_tv1, _drop_rail_y - _hp_m5_tv1,
+                        v2[0] + _hp_m5_tv1, _drop_rail_y + _hp_m5_tv1))
                 _tm1_drops.append((v2[0], v2[1], drop_net))
             else:
                 m3v = drop['m3_vbar']
