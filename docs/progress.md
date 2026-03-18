@@ -406,11 +406,29 @@ TopMetal2 — 禁止 (TTIHP)
 - ❌ LVS clean
 - ❌ KLayout DRC clean
 
+### SAGERoute 尝试 + 放弃 (2026-03-18 17:50)
+- IHP tech file 创建成功，SAGERoute binary 跑通但 18ms = 没识别 nets
+- 黑盒 binary 不可调试 → 放弃
+
+### PDK 完整审计 (2026-03-18 17:30)
+- layout_rules.pdf + process_spec.pdf 全读完，DRC 三处交叉验证一致
+- 完整参考: docs/pdk_reference.md
+- LEF: M5=H（我们用 V，不违反 DRC）
+
+### 最终方案: ATK Maze Router 改造 + 188 核 Sweep
+
+**改造内容 (~80-120 行):**
+1. 层重映射: 0→M3, 1→M4, 2→M5 + pdk.py 加 M5/Via4
+2. 删 `_block_power_rails_m3()` + 重写 `_block_power_drops()` → 153 power pad obstacles
+3. 删 device bbox blocking (PCell 无 M3/M4)
+4. Via2 bridge 预画 (M2 AP → M3)
+5. H/V direction cost bias
+6. 并行: 188 核 random net ordering → A* routing → Magic LVS → 选最优
+
 ### 下一步 (下个 session)
-1. 设计正式 router 模块（obstacle map + greedy L-route + strict H/V + M3/M4/M5）
-2. 本机完整测试（单 net → 全 nets → LVS → 确认 score 含义）
-3. 192 核 net ordering sweep（ECS, pop=nproc-4, 高IO云盘）
-4. ECS 运维纪律：pop-4核, 监控≤30s, subprocess.run+timeout
+1. 改 ATK maze router (pdk.py + maze_router.py + solver.py)
+2. 本机验证 (单 net → 全 nets → LVS baseline)
+3. 开 ECS 188 核 sweep (pop=nproc-4, ESSD PL1, 监控≤30s)
 
 ---
 
