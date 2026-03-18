@@ -218,13 +218,30 @@ TopMetal1 → << met6 >>     ← 不是 topmetal1!
 **分析**: 57/255 是 candidate 0 的 baseline。cross-net shorts 来自 135 routes 全选 candidate 0
 互相冲突。GA 优化应能显著提高。
 
-**⚠️ unverified**: 没跑 bare (无 signal routing) 的 LVS baseline 做对比。
-57 可能比 bare 还差（如果 routing 引入了更多 cross-net 比它连接的还多）。
+### Bare Baseline 分析 (2026-03-18 14:15)
+
+**Bare (devices + APs + power, 无 signal routing) LVS:**
+- Extracted: 259 devices → Netgen merged 186 parallel → **73 devices**
+- Reference: 257 devices → merged 2 → 255 devices
+- 73/255 match
+
+**原因**: 无 signal routing 时，同类型同尺寸 device 电气不可区分 → Netgen parallel merge。
+这是**正常行为**，不是 layout bug。signal routing 的作用就是区分这些 device。
+
+**对比**:
+- Bare: 73/255 (186 merged)
+- Candidate 0: 57/255 (routing cross-net 使 merge 更多)
+- GA 目标: >> 73, 趋向 255
+
+**Pipeline 验证 ✅**: 端到端干净，merging 是 Netgen 数学性质，不是 layout 错误。
+
+**assumption**: "GA 搜索空间足够" — L-route candidates + M3/M4 两层能否支撑 135 nets
+不 cross-net，需要 ECS 实际跑才知道。
 
 ### 下一步
-1. commit 当前进展 + signal_router.py
-2. 写 ga_signal_router.py (新文件，复用 GA 框架)
-3. 开 ECS 跑 GA + bare baseline 对比
+1. 写 ga_signal_router.py (新文件)
+2. 开 ECS 跑 GA
+3. 如果 GA 上限不够高，扩展 candidates (加 M5, 加更多变体)
 
 ---
 
