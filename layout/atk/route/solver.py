@@ -78,17 +78,23 @@ class RoutingSolver:
         print(f'  {len(self.rails)} rails, {len(self.power_drops)} drops '
               f'({len(self.via_stack_pins)} via_stack)')
 
-        # 3. Build obstacle map
-        print('[3] Building obstacle map...')
+        # 3. Build obstacle map (M3+M4+M5 routing)
+        # Device bboxes NOT blocked (PCell has no M3/M4/M5 geometry, verified)
+        # Tie M1 NOT blocked (M1 layer, not relevant to M3+ routing)
+        # M3 power rails NOT blocked (power moved to TopMetal1)
+        print('[3] Building obstacle map (M3+M4+M5)...')
         self._init_router()
         self._register_pin_terminals() # FIRST: pin centers must be known
-        self._block_device_bbox()      # permanent (skips pin terminals)
-        self._block_tie_m1()           # permanent (skips pin terminals)
-        self._block_pin_access()       # soft
+        # self._block_device_bbox()    # DISABLED: no M3/M4/M5 in PCell
+        # self._block_tie_m1()         # DISABLED: ties on M1 only
+        self.device_body_cells = {}    # empty — no device obstacles on M3+
+        self.power_stub_cells = set()  # empty — old M1 power stubs not relevant
+        self.power_m2_cells = set()    # empty — old M2 power pads not relevant
+        self._block_pin_access()       # soft — pin Via2 pads on M3
         self._pin_escape()             # clears soft only (safe_discard)
         self._reblock_pin_access()     # re-registers soft
-        self._block_power_drops()      # permanent (skips pin terminals)
-        self._block_power_rails_m3()   # permanent M3 power rails
+        self._block_power_pads_m345()  # NEW: 153 power via stack pads
+        # self._block_power_rails_m3() # DISABLED: power on TM1 now
         self._signal_escape_recheck()  # re-open signal pins blocked by power
         print(f'  Router grid: {self.router.nx}×{self.router.ny} '
               f'({self.router.nx * self.router.ny} cells)')
@@ -453,6 +459,61 @@ class RoutingSolver:
               f'{m2_pad_count} M2 pads ({m2_pad_skip} skipped/via_access), '
               f'{m1_pad_count} M1 stubs'
               f'{f", {cross_exempt} cross-device exemptions" if cross_exempt else ""}')
+
+    def _block_power_pads_m345(self):
+        """Block 153 power via stack pads on M3/M4/M5 — PERMANENT.
+
+        Power via stacks from TM1 down to M2 have pads on M3, M4, M5.
+        Signal routing must avoid these. Device bboxes are NOT blocked
+        (PCell has no M3/M4/M5 geometry, verified 2026-03-18).
+
+        Also blocks 3 cap_cmim bottom plate areas on M5.
+        """
+        from .maze_router import M1_LYR, M2_LYR, M3_LYR, N_ROUTING_LAYERS
+        from ..pdk import (VIA3_PAD, VIA4_PAD, M5_MIN_S, M4_MIN_S, M3_MIN_S,
+                           M2_SIG_W)
+
+        # Margin = metal spacing + wire half-width
+        m3_margin = M3_MIN_S + M2_SIG_W // 2   # 210 + 150 = 360nm
+        m4_margin = M4_MIN_S + M2_SIG_W // 2   # 210 + 150 = 360nm
+        m5_margin = M5_MIN_S + M2_SIG_W // 2   # 210 + 150 = 360nm
+
+        pad_hw = VIA3_PAD // 2  # ~185nm half-pad (same for Via3/Via4)
+        count = 0
+        for drop in self.power_drops:
+            if drop['type'] != 'via_stack':
+                continue
+            # Power pad center = AP position
+            ap_key = f"{drop['inst']}.{drop['pin']}"
+            ap = self.access_points.get(ap_key)
+            if not ap:
+                continue
+            px, py = ap['x'], ap['y']
+
+            # Block on all 3 routing layers (M3=layer0, M4=layer1, M5=layer2)
+            for lyr, margin in [(M1_LYR, m3_margin),
+                                (M2_LYR, m4_margin),
+                                (M3_LYR, m5_margin)]:
+                self.router.block_rect(
+                    px - pad_hw, py - pad_hw, px + pad_hw, py + pad_hw,
+                    lyr, margin=margin, permanent=True)
+                count += 1
+
+        # Block cap_cmim bottom plate areas on M5 (layer 2)
+        cap_count = 0
+        from ..pdk import M5_MIN_S
+        for inst_name, inst in self.placement['instances'].items():
+            dev_type = inst.get('type', '')
+            if 'cap' not in dev_type and 'cmim' not in dev_type:
+                continue
+            left, bot, right, top = inst_bbox_nm(self.placement, inst_name)
+            self.router.block_rect(
+                left, bot, right, top,
+                M3_LYR, margin=m5_margin, permanent=True)  # M3_LYR=2=M5
+            cap_count += 1
+
+        print(f'  Power pad obstacles: {count} (153 drops × 3 layers)')
+        print(f'  Cap_cmim M5 obstacles: {cap_count}')
 
     def _block_power_rails_m3(self):
         """Block M3 power rails as permanent obstacles on M3 layer.
