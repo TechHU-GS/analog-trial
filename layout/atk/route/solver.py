@@ -484,8 +484,7 @@ class RoutingSolver:
             if drop['type'] != 'via_stack':
                 continue
             # Power pad center = AP position
-            ap_key = f"{drop['inst']}.{drop['pin']}"
-            ap = self.access_points.get(ap_key)
+            ap = self.access_points.get((drop['inst'], drop['pin']))
             if not ap:
                 continue
             px, py = ap['x'], ap['y']

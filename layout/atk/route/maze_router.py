@@ -232,14 +232,13 @@ class MazeRouter:
                 if 0 <= nx < self.nx and 0 <= ny < self.ny:
                     nb = (nx, ny, layer)
                     if _passable(nb):
-                        # Non-preferred direction: 4x cost penalty
+                        # Strict H/V discipline: non-preferred direction blocked
                         is_horizontal = (dx != 0)
-                        if layer == M1_LYR and not is_horizontal:  # M3: H preferred
-                            nc = cost + 4
-                        elif layer in (M2_LYR, M3_LYR) and is_horizontal:  # M4,M5: V preferred
-                            nc = cost + 4
-                        else:
-                            nc = cost + 1
+                        if layer == M1_LYR and not is_horizontal:  # M3: H only
+                            continue  # BLOCK vertical on M3
+                        elif layer in (M2_LYR, M3_LYR) and is_horizontal:  # M4,M5: V only
+                            continue  # BLOCK horizontal on M4/M5
+                        nc = cost + 1
                         if nc < g_score.get(nb, float('inf')):
                             g_score[nb] = nc
                             came_from[nb] = cur
