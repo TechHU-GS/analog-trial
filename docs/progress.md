@@ -168,18 +168,28 @@ Routing 给 PLUS M2 标 signal name → 同一 M2 也连 MINUS (gnd) → signal=
 
 **修复方向:** solver 排除 shared-M2 cap/res pin。PDK 没问题 — 是我们不该走这个 pin。
 
-### Shared-M2 通用检测 (实现，部分生效)
+### Shared-M2 通用检测 (实现)
 - solver.py: 自动检测同位置不同 net AP → shared_m2_exclude (8 pins)
 - 排除 pin from routing + output pin list + _add_missing_ap_via2 Via2 skip
-- **nmos_bias 已修** ✅ — binary search n=58 仍 246（之前 n=60 触发 drop）
-- **pmos_bias 已修** ✅ — n=67 仍 246
-- **sum_n 未修** ❌ — n=77 触发 246→112，机制不同（非 shared-M2）
-  - sum_n pins: Min_n.G, Rin.MINUS, Rdac.MINUS（C_fb.MINUS 已排除）
-  - 16 segments wire 本身导致问题，待分析
+
+### 245→113 真正根因 ⚠️ 重大发现
+
+**_add_missing_ap_via2 失败率 78%** — 101/129 routes 没有 Via2 连接 M2。
+routing wire (M3/M4) 画了但浮空（不连 M2）→ 干扰 KLayout LVS extraction → 246→113。
+
+验证:
+- 只保留 28 个有 Via2 的 routes → **246 matched, 0 WB** ✅
+- GDS 比较 n=76 vs n=77: sum_n 加了 24 shapes 但 0 Via2 → 浮空 wire
+- KLayout API 确认 sum_n 在 extracted netlist 有 2 terminals 但 GND mega-net 369→369
+- 3D 视图确认: M4 wire 悬在 M2 上方无 Via2
+
+之前的 shared-M2 分析是表面现象。cap dual-pin 的 4 nets 碰巧也是浮空 routes。
+真正问题是 _add_missing_ap_via2 的 M3 conflict check 太严格 → 大量 Via2 被跳过。
 
 ### 下一步
-1. 分析 sum_n 的 routing wire 碰了什么
-2. 可能有更多 net 需要类似处理
+1. 修 _add_missing_ap_via2 让 Via2 放置率 > 90%（放宽 conflict check 或 fallback）
+2. 或: assemble_gds.py 只画有 Via2 的 route 的 wire（跳过浮空 route）
+3. 方案 1 更好（更多 net 连通 → LVS + connectivity 都改善）
 
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 
