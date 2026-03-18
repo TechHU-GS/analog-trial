@@ -166,13 +166,20 @@ Routing 给 PLUS M2 标 signal name → 同一 M2 也连 MINUS (gnd) → signal=
 132 routes (全部):   matched=113, WB=16, nets=18
 ```
 
-**修复方向:** solver 在 routing 这 4 net 时排除 shared-M2 cap/res pin，通过其他 pin 连通。
-不是 PDK 问题 — cap M2 pad 共享是 PCell 正确行为，是我们的 routing 不该走这个 pin。
+**修复方向:** solver 排除 shared-M2 cap/res pin。PDK 没问题 — 是我们不该走这个 pin。
+
+### Shared-M2 通用检测 (实现，部分生效)
+- solver.py: 自动检测同位置不同 net AP → shared_m2_exclude (8 pins)
+- 排除 pin from routing + output pin list + _add_missing_ap_via2 Via2 skip
+- **nmos_bias 已修** ✅ — binary search n=58 仍 246（之前 n=60 触发 drop）
+- **pmos_bias 已修** ✅ — n=67 仍 246
+- **sum_n 未修** ❌ — n=77 触发 246→112，机制不同（非 shared-M2）
+  - sum_n pins: Min_n.G, Rin.MINUS, Rdac.MINUS（C_fb.MINUS 已排除）
+  - 16 segments wire 本身导致问题，待分析
 
 ### 下一步
-1. solver 实现 dual-pin AP 检测 + 排除
-2. 重跑 routing + LVS 验证 246 在完整 routing 下保持
-3. 然后 DRC clean + sweep 才有意义
+1. 分析 sum_n 的 routing wire 碰了什么
+2. 可能有更多 net 需要类似处理
 
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 

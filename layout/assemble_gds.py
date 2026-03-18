@@ -1128,6 +1128,16 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
         if drop['type'] == 'via_stack':
             via_stack_pins.add(f"{drop['inst']}.{drop['pin']}")
 
+    # Detect shared-M2 AP positions (cap/res dual-pin) — skip Via2 at these
+    _aps = routing.get('access_points', {})
+    _pos_aps = {}
+    for _ak, _av in _aps.items():
+        _pos_aps.setdefault((_av['x'], _av['y']), []).append(_ak)
+    _shared_m2_pins = set()
+    for _pos, _keys in _pos_aps.items():
+        if len(_keys) >= 2:
+            _shared_m2_pins.update(_keys)
+
     # Build pin→net map
     pin_net = {}
     for ne in routing.get('nets', []):
@@ -1269,6 +1279,8 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
         for pin_key in pins:
             if pin_key in via_stack_pins:
                 continue
+            if pin_key in _shared_m2_pins:
+                continue  # skip dual-pin shared-M2 (cap/res overlap)
             ap = aps.get(pin_key)
             if not ap or not ap.get('via_pad') or 'm2' not in ap['via_pad']:
                 continue

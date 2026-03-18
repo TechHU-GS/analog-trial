@@ -64,6 +64,25 @@ class RoutingSolver:
             by_mode[ap['mode']] = by_mode.get(ap['mode'], 0) + 1
         print(f'  {len(self.access_points)} access points: {by_mode}')
 
+        # 1b. Detect shared-M2 AP conflicts (cap/res dual-pin same position)
+        # Two different-net APs at the same (x,y) share M2 pad → routing one
+        # would short it to the other net. Exclude one pin from each conflict.
+        _pos_to_aps = {}
+        for (inst, pin), ap in self.access_points.items():
+            pos = (ap['x'], ap['y'])
+            _pos_to_aps.setdefault(pos, []).append((inst, pin))
+        self.shared_m2_exclude = set()
+        for pos, ap_list in _pos_to_aps.items():
+            if len(ap_list) < 2:
+                continue
+            # Multiple APs at same position — exclude ALL from signal routing
+            for inst, pin in ap_list:
+                self.shared_m2_exclude.add((inst, pin))
+            print(f'  Shared-M2 conflict @ {pos}: {[f"{i}.{p}" for i,p in ap_list]}'
+                  f' → exclude ALL')
+        if self.shared_m2_exclude:
+            print(f'  Total excluded: {len(self.shared_m2_exclude)} pins')
+
         # 2. Power rails + drops
         print('[2] Computing power topology...')
         power_topo = self.netlist.get('constraints', {}).get('power_topology', {})
@@ -777,12 +796,11 @@ class RoutingSolver:
             for inst, pin in pin_list:
                 if (inst, pin) in pre_routed:
                     continue
+                if (inst, pin) in self.shared_m2_exclude:
+                    continue  # skip dual-pin shared-M2 conflict
                 ap = self.access_points.get((inst, pin))
                 if ap:
-                    if net_name == 'nmos_bias':
-                        pin_positions.append((ap['x'], ap['y'], M1_LYR))
-                    else:
-                        pin_positions.append((ap['x'], ap['y']))
+                    pin_positions.append((ap['x'], ap['y']))
                 else:
                     msg = f'{net_name}: no access point for {inst}.{pin}'
                     print(f'  WARNING: {msg}')
@@ -797,7 +815,8 @@ class RoutingSolver:
             if segments is not None:
                 self.signal_routes[net_name] = {
                     'pins': [(inst, pin) for inst, pin in pin_list
-                             if (inst, pin) not in pre_routed],
+                             if (inst, pin) not in pre_routed
+                             and (inst, pin) not in self.shared_m2_exclude],
                     'segments': segments,
                 }
                 routed += 1
