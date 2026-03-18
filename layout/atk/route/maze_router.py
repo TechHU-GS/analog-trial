@@ -1,43 +1,57 @@
-"""Four-layer A* maze router for analog IC signal routing.
+"""Three-layer A* maze router for analog IC signal routing on M3+M4+M5.
 
 Grid resolution from pdk.MAZE_GRID. Costs: same-layer step=1, via=VIA_COST.
 Supports multi-pin nets via sequential nearest-neighbor Steiner tree.
 
+Layer mapping (2026-03-18 verified):
+  Router layer 0 → Metal3 (HORIZONTAL, IHP preferred)
+  Router layer 1 → Metal4 (VERTICAL, IHP preferred)
+  Router layer 2 → Metal5 (HORIZONTAL per IHP LEF, used as V for routability)
+  Via code -1    → Via3 (M3↔M4, GDS 49/0)
+  Via code -2    → Via4 (M4↔M5, GDS 66/0)
+
+Pin entry: Via2 bridge pre-drawn at M2 AP → pin presented at layer 0 (M3).
+
 Obstacle model:
-  permanent: device bbox, tie M1, power drops, M3 power rails — never cleared.
+  permanent: power via stack pads on M3/M4/M5, cap_cmim on M5 — never cleared.
   soft:      pin access protection rings — clearable per-net for routing.
 
-Via positions marked on BOTH adjacent layers (via pads physically exist on
-both metals).  Layer transitions: M1↔M2 (Via1), M2↔M3 (Via2), M3↔M4 (Via3).
-Wire positions marked on their own layer with margin from pdk.MAZE_MARGIN.
+NOTE: Device bboxes are NOT obstacles (PCell has no M3/M4/M5 geometry, verified).
 """
 
 import heapq
 from ..pdk import MAZE_GRID, MAZE_MARGIN, M2_SIG_W
 
-M1_LYR = 0
-M2_LYR = 1
-M3_LYR = 2
-M4_LYR = 3
+# --- Abstract routing layer indices ---
+# Internal to router; physical layer mapping done at GDS assembly.
+M1_LYR = 0   # → Metal3 (physical)
+M2_LYR = 1   # → Metal4 (physical)
+M3_LYR = 2   # → Metal5 (physical)
+
+# Keep old names for backward compat with solver.py imports,
+# but the MEANING has changed:
+#   M1_LYR(0) = Metal3, M2_LYR(1) = Metal4, M3_LYR(2) = Metal5
+# M4_LYR is no longer used (3-layer router).
+M4_LYR = None  # Explicitly disabled — catch any stale references
+
+N_ROUTING_LAYERS = 3
 
 # Adjacent layer pairs for via transitions
 _VIA_PAIRS = {
-    (M1_LYR, M2_LYR),   # Via1
-    (M2_LYR, M3_LYR),   # Via2
-    (M3_LYR, M4_LYR),   # Via3
+    (M1_LYR, M2_LYR),   # Via3 (M3↔M4)
+    (M2_LYR, M3_LYR),   # Via4 (M4↔M5)
 }
 
 # For a given layer, which layers can be reached via a single via
 _VIA_NEIGHBORS = {
-    M1_LYR: (M2_LYR,),
-    M2_LYR: (M1_LYR, M3_LYR),
-    M3_LYR: (M2_LYR, M4_LYR),
-    M4_LYR: (M3_LYR,),
+    M1_LYR: (M2_LYR,),           # M3 → M4
+    M2_LYR: (M1_LYR, M3_LYR),   # M4 → M3 or M5
+    M3_LYR: (M2_LYR,),           # M5 → M4
 }
 
 
 class MazeRouter:
-    """Four-layer (M1+M2+M3+M4) maze router using A* pathfinding."""
+    """Three-layer (M3+M4+M5) maze router using A* pathfinding."""
 
     GRID = MAZE_GRID
     VIA_COST = 8
@@ -111,7 +125,7 @@ class MazeRouter:
     def unblock_radius(self, x_nm, y_nm, radius=5, layer=None):
         """Unblock cells around a point (respects permanent)."""
         gp = self.to_grid(x_nm, y_nm)
-        layers = (M1_LYR, M2_LYR, M3_LYR, M4_LYR) if layer is None else (layer,)
+        layers = tuple(range(N_ROUTING_LAYERS)) if layer is None else (layer,)
         for lyr in layers:
             for dx in range(-radius, radius + 1):
                 for dy in range(-radius, radius + 1):
@@ -127,7 +141,7 @@ class MazeRouter:
         Respects permanent blocks — only clears soft (pin access) cells.
         """
         if layers is None:
-            layers = (M1_LYR, M2_LYR, M3_LYR, M4_LYR)
+            layers = tuple(range(N_ROUTING_LAYERS))
         if width_nm is None:
             width_nm = M2_SIG_W
         px, py = pin_nm
@@ -189,7 +203,7 @@ class MazeRouter:
         came_from = {}
         g_score = {}
 
-        layers = (start_layer,) if start_layer is not None else (M4_LYR, M3_LYR, M2_LYR, M1_LYR)
+        layers = (start_layer,) if start_layer is not None else tuple(range(N_ROUTING_LAYERS - 1, -1, -1))
         for layer in layers:
             s = (start_xy[0], start_xy[1], layer)
             if _passable(s):
@@ -320,19 +334,15 @@ class MazeRouter:
                 pt_layers[(x1, y1)].add(layer)
                 pt_layers[(x2, y2)].add(layer)
         added = 0
-        # Via1: M1(0) ↔ M2(1), code -1
-        # Via2: M2(1) ↔ M3(2), code -2
-        # Via3: M3(2) ↔ M4(3), code -3
+        # Via3: layer 0(M3) ↔ layer 1(M4), code -1
+        # Via4: layer 1(M4) ↔ layer 2(M5), code -2
         for pt, layers in pt_layers.items():
-            if 0 in layers and 1 in layers and -1 not in via_pts.get(pt, set()):
-                segs.append((pt[0], pt[1], pt[0], pt[1], -1))
-                added += 1
-            if 1 in layers and 2 in layers and -2 not in via_pts.get(pt, set()):
-                segs.append((pt[0], pt[1], pt[0], pt[1], -2))
-                added += 1
-            if 2 in layers and 3 in layers and -3 not in via_pts.get(pt, set()):
-                segs.append((pt[0], pt[1], pt[0], pt[1], -3))
-                added += 1
+            for lo in range(N_ROUTING_LAYERS - 1):
+                hi = lo + 1
+                via_code = -1 - lo
+                if lo in layers and hi in layers and via_code not in via_pts.get(pt, set()):
+                    segs.append((pt[0], pt[1], pt[0], pt[1], via_code))
+                    added += 1
         if added:
             print(f'    Router: inserted {added} junction via(s)')
         return segs
@@ -466,9 +476,9 @@ class MazeRouter:
                     nm_s = self.to_nm(g_start[0], g_start[1])
                     nm_e = self.to_nm(g_end[0], g_end[1])
                     bl_s = any((g_start[0], g_start[1], l) in self.blocked
-                               for l in range(4))
+                               for l in range(N_ROUTING_LAYERS))
                     bl_e = any((g_end[0], g_end[1], l) in self.blocked
-                               for l in range(4))
+                               for l in range(N_ROUTING_LAYERS))
                     print(f'    Router: {net_name} A* failed '
                           f'({nm_s[0]/1000:.1f},{nm_s[1]/1000:.1f})->'
                           f'({nm_e[0]/1000:.1f},{nm_e[1]/1000:.1f}) '
@@ -538,7 +548,7 @@ class MazeRouter:
             for i, seg in enumerate(segs):
                 x1, y1, x2, y2, layer = seg
                 if layer == -1:
-                    for lyr in range(4):
+                    for lyr in range(N_ROUTING_LAYERS):
                         pt_seg[(x1, y1, lyr)].add(i)
                 else:
                     pt_seg[(x1, y1, layer)].add(i)
@@ -579,11 +589,11 @@ class MazeRouter:
 
             comp_shapes = {}
             for ci, comp in enumerate(components):
-                shapes = {lyr: [] for lyr in range(4)}
+                shapes = {lyr: [] for lyr in range(N_ROUTING_LAYERS)}
                 for idx in comp:
                     seg = segs[idx]
                     layer = seg[4]
-                    if layer in range(4):
+                    if layer in range(N_ROUTING_LAYERS):
                         shapes[layer].append(_seg_box(seg, hw))
                 comp_shapes[ci] = shapes
 
@@ -594,7 +604,7 @@ class MazeRouter:
                 for cj in range(ci + 1, len(components)):
                     if merged:
                         break
-                    for layer in range(4):
+                    for layer in range(N_ROUTING_LAYERS):
                         si = comp_shapes[ci][layer]
                         sj = comp_shapes[cj][layer]
                         if not si or not sj:
@@ -701,14 +711,14 @@ class MazeRouter:
         overlaps adjacent wire. So via margins must NOT exempt pin_terminals.
 
         If layer is given, marks that layer + its _VIA_NEIGHBORS.
-        If None, marks M1+M2 (backward compat for Via1 junctions).
+        If None, marks bottom two routing layers (layer 0 + layer 1).
         """
         gx, gy = self.to_grid(x_nm, y_nm)
         margin = MAZE_MARGIN
         if layer is not None:
             layers_to_mark = [layer] + list(_VIA_NEIGHBORS.get(layer, ()))
         else:
-            # Default: Via1 junction (M1+M2) — backward compat
+            # Default: mark bottom two layers (Via3 junction: M3+M4)
             layers_to_mark = [M1_LYR, M2_LYR]
         for dx in range(-margin, margin + 1):
             for dy in range(-margin, margin + 1):
