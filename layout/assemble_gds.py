@@ -21,7 +21,7 @@ import pya
 import klayout.db
 
 from atk.pdk import (
-    METAL1, METAL2, METAL3, METAL4, VIA1, VIA2, VIA3,
+    METAL1, METAL2, METAL3, METAL4, METAL5, VIA1, VIA2, VIA3, VIA4,
     METAL1_PIN, METAL2_PIN, METAL3_PIN, METAL4_PIN,
     METAL1_LBL, METAL2_LBL, METAL3_LBL, METAL4_LBL,
     TOPMETAL1, TOPMETAL1_PIN,
@@ -2074,9 +2074,21 @@ def main():
     li_m2 = layout.layer(*METAL2)
     li_m3 = layout.layer(*METAL3)
     li_m4 = layout.layer(*METAL4)
+    li_m5 = layout.layer(*METAL5)
     li_v1 = layout.layer(*VIA1)
     li_v2 = layout.layer(*VIA2)
     li_v3 = layout.layer(*VIA3)
+    li_v4 = layout.layer(*VIA4)
+
+    # Router layer mapping (router code → physical GDS layer):
+    #   Router layer 0 → Metal3, 1 → Metal4, 2 → Metal5
+    #   Router via -1  → Via3,   -2 → Via4
+    # draw_segments receives li_m1/m2/m3/m4 positionally, so we remap:
+    li_route_0 = li_m3   # router layer 0 = M3
+    li_route_1 = li_m4   # router layer 1 = M4
+    li_route_2 = li_m5   # router layer 2 = M5
+    li_via_01  = li_v3   # router via -1 = Via3 (M3↔M4)
+    li_via_12  = li_v4   # router via -2 = Via4 (M4↔M5)
     li_m3_lbl = layout.layer(30, 25)   # LVS: metal3_text = labels(30, 25)
     li_m2_lbl = layout.layer(10, 25)   # LVS: metal2_text = labels(10, 25)
 
@@ -4354,23 +4366,21 @@ def main():
     # Pre-routes
     for net_name, route in routing.get('pre_routes', {}).items():
         segs = route.get('segments', [])
-        draw_segments(top, li_m1, li_m2, li_v1, segs, M2_SIG_W,
-                      drawn_vias=drawn_vias, li_m3=li_m3, li_v2=li_v2,
-                      li_m4=li_m4, li_v3=li_v3,
-                      xnet_m2_obs=_xnet_m2_obs(net_name))
+        # Route layers remapped: router 0→M3, 1→M4, 2→M5, via -1→Via3, -2→Via4
+        draw_segments(top, li_route_0, li_route_1, li_via_01, segs, M2_SIG_W,
+                      drawn_vias=drawn_vias, li_m3=li_route_2, li_v2=li_via_12)
         print(f'    Pre-route {net_name}: {len(segs)} segments')
 
-    # Signal routes (drawn_vias prevents duplicate Via1 at access point positions)
+    # Signal routes (drawn_vias prevents duplicate Via at access point positions)
     total_segs = 0
     via1_before = len(drawn_vias)
     total_via_segs = 0
     for net_name, route in routing.get('signal_routes', {}).items():
         segs = route.get('segments', [])
         total_via_segs += sum(1 for s in segs if s[4] < 0)
-        draw_segments(top, li_m1, li_m2, li_v1, segs, M1_SIG_W,
-                      drawn_vias=drawn_vias, li_m3=li_m3, li_v2=li_v2,
-                      li_m4=li_m4, li_v3=li_v3,
-                      xnet_m2_obs=_xnet_m2_obs(net_name))
+        # Route layers remapped: router 0→M3, 1→M4, 2→M5, via -1→Via3, -2→Via4
+        draw_segments(top, li_route_0, li_route_1, li_via_01, segs, M2_SIG_W,
+                      drawn_vias=drawn_vias, li_m3=li_route_2, li_v2=li_via_12)
         total_segs += len(segs)
     new_vias = len(drawn_vias) - via1_before
     skipped_vias = total_via_segs - new_vias
