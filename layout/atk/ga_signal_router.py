@@ -101,13 +101,18 @@ def evaluate(args):
         # Copy PCells
         os.system(f'cp {PCELL_DIR}/dev_*.mag {W}/')
 
-        # Magic extract
-        os.system(
-            f'cd {W} && echo "load soilz\\nflatten soilz_flat\\n'
-            f'load soilz_flat\\nextract unique\\nextract all\\n'
-            f'ext2spice lvs\\next2spice\\nexit" | {MAGIC_CMD} > /dev/null 2>&1')
-
+        # Magic extract: start background, poll for SPICE, kill when done
+        proc = subprocess.Popen(
+            f'cd {W} && {MAGIC_CMD} < phase_c.tcl > /dev/null 2>&1',
+            shell=True)
         spice_path = f'{W}/soilz_flat.spice'
+        for _ in range(600):  # max 600s
+            time.sleep(1)
+            if os.path.exists(spice_path) and os.path.getsize(spice_path) > 100:
+                time.sleep(1)  # let ext2spice finish flushing
+                break
+        proc.kill()
+        proc.wait()
         if not os.path.exists(spice_path):
             os.system(f'rm -rf {W}')
             return idx, 0

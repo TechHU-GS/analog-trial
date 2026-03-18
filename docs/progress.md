@@ -366,11 +366,51 @@ TopMetal2 — 禁止 (TTIHP)
 4. 电阻 PCell — 同上
 ```
 
-### 下一步
-1. 在贪心 track assignment 里加 power pad obstacle avoidance
-2. M5 routing 避开 cap_cmim 区域
-3. 重新生成 routing → LVS 验证
-4. 如果贪心够好 → 完成；不够 → 192核 sweep net ordering
+### Obstacle-Aware Greedy Routing 尝试 (2026-03-18 17:20)
+
+**实现**: 贪心 L-route + power pad avoidance + 已 route 线作 obstacle + strict H/V
+**结果**: 80/135 nets routed, 55 failed
+
+**LVS**: 171/255 post-merge devices (bare=73, 无 obstacle=51)
+**但分析显示问题严重:**
+- mega-net dev_rin_0.B: 185 connections（bare=149, 无obstacle=782）→ 改善但没消除
+- **528/619 unique nets 只有 1 个 connection（isolated pins）**
+- routing 碎片化: 连了一些 pin 但大部分断了
+- 55 failed nets 的 pins 完全未 route
+
+**Routing inline 代码迭代 (mole-whacking):**
+1. L-route candidates + GA → M3 jog 违反 H/V + cross-net
+2. 贪心 track assignment → 无 obstacle → 穿过 power pads → mega-net
+3. strict H/V → 修了 jog 但仍穿 power pads
+4. obstacle-aware → 好了但 routing 质量不够（碎片化）
+
+**教训**: 临时 inline Python 脚本不是 router。每次修一个问题暴露下一个 = 打地鼠。
+需要正式的 router 模块，从设计开始，不是边跑边改。
+
+### Session 4 总结
+
+**已验证确认 (干净的基础):**
+- PDK clean ✅
+- Placement DRC = 0 ✅ (commit eff808b)
+- 分层策略 M3-H M4-V M5-V ✅ (容量 + DRC + 电气连通)
+- Power on TM1 ✅ (153 drops DRC clean + 电气连通)
+- 障碍清单 ✅ (153 power pads M3/M4/M5 + 3 cap_cmim M5)
+- Via2→M3 电气连通 ✅ (Magic extract)
+- TM1→M1 power 电气连通 ✅ (Magic extract)
+- Magic 层名映射 ✅ (via5=TopVia1, met6=TopMetal1)
+- Device PCell 无 M3/M4 geometry → device bbox 不是 routing obstacle ✅
+
+**未完成:**
+- ❌ 正式的 obstacle-aware router（需要设计，不是 inline 脚本）
+- ❌ 192 核 net ordering sweep
+- ❌ LVS clean
+- ❌ KLayout DRC clean
+
+### 下一步 (下个 session)
+1. 设计正式 router 模块（obstacle map + greedy L-route + strict H/V + M3/M4/M5）
+2. 本机完整测试（单 net → 全 nets → LVS → 确认 score 含义）
+3. 192 核 net ordering sweep（ECS, pop=nproc-4, 高IO云盘）
+4. ECS 运维纪律：pop-4核, 监控≤30s, subprocess.run+timeout
 
 ---
 
