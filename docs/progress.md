@@ -463,11 +463,27 @@ Check 2 Obstacles: 1 overlap (需查原因)
 8 failed nets: t3_m, t4I_mb, div2_Q, t4I_m, t2Q_nsn, t1Q_m, mxfq_selb, div2_I_b
 原因: strict H/V + obstacles 导致部分 pin 不可达 → net ordering sweep 应能改善
 
+### Check 1+2 验证 (2026-03-18 19:00)
+
+**Bug fixes:**
+- AP key: string→tuple, power pads 0→453 ✅
+- H/V: 4x penalty→hard block (continue), violations 325→0 ✅
+
+**结果 (seed=0, 修正后):**
+```
+Routed: 127/135 nets (8 failed)
+Check 1 H/V: 0 violations ✅
+Check 2 Obstacles: 1 overlap (vptat layer=M4, Rout.MINUS pad, grid boundary case)
+```
+
+1 overlap 原因: wire 边缘和 pad 边缘重叠 65nm (grid 350nm 量化边界 case, 非结构性问题)
+8 failed: VCO 区域 pins stuck (t3_m, t4I_mb, div2_Q, t4I_m, t2Q_nsn, t1Q_m, mxfq_selb, div2_I_b)
+
 ### 下一步
-1. 查 1 个 obstacle overlap 原因
+1. 输出 routing.json → assemble_gds → GDS
 2. Check 3: KLayout DRC
 3. Check 4: Magic LVS
-4. 188 核 net ordering sweep (不同 seed 可能 route 更多 nets)
+4. 188 核 net ordering sweep
 
 ---
 
