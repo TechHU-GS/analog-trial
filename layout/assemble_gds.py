@@ -24,10 +24,11 @@ from atk.pdk import (
     METAL1, METAL2, METAL3, METAL4, METAL5, VIA1, VIA2, VIA3, VIA4,
     METAL1_PIN, METAL2_PIN, METAL3_PIN, METAL4_PIN,
     METAL1_LBL, METAL2_LBL, METAL3_LBL, METAL4_LBL,
-    TOPMETAL1, TOPMETAL1_PIN,
+    TOPMETAL1, TOPMETAL1_PIN, TOPVIA1,
     ACTIV, GATPOLY, CONT, NWELL, PSD,
     UM, M1_SIG_W, M1_THIN, M2_SIG_W, M4_SIG_W, M3_PWR_W, M3_MIN_W,
     VIA1_SZ, VIA1_PAD, VIA1_PAD_M1, VIA1_GDS_M1, VIA1_GDS_M2, VIA2_SZ, VIA2_PAD, VIA2_PAD_M2, VIA2_PAD_M3, VIA3_SZ, VIA3_PAD,
+    VIA4_SZ, VIA4_PAD_M4, VIA4_PAD_M5, TV1_SIZE, TV1_ENC_M5, TV1_ENC_TM1, TM1_MIN_W,
     M1_MIN_W, M2_MIN_W, M2_MIN_S, M1_MIN_S, M3_MIN_S, M3_WIDE_S, M4_MIN_S, M4_MIN_W,
     M3_MIN_AREA, M4_MIN_AREA,
     MAZE_GRID,
@@ -151,6 +152,27 @@ def via3(cell, li_v3, li_m3, li_m4, x, y):
     cell.shapes(li_v3).insert(klayout.db.Box(x - hs, y - hs, x + hs, y + hs))
     cell.shapes(li_m3).insert(klayout.db.Box(x - hp_m3, y - hp_m3, x + hp_m3, y + hp_m3))
     cell.shapes(li_m4).insert(klayout.db.Box(x - hp_m4, y - hp_m4, x + hp_m4, y + hp_m4))
+
+
+def via4(cell, li_v4, li_m4, li_m5, x, y):
+    """Via4 cut + M4 pad + M5 pad.  Pad sizes from pdk.py (IHP §5.20)."""
+    hs = VIA4_SZ // 2              # 95nm
+    hp_m4 = VIA4_PAD_M4 // 2       # 185nm
+    hp_m5 = VIA4_PAD_M5 // 2       # 185nm
+    cell.shapes(li_v4).insert(klayout.db.Box(x - hs, y - hs, x + hs, y + hs))
+    cell.shapes(li_m4).insert(klayout.db.Box(x - hp_m4, y - hp_m4, x + hp_m4, y + hp_m4))
+    cell.shapes(li_m5).insert(klayout.db.Box(x - hp_m5, y - hp_m5, x + hp_m5, y + hp_m5))
+
+
+def topvia1(cell, li_tv1, li_m5, li_tm1, x, y, tm1_hw=None):
+    """TopVia1 cut + M5 pad + TM1 pad.  TM1 pad defaults to min width."""
+    hs = TV1_SIZE // 2             # 210nm
+    hp_m5 = TV1_SIZE // 2 + TV1_ENC_M5  # 210+100 = 310nm
+    if tm1_hw is None:
+        tm1_hw = TM1_MIN_W // 2   # 820nm (min TM1 half-width)
+    cell.shapes(li_tv1).insert(klayout.db.Box(x - hs, y - hs, x + hs, y + hs))
+    cell.shapes(li_m5).insert(klayout.db.Box(x - hp_m5, y - hp_m5, x + hp_m5, y + hp_m5))
+    cell.shapes(li_tm1).insert(klayout.db.Box(x - tm1_hw, y - tm1_hw, x + tm1_hw, y + tm1_hw))
 
 
 def draw_rect(cell, li, rect):
@@ -2079,6 +2101,8 @@ def main():
     li_v2 = layout.layer(*VIA2)
     li_v3 = layout.layer(*VIA3)
     li_v4 = layout.layer(*VIA4)
+    li_tv1 = layout.layer(*TOPVIA1)
+    li_tm1 = layout.layer(*TOPMETAL1)
 
     # Router layer mapping (router code → physical GDS layer):
     #   Router layer 0 → Metal3, 1 → Metal4, 2 → Metal5
@@ -3735,6 +3759,7 @@ def main():
 
     # Power drops
     drop_count = 0
+    _tm1_drops = []  # collect (x, y, net) for TM1 stripe drawing
     for drop in routing.get('power', {}).get('drops', []):
         dtype = drop['type']
         if dtype == 'via_access':
@@ -3793,9 +3818,15 @@ def main():
                 hbar(top, li_m2, jog[0], jog[2], jog[1], VIA1_PAD)
 
             if 'm3_vbar' not in drop or target_rail is None:
-                # No M3 connection needed, just via2 at pin
+                # No M3 rail — draw via2 + full via stack to TM1
                 v2 = drop['via2_pos']
                 via2(top, li_v2, li_m2, li_m3, v2[0], v2[1])
+                # Via stack: M3 pad → Via3 → M4 → Via4 → M5 → TopVia1
+                # (TM1 stripe drawn separately after all drops)
+                via3(top, li_v3, li_m3, li_m4, v2[0], v2[1])
+                via4(top, li_v4, li_m4, li_m5, v2[0], v2[1])
+                topvia1(top, li_tv1, li_m5, li_tm1, v2[0], v2[1])
+                _tm1_drops.append((v2[0], v2[1], drop_net))
             else:
                 m3v = drop['m3_vbar']
                 pin_x = m3v[0]
@@ -4255,6 +4286,53 @@ def main():
         drop_count += 1
     print(f'  Drew {drop_count} power drops')
 
+    # ── TM1 power stripes ──
+    # Group drops by net+rail_y → each group shares a TM1 horizontal stripe.
+    # Use original rail Y positions from routing.json for stripe placement.
+    _orig_rails = routing.get('power', {}).get('rails', {})
+    _tm1_stripe_count = 0
+    li_tm1_lbl = layout.layer(126, 25)  # TM1 text for LVS net naming
+    if _tm1_drops:
+        # Group drops by net
+        _drops_by_net = {}
+        for dx, dy, dn in _tm1_drops:
+            _drops_by_net.setdefault(dn, []).append((dx, dy))
+        # For each net, find the closest original rail Y → draw TM1 stripe there
+        _tm1_hw = TM1_MIN_W // 2  # 820nm half-width
+        for net, positions in _drops_by_net.items():
+            # Find matching rail Y positions for this net
+            net_rails = [(rid, rl) for rid, rl in _orig_rails.items()
+                         if rl.get('net', rid) == net]
+            # Group drops to nearest rail
+            rail_groups = {}  # rail_y → [drop positions]
+            for px, py in positions:
+                best_ry = None
+                best_d = float('inf')
+                for rid, rl in net_rails:
+                    d = abs(rl['y'] - py)
+                    if d < best_d:
+                        best_d = d
+                        best_ry = rl['y']
+                if best_ry is not None:
+                    rail_groups.setdefault(best_ry, []).append((px, py))
+            # Draw TM1 stripe for each rail group
+            for ry, drops in rail_groups.items():
+                xs = [p[0] for p in drops]
+                x1 = min(xs) - _tm1_hw
+                x2 = max(xs) + _tm1_hw
+                # Ensure stripe is at least TM1_MIN_W wide
+                if x2 - x1 < TM1_MIN_W:
+                    mid = (x1 + x2) // 2
+                    x1 = mid - _tm1_hw
+                    x2 = mid + _tm1_hw
+                hbar(top, li_tm1, x1, x2, ry, TM1_MIN_W)
+                # Label on TM1 for LVS
+                mid_x = (x1 + x2) // 2
+                top.shapes(li_tm1_lbl).insert(klayout.db.Text(
+                    net, klayout.db.Trans(klayout.db.Point(mid_x, ry))))
+                _tm1_stripe_count += 1
+    print(f'  TM1 stripes: {_tm1_stripe_count} ({len(_tm1_drops)} drops)')
+
     # ── Multi-rail bridges (connect same-net M3 rails via M2 underpass) ──
     _draw_rail_bridges(top, li_m2, li_v2, li_m3, all_rails, m2_signal_segs)
 
@@ -4447,13 +4525,8 @@ def main():
     # ═══ 6. Pin labels for LVS ═══
     print('\n  === Adding pin labels ===')
 
-    # Power labels on M3 rails
-    rails = routing.get('power', {}).get('rails', {})
-    for rail_id, rail in rails.items():
-        label = rail.get('net', rail_id)  # Use net name, not rail_id
-        mid_x = (rail['x1'] + rail['x2']) // 2
-        top.shapes(li_m3_lbl).insert(klayout.db.Text(
-            label, klayout.db.Trans(klayout.db.Point(mid_x, rail['y']))))
+    # Power labels — on TM1 (drawn with TM1 stripes above), NOT on M3 rails
+    # (M3 rails removed; orphaned M3 labels would land on signal wires → comma merge)
 
     # Signal labels on M1 (8,25) and M2 (10,25) for every signal net.
     # LVS needs labels to name extracted nets; unlabelled nets become $N.
