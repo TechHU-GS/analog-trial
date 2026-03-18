@@ -230,11 +230,33 @@ WB PMOS: 126 → 0
 Routes:  48/129 connected (37%)
 ```
 
+### CI Precheck 结果 (commit ab8ea16)
+- GDS job: ✅
+- **DRC: 178 violations** (precheck rule set, foundry 强制)
+- Cell name mismatch (soilz ≠ tt_um_techhu_analog_trial) — 新 repo 时修
+- LVS: precheck 不跑 LVS（模拟设计）
+- Layer (51,0) invalid — 需查
+
+### 本地 Precheck DRC: 267 violations 分类
+```
+M1.b   66  AP M1 stub 碰邻居 PCell M1 (spacing 25-175nm < 180nm)
+M3.b   35  routing wire/bridge/Via2 M3 pad spacing
+M5.b   32  power M5 vbar spacing
+NW.c   23  NWell enclosure
+Cnt.b  11  contact spacing
+V3.b    9  Via3 spacing (160nm < 220nm)
+NW.f    8  NWell rule
+Act.b   7  active spacing
+Others 76  TV1/TM1/pSD/min-area/fill/jog
+```
+Routing/assembly 引入: 81 (M3.b+M5.b+V3.b+TV1+TM1)
+Placement/device: 115 (M1.b+Cnt.b+Act.b+NW)
+M1 利用率只有 1% — spacing 问题不是拥挤，是 AP stub 方向
+
 ### 下一步
-1. DRC re-check (当前 ~400, 需要确认 48-route 版本)
+1. 修 DRC (按类别，不影响 LVS 246)
 2. 查 11 unmatched devices (3 cap, 4 res, 4 MOS)
-3. DRC clean (M3.b spacing, M5.b, M1.b 等)
-4. 然后 sweep/GA 找最优 Via2 子集
+3. 修完后再跑 CI precheck 确认
 
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 
