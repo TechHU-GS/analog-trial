@@ -28,7 +28,7 @@ from atk.pdk import (
     ACTIV, GATPOLY, CONT, NWELL, PSD,
     UM, M1_SIG_W, M1_THIN, M2_SIG_W, M4_SIG_W, M3_PWR_W, M3_MIN_W,
     VIA1_SZ, VIA1_PAD, VIA1_PAD_M1, VIA1_GDS_M1, VIA1_GDS_M2, VIA2_SZ, VIA2_PAD, VIA2_PAD_M2, VIA2_PAD_M3, VIA3_SZ, VIA3_PAD,
-    VIA4_SZ, VIA4_PAD_M4, VIA4_PAD_M5, TV1_SIZE, TV1_ENC_M5, TV1_ENC_TM1, TM1_MIN_W,
+    VIA4_SZ, VIA4_PAD_M4, VIA4_PAD_M5, VIA3_PAD_M4, TV1_SIZE, TV1_ENC_M5, TV1_ENC_TM1, TM1_MIN_W,
     M1_MIN_W, M2_MIN_W, M2_MIN_S, M1_MIN_S, M3_MIN_S, M3_WIDE_S, M4_MIN_S, M4_MIN_W,
     M3_MIN_AREA, M4_MIN_AREA,
     MAZE_GRID,
@@ -147,18 +147,20 @@ _VIA2_M2_ENDCAP = VIA2_SZ // 2 + 50  # 145nm
 
 def via3(cell, li_v3, li_m3, li_m4, x, y):
     hs = VIA3_SZ // 2
-    hp_m3 = VIA3_PAD // 2     # 190nm — keep large for M3.d area
-    hp_m4 = M1_SIG_W // 2     # 150nm — match M4 wire width to avoid M4.b
+    # Pads must satisfy BOTH enclosure AND min area (M3/M4_MIN_AREA=144000nm² → pad≥380nm)
+    hp_m3 = max(VIA3_PAD // 2, 190)   # 190nm → 380nm pad (area 144400 ≥ 144000)
+    hp_m4 = max(VIA3_PAD_M4 // 2, 190)  # 190nm → 380nm pad (area 144400 ≥ 144000)
     cell.shapes(li_v3).insert(klayout.db.Box(x - hs, y - hs, x + hs, y + hs))
     cell.shapes(li_m3).insert(klayout.db.Box(x - hp_m3, y - hp_m3, x + hp_m3, y + hp_m3))
     cell.shapes(li_m4).insert(klayout.db.Box(x - hp_m4, y - hp_m4, x + hp_m4, y + hp_m4))
 
 
 def via4(cell, li_v4, li_m4, li_m5, x, y):
-    """Via4 cut + M4 pad + M5 pad.  Pad sizes from pdk.py (IHP §5.20)."""
+    """Via4 cut + M4 pad + M5 pad.  Pads satisfy enclosure + min area."""
     hs = VIA4_SZ // 2              # 95nm
-    hp_m4 = VIA4_PAD_M4 // 2       # 185nm
-    hp_m5 = VIA4_PAD_M5 // 2       # 185nm
+    # M4/M5_MIN_AREA=144000nm² → pad≥380nm → hp≥190nm
+    hp_m4 = max(VIA4_PAD_M4 // 2, 190)  # 190nm
+    hp_m5 = max(VIA4_PAD_M5 // 2, 190)  # 190nm
     cell.shapes(li_v4).insert(klayout.db.Box(x - hs, y - hs, x + hs, y + hs))
     cell.shapes(li_m4).insert(klayout.db.Box(x - hp_m4, y - hp_m4, x + hp_m4, y + hp_m4))
     cell.shapes(li_m5).insert(klayout.db.Box(x - hp_m5, y - hp_m5, x + hp_m5, y + hp_m5))
