@@ -186,10 +186,17 @@ routing wire (M3/M4) 画了但浮空（不连 M2）→ 干扰 KLayout LVS extrac
 之前的 shared-M2 分析是表面现象。cap dual-pin 的 4 nets 碰巧也是浮空 routes。
 真正问题是 _add_missing_ap_via2 的 M3 conflict check 太严格 → 大量 Via2 被跳过。
 
+### Via2 reach threshold 修复 (验证)
+- 根因: line 1345 硬编码 500nm gate → 82% Via2 放置失败
+- 修复: 500nm → 6*MAZE_GRID=2100nm (TODO flag 加注释)
+- Via2 放置: 81→98 (+17), connected routes: 28→51
+- 只保留 51 connected routes → 246 matched, 0 WB ✅
+- 78 routes 仍浮空 — 196 pins 的 route 完全没 M3/M4 segments (router 层面问题)
+
 ### 下一步
-1. 修 _add_missing_ap_via2 让 Via2 放置率 > 90%（放宽 conflict check 或 fallback）
-2. 或: assemble_gds.py 只画有 Via2 的 route 的 wire（跳过浮空 route）
-3. 方案 1 更好（更多 net 连通 → LVS + connectivity 都改善）
+1. assemble_gds.py: 只画有 Via2 connected 的 route wire (方案 2, 安全)
+2. 然后查为什么 78 routes 没有 M3/M4 segments (router 层面)
+3. DRC re-check
 
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 

@@ -1342,7 +1342,11 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
                         best_dist = dist
                         best_pos = (px, py)
 
-            if not best_pos or best_dist > 500:
+            # TODO(via2_reach): 原值 500nm 只够 1.4 grid steps，导致 78% Via2 放置失败。
+            # 改为 6*MAZE_GRID 覆盖 router bridge + grid snap 偏移。
+            # 理想值应从 pdk.py 引用，不硬编码。
+            _VIA2_REACH = 6 * MAZE_GRID  # 2100nm — was 500nm
+            if not best_pos or best_dist > _VIA2_REACH:
                 continue
 
             rx, ry = best_pos
