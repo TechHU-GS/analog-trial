@@ -1587,3 +1587,35 @@ Netgen Tcl LVS working. Full loop: Magic→Netgen. 269 devices extracted, LVS mi
 - Netgen 148 merge count likely includes topology-based merges (not just parallel)
 
 Session end: 62 commits, 81 full devices, 15 parallel merges, 0 merges, 0 wrong-bulk.
+
+---
+
+## ★ Session 4 Final Status (2026-03-18 20:30)
+
+### ATK M3+M4+M5 Routing — Working but LVS=92/255
+
+**Code changes (all committed):**
+- pdk.py: M5/Via4/TopVia1/TM1 constants (IHP PDK values)
+- maze_router.py: 3-layer (M3H+M4V+M5V), strict H/V block, last-mile bridge
+- solver.py: power pad obstacles, seed parallel, disabled M1/M2 obstacles
+- assemble_gds.py: route layer remapping (0→M3, 1→M4, 2→M5)
+
+**Verified facts:**
+- H/V discipline: 0 violations ✅
+- Obstacle avoidance: 1 overlap (grid boundary) 
+- Via stack: M2→Via2→M3→Via3→M4→Via4→M5 complete ✅
+- Magic extraction: correctly extracts M3/M4/M5 (1730 .ext entries) ✅
+- seed diversity: seed=0 routes 127, seed=1 routes 129, different net sets ✅
+- LVS: 92/255 (bare=73, improvement +19)
+
+**Unresolved:**
+- 92 gap analysis: which nets connected, which didn't, why
+- KLayout DRC not done
+- 188-core sweep not done
+- .mag generation is inline script, not reusable module
+
+### Next session priorities
+1. Analyze 92 breakdown (connected vs merged vs missing)
+2. KLayout DRC
+3. Formalize .mag generation as module
+4. 188-core ECS sweep

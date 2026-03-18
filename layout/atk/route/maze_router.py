@@ -320,6 +320,26 @@ class MazeRouter:
             if seg[4] == -1:
                 self._mark_via_used(seg[0], seg[1])
 
+        # Last-mile bridge: connect exact pin positions to grid-snapped endpoints.
+        # Router works on grid; pins are at exact nm. The grid snap error (≤GRID/2)
+        # creates a gap that must be explicitly bridged.
+        for i, p in enumerate(pin_nms):
+            pin_x, pin_y = p[0], p[1]
+            gp = grid_pins[i]
+            grid_x, grid_y = self.to_nm(gp[0], gp[1])
+            if pin_x == grid_x and pin_y == grid_y:
+                continue  # already aligned, no bridge needed
+            # Find the layer of the nearest segment at this grid point
+            bridge_layer = M1_LYR  # default: M3 (layer 0)
+            for seg in segs:
+                sx, sy = seg[0], seg[1]
+                if abs(sx - grid_x) < self.GRID and abs(sy - grid_y) < self.GRID:
+                    if seg[4] >= 0:  # metal, not via
+                        bridge_layer = seg[4]
+                        break
+            # Add bridge segment from pin exact to grid-snapped position
+            segs.append((pin_x, pin_y, grid_x, grid_y, bridge_layer))
+
         return segs
 
     @staticmethod
