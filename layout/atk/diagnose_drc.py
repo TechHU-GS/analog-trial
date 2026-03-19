@@ -229,10 +229,18 @@ def diagnose(lyrdb_path, gds_path, routing_path, output_path=None):
                         dy = max(0, max(b1[1], b2[1]) - min(b1[3], b2[3]))
                         gap = min(dx, dy) if dx > 0 and dy > 0 else max(dx, dy)
 
-                    # Classify collision using NET PROBING (gold standard)
+                    # Classify: net probing + AP ownership cross-check
+                    # Net probing alone is unreliable for notch cases:
+                    # same-AP shapes with gap → extraction splits into 2 nets
+                    # → probe_net says "cross_net" but it's actually self-collision.
                     if net1_id is not None and net2_id is not None:
                         if net1_id == net2_id:
                             collision = 'same_net'
+                        elif ap1 == ap2 and ap1 != '?':
+                            # Same AP, different extracted nets → notch broke connectivity
+                            collision = 'notch'
+                        elif ap1 != '?' and ap2 != '?':
+                            collision = 'cross_device'
                         else:
                             collision = 'cross_net'
                     elif ap1 == ap2 and ap1 != '?':
