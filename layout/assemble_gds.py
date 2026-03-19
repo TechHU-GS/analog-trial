@@ -3884,7 +3884,24 @@ def main():
                 # Don't draw TM1 pad at drop — would overlap cross-net stripes.
                 _drop_rail_y = drop.get('rail_y')
                 if _drop_rail_y is not None:
-                    vbar(top, li_m5, v2[0], v2[1], _drop_rail_y, VIA4_PAD_M5)
+                    # M5 vbar — merge with same-net M5 to avoid M5.b notch
+                    _m5_hw = VIA4_PAD_M5 // 2
+                    _m5_y1 = min(v2[1], _drop_rail_y)
+                    _m5_y2 = max(v2[1], _drop_rail_y)
+                    _m5_x1 = v2[0] - _m5_hw
+                    _m5_x2 = v2[0] + _m5_hw
+                    # Extend to merge with nearby same-net M5 shapes
+                    _m5_search = klayout.db.Box(_m5_x1 - M5_MIN_S, _m5_y1,
+                                                _m5_x2 + M5_MIN_S, _m5_y2)
+                    for _es in top.shapes(li_m5).each_overlapping(_m5_search):
+                        if _es.is_box():
+                            _eb = _es.box
+                            # Check Y overlap (must share vertical range)
+                            if _eb.top > _m5_y1 and _eb.bottom < _m5_y2:
+                                # Extend X to cover this shape (merge)
+                                _m5_x1 = min(_m5_x1, _eb.left)
+                                _m5_x2 = max(_m5_x2, _eb.right)
+                    top.shapes(li_m5).insert(klayout.db.Box(_m5_x1, _m5_y1, _m5_x2, _m5_y2))
                     _hs_tv1 = TV1_SIZE // 2
                     _hp_m5_tv1 = _hs_tv1 + TV1_ENC_M5
                     top.shapes(li_tv1).insert(klayout.db.Box(
