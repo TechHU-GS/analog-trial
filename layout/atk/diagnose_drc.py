@@ -1,31 +1,63 @@
 #!/usr/bin/env python3
-"""DRC violation diagnostic tool — traces violations to code origin.
-
-Usage:
-    python3 -m atk.diagnose_drc --lyrdb /tmp/drc_precheck/*.lyrdb \
-                                 --gds output/soilz.gds \
-                                 --routing output/routing.json
+"""DRC violation diagnostic tool — uses KLayout RDB + LayoutToNetlist APIs.
 
 For each DRC violation:
-  1. Parses edge-pair coordinates from .lyrdb
-  2. Finds actual GDS shapes at those coordinates
-  3. Classifies shapes (stub/pad/PCell/wire/vbar)
-  4. Maps to routing.json AP or power drop
-  5. Reports: rule, gap, shape types, AP ownership, code origin
+  1. Reads edge-pair geometry from .lyrdb via ReportDatabase API
+  2. Probes GDS net at violation edges via LayoutToNetlist
+  3. Classifies: self-collision (same net) vs cross-net
+  4. Maps to routing.json AP ownership
+  5. Reports actionable fix direction
+
+Usage:
+    python3 -m atk.diagnose_drc --lyrdb FILE --gds FILE --routing FILE [--output FILE]
 """
 
 import argparse
 import json
-import re
 import sys
-import xml.etree.ElementTree as ET
 from collections import Counter
 
 import klayout.db as db
+import klayout.rdb as rdb
+
+
+# GDS layer definitions for net extraction
+METAL_LAYERS = [
+    (8,   0, 'Metal1'),
+    (19,  0, 'Via1'),
+    (10,  0, 'Metal2'),
+    (29,  0, 'Via2'),
+    (30,  0, 'Metal3'),
+    (49,  0, 'Via3'),
+    (50,  0, 'Metal4'),
+    (66,  0, 'Via4'),
+    (67,  0, 'Metal5'),
+    (125, 0, 'TopVia1'),
+    (126, 0, 'TopMetal1'),
+]
+
+# Map DRC rule prefix to GDS layer for shape lookup
+RULE_LAYER = {
+    'M1': (8, 0), 'M2': (10, 0), 'M3': (30, 0), 'M4': (50, 0), 'M5': (67, 0),
+    'V1': (19, 0), 'V2': (29, 0), 'V3': (49, 0),
+    'Cnt': (6, 0), 'CntB': (6, 0),
+    'TV1': (125, 0), 'TM1': (126, 0), 'TM2': (134, 0),
+    'NW': (31, 0), 'pSD': (14, 0), 'nSD': (7, 0),
+    'Act': (1, 0), 'LU': (1, 0),
+    'AFil': (1, 0), 'GFil': (5, 0),
+}
+
+
+def get_layer_for_rule(rule):
+    """Map DRC rule name to GDS layer number."""
+    for prefix, layer in RULE_LAYER.items():
+        if rule.startswith(prefix):
+            return layer
+    return None
 
 
 def classify_shape(w, h):
-    """Classify M1/M3/M5 shape by dimensions."""
+    """Classify shape by dimensions."""
     mn, mx = min(w, h), max(w, h)
     if mn <= 170 and mx > 500:
         return 'stub'
@@ -41,9 +73,52 @@ def classify_shape(w, h):
         return f'{w}x{h}'
 
 
-def find_shape_at(top, li, x, y, radius=30):
-    """Find GDS shape overlapping (x,y) on layer li."""
-    box = db.Box(x - radius, y - radius, x + radius, y + radius)
+def build_net_extractor(layout, top_cell):
+    """Build LayoutToNetlist for net probing."""
+    l2n = db.LayoutToNetlist(db.RecursiveShapeIterator(layout, top_cell, []))
+
+    layers = {}
+    for gds_l, gds_d, name in METAL_LAYERS:
+        li = layout.find_layer(gds_l, gds_d)
+        if li >= 0:
+            layers[name] = l2n.make_layer(li, name)
+
+    # Connect metals through vias
+    connections = [
+        ('Metal1', 'Via1'), ('Metal2', 'Via1'),
+        ('Metal2', 'Via2'), ('Metal3', 'Via2'),
+        ('Metal3', 'Via3'), ('Metal4', 'Via3'),
+        ('Metal4', 'Via4'), ('Metal5', 'Via4'),
+        ('Metal5', 'TopVia1'), ('TopMetal1', 'TopVia1'),
+    ]
+    for name in layers:
+        l2n.connect(layers[name])  # intra-layer
+    for m, v in connections:
+        if m in layers and v in layers:
+            l2n.connect(layers[m], layers[v])
+
+    l2n.extract_netlist()
+    return l2n, layers
+
+
+def probe_net_at(l2n, layer_obj, x_um, y_um, dbu):
+    """Probe net at a point. Returns (net_name, cluster_id) or (None, None)."""
+    pt = db.DPoint(x_um, y_um)
+    net = l2n.probe_net(layer_obj, pt)
+    if net:
+        name = net.name if net.name else net.expanded_name()
+        return name, net.cluster_id
+    return None, None
+
+
+def find_gds_shape(top, layout, gds_layer, x_um, y_um, dbu):
+    """Find GDS shape at position, return bbox + classification."""
+    li = layout.find_layer(*gds_layer)
+    if li < 0:
+        return None
+    x_dbu = int(x_um / dbu)
+    y_dbu = int(y_um / dbu)
+    box = db.Box(x_dbu - 30, y_dbu - 30, x_dbu + 30, y_dbu + 30)
     for s in top.shapes(li).each_overlapping(box):
         if s.is_box():
             b = s.box
@@ -51,188 +126,195 @@ def find_shape_at(top, li, x, y, radius=30):
                 'bbox': (b.left, b.bottom, b.right, b.top),
                 'w': b.width(), 'h': b.height(),
                 'type': classify_shape(b.width(), b.height()),
-                'cx': (b.left + b.right) // 2,
-                'cy': (b.bottom + b.top) // 2,
             }
     return None
 
 
-def find_ap_owner(shape, aps, ap_net):
-    """Find which AP owns a GDS shape by proximity."""
-    if not shape:
-        return '?', '?'
-    cx, cy = shape['cx'], shape['cy']
-    best_d = 2000
-    best_ak = '?'
-    for ak, ap in aps.items():
-        d = abs(ap['x'] - cx) + abs(ap['y'] - cy)
-        if d < best_d:
-            best_d = d
-            best_ak = ak
-    return best_ak, ap_net.get(best_ak, '?')
-
-
-def parse_violations(lyrdb_path):
-    """Parse .lyrdb and return list of violations."""
-    tree = ET.parse(lyrdb_path)
-    root = tree.getroot()
-    violations = []
-    for item in root.findall('.//items/item'):
-        cat = item.find('category')
-        if cat is None or not cat.text:
-            continue
-        rule = cat.text.strip("'")
-        val = item.find('.//value')
-        if val is None:
-            continue
-        pairs = re.findall(r'([\d.]+),([\d.]+)', val.text)
-        if len(pairs) >= 4:
-            x1 = int(float(pairs[0][0]) * 1000)
-            y1 = int(float(pairs[0][1]) * 1000)
-            x2 = int(float(pairs[2][0]) * 1000)
-            y2 = int(float(pairs[2][1]) * 1000)
-            violations.append({
-                'rule': rule,
-                'x1': x1, 'y1': y1,
-                'x2': x2, 'y2': y2,
-                'raw': val.text[:80],
-            })
-    return violations
-
-
-# Layer GDS numbers
-LAYER_MAP = {
-    'M1.b': (8, 0), 'M1.a': (8, 0), 'M1.d': (8, 0), 'M1.j': (8, 0),
-    'M2.a': (10, 0), 'M2.b': (10, 0), 'M2.d': (10, 0), 'M2.j': (10, 0),
-    'M3.a': (30, 0), 'M3.b': (30, 0), 'M3.d': (30, 0), 'M3.j': (30, 0),
-    'M3.c1': (30, 0), 'M3.e': (30, 0),
-    'M4.a': (50, 0), 'M4.b': (50, 0), 'M4.d': (50, 0), 'M4.j': (50, 0),
-    'M5.a': (67, 0), 'M5.b': (67, 0), 'M5.j': (67, 0), 'M5.e': (67, 0),
-    'V1.b': (19, 0), 'V2.c1': (29, 0), 'V3.b': (49, 0), 'V3.c1': (49, 0),
-    'Cnt.b': (6, 0), 'Cnt.g1': (6, 0),
-    'TV1.a': (125, 0), 'TV1.b': (125, 0),
-    'TM1.b': (126, 0), 'TM1.c': (126, 0),
-}
-
-
 def diagnose(lyrdb_path, gds_path, routing_path, output_path=None):
-    """Run full DRC diagnosis."""
-    # Load data
+    """Run full DRC diagnosis with net probing."""
+    # Load GDS
     layout = db.Layout()
     layout.read(gds_path)
     top = layout.top_cell()
+    dbu = layout.dbu
 
+    # Build net extractor
+    print('Building net extractor...')
+    l2n, layers = build_net_extractor(layout, top)
+    netlist = l2n.netlist()
+    top_circuit = None
+    for c in netlist.each_circuit():
+        top_circuit = c  # last = top
+    if top_circuit:
+        print(f'  Extracted: {len(list(top_circuit.each_net()))} nets in {top_circuit.name}')
+
+    # Load routing.json for AP mapping
     with open(routing_path) as f:
         routing = json.load(f)
     aps = routing.get('access_points', {})
-
-    # Build AP → net map
     ap_net = {}
     for net, rt in routing.get('signal_routes', {}).items():
-        for pin in rt.get('pins', []):
-            ap_net[pin] = net
-    for net, rt in routing.get('pre_routes', {}).items():
         for pin in rt.get('pins', []):
             ap_net[pin] = net
     for d in routing.get('power', {}).get('drops', []):
         ap_net[f'{d["inst"]}.{d["pin"]}'] = d['net']
 
-    violations = parse_violations(lyrdb_path)
-    print(f'Parsed {len(violations)} violations from {lyrdb_path}')
+    def find_ap(x_dbu, y_dbu):
+        """Find nearest AP by proximity."""
+        best_d, best_ak = 2000, '?'
+        for ak, ap in aps.items():
+            d = abs(ap['x'] - x_dbu) + abs(ap['y'] - y_dbu)
+            if d < best_d:
+                best_d = d
+                best_ak = ak
+        return best_ak
+
+    # Load DRC report
+    rdb_db = rdb.ReportDatabase('drc')
+    rdb_db.load(lyrdb_path)
+    print(f'Loaded {rdb_db.num_items()} violations from {lyrdb_path}')
 
     # Analyze each violation
     results = []
-    for v in violations:
-        rule = v['rule']
-        gds_layer = LAYER_MAP.get(rule)
-        if not gds_layer:
-            results.append({**v, 'shape1': None, 'shape2': None,
-                         'ap1': '?', 'ap2': '?', 'net1': '?', 'net2': '?',
-                         'gap': -1, 'collision': 'unknown'})
+    for cat in rdb_db.each_category():
+        if cat.num_items() == 0:
             continue
+        rule = cat.name()
+        gds_layer = get_layer_for_rule(rule)
 
-        li = layout.layer(*gds_layer)
-        s1 = find_shape_at(top, li, v['x1'], v['y1'])
-        s2 = find_shape_at(top, li, v['x2'], v['y2'])
+        # Find the layer Region for net probing
+        layer_name = None
+        layer_obj = None
+        if gds_layer:
+            for gds_l, gds_d, name in METAL_LAYERS:
+                if (gds_l, gds_d) == gds_layer:
+                    layer_name = name
+                    layer_obj = layers.get(name)
+                    break
 
-        ap1, net1 = find_ap_owner(s1, aps, ap_net)
-        ap2, net2 = find_ap_owner(s2, aps, ap_net)
+        for item in rdb_db.each_item_per_category(cat.rdb_id()):
+            result = {'rule': rule}
 
-        # Compute gap
-        gap = -1
-        if s1 and s2 and s1['bbox'] != s2['bbox']:
-            b1, b2 = s1['bbox'], s2['bbox']
-            dx = max(0, max(b1[0], b2[0]) - min(b1[2], b2[2]))
-            dy = max(0, max(b1[1], b2[1]) - min(b1[3], b2[3]))
-            gap = min(dx, dy) if dx > 0 and dy > 0 else max(dx, dy)
+            for v in item.each_value():
+                if v.is_edge_pair():
+                    ep = v.edge_pair()
+                    # Edge endpoints (microns)
+                    p1 = ep.first.p1
+                    p2 = ep.second.p1
 
-        # Classify collision type
-        if ap1 == ap2 and ap1 != '?':
-            collision = 'self'  # same AP shapes collide
-        elif net1 == net2 and net1 != '?':
-            collision = 'same_net'
-        elif net1 != '?' and net2 != '?':
-            collision = 'cross_net'
-        else:
-            collision = 'unknown'
+                    # Probe nets at both edges
+                    net1_name, net1_id = None, None
+                    net2_name, net2_id = None, None
+                    if layer_obj:
+                        net1_name, net1_id = probe_net_at(l2n, layer_obj, p1.x, p1.y, dbu)
+                        net2_name, net2_id = probe_net_at(l2n, layer_obj, p2.x, p2.y, dbu)
 
-        results.append({
-            **v,
-            'shape1': s1, 'shape2': s2,
-            'ap1': ap1, 'ap2': ap2,
-            'net1': net1, 'net2': net2,
-            'gap': gap,
-            'collision': collision,
-        })
+                    # Find GDS shapes
+                    shape1 = find_gds_shape(top, layout, gds_layer, p1.x, p1.y, dbu) if gds_layer else None
+                    shape2 = find_gds_shape(top, layout, gds_layer, p2.x, p2.y, dbu) if gds_layer else None
 
-    # Summary by rule
-    print('\n=== DRC Summary by Rule ===')
+                    # AP ownership
+                    x1_dbu = int(p1.x / dbu)
+                    y1_dbu = int(p1.y / dbu)
+                    x2_dbu = int(p2.x / dbu)
+                    y2_dbu = int(p2.y / dbu)
+                    ap1 = find_ap(x1_dbu, y1_dbu)
+                    ap2 = find_ap(x2_dbu, y2_dbu)
+
+                    # Gap
+                    gap = -1
+                    if shape1 and shape2 and shape1['bbox'] != shape2['bbox']:
+                        b1, b2 = shape1['bbox'], shape2['bbox']
+                        dx = max(0, max(b1[0], b2[0]) - min(b1[2], b2[2]))
+                        dy = max(0, max(b1[1], b2[1]) - min(b1[3], b2[3]))
+                        gap = min(dx, dy) if dx > 0 and dy > 0 else max(dx, dy)
+
+                    # Classify collision using NET PROBING (gold standard)
+                    if net1_id is not None and net2_id is not None:
+                        if net1_id == net2_id:
+                            collision = 'same_net'
+                        else:
+                            collision = 'cross_net'
+                    elif ap1 == ap2 and ap1 != '?':
+                        collision = 'self_ap'
+                    else:
+                        collision = 'unknown'
+
+                    result.update({
+                        'gap': gap,
+                        'collision': collision,
+                        'net1': net1_name, 'net2': net2_name,
+                        'net1_id': net1_id, 'net2_id': net2_id,
+                        'ap1': ap1, 'ap2': ap2,
+                        'shape1_type': shape1['type'] if shape1 else '?',
+                        'shape2_type': shape2['type'] if shape2 else '?',
+                        'p1': (round(p1.x, 3), round(p1.y, 3)),
+                        'p2': (round(p2.x, 3), round(p2.y, 3)),
+                    })
+                    break  # first edge_pair only
+                elif v.is_polygon():
+                    poly = v.polygon()
+                    bb = poly.bbox()
+                    cx, cy = bb.center().x, bb.center().y
+
+                    net_name, net_id = None, None
+                    if layer_obj:
+                        net_name, net_id = probe_net_at(l2n, layer_obj, cx, cy, dbu)
+
+                    result.update({
+                        'gap': -1,
+                        'collision': 'polygon',
+                        'net1': net_name, 'net2': None,
+                        'shape1_type': f'poly({int(bb.width()*1000)}x{int(bb.height()*1000)})',
+                        'shape2_type': '?',
+                        'ap1': find_ap(int(cx / dbu), int(cy / dbu)),
+                        'ap2': '?',
+                    })
+                    break
+
+            if 'collision' not in result:
+                result['collision'] = 'no_geometry'
+                result['gap'] = -1
+            results.append(result)
+
+    # === Summary ===
+    print(f'\n=== DRC Summary ({len(results)} violations) ===')
     rule_counts = Counter(r['rule'] for r in results)
     for rule, cnt in rule_counts.most_common():
         print(f'  {cnt:5d}  {rule}')
     print(f'  -----')
     print(f'  {len(results):5d}  TOTAL')
 
-    # Detailed analysis for top rules
-    for rule in [r for r, _ in rule_counts.most_common(5)]:
-        rule_results = [r for r in results if r['rule'] == rule]
-        collision_types = Counter(r['collision'] for r in rule_results)
-        shape_pairs = Counter()
-        for r in rule_results:
-            if r.get('shape1') and r.get('shape2'):
-                pair = tuple(sorted([r['shape1']['type'], r['shape2']['type']]))
-                shape_pairs[pair] += 1
+    # Per-rule detailed analysis
+    for rule in [r for r, _ in rule_counts.most_common(8)]:
+        rr = [r for r in results if r['rule'] == rule]
+        ct = Counter(r['collision'] for r in rr)
+        sp = Counter()
+        for r in rr:
+            if r.get('shape1_type') and r.get('shape2_type'):
+                sp[tuple(sorted([r['shape1_type'], r['shape2_type']]))] += 1
 
-        print(f'\n=== {rule} ({len(rule_results)} violations) ===')
-        print(f'  Collision types: {dict(collision_types)}')
-        print(f'  Shape pairs:')
-        for pair, cnt in shape_pairs.most_common(5):
-            print(f'    {pair[0]:10s} ↔ {pair[1]:10s}: {cnt}')
-
-        # Show specific examples
+        print(f'\n--- {rule} ({len(rr)}) ---')
+        print(f'  Collision: {dict(ct)}')
+        if sp:
+            print(f'  Shape pairs:')
+            for pair, cnt in sp.most_common(5):
+                print(f'    {pair[0]:10s} ↔ {pair[1]:10s}: {cnt}')
         print(f'  Examples:')
-        for r in rule_results[:3]:
-            s1t = r['shape1']['type'] if r.get('shape1') else '?'
-            s2t = r['shape2']['type'] if r.get('shape2') else '?'
-            print(f'    gap={r["gap"]:3d}nm {r["collision"]:9s}: '
-                  f'{s1t} ({r["ap1"]}) ↔ {s2t} ({r["ap2"]})')
+        for r in rr[:3]:
+            n1 = r.get('net1', '?') or '?'
+            n2 = r.get('net2', '?') or '?'
+            s1 = r.get('shape1_type', '?')
+            s2 = r.get('shape2_type', '?')
+            print(f'    gap={r["gap"]:3d}nm {r["collision"]:9s} '
+                  f'{s1}[{n1}] ↔ {s2}[{n2}]')
 
-    # Save detailed JSON report
+    # Save JSON report
     if output_path:
         report = {
             'total': len(results),
             'by_rule': dict(rule_counts),
-            'violations': [{
-                'rule': r['rule'],
-                'gap': r['gap'],
-                'collision': r['collision'],
-                'ap1': r.get('ap1', '?'),
-                'ap2': r.get('ap2', '?'),
-                'net1': r.get('net1', '?'),
-                'net2': r.get('net2', '?'),
-                'shape1_type': r['shape1']['type'] if r.get('shape1') else '?',
-                'shape2_type': r['shape2']['type'] if r.get('shape2') else '?',
-            } for r in results],
+            'violations': results,
         }
         with open(output_path, 'w') as f:
             json.dump(report, f, indent=2)
@@ -240,7 +322,7 @@ def diagnose(lyrdb_path, gds_path, routing_path, output_path=None):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='DRC violation diagnostic')
+    parser = argparse.ArgumentParser(description='DRC violation diagnostic (KLayout RDB + L2N)')
     parser.add_argument('--lyrdb', required=True, help='KLayout .lyrdb DRC report')
     parser.add_argument('--gds', required=True, help='GDS file')
     parser.add_argument('--routing', required=True, help='routing.json')
