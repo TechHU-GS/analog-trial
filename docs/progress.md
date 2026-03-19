@@ -220,9 +220,18 @@ routing wire (M3/M4) 画了但浮空（不连 M2）→ 干扰 KLayout LVS extrac
 2. GDS 检查哪些 route 有 Via2 → 删无 Via2 的 81 routes → 重跑 assembly
 → 48 routes drawn, 246 matched, 0 WB, 0 CM ✅
 
+### DRC 修复进展
+- M5.b: 32→6 (same-net M5 vbar merge) ✅
+- M1.b: 65 未修 — AP M1 pad extend 逻辑导致（assemble_gds.py L3350-3414）
+  routing.json m1_stub 不碰，但 GDS 画的 extended pad 碰
+- check_spacing 函数已加，shrink 策略对 spacing 无效（位置不变）
+- shift 策略对 M5 有效但断连 Via4（只移 vbar 不移 stack）→ 回退
+- M5 merge 策略有效（extend 到 overlap 消除 notch）→ 保留
+- 全 metal 利用率 <3%，空间充足
+
 ### Session 5 最终结果
 ```
-DRC:     4227 → 待 re-check
+DRC:     4227 → 240 (precheck rules)
 LVS:     96 → 246/257 matched (95.7%)
 Nets:    0 → 17 matched
 Merges:  79 → 0
