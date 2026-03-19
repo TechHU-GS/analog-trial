@@ -67,6 +67,26 @@ def wire(cell, li, pts, w):
     cell.shapes(li).insert(klayout.db.Path(kpts, int(w)))
 
 
+def check_spacing(cell, li, box, min_spacing):
+    """Check if box would violate min_spacing with existing shapes on layer.
+    Returns True if safe (no conflict), False if would violate."""
+    search = klayout.db.Box(box.left - min_spacing, box.bottom - min_spacing,
+                             box.right + min_spacing, box.top + min_spacing)
+    for existing in cell.shapes(li).each_overlapping(search):
+        if existing.is_box():
+            eb = existing.box
+            # Check actual edge-to-edge gap (not center distance)
+            dx = max(0, max(box.left, eb.left) - min(box.right, eb.right))
+            dy = max(0, max(box.bottom, eb.bottom) - min(box.top, eb.top))
+            if dx < min_spacing and dy < min_spacing:
+                # Shapes overlap or gap < min_spacing
+                if dx > 0 or dy > 0:  # not overlapping, just close
+                    return False
+                # Overlapping = same net (OK) or different net (bad)
+                # Can't tell here, assume same net → OK
+    return True
+
+
 def via1(cell, li_v, li_m1, li_m2, x, y, m1_pad=None, m2_pad=None,
          m2_hw=None, m2_hh=None):
     """Draw Via1 cut + M1/M2 pads.
@@ -3392,9 +3412,25 @@ def main():
                             m1_pad[1] = min(m1_pad[1], _pad_min_b)
                             m1_pad[2] = max(m1_pad[2], _pad_max_r)
                             m1_pad[3] = max(m1_pad[3], _pad_max_t)
-                    draw_rect(top, li_m1, m1_pad)
+                    _m1_box = klayout.db.Box(m1_pad[0], m1_pad[1], m1_pad[2], m1_pad[3])
+                    if check_spacing(top, li_m1, _m1_box, M1_MIN_S):
+                        draw_rect(top, li_m1, m1_pad)
+                    else:
+                        # Shrink to minimum Via1 enclosure to avoid M1.b
+                        _v1ec = 50
+                        _m1_min = [vp['via1'][0]-_v1ec, vp['via1'][1]-_v1ec,
+                                   vp['via1'][2]+_v1ec, vp['via1'][3]+_v1ec]
+                        draw_rect(top, li_m1, _m1_min)
+                        _ap_m2_shrink += 1  # reuse counter for tracking
                 else:
-                    draw_rect(top, li_m1, m1r)
+                    _m1_box = klayout.db.Box(m1r[0], m1r[1], m1r[2], m1r[3])
+                    if check_spacing(top, li_m1, _m1_box, M1_MIN_S):
+                        draw_rect(top, li_m1, m1r)
+                    else:
+                        _v1ec = 50
+                        _m1_min = [vp['via1'][0]-_v1ec, vp['via1'][1]-_v1ec,
+                                   vp['via1'][2]+_v1ec, vp['via1'][3]+_v1ec]
+                        draw_rect(top, li_m1, _m1_min)
             if 'm2' in vp:
                 m2_rect = vp['m2']
                 ap_net = _pin_net_ap.get(key, '')
