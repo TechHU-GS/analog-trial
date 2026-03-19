@@ -229,9 +229,33 @@ routing wire (M3/M4) 画了但浮空（不连 M2）→ 干扰 KLayout LVS extrac
 - M5 merge 策略有效（extend 到 overlap 消除 notch）→ 保留
 - 全 metal 利用率 <3%，空间充足
 
+### diagnose_drc.py 工具 (v3, 可靠)
+- KLayout RDB API 解析 violations
+- LayoutToNetlist probe_net() 查 net ownership
+- notch 检测: probe_net cross_net + same AP → notch (非 true cross_net)
+- 5 分类: same_net / notch / cross_device / self_ap / unknown
+
+### DRC 275 violations 最终分类 (diagnose_drc 验证数据)
+```
+M1.b(67):  notch=49 (stub-pad gap), same_net=12, cross_device=6
+M3.b(35):  same_net=34, cross_net=1 → merge 可修
+V3.b(9):   same_net=9 → merge 可修
+M5.b(6):   已通过 merge 从 32 降到 6 ✅
+pSD.c(27): self_ap (PSD layer)
+NW.c(24):  self_ap (NW enclosure)
+Cnt.b(15): self_ap=10
+其他(92):  CntB/NW.f/Act.b/TV1/TM1/min-area/fill/jog
+```
+
+### DRC 修法 roadmap
+1. Merge same_net: M3.b(34)+V3.b(9)+M1.b(12) = 55 → M5 merge 同策略
+2. Fix notch: M1.b(49) → stub-pad merge (draw_segments Via1 M1 + AP section pad 合并)
+3. Placement: M1.b(6) cross_device → divider 区 device 间距
+4. pSD/NW/Cnt(76): self_ap → 需单独分析
+
 ### Session 5 最终结果
 ```
-DRC:     4227 → 240 (precheck rules)
+DRC:     4227 → 275 (precheck rules, 275 是最新 diagnose_drc 验证)
 LVS:     96 → 246/257 matched (95.7%)
 Nets:    0 → 17 matched
 Merges:  79 → 0
