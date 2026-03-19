@@ -3412,25 +3412,22 @@ def main():
                             m1_pad[1] = min(m1_pad[1], _pad_min_b)
                             m1_pad[2] = max(m1_pad[2], _pad_max_r)
                             m1_pad[3] = max(m1_pad[3], _pad_max_t)
-                    _m1_box = klayout.db.Box(m1_pad[0], m1_pad[1], m1_pad[2], m1_pad[3])
-                    if check_spacing(top, li_m1, _m1_box, M1_MIN_S):
-                        draw_rect(top, li_m1, m1_pad)
-                    else:
-                        # Shrink to minimum Via1 enclosure to avoid M1.b
-                        _v1ec = 50
-                        _m1_min = [vp['via1'][0]-_v1ec, vp['via1'][1]-_v1ec,
-                                   vp['via1'][2]+_v1ec, vp['via1'][3]+_v1ec]
-                        draw_rect(top, li_m1, _m1_min)
-                        _ap_m2_shrink += 1  # reuse counter for tracking
+                    # Merge pad with stub to eliminate M1.b notch (self-collision)
+                    if stub:
+                        m1_pad[0] = min(m1_pad[0], stub[0])
+                        m1_pad[1] = min(m1_pad[1], stub[1])
+                        m1_pad[2] = max(m1_pad[2], stub[2])
+                        m1_pad[3] = max(m1_pad[3], stub[3])
+                    draw_rect(top, li_m1, m1_pad)
                 else:
-                    _m1_box = klayout.db.Box(m1r[0], m1r[1], m1r[2], m1r[3])
-                    if check_spacing(top, li_m1, _m1_box, M1_MIN_S):
-                        draw_rect(top, li_m1, m1r)
-                    else:
-                        _v1ec = 50
-                        _m1_min = [vp['via1'][0]-_v1ec, vp['via1'][1]-_v1ec,
-                                   vp['via1'][2]+_v1ec, vp['via1'][3]+_v1ec]
-                        draw_rect(top, li_m1, _m1_min)
+                    # Merge pad with stub
+                    _m1_draw = list(m1r)
+                    if stub:
+                        _m1_draw[0] = min(_m1_draw[0], stub[0])
+                        _m1_draw[1] = min(_m1_draw[1], stub[1])
+                        _m1_draw[2] = max(_m1_draw[2], stub[2])
+                        _m1_draw[3] = max(_m1_draw[3], stub[3])
+                    draw_rect(top, li_m1, _m1_draw)
             if 'm2' in vp:
                 m2_rect = vp['m2']
                 ap_net = _pin_net_ap.get(key, '')
