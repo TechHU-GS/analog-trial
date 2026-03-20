@@ -110,10 +110,30 @@ Session 6 教训（stub-pad merge = DRC disaster）+ 数据验证（532/532 全 
 PCell DRC clean（Session 4 验证）。BARE flattened M1 space_check = 0。
 剩余 66 M1.b 需要进一步分析。
 
+### DRC 深度分析结论
+
+CI DRC 161 全部是 inter-PCell 间距（单个 PCell CI DRC clean 已验证）。
+M1.b=57 中 38 个集中在 TFF 数字区 (x=50-100, y=200-250um)。
+Gap fill 260nm shapes 贡献 +36 M1.b（去掉后 57→21）。
+Y-stretch 对 M1.b 无效（不是 Y 间距问题）。
+X 单 device 移动也无效（是 assembly shapes 和 PCell strip 的 notch）。
+
+### 架构转换：模块化 "搭积木" 方案
+
+放弃 flat 257-device 全局 assembly。改为模块化：
+1. TFF macro: 16 devices (8 nmos_vco + 8 pmos_vco), 7 个相同实例
+2. 各模拟模块 (VCO, OTA, BIAS...) 独立设计
+3. 最后拼装
+
+TFF macro baseline 已提取: modular/output/tff_macro.gds
+- 64 M1 shapes, M1.b=0, M1.a=0 (PCell only, DRC clean)
+- 下一步: 逐步加 bus straps → ties → gate → AP, 每步验证 DRC
+
 ### 下一步
-1. DRC M1.b 66 — 分析剩余来源
-2. CI precheck 非 DRC 失败修复（top cell name, layer, analog pin）
-3. Router 改进 — 增加 route 覆盖 (11 unmatched devices)
+1. TFF macro assembly (bus straps + ties + gate + AP, DRC clean)
+2. TFF 实例化 × 7 + inter-TFF 验证
+3. 模拟区模块化
+4. 全局拼装
 
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
