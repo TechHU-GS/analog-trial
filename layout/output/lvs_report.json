@@ -68,22 +68,22 @@
         }
       },
       {
-        "name": "$83",
+        "name": "$82",
         "class": "sg13_lv_nmos",
         "terminals": {
-          "S": "ref_Q",
-          "G": "$741",
-          "D": "$754",
+          "S": "t3_nsn",
+          "G": "$432",
+          "D": "$447",
           "B": "gnd,t1I_m,t1Q_m,t2I_m,t2Q_m,vdd"
         }
       },
       {
-        "name": "$84",
+        "name": "$83",
         "class": "sg13_lv_nmos",
         "terminals": {
-          "S": "$375",
-          "G": "$376",
-          "D": "vco_buf_b",
+          "S": "ref_Q",
+          "G": "$773",
+          "D": "$789",
           "B": "gnd,t1I_m,t1Q_m,t2I_m,t2Q_m,vdd"
         }
       },
@@ -92,19 +92,19 @@
         "class": "sg13_lv_pmos",
         "terminals": {
           "S": "gnd,t1I_m,t1Q_m,t2I_m,t2Q_m,vdd",
-          "G": "$453",
-          "D": "$470",
+          "G": "$469",
+          "D": "$485",
           "B": "gnd,t1I_m,t1Q_m,t2I_m,t2Q_m,vdd"
         },
         "bulk_ok": true
       },
       {
-        "name": "$219",
+        "name": "$256",
         "class": "sg13_lv_pmos",
         "terminals": {
-          "S": "$483",
-          "G": "$450",
-          "D": "$468",
+          "S": "$697",
+          "G": "$664",
+          "D": "$680",
           "B": "gnd,t1I_m,t1Q_m,t2I_m,t2Q_m,vdd"
         },
         "bulk_ok": true
@@ -182,22 +182,22 @@
         }
       },
       {
-        "name": "M_IA_N",
+        "name": "M_NA_N1",
         "class": "SG13_LV_NMOS",
         "terminals": {
-          "S": "GND",
-          "G": "NAND_A",
-          "D": "PHI_P",
+          "S": "NA_MID",
+          "G": "F_EXC",
+          "D": "NAND_A",
           "B": "GND"
         }
       },
       {
-        "name": "M_IB_P",
+        "name": "M_IA_P",
         "class": "SG13_LV_PMOS",
         "terminals": {
           "S": "VDD",
-          "G": "NAND_B",
-          "D": "PHI_N",
+          "G": "NAND_A",
+          "D": "PHI_P",
           "B": "VDD"
         },
         "bulk_ok": true
@@ -227,7 +227,7 @@
   },
   "nets": {
     "matched": 15,
-    "ref_only": 595,
+    "ref_only": 604,
     "ext_only": 130,
     "ref_only_named": [
       "bias_n",
@@ -291,7 +291,6 @@
       "nb_mid",
       "net_rptat",
       "ns1",
-      "ns3,vco3",
       "ota_out",
       "phi_n",
       "phi_p",
@@ -306,6 +305,7 @@
       "src1",
       "src2",
       "src3",
+      "sum_n",
       "t1I_mb",
       "t1I_nmn",
       "t1I_nmp",
@@ -317,6 +317,7 @@
       "t1Q_nsn",
       "t1Q_nsp",
       "t2I_mb",
+      "t2I_nmn",
       "t2I_nmp",
       "t2I_nsn",
       "t2I_nsp",
@@ -346,7 +347,7 @@
       "tail",
       "vcas",
       "vco1",
-      "vco2",
+      "vco3",
       "vco4",
       "vco5",
       "vco_b",
@@ -354,7 +355,7 @@
       "vco_buf_b",
       "vco_out"
     ],
-    "ref_only_anon_count": 472,
+    "ref_only_anon_count": 480,
     "ext_only_named": [
       "BIAS_N",
       "BUF1",
@@ -396,6 +397,7 @@
       "F_EXC_B",
       "F_EXC_B_D",
       "F_EXC_D",
+      "GND",
       "IQ_SEL",
       "LAT_Q",
       "LAT_QB",
@@ -419,11 +421,9 @@
       "NET_RPTAT",
       "NMOS_BIAS",
       "NS1",
-      "NS3",
       "OTA_OUT",
       "PHI_N",
       "PHI_P",
-      "PMOS_BIAS",
       "PROBE_N",
       "PROBE_P",
       "REF_I",
@@ -434,6 +434,7 @@
       "SRC1",
       "SRC2",
       "SRC3",
+      "SUM_N",
       "T1I_M",
       "T1I_MB",
       "T1I_NMN",
@@ -446,7 +447,9 @@
       "T1Q_NMP",
       "T1Q_NSN",
       "T1Q_NSP",
+      "T2I_M",
       "T2I_MB",
+      "T2I_NMN",
       "T2I_NMP",
       "T2I_NSN",
       "T2I_NSP",
@@ -476,8 +479,6 @@
       "T4Q_NSP",
       "TAIL",
       "VCAS",
-      "VCO1",
-      "VCO2",
       "VCO3",
       "VCO4",
       "VCO5",
@@ -487,25 +488,27 @@
       "VCO_OUT",
       "VPTAT"
     ],
-    "comma_merges": [
-      "ns3,vco3"
-    ],
+    "comma_merges": [],
     "matched_pairs": [
       {
-        "ref": "$610",
-        "ext": "T2I_M"
+        "ref": "$363",
+        "ext": "PMOS_BIAS"
       },
       {
-        "ref": "$156",
-        "ext": "VDD"
+        "ref": "$339",
+        "ext": "VCO1"
       },
       {
         "ref": "gnd,t1I_m,t1Q_m,t2I_m,t2Q_m,vdd",
-        "ext": "GND"
+        "ext": "VDD"
       },
       {
         "ref": "ns2",
         "ext": "NS2"
+      },
+      {
+        "ref": "ns3",
+        "ext": "NS3"
       },
       {
         "ref": "ns4",
@@ -536,12 +539,8 @@
         "ext": "SEL2B"
       },
       {
-        "ref": "sum_n",
-        "ext": "SUM_N"
-      },
-      {
-        "ref": "t2I_nmn",
-        "ext": "T2I_NMN"
+        "ref": "vco2",
+        "ext": "VCO2"
       },
       {
         "ref": "vref_comp",
@@ -554,17 +553,17 @@
     ]
   },
   "pins": {
-    "matched": 268,
+    "matched": 269,
     "mismatched": 0
   },
   "summary": {
     "devices_matched": 246,
     "devices_unmatched": 20,
     "nets_matched": 15,
-    "nets_unmatched": 725,
-    "comma_merges": 1,
+    "nets_unmatched": 734,
+    "comma_merges": 0,
     "wrong_bulk_pmos": 0,
-    "pins_matched": 268,
+    "pins_matched": 269,
     "pins_mismatched": 0
   }
 }

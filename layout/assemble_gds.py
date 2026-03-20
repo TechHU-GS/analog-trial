@@ -1756,6 +1756,15 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
                                      net_name):
                     skipped += 1
                     continue
+                # Check M4 conflict: PCell M4 wires at target may be
+                # cross-net (e.g., ns3 M4 wire connecting Mpb.D to Mpu.S).
+                # Via3 M4 pad would merge with PCell M4 → cross-net short.
+                _m4_search = klayout.db.Box(
+                    rx - hp_via3, ry - hp_via3, rx + hp_via3, ry + hp_via3)
+                if any(True for _ in top.shapes(li_m4).each_overlapping(
+                        _m4_search)):
+                    skipped += 1
+                    continue
 
             # All clear — draw Via2 at AP center.
             # AP M2 pad (already drawn in step 3, possibly shrunk later)
