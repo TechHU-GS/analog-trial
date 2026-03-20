@@ -670,7 +670,7 @@ def _fill_same_net_gaps(cell, layer_indices, routing,
 
                     fill = None
                     if x_gap > 0 and x_gap < min_s and y_gap < 0:
-                        # X gap with Y overlap
+                        # X gap with Y overlap — fill matches overlap width
                         fy1 = max(a[1], b[1])
                         fy2 = min(a[3], b[3])
                         if fy2 - fy1 < min_w:
@@ -679,11 +679,18 @@ def _fill_same_net_gaps(cell, layer_indices, routing,
                             fy1 -= extra
                             fy2 += extra
                         if fy2 - fy1 >= min_w:
-                            fx1 = min(a[2], b[2]) - min_w
-                            fx2 = max(a[0], b[0]) + min_w
+                            # Fill X: just bridge the gap, don't widen
+                            # into existing shapes (causes cross-net M1.b)
+                            fx1 = min(a[2], b[2])
+                            fx2 = max(a[0], b[0])
+                            # Ensure fill meets min_w in X
+                            if fx2 - fx1 < min_w:
+                                cx = (fx1 + fx2) // 2
+                                fx1 = cx - min_w // 2
+                                fx2 = cx + min_w // 2
                             fill = (fx1, fy1, fx2, fy2)
                     elif y_gap > 0 and y_gap < min_s and x_gap < 0:
-                        # Y gap with X overlap
+                        # Y gap with X overlap — fill matches overlap width
                         fx1 = max(a[0], b[0])
                         fx2 = min(a[2], b[2])
                         if fx2 - fx1 < min_w:
@@ -692,8 +699,13 @@ def _fill_same_net_gaps(cell, layer_indices, routing,
                             fx1 -= extra
                             fx2 += extra
                         if fx2 - fx1 >= min_w:
-                            fy1 = min(a[3], b[3]) - min_w
-                            fy2 = max(a[1], b[1]) + min_w
+                            # Fill Y: just bridge the gap
+                            fy1 = min(a[3], b[3])
+                            fy2 = max(a[1], b[1])
+                            if fy2 - fy1 < min_w:
+                                cy = (fy1 + fy2) // 2
+                                fy1 = cy - min_w // 2
+                                fy2 = cy + min_w // 2
                             fill = (fx1, fy1, fx2, fy2)
                     elif x_gap > 0 and y_gap > 0:
                         # Corner gap — diagonal distance check
