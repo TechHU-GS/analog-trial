@@ -230,6 +230,16 @@ Step 9: 复制 + inter-module routing → CI DRC = 0
 ### 已完成模块
 1. ✅ 数字 block: soilz_digital.gds (80x30um, 23 std cells, LibreLane)
 2. ✅ VCO: vco_5stage.gds (108.8x13.2um, 20 devices, 5-stage ring)
+3. ✅ BIAS mirrors: bias_mirrors.gds (52x10um, 4 PM mirrors)
+4. ✅ BIAS MN pair: bias_mn.gds (8.5x3um, MN_diode+MN_pgen)
+5. ✅ BIAS cascode: bias_cascode.gds (21.7x7.9um, 4 PM_cas + MN_cas_load)
+6. ✅ OTA: ota.gds (22.6x19.6um, 5T OTA)
+
+Tap 规则总结:
+- NMOS → ptap (P+ substrate, pSD layer, no NWell)
+- PMOS → ntap (N+ in NWell, no pSD)
+- tap 放在 PCell Active 外 ≥ Act.b(0.21um)
+- tap 在 NWell 内才有效（ntap 要在 PCell NWell 范围内）
 
 ### 待做模块 (按 device 数排序)
 - BIAS: 23 devices (PM mirrors, MN bias, Rptat/Rout)
