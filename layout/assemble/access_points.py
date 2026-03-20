@@ -83,6 +83,19 @@ def draw_access_points(top, li_m1, li_m2, li_v1, layout,
                 v = vp['via1']
                 drawn_vias.add(((v[0] + v[2]) // 2, (v[1] + v[3]) // 2))
             if 'm1' in vp and not skip_m1:
+                # Gate pins: skip AP M1 pad if PCell already has M1 at
+                # the Via1 position (gate contact M1).  The AP pad is
+                # 290nm which violates M1.b with adjacent S/D strips
+                # (gate sits between S/D, gap ~100-150nm < 180nm).
+                _is_gate = '.G' in key
+                if _is_gate and 'via1' in vp:
+                    _gv = vp['via1']
+                    _gvx = (_gv[0] + _gv[2]) // 2
+                    _gvy = (_gv[1] + _gv[3]) // 2
+                    _gs = klayout.db.Box(_gvx - 50, _gvy - 50,
+                                         _gvx + 50, _gvy + 50)
+                    if any(True for _ in top.shapes(li_m1).each_overlapping(_gs)):
+                        continue  # PCell M1 covers Via1 → skip AP pad
                 # Shrink M1 AP pad to VIA1_GDS_M1 (310nm) from routing's
                 # VIA1_PAD_M1 (370nm) to reduce M1.b violations
                 m1r = vp['m1']
