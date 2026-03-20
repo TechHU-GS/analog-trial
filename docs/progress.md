@@ -189,7 +189,13 @@ Compact VCO stage: 20.0 x 12.0 um, M1.b=0
 - PCell 已有结构要利用，不重复画
 - 层号必须从 PDK lyp 文件确认
 
-剩余：Mnb.G/Mpb.G bias routing (需 M2), pin labels, LVS
+7. Bias gate routing (Mnb.G→BIAS_N, Mpb.G→BIAS_P via M2) → DRC=0 ✅
+   - PCell poly extension 只有 180nm，不够放 contact
+   - 手动加 poly extension 500nm + Cont + Via1 + M2 route
+   - M2 width ≥ 210nm (M2_a rule)
+
+VCO single stage 完成: 20.9x12.8um, 全部连接 DRC clean
+剩余: pin labels, LVS, 5-stage 复制 + 环形连接
 
 ### 下一步
 1. VCO stage bias gate routing (M2) → DRC clean
