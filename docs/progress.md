@@ -241,16 +241,21 @@ Tap 规则总结:
 - tap 放在 PCell Active 外 ≥ Act.b(0.21um)
 - tap 在 NWell 内才有效（ntap 要在 PCell NWell 范围内）
 
-### 待做模块 (按 device 数排序)
-- BIAS: 23 devices (PM mirrors, MN bias, Rptat/Rout)
-- COMP: 11 devices (strong-arm comparator)
-- SR: 8 devices (ΣΔ latch)
-- OTA: 6 devices (5T OTA)
-- SW: 6 devices (current source switches)
-- H-bridge: 4 devices
-- Chopper: 4 devices
-- DAC: 4 devices (TG switches)
-- Passive: 7 devices (cap_cmim, rhigh)
+7. ✅ COMP: comp.gds (14x20um, 11 devices, strong-arm)
+8. ✅ SR latch: sr_latch.gds (16x9um, 8 devices)
+9. ✅ H-bridge: hbridge.gds (18x3um, 4 devices)
+10. ✅ Chopper: chopper.gds (11x3um, 4 devices)
+11. ✅ DAC switch: dac_sw.gds (17x5um, 4 devices)
+12. ✅ Current SW: sw.gds (22x5um, 6 devices)
+
+**全部 12 个 active 模块 CI DRC=0。**
+75 analog devices + 23 std cells = 所有 active 器件完成。
+
+### 待做
+- Passive devices: Rptat(135um), Rout(101um), Rin(22um), Rdac(22um), C_fb(27um), Cbyp_n/p(6um)
+  → 放边缘，不需要复杂 routing
+- 全局组装: floorplan + power + inter-module routing + LVS
+- 数字增强: I/Q 相关器 + SPI + 扫频
 
 ### 下一步
 1. 下一个模拟模块 (BIAS or OTA or COMP)
