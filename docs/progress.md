@@ -83,10 +83,32 @@ L2N: 283 safe / 2 unsafe, 16 l2n_only (false positive)
 - 4 MOSFET: route 覆盖不足 (48/129 routes)
 - 不是 assembly 问题，需要 router 输出更多 route
 
+### CI 对齐 (重大发现)
+
+**run_drc.py (maximal) 和 ihp-sg13g2.drc (CI precheck) 结果完全不同：**
+- run_drc.py: M1.b=0, total=112
+- ihp-sg13g2.drc: M1.b=213, total=327
+CI 用的 ihp-sg13g2.drc 才是 TTIHP 提交标准。run_all.sh 已切换。
+PDK 更新到 CI 版本 c4b8b4e5。
+
+### DRC 修复: G pin M1 pad skip
+
+M1.b=213 中 85% 来自 access_points phase。根因: gate contact M1 pad (290nm)
+在 S/D strip 之间，cross-net gap 100-150nm < M1.b 180nm。
+150/250 G pin 有 PCell M1 覆盖 Via1 → 跳过冗余 AP M1 pad。
+结果: M1.b 213→156 (-57), DRC 327→273 (-54)。LVS 不变。
+
+### CI precheck 其他失败
+- Top cell 名字不对 (soilz vs tt_um_techhu_analog_trial)
+- Layer (51,0) = M4 不在允许列表
+- Analog pin ua[0] 未连接
+- 需要 wrapper cell 或调整 GDS 提交结构
+
 ### 下一步
-1. DRC 重测 — pad-stub fix 可能大幅改善
-2. Router 改进 — 增加 route 覆盖 (passive devices, more signal nets)
-3. Via2 继续改进 — 159 too_far, 22 unknown
+1. DRC M1.b 156 — 100 个 G pin 无 PCell M1 覆盖（需要更小 pad 或 gate contact 策略）
+2. DRC M3.b 46 — 分析来源
+3. CI precheck 非 DRC 失败修复（top cell, layer, analog pin）
+4. Router 改进 — 增加 route 覆盖
 
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
