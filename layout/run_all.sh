@@ -47,15 +47,30 @@ echo "=== Phase 5: GDS Assembly ==="
 klayout -n sg13g2 -zz -r assemble_gds.py
 echo ""
 
-# --- Phase 5b: DRC ---
+# --- Phase 5b: DRC (CI-aligned: ihp-sg13g2.drc, same as TTIHP precheck) ---
 echo "=== Phase 5b: DRC ==="
 rm -rf "${DRC_DIR}"
 mkdir -p "${DRC_DIR}"
-python3 "${PDK_ROOT}/ihp-sg13g2/libs.tech/klayout/tech/drc/run_drc.py" \
-    --path="${GDS}" \
-    --topcell="${CELL}" \
-    --run_dir="${DRC_DIR}" \
-    --mp=1 --no_density 2>&1 | tail -5 || true  # DRC violations are reported, not fatal
+klayout -n sg13g2 -zz \
+    -rd input="${GDS}" \
+    -rd topcell="${CELL}" \
+    -rd report="${DRC_DIR}/${CELL}_drc.lyrdb" \
+    -r "${PDK_ROOT}/ihp-sg13g2/libs.tech/klayout/tech/drc/ihp-sg13g2.drc" \
+    2>&1 | tail -5 || true
+# Count violations
+python3 -c "
+import xml.etree.ElementTree as ET
+from collections import Counter
+tree = ET.parse('${DRC_DIR}/${CELL}_drc.lyrdb')
+counts = Counter()
+for item in tree.getroot().findall('.//items/item'):
+    c = item.findtext('category')
+    if c: counts[c] += 1
+total = sum(counts.values())
+print(f'  DRC (CI-aligned): {total} violations')
+for r, n in counts.most_common(10):
+    print(f'    {r}: {n}')
+" 2>/dev/null || true
 echo ""
 
 # --- Phase 6: LVS ---
