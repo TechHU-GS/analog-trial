@@ -175,42 +175,13 @@ def draw_access_points(top, li_m1, li_m2, li_v1, layout,
                             m1_pad[1] = min(m1_pad[1], _pad_min_b)
                             m1_pad[2] = max(m1_pad[2], _pad_max_r)
                             m1_pad[3] = max(m1_pad[3], _pad_max_t)
-                    # Draw pad and stub separately to avoid bridging
-                    # adjacent pins' M1 regions. Only merge if they
-                    # overlap or gap < M1_MIN_S (would cause M1.b).
-                    if stub:
-                        _gap_x = max(0, max(stub[0], m1_pad[0])
-                                     - min(stub[2], m1_pad[2]))
-                        _gap_y = max(0, max(stub[1], m1_pad[1])
-                                     - min(stub[3], m1_pad[3]))
-                        _gap = max(_gap_x, _gap_y)
-                        if _gap < M1_MIN_S:
-                            # Close enough — merge to avoid M1.b notch
-                            m1_pad[0] = min(m1_pad[0], stub[0])
-                            m1_pad[1] = min(m1_pad[1], stub[1])
-                            m1_pad[2] = max(m1_pad[2], stub[2])
-                            m1_pad[3] = max(m1_pad[3], stub[3])
-                        else:
-                            # Far apart — draw stub separately
-                            draw_rect(top, li_m1, stub)
+                    # Never bbox merge pad+stub — it widens stub from
+                    # 160nm to 310nm causing M1.b with adjacent shapes.
+                    # Session 6 lesson: stub-pad merge = DRC disaster.
+                    # Overlapping shapes are fine — DRC engine auto-merges.
                     draw_rect(top, li_m1, m1_pad)
                 else:
-                    # Draw pad; draw stub separately if gap >= M1_MIN_S
-                    _m1_draw = list(m1r)
-                    if stub:
-                        _gap_x = max(0, max(stub[0], _m1_draw[0])
-                                     - min(stub[2], _m1_draw[2]))
-                        _gap_y = max(0, max(stub[1], _m1_draw[1])
-                                     - min(stub[3], _m1_draw[3]))
-                        _gap = max(_gap_x, _gap_y)
-                        if _gap < M1_MIN_S:
-                            _m1_draw[0] = min(_m1_draw[0], stub[0])
-                            _m1_draw[1] = min(_m1_draw[1], stub[1])
-                            _m1_draw[2] = max(_m1_draw[2], stub[2])
-                            _m1_draw[3] = max(_m1_draw[3], stub[3])
-                        else:
-                            draw_rect(top, li_m1, stub)
-                    draw_rect(top, li_m1, _m1_draw)
+                    draw_rect(top, li_m1, m1r)
             if 'm2' in vp:
                 m2_rect = vp['m2']
                 ap_net = pin_net_map.get(key, '')

@@ -97,21 +97,21 @@ M1.b=213 中 85% 来自 access_points phase。根因: gate contact M1 pad (290nm
 - Analog pin ua[0] 未连接
 - 需要 wrapper cell 或调整 GDS 提交结构
 
-### DRC 正确分析
+### DRC: 去掉 pad-stub bbox merge → M1.b 156→66 ✅ verified
 
-PCell 单独 DRC clean（Session 4 验证）。BARE flattened M1 space_check = 0。
-CI DRC BARE=CURRENT=273 中包含 PCell 内部预期 violation（CntB.h1 等 waiver），
-这些不是我们的问题。
+Session 6 教训（stub-pad merge = DRC disaster）+ 数据验证（532/532 全 overlap）
+→ 完全去掉 bbox merge，pad 和 stub 分开画。DRC 引擎自动合并重叠区域。
 
-Assembly 引入 **156 个 M1.b violation** (flattened 验证: BARE=0, CURRENT=156)。
-主要来自 pad-stub merge 后 stub 变成 310nm 宽（原始 160nm），
-和邻近 PCell strip/gate pad 间距 < 180nm。
-e4b82ae 有 M1.b=68 (CI DRC)，我们多了 88 个（pad-stub 分离的代价）。
+结果:
+- M1.b: 156 → **66** (比 e4b82ae 的 68 还少 2 个)
+- CI DRC: 273 → **169**
+- LVS: 246/0/0 不变 ✅
 
-Y-stretch 试过但对 M1.b 无效（157 vs 156），因为不是 device 间距问题。
+PCell DRC clean（Session 4 验证）。BARE flattened M1 space_check = 0。
+剩余 66 M1.b 需要进一步分析。
 
 ### 下一步
-1. DRC assembly M1.b 156 — pad-stub 310nm 宽度问题
+1. DRC M1.b 66 — 分析剩余来源
 2. CI precheck 非 DRC 失败修复（top cell name, layer, analog pin）
 3. Router 改进 — 增加 route 覆盖 (11 unmatched devices)
 
