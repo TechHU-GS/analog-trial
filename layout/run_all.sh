@@ -17,8 +17,12 @@ echo "============================================================"
 echo ""
 
 # --- Phase 2: CP-SAT Placement ---
-echo "=== Phase 2: Placement ==="
-python3 solve_placement.py
+if [ ! -f placement.json ]; then
+    echo "=== Phase 2: Placement ==="
+    python3 solve_placement.py
+else
+    echo "=== Phase 2: Placement (skipped — placement.json exists) ==="
+fi
 echo ""
 
 # --- Phase 3: Tie Cell Placement ---
@@ -27,13 +31,15 @@ python3 solve_ties.py
 echo ""
 
 # --- Phase 4: Signal Routing ---
-echo "=== Phase 4: Routing ==="
-python3 solve_routing.py || true  # gate warning (HBT pre-route disabled) is non-fatal
-echo ""
-
-# --- Phase 4b: Route Optimization ---
-echo "=== Phase 4b: Route Optimization ==="
-python3 -m atk.route.optimize
+if [ ! -f output/routing.json ]; then
+    echo "=== Phase 4: Routing ==="
+    python3 solve_routing.py || true  # gate warning (HBT pre-route disabled) is non-fatal
+    echo ""
+    echo "=== Phase 4b: Route Optimization ==="
+    python3 -m atk.route.optimize
+else
+    echo "=== Phase 4: Routing (skipped — routing.json exists) ==="
+fi
 echo ""
 
 # --- Phase 5: GDS Assembly ---

@@ -44,7 +44,8 @@ def main():
 
     # Solve
     solver = RoutingSolver(placement, ties, netlist)
-    solver.solve()
+    seed = int(os.environ['ROUTE_SEED']) if 'ROUTE_SEED' in os.environ else None
+    solver.solve(seed=seed)
 
     # Gate checks
     n_pass, n_total, errors = solver.verify()

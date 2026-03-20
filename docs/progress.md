@@ -286,10 +286,322 @@ Routing/assembly 引入: 81 (M3.b+M5.b+V3.b+TV1+TM1)
 Placement/device: 115 (M1.b+Cnt.b+Act.b+NW)
 M1 利用率只有 1% — spacing 问题不是拥挤，是 AP stub 方向
 
+### Session 6 — 闭环尝试 (2026-03-19 17:30)
+
+**目标**: diagnose → fix → verify → diagnose 闭环
+
+**完成**:
+- `_gds_same_net_merge()` 函数加入 assemble_gds.py (line ~733)
+  - GDS-level 后处理: 扫实际 GDS shapes, 用 routing.json 分配 net, 填 gap < min_s
+  - Assembly 输出: "GDS merge M3: 4 same-net gap fills"
+
+**问题**: 闭环比较无效
+- 重跑了 solve_routing.py → routing 变了 → DRC 不可比
+- routing_backup2 没有 `_floating` 标记 → 所有 132 routes 都画了（含浮空）
+- 之前的 275 baseline 是手动两步流程(48 connected routes) + precheck rules 的结果
+- 当前全规则 DRC = 726 violations, 无法和之前 275(precheck) 直接对比
+
+**全规则 DRC 726 分类** (routing_backup2, 132 routes, 含浮空):
+```
+M1.b  420  (notch=309, cross_device=40, same_net=59, cross_net=12)
+M1.e   77  (cross_device=54, cross_net=12, notch=9)
+M3.b   45  (same_net=39, notch=5, cross_device=1)
+M5.b   32  (notch=10, cross_device=9, same_net=8, cross_net=5)
+M3.d   22  (polygon=22, MIN_AREA)
+pSD.c  26  NW.c 23  V3.b 10  Cnt.b 11  其他 60
+```
+
+**关键发现**:
+- 全规则比 precheck 多 ~450 violations (主要 M1.b 66→420, M1.e 新增 77)
+- M1.b/M1.e 大量 notch = AP M1 pad 和 PCell M1 之间的 gap
+- M3.b same_net 39 个, GDS merge 只修了 4 个 — 大部分 shapes 没被 net assign
+- M3.d(22) 是 MIN_AREA violations, ~300x350nm shapes
+
+**已解决**:
+- ✅ 浮空 route 检测集成 — `_pre_mark_floating_routes` pre-scan (line ~4679)
+  - 验证: `Pre-scan: 61 floating routes detected` + 726→694 violations
+- ✅ run_all.sh 跳过 placement/routing (outputs exist 时)
+- ✅ `_gds_same_net_merge()` M3 后处理 — 4 fills
+
+**全规则 DRC 694 (浮空跳过后, routing_backup2)**:
+```
+M1.b  420  (notch=309, cross_device=40, same_net=59, cross_net=12)
+M1.e   77  (cross_device=54, cross_net=12, notch=9)
+M5.b   32  (notch=10, cross_device=9, same_net=8, cross_net=5)
+M3.b   30  (same_net=24, notch=5, cross_device=1)
+pSD.c  26  NW.c 23  Cnt.b 11  M3.d 9  V3.b 6
+其他   61
+```
+
+**⚠️ 未验证**: LVS 是否仍 246（浮空检测改了 route 选择）
+**⚠️ 未验证**: Pipeline 重复性（只跑了一次）
+
+### Bare DRC baseline (验证)
+```
+BARE_MODE=1 → bare PCell-only DRC = 5 violations (NW.b, M1.d, LU.a, NW.b1, LU.b)
+Full DRC = 694 → 689 = assembly 步骤引入 (bus straps+ties+NWell+AP+power+routing)
+```
+
+### 分析工具建设 (Session 6)
+1. `analyze_drc.py` — DBSCAN聚类 + 冲突图 + device-pair + GDS M1 footprint
+2. `assemble_gds.py BARE_MODE` — PCell-only GDS baseline
+3. `_gds_same_net_merge()` — GDS M3 post-pass (4 fills)
+4. `_pre_mark_floating_routes` — 浮空 route 预检测集成
+5. `run_all.sh` — 跳过已有 placement/routing
+
+### 系统分析关键发现 (analyze_drc 数据)
+- 93% violations 是 self (同一 device) — 不是 device 间距
+- M1 PCell 延伸 ~1.05um — PCell 本身 OK (bare DRC=5 证明)
+- TFF = 49% violations (339/694)
+- M1.b gap 两个峰: 55nm(117) 和 140-160nm(147)
+- V3.b 全部 gap=160nm — 系统性
+
+### ⚠️ LVS 回退
+48-route routing 恢复后 LVS=112 (应为 246)。
+原因: post-e4b82ae 的 assemble_gds.py 改动 (M1 stub-pad merge 等)。
+需逐个 revert 确认。
+
+### ECS Placement Sweep (2026-03-19 20:30)
+ECS: i-bp1fij0cmmw6daqwakar (192C/384G) IP=101.37.127.154
+KLayout 0.29.11 从源码编译 (192核 ~3min)
+```
+25点 sweep (x_gap 1.0-1.4, y_gap 0-4um, 24并发):
+Best:  x=1.40 y=2.0 → total=622 M1.b=406 M3.b=10 pSD=5 NW=5
+原始:  x=1.00 y=0.0 → total=684 M1.b=424 M3.b=41 pSD=26 NW=23
+改善:  -62 (-9%), M3.b-31, pSD-21, NW-18. M1.b只降4%
+```
+### 125 点 sweep 最终结果 (5 x_gap × 5 y_gap × 5 seeds, 48 并发, 557s)
+```
+Best:  x=1.38 y=4.0 seed=3 → score=5125 total=655 M1.b=400 M3.b=12 M5.b=3 pSD=8 NW=7
+#2:    x=1.25 y=4.0 seed=4 → score=5147 total=563 M1.b=408 M3.b=14 M5.b=6 pSD=5 NW=5
+原始:  x=1.00 y=0.0         → score=5874 total=684 M1.b=424 M3.b=41 M5.b=8 pSD=26 NW=23
+```
+- Y gap 是最强参数 (y=4.0 统治 top 10)
+- Routing seed 有 ~2% 影响
+- M1.b 在 ~400 触底 — placement 无法进一步降低
+- ECS 已释放 ✅, best placement 拉回本地 ✅
+- ⚠️ LVS 未验证
+- ⚠️ 本地没有 best routing.json (需重新 routing)
+
+### 125 点 sweep 最终结果 (5×5×5, 48并发, 557s)
+```
+Best:  x=1.38 y=4.0 seed=3 → score=5125 M1.b=400 M3.b=12 pSD=8 NW=7
+#2:    x=1.25 y=4.0 seed=4 → total=563 M1.b=408 M3.b=14 pSD=5 NW=5
+```
+本地验证 best: 651 total (CntB+76 因手动拉间距破坏 row 结构)
+
+### Solver INFEASIBLE
+- CP-SAT 在原始约束下就 INFEASIBLE (0s, 预处理矛盾)
+- 194K constraints, 153K variables
+- 当前 placement.json 是更早版本约束的产物
+- 手动拉间距 → row 结构破坏 → NW/CntB violations 暴增
+- 需 debug solver 约束矛盾才能生成合法宽间距 placement
+
+### Session 6 最终状态
+```
+文件: placement.json = 原始, netlist.json = 原始
+DRC: 684 (原始), sweep best 可达 ~563-622
+LVS: 未验证 (assembly 改动导致 246→112)
+工具: diagnose_drc, analyze_drc, sweep_placement 可用
+ECS: 已释放
+Sweep 结果: output/sweep_results.json
+```
+
+### 构造式 Placer (constructive_placer.py)
+绕过 INFEASIBLE 的 CP-SAT solver，直接按参数构造 placement。
+首次测试 (row_x_gap=3, row_y_gap=5):
+```
+M1.b=344 (vs 原始 424, -19%) ← 首次突破 400！
+M1.e=15 (vs 77)  pSD.c=6 (vs 26)  NW.c=5 (vs 23)
+但 Cnt.j=212  CntB.*=282 ← row 结构不对，tie cell 规则违反
+Total: 1223 (vs 684) — metal DRC 下降但 contact 暴增
+```
+⚠️ 8 个 device 缺失 (不在 row_groups: C_fb, Cbyp_n/p, INV_iso_*, M_bias_mir)
+⚠️ placement.json 当前是构造式版本
+
+### Y-Stretch 方法 (保留原始 X 结构，只调 Y gap)
+原始 placement 的 row X 结构精确，只拉大 Y 间距。
+108 点 sweep (ECS 128C, 48并发, 589s):
+```
+Best:  x=1.00 pair=1.7 grp=6.0 seed=0 → total=599 M1.b=411 M3.b=29 Cnt=0 score=5412
+原始:                                  → total=684 M1.b=424 M3.b=41 Cnt=11 score=5874
+改善: -85 (-12%), Cnt 11→0
+```
+关键发现:
+- **X=1.00 统治 top 20** — X 不该拉大！原始 X 是 tie cell 最优
+- Y pair_extra=1.7um + group_extra=6.0um 是最优组合
+- Cnt=0 只在 X=1.00 时出现
+- ECS 已释放, best placement 已拉回本地 ✅
+
+### M1 stub-pad merge REVERT ← 重大突破 (trace_drc 验证)
+`trace_drc.py` 溯源: ap_m1_merged 出现在 91% M1.b violations
+Revert assemble_gds.py line 3574-3589 的 stub-pad merge 代码:
+```
+Before revert: DRC=587 M1.b=411 LVS=110matched/8merges
+After revert:  DRC=179 M1.b=77  LVS=113matched/1merge ✅ 验证
+改善: DRC -408(-70%), M1.b -334(-81%), merges 8→1
+```
+剩余 M1.b=77, M3.b=29, M5.b=7, pSD=5, NW=5
+LVS: 113 matched, 17 wrong-bulk, 1 merge (ns2,vco2)
+⚠️ LVS 113 不是 246 — 因为 Y-stretch placement + 新 routing（不是原始 48-route）
+
+### LVS 246 恢复验证 ✅
+原始 placement + e4b82ae ties + 48-route routing + e4b82ae assembly = **LVS 246, 0 WB, 0 merge**
+关键: ties.json 必须和 placement 配套，重新生成的 ties 导致 LVS 掉
+
+### Y-stretch LVS 调查结果
+- Bare LVS: 原始=Y-stretch=**完全相同(103 matched)** → PCell 层面无问题
+- Y-stretch + 新 routing(130 routes) = LVS 113 → 问题在 assembly/routing
+- merge net `gnd,t2I_m,vdd` — 来自新 routing 的 signal wire 碰 power
+- Bus strap 不是原因 (nmos_vco ng=1, 跳过 bus strap)
+- M1 shapes 两个 placement 结构一样 (只有 Y 偏移)
+- **结论: 新 routing 未经精选 + assembly 有硬编码位置 → LVS 掉**
+
+### 全链路改进 Plan (approved)
+详见: `.claude/plans/moonlit-brewing-hamming.md`
+7 个 Phase, 总工作量 18-28 sessions:
+1. Assembly 模块化 (3-5 sessions) ← 开始执行
+2. Inline DRC (1-2 sessions)
+3. Region API 替代手写坐标 (4-6 sessions)
+4. Placement-Agnostic Assembly (2-3 sessions)
+5. Pipeline Schema 验证 (1-2 sessions)
+6. 集成 Sweep (3-4 sessions)
+7. LVS 集成 (4-6 sessions)
+
+### Phase 1 完成 ✅ (Assembly 模块化)
+```
+assemble_gds.py: 4823 → 2314 行 (-52%)
+8 个模块: context(42), pcell_place(48), bus_straps(607), gate(225),
+          ties_nwell(334), access_points(272), power(1015),
+          signal_routes(163), labels(157)
+DRC 706 = baseline ✅  LVS 112 = baseline ✅
+0 runtime errors ✅
+```
+
+### Phase 2 完成 ✅ (Inline DRC)
+assemble/drc_check.py: Region API space_check/width_check
+6 个 checkpoint: bus_straps→gate→ties→AP→power→signal
+DRC_INLINE=1 启用，默认关。输出示例:
+```
+ties_nwell:     M1 spacing=6
+access_points:  M1 spacing=290, M2 spacing=2
+power:          M1 spacing=400, M2 spacing=48
+signal_routes:  M1 spacing=416, M3 spacing=35
+```
+→ 实时定位哪个 phase 引入 violations
+
+### 当前状态
+```
+placement.json = 原始
+assemble_gds.py = 模块化 + inline DRC
+DRC: 706 (全规则, e4b82ae baseline)
+LVS: 112 (e4b82ae baseline, 非 246 — 可能需要手动删浮空 routes)
+工具: diagnose_drc, analyze_drc, trace_drc, sweep_placement,
+      constructive_placer, drc_check (inline)
+```
+
+### Phase 4 部分完成
+- ✅ debug Via2 check: 用 AP 坐标替代硬编码 (signal_routes.py)
+- TODO: _safe_drops 4 组硬编码坐标 → 需 M4 endpoint 检测算法 (Phase 3 依赖)
+- TODO: _NW_BRIDGE_A 硬编码 → 需 Region NWell gap 检测 (Phase 3 依赖)
+- 结论: Phase 4 依赖 Phase 3 (Region API) 才能正确计算替代坐标
+
+### Phase 3 完成 (Region API — 几何操作部分)
+✅ gap_fill.py — Region sized/merged (DRC 706→687 -19, LVS 112 不变)
+✅ _draw_gapped_bus — Region boolean (DRC 687 不变, LVS 不变)
+TODO: NWell bridge — 需要 connectivity 分析 (LayoutToNetlist)，不是纯几何 → Phase 7
+TODO: M4 dead-end — 需要 routing endpoint + M2 enclosure 验证 → 保留硬编码
+结论: Region 适合几何操作，拓扑问题需要 L2N API (Phase 7)
+
+### 全链路改进总计
+```
+DRC: 706 → 687 (-19, -3%) ← Region gap fill 更精确
+LVS: 112 → 112 (不变) / merges: 8 → 7 (-1)
+代码: assemble_gds.py 4823 → 2314 行 (-52%)
+模块: 9 个文件 + drc_check + gap_fill = 11 个文件
+工具: inline DRC (6 checkpoints), Region-based gap fill
+```
+
+### Phase 6 完成 (集成 sweep)
+✅ integrated_sweep.py — subprocess + inline Region DRC (M1.b+M3.b)
+   4 点本地测试通过 (256s, ~64s/点)
+   inline M1.b=422 vs full DRC M1.b=403 (Region 略严格, 排序一致)
+⚠️ 还是 subprocess (assembly exec() 不适合多进程)
+⚠️ 未在 ECS 大规模验证
+
+### Session 总结 — 全链路改进
+```
+P1 模块化:    ✅ 4823→2314行, 9模块, 0 error
+P2 inline DRC: ✅ 6 checkpoint, DRC_INLINE=1
+P3 Region:    ✅(几何) gap_fill+bus_strap, DRC 706→687 (-19)
+P4 去硬编码:  ⚠️ debug check ✅, safe_drops Region ✅(-3 DRC), NWell bridge TODO
+P5 Schema:    ✅ placement/ties/routing 结构校验, assembly 开头自动跑
+P6 集成sweep: ✅ inline Region DRC, 本地测试通过
+P7 LVS proxy:  ✅ L2N power connectivity check, LVS_INLINE=1, 检测到 GND-VDD short
+
+DRC: 706 → 684 (-3%) — Region gap fill -19, safe_drops Region -3
+LVS: 112 (一致, merges 8→7)
+代码: -52% assemble_gds.py
+新工具: drc_check, gap_fill, integrated_sweep
+```
+
+### 诊断增强 (4 项全部完成 + 验证)
+```
+✅ #1 DRC 增量诊断 — DRCTracker，每 phase 报 delta:
+     bus_straps:     M1.width +3
+     access_points:  M1.spacing +284 ← 最大来源
+     power:          M1.spacing +110
+     signal_routes:  M1.spacing +3, M3.spacing +29
+✅ #2 LVS short 定位 — binary search:
+     BARE: clean
+     Full assembly, 0 routes: SHORT! ← assembly infrastructure 问题!
+     ⚠️ 之前认为是浮空 route 导致 — 错误归因
+✅ #3 Via2 审计: 78/789 = 10% 成功率，86/131 routes 0 Via2
+✅ #4 功能完整性: 12/13 features present
+```
+
+### ⚠️⚠️ 关键发现: LVS proxy 有 bug + 根因纠正
+LVS proxy 用 Python id() 比较 net 对象 → false positive "GND-VDD SHORT"
+修复: 改用 net.cluster_id → **实际没有 GND-VDD short**
+真正的 LVS 问题: **power net fragmentation**
+  GND: 79 个分离 components (应为 1)
+  VDD: 125 个分离 components (应为 1-2)
+→ KLayout 提取碎片化 power net 和 reference 单一 net 对不上 → 0 nets matched
+之前所有 Session 的 "GND-VDD SHORT detected" 都是 false positive
+
+### Y-stretch 闭环测试
+DRC 576 (706→576 = -18%), LVS 110 (有 GND-VDD short)
+
+### 诊断工具链修复完成 (7/7)
+```
+✅ #1 LVS proxy id()→cluster_id
+✅ #2 LVS 11层连接: GND 59 frag, VDD 68 frag, 3 shared (真short)
+✅ #3 功能检查: 扫描 assemble_gds.py + assemble/*.py, 15/15 ✅
+✅ #4 Via2原因: too_far=302, no_m5=190, via_stack=148, no_route=38, unknown=26
+✅ #5 DRC位置: hotspot bbox (如 M1.spacing +284 at (3,63)-(195,274))
+✅ #6 check_power_separation 用 cluster_id 验证
+✅ #7 Power fragmentation: 3 shared clusters 定位到具体 devices
+     Cluster 247: BUF/INV/MB区 14 GND + 36 VDD
+     Cluster 29: NOL/OTA区 7 GND + 17 VDD
+     Cluster 215: BIAS/SR区 2 GND + 7 VDD
+```
+
+### 当前诊断能力总结
+| 工具 | 能力 | 可靠性 |
+|------|------|--------|
+| DRC增量 | 每phase新增violations+位置 | ✅ 验证 |
+| LVS proxy | 11层power connectivity+fragmentation | ✅ 验证 |
+| Via2 audit | 成功/失败+原因分类 | ✅ 验证 |
+| trace_drc | shape溯源到代码路径 | ✅ 验证 |
+| analyze_drc | 聚类+冲突图+gap分布 | ✅ 验证 |
+| 功能检查 | 15 features 完整性 | ✅ 验证 |
+| Schema | JSON结构校验 | ✅ 验证 |
+
 ### 下一步
-1. 修 DRC (按类别，不影响 LVS 246)
-2. 查 11 unmatched devices (3 cap, 4 res, 4 MOS)
-3. 修完后再跑 CI precheck 确认
+诊断链条已扎实。可以开始修实际问题：
+1. Power fragmentation (GND 79→1, VDD 125→1-2) — 需要连通 power net
+2. Via2 成功率 (10%→?) — 302 too_far + 190 no_m5 = 根因
+3. M1.b 397 — access_points 引入 284
 
 ## ★ Session 4 — DRC 基线排查 + Placement Sweep (2026-03-18 11:00)
 
