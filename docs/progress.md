@@ -241,15 +241,19 @@ Tap 规则总结:
 - tap 放在 PCell Active 外 ≥ Act.b(0.21um)
 - tap 在 NWell 内才有效（ntap 要在 PCell NWell 范围内）
 
-7. ✅ COMP: comp.gds (14x20um, 11 devices, strong-arm)
-8. ✅ SR latch: sr_latch.gds (16x9um, 8 devices)
-9. ✅ H-bridge: hbridge.gds (18x3um, 4 devices)
-10. ✅ Chopper: chopper.gds (11x3um, 4 devices)
-11. ✅ DAC switch: dac_sw.gds (17x5um, 4 devices)
-12. ✅ Current SW: sw.gds (22x5um, 6 devices)
+7. ⚠️ COMP: comp.gds (14x20um, 11 devices) — placement+ties DRC=0, routing 未做
+8. ⚠️ SR latch: sr_latch.gds (16x9um, 8 devices) — 同上
+9. ⚠️ H-bridge: hbridge.gds (18x3um, 4 devices) — 同上
+10. ⚠️ Chopper: chopper.gds (11x3um, 4 devices) — 同上
+11. ⚠️ DAC switch: dac_sw.gds (17x5um, 4 devices) — 同上
+12. ⚠️ Current SW: sw.gds (22x5um, 6 devices) — 同上
 
-**全部 12 个 active 模块 CI DRC=0。**
-75 analog devices + 23 std cells = 所有 active 器件完成。
+**状态区分:**
+- ✅ = 完整 routing (bus straps + gate contacts + internal connections + DRC=0)
+- ⚠️ = placement + ties only (DRC=0 但无内部 routing)
+
+完整 routing 完成: 数字 block, VCO (含 5-stage 环形), BIAS mirrors
+Placement DRC=0: BIAS MN, BIAS cascode, OTA, COMP, SR, H-bridge, Chopper, DAC, SW
 
 ### 待做
 - Passive devices: Rptat(135um), Rout(101um), Rin(22um), Rdac(22um), C_fb(27um), Cbyp_n/p(6um)
