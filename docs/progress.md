@@ -141,11 +141,29 @@ soilz_digital.v → LibreLane 3.0.0.dev44 → soilz_digital.gds
 - 替换 TFF 区域后 CI DRC: 161→72 (-55%)
 - M1.b: 57→21, M3.b: 46→20
 
+### 模拟区分析
+
+去掉数字区后 CI DRC: 32 (was 161)。80% DRC 来自数字区。
+模拟区 11 M1.b: BIAS(6) + DAC(3) + COMP(1) + SR(1)。
+
+### VCO Stage 模块化
+
+PCell 实际尺寸（从 bare GDS child cell 直接测量）:
+- Mpb1 (pmos_cs8): pmos$5 = 20.0 x 1.1 um (8-finger 长条)
+- Mpu1 (pmos_vco): pmos = 1.8 x 2.6 um (单 finger 小方块)
+- Mpd1 (nmos_vco): nmos = 1.2 x 1.4 um (单 finger 小方块)
+- Mnb1 (nmos_bias8): nmos$9 = 19.3 x 1.4 um (8-finger 长条)
+
+Compact VCO stage: 20.0 x 12.0 um, M1.b=0
+结构: Mpb(长条顶) → Mpu(小方块) → Mpd(小方块) → Mnb(长条底)
+文件: modular/output/vco_stage_compact.gds
+
 ### 下一步
-1. 集成 soilz_digital.gds 到模拟设计 (power + signal 对接)
-2. 更新 LVS 参考网表 (164 transistors → 23 standard cells)
-3. 模拟区 75 devices 版图优化
-4. CI precheck 通过
+1. VCO stage 加 assembly (bus straps, ties, routing) → DRC clean
+2. 5 stage 复制 + 环形连接 → 完整 VCO
+3. 其他模拟模块 (BIAS, OTA, COMP...)
+4. 集成: 数字 block + VCO + 模拟模块
+5. 数字增强 (I/Q 相关器, SPI, 扫频) — 模拟完成后
 
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
