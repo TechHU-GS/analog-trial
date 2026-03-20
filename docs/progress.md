@@ -205,11 +205,48 @@ VCO single stage 完成: 20.9x12.8um, 全部连接 DRC clean
 - 外部 stub 留待组装时根据 floorplan 决定
 文件: modular/output/vco_5stage.gds
 
+### 模块化版图工作模式 (已验证有效)
+
+```
+Step 1: 查 PCell 实际尺寸 (从 bare GDS child cell bbox)
+Step 2: 规划 compact placement (考虑 NWell spacing, latch-up)
+Step 3: 放 PCell → CI DRC 验证 = 0
+Step 4: 加 S/D bus straps (S/D 分离!) → CI DRC = 0
+Step 5: 加 internal M1 routing → CI DRC = 0
+Step 6: 加 tie cells (ntap/ptap) → CI DRC = 0
+Step 7: 加 gate contacts (利用 PCell poly extension, 正确层号) → CI DRC = 0
+Step 8: 加 bias gate routing (M2 + Via1) → CI DRC = 0
+Step 9: 复制 + inter-module routing → CI DRC = 0
+每步不 clean 不继续。看图说话定位问题。
+```
+
+关键规则速查:
+- GatPoly=(5,0) Cont=(6,0) NWell=(31,0) M1=(8,0) Via1=(19,0) M2=(10,0)
+- M1.b=180nm M2.b=210nm NW.b1=1.8um Cnt.e=140nm Cnt.c=70nm Gat.d=70nm
+- PCell poly 自带延伸 ~180nm, 通常够放 contact
+- S/D bus 必须分离 source 和 drain (不能全连)
+- NWell fill 不解决 NW.b1 — 要调 device 间距
+
+### 已完成模块
+1. ✅ 数字 block: soilz_digital.gds (80x30um, 23 std cells, LibreLane)
+2. ✅ VCO: vco_5stage.gds (108.8x13.2um, 20 devices, 5-stage ring)
+
+### 待做模块 (按 device 数排序)
+- BIAS: 23 devices (PM mirrors, MN bias, Rptat/Rout)
+- COMP: 11 devices (strong-arm comparator)
+- SR: 8 devices (ΣΔ latch)
+- OTA: 6 devices (5T OTA)
+- SW: 6 devices (current source switches)
+- H-bridge: 4 devices
+- Chopper: 4 devices
+- DAC: 4 devices (TG switches)
+- Passive: 7 devices (cap_cmim, rhigh)
+
 ### 下一步
-1. VCO stage bias gate routing (M2) → DRC clean
-2. VCO 5 stage 复制 + 环形连接
-3. 其他模拟模块 — 同样方法
-4. 集成 + 数字增强
+1. 下一个模拟模块 (BIAS or OTA or COMP)
+2. 逐个模块 DRC clean
+3. 全部模块完成后组装
+4. 数字增强 (I/Q 相关器, SPI, 扫频)
 
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
