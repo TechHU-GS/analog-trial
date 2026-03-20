@@ -195,7 +195,15 @@ Compact VCO stage: 20.0 x 12.0 um, M1.b=0
    - M2 width ≥ 210nm (M2_a rule)
 
 VCO single stage 完成: 20.9x12.8um, 全部连接 DRC clean
-剩余: pin labels, LVS, 5-stage 复制 + 环形连接
+
+### 5-Stage Ring VCO 完成 ✅ verified
+
+108.8 x 13.2um, CI DRC=0
+- 5 identical stages 水平排列 (22um pitch)
+- Inter-stage: Via1 on OUT/INPUT M1 bars + M2 horizontal route
+- Ring feedback: Stage 5 → Stage 1 via M2 below stages
+- 外部 stub 留待组装时根据 floorplan 决定
+文件: modular/output/vco_5stage.gds
 
 ### 下一步
 1. VCO stage bias gate routing (M2) → DRC clean
