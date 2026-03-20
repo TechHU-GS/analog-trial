@@ -104,22 +104,27 @@ M1.b=213 中 85% 来自 access_points phase。根因: gate contact M1 pad (290nm
 - Analog pin ua[0] 未连接
 - 需要 wrapper cell 或调整 GDS 提交结构
 
-### DRC BARE vs CURRENT 对比 (CI-aligned ihp-sg13g2.drc)
+### ⚠️ DRC 错误结论修正
 
-BARE (PCell only, 0 assembly shapes): 273 violations
-CURRENT (full assembly, 1916 M1 shapes): 273 violations
-→ ⚠️ 数量相同，但需谨慎：inline DRC (flattened Region) 显示 assembly
-  增加了 +123 M1.spacing (access_points phase)。CI DRC 可能用 hierarchical
-  模式处理 PCell，导致 violation 计数方式不同。
-→ assembly G pin M1 pad 全部跳过（250/250 PCell M1 覆盖 Via1），
-  assembly 不再增加 M1 pad 相关 violation。
+之前声称"assembly DRC-neutral, 273 全是 PCell placement"——错误。
+BARE=CURRENT=273 是巧合：CI DRC (hierarchical) 包含 PCell 内部 violation。
+
+正确数据 (flattened Region space_check 180nm):
+- BARE flattened M1: 857 shapes, space_check = **0** (PCell placement clean)
+- CURRENT flattened M1: 2773 shapes, space_check = **156** (assembly 引入)
+
+**Assembly 引入 156 个 M1.b violation，不是 0。**
+CI DRC 273 = PCell 内部 (~117) + assembly 引入 (156)，数字重叠。
+
+G pin M1 pad 全部跳过（250/250）✅ verified。
+但 access_points 仍引入 +123 M1.spacing (inline DRC)。
+Assembly 层面 DRC 工作未完成。
 
 ### 下一步
-1. DRC 273 — 全部是 PCell placement 间距 (M1.b=156, M3.b=46, Cnt.b=15...)
-   需要 placement 间距调整 或 PCell 参数优化
-2. CI precheck 非 DRC 失败修复（top cell name, layer, analog pin）
-3. Router 改进 — 增加 route 覆盖 (11 unmatched devices)
-4. ⚠️ 确认 inline DRC vs CI DRC 差异原因（flattened vs hierarchical）
+1. DRC assembly 引入 156 M1.b — 继续分析和修复
+2. DRC M3.b=46, 其他 — 分析来源
+3. CI precheck 非 DRC 失败修复（top cell name, layer, analog pin）
+4. Router 改进 — 增加 route 覆盖 (11 unmatched devices)
 
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
