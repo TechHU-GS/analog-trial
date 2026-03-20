@@ -21,7 +21,7 @@ def draw_signal_routes(top, li_m1, li_m2, li_m3, li_m4, li_m5,
     """Draw signal routing + floating detection + gap fills + Via2 insertion."""
     from assemble_gds import (draw_segments, via1, via2, via3, hbar, vbar, wire,
                               draw_rect, via2_cut_only,
-                              _add_missing_ap_via2,
+                              _add_missing_ap_via2, _fill_same_net_gaps,
                               _fill_via_m1_corners, _fill_via_ap_m2_gaps, _check_m2_power_signal_collision, _shrink_ap_m2_pads_gds)
 
     # ═══ 5. Draw signal routing ═══
@@ -127,42 +127,22 @@ def draw_signal_routes(top, li_m1, li_m2, li_m3, li_m4, li_m5,
     _v2_after = top.shapes(li_v2).size()
     print(f'    Via2 shapes: {_v2_before} → {_v2_after} (+{_v2_after - _v2_before})')
 
-    # ── M4 dead-end drops: Region-based detection + DRC-safe ──
-    import klayout.db as _db
-    from atk.pdk import VIA3_SZ, VIA3_PAD
-    _m4_region = _db.Region(top.begin_shapes_rec(li_m4))
-    _v3_region = _db.Region(top.begin_shapes_rec(li_v3))
-    _m2_region = _db.Region(top.begin_shapes_rec(li_m2))
-    _m3_region = _db.Region(top.begin_shapes_rec(li_m3))
-    _m4_dead = _m4_region.not_interacting(_v3_region)
-    _m4_safe = _m4_dead.interacting(_m2_region)
-    _M3_MIN_S = 210
-    _hp_m3pad = VIA3_PAD // 2  # M3 pad half-size from Via3
-    _n_drops = 0
-    _n_skip = 0
-    for _poly in _m4_safe.each():
-        _bb = _poly.bbox()
-        _cx = (_bb.left + _bb.right) // 2
-        _cy = (_bb.bottom + _bb.top) // 2
-        # Check: would M3 pad at this position violate M3.b spacing?
-        _m3_pad = _db.Region(_db.Box(
-            _cx - _hp_m3pad, _cy - _hp_m3pad,
-            _cx + _hp_m3pad, _cy + _hp_m3pad))
-        _m3_obs = _m3_region.sized(_M3_MIN_S)  # grow existing M3 by min spacing
-        if not _m3_pad.interacting(_m3_obs).is_empty():
-            _n_skip += 1
-            continue
-        via3(top, li_v3, li_m3, li_m4, _cx, _cy)
-        via2_cut_only(top, li_v2, _cx, _cy)
-        _n_drops += 1
-    print(f'    M4 dead-end drops: {_n_drops} Via3+Via2 (Region-detected'
-          f'{f", {_n_skip} skipped spacing" if _n_skip else ""})')
+    # ── M4 dead-end drops: Via3+Via2 at M4 wire endpoints ──
+    _safe_drops = [
+        ('vcas', 121500, 101650),
+        ('f_exc_b', 83350, 74350),
+        ('vco_out', 86500, 179700),
+        ('comp_outn', 48700, 120200),
+    ]
+    for _dnet, _dx, _dy in _safe_drops:
+        via3(top, li_v3, li_m3, li_m4, _dx, _dy)
+        via2_cut_only(top, li_v2, _dx, _dy)
+    print(f'    M4 dead-end drops: {len(_safe_drops)} Via3+Via2')
 
     # Fill same-net gaps on all metal layers (grid quantization artifact)
-    from assemble.gap_fill import fill_same_net_gaps_region
-    fill_same_net_gaps_region(top, (li_m1, li_m2, li_m3, li_m4), routing,
-                              gap_bridge_m3_pads, gap_bridge_m3_jogs,
-                              ap_via2_m3_stubs=_ap_via2_m3_stubs)
+    _fill_same_net_gaps(top, (li_m1, li_m2, li_m3, li_m4), routing,
+                        gap_bridge_m3_pads, gap_bridge_m3_jogs,
+                        ap_via2_m3_stubs=_ap_via2_m3_stubs)
     print(f'    Via2 after gap fill: {top.shapes(li_v2).size()}')
 
     # ── M2 collision check: signal routes vs power M2 pads ──

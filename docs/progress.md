@@ -2,6 +2,68 @@
 
 > Read this after compact to restore context.
 
+## ★ Session 8 — LVS Pipeline 闭环 + LVS 112→246 (2026-03-20 17:35)
+
+### 核心成果
+
+**LVS 112 → 246 (+134 devices, 9→1 merges, 14→0 wrong-bulk)**
+
+根因: `access_points.py` 的 pad-stub merge 逻辑把同一 MOSFET 的 D/G 的 M1 区域
+合并成 bounding box → 665x2560nm M1 shape 桥接了不同 net 的 pin。
+修法: 只在 pad 和 stub 间距 < M1_MIN_S 时才 merge，否则分开画。
+
+验证: GDS M1 shape 对比（current vs e4b82ae）确认 bridge shape 只在 current 存在。
+文件: `assemble/access_points.py` lines 165-179
+
+### lvs_loop.py 工具建成 (LVS 闭环诊断)
+
+`python3 -m atk.lvs_loop --gds ... --routing ... --ties ... --placement ... --lvs-report ... --output ... --prev ...`
+
+功能:
+1. L2N merge 检测（metal-only）
+2. Via2 审计
+3. L2N safe pin 分析（M2 cluster）
+4. KLayout LVS 交叉验证 → 区分 real merge vs false positive
+5. 分类 action plan: substrate > confirmed metal > via2 > l2n_only
+6. Diff 对比（--prev 参数）
+
+关键发现:
+- 71 个 L2N merge 中只有 31 个被 KLayout LVS 确认，40 个是 false positive
+- same_device_dg 从 34 降到 3 (after KLayout 确认过滤)
+- bus_straps Region→interval merge 回退 → 无影响（排除了 bus strap 假设）
+
+### Via2 L2N guard 实现
+
+assemble_gds.py `_add_missing_ap_via2`: 用 M1+Via1+M2 L2N probe 每个 AP 的 M2 cluster。
+- Safe (single-net): 搜索 M1_LYR+M3_LYR+M4_LYR (expanded)
+- Unsafe (mixed-net): 只搜索 M3_LYR+M4_LYR (conservative)
+
+验证: 无 guard 扩展 M1_LYR → LVS 246→112, 9 merges (cross-device D/G merge)。
+L2N guard 后 → safe 283 of 285, Via2 81→127。
+
+### 排除的假设
+1. bus_straps Region gap cutting → 回退到 interval merge, gap 21→22, LVS 不变 → 排除
+2. 简单扩展 Via2 搜索到 M3 → 9 merges, LVS 112 → 排除 (需要 L2N guard)
+3. has_low=False AP 可安全扩展 → 0 个 has_low=False AP with M3 close → 排除
+
+### 当前状态
+```
+LVS: 246/257 matched, 1 merge (ns3,vco3 substrate), 0 WB
+Via2: 130 ok / 504 fail / 155 skip (success rate 20%)
+L2N safe: 283/285
+DRC: 未重测 (assembly 改动后)
+```
+
+### 剩余 11 unmatched devices
+- 7 passive (3 cap_cmim + 4 rhigh): 无 route, 4 个 SHARED-M2
+- 4 MOSFET (2 nmos + 2 pmos): substrate merge 影响
+
+### 下一步
+1. ns3↔vco3 substrate merge — NWell/substrate 隔离问题
+2. Passive device routing — router 不支持
+3. Via2 继续改进 — 504 fail 中 346 是 no_route (路由覆盖不足)
+4. DRC 重测
+
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
 ### 核心发现
@@ -567,7 +629,9 @@ LVS proxy 用 Python id() 比较 net 对象 → false positive "GND-VDD SHORT"
   GND: 79 个分离 components (应为 1)
   VDD: 125 个分离 components (应为 1-2)
 → KLayout 提取碎片化 power net 和 reference 单一 net 对不上 → 0 nets matched
-之前所有 Session 的 "GND-VDD SHORT detected" 都是 false positive
+之前所有 "GND-VDD SHORT" 都是 false positive (id() bug + 缺 substrate 层)
+LVS proxy 修正: 只报 fragmentation, short 判定交给 KLayout LVS
+溯源验证: LVS-246 GDS 的 L2N 也报 57/66/3 但 KLayout LVS = 246/0/0 → 证实 false positive
 
 ### Y-stretch 闭环测试
 DRC 576 (706→576 = -18%), LVS 110 (有 GND-VDD short)
@@ -598,6 +662,20 @@ DRC 576 (706→576 = -18%), LVS 110 (有 GND-VDD short)
 | Schema | JSON结构校验 | ✅ 验证 |
 
 ### 下一步
+### 模块化 LVS 回退根因溯源 (最终结论)
+e4b82ae assembly=LVS 246, 模块化 assembly=LVS 112 (同输入 placement/ties/routing)
+GDS MD5 不同 (d24e... vs 8db3...) — Region diff 检测不到差异 (sub-polygon level)
+可能原因: bus strap Region gap cutting 产生了不同切割形状 (22→21 gaps)
+或: _draw_gapped_bus 的 Region boolean vs 手写 interval merge 精度差异
+⚠️ 未定位到具体模块 — 需要逐模块二分排查
+
+### LVS 246 基线条件
+- placement: git show e4b82ae:layout/placement.json (hash e95a7a2fc59d)
+- ties: git show e4b82ae:layout/output/ties.json (hash 747add90abf7)
+- routing: git show e4b82ae:layout/output/routing.json (hash bf2bae3ad668, 48 routes)
+- assembly: git show e4b82ae:layout/assemble_gds.py (4823 行)
+- ⚠️ placement_original.json hash 不同 (31b91da68184) — 不是 246 的 placement!
+
 诊断链条已扎实。可以开始修实际问题：
 1. Power fragmentation (GND 79→1, VDD 125→1-2) — 需要连通 power net
 2. Via2 成功率 (10%→?) — 302 too_far + 190 no_m5 = 根因

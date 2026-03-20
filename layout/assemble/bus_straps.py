@@ -160,11 +160,9 @@ def draw_bus_straps(top, li_m1, li_m2, li_m3, li_m4, li_v1, li_v2, li_v3,
     def _draw_gapped_bus(bx1, by1, bx2, by2, bus_net):
         """Draw horizontal bus bar with gaps at cross-net positions.
 
-        Uses Region boolean: bus_bar - obstacles.sized(M1_MIN_S).
+        Uses interval merge (matching e4b82ae algorithm exactly).
         """
-        import klayout.db as db
-        bus_region = db.Region(db.Box(bx1, by1, bx2, by2))
-        obs_region = db.Region()
+        gaps = []  # (gap_xl, gap_xr) — X ranges to cut
         # AP stubs/pads: overlap check
         for sxl, syb, sxr, syt, snet in _ap_m1_obs:
             if snet == bus_net:
@@ -173,7 +171,7 @@ def draw_bus_straps(top, li_m1, li_m2, li_m3, li_m4, li_v1, li_v2, li_v3,
                 continue
             if sxr <= bx1 or sxl >= bx2:
                 continue
-            obs_region.insert(db.Box(sxl - M1_MIN_S, by1, sxr + M1_MIN_S, by2))
+            gaps.append((sxl - M1_MIN_S, sxr + M1_MIN_S))
         # Routing vias/wires: proximity check
         for sxl, syb, sxr, syt, snet in _via1_m1_obs:
             if snet == bus_net:
@@ -182,25 +180,35 @@ def draw_bus_straps(top, li_m1, li_m2, li_m3, li_m4, li_v1, li_v2, li_v3,
                 continue
             if sxr <= bx1 or sxl >= bx2:
                 continue
-            obs_region.insert(db.Box(sxl - M1_MIN_S, by1, sxr + M1_MIN_S, by2))
-        result = bus_region - obs_region
-        n_gaps = 0
-        for poly in result.each():
-            bbox = poly.bbox()
-            # Min area check: extend height downward if needed
-            seg_w = bbox.width()
-            seg_h = bbox.height()
+            gaps.append((sxl - M1_MIN_S, sxr + M1_MIN_S))
+        if not gaps:
+            top.shapes(li_m1).insert(klayout.db.Box(bx1, by1, bx2, by2))
+            return 0
+        gaps.sort()
+        merged = [list(gaps[0])]
+        for gl, gr in gaps[1:]:
+            if gl <= merged[-1][1]:
+                merged[-1][1] = max(merged[-1][1], gr)
+            else:
+                merged.append([gl, gr])
+
+        def _emit_seg(sx1, sy1, sx2, sy2):
+            seg_w = sx2 - sx1
+            seg_h = sy2 - sy1
             if seg_w > 0 and seg_h > 0 and seg_w * seg_h < _M1_MIN_AREA:
                 need_h = (_M1_MIN_AREA + seg_w - 1) // seg_w
-                new_box = db.Box(bbox.left, bbox.bottom - (need_h - seg_h),
-                                 bbox.right, bbox.top)
-                top.shapes(li_m1).insert(new_box)
-            else:
-                top.shapes(li_m1).insert(poly)
-            n_gaps += 1
-        if n_gaps == 1 and obs_region.is_empty():
-            return 0  # no gaps cut
-        return max(0, n_gaps - 1) if not obs_region.is_empty() else 0
+                sy1 -= (need_h - seg_h)
+            top.shapes(li_m1).insert(klayout.db.Box(sx1, sy1, sx2, sy2))
+
+        cur_x = bx1
+        for gap_l, gap_r in merged:
+            seg_end = max(cur_x, min(gap_l, bx2))
+            if seg_end > cur_x:
+                _emit_seg(cur_x, by1, seg_end, by2)
+            cur_x = max(cur_x, min(gap_r, bx2))
+        if cur_x < bx2:
+            _emit_seg(cur_x, by1, bx2, by2)
+        return len(merged)
 
     # Device types without PCell via stacks on S0 — need M2 bridge
     # to connect S0 across D1's AP gap in the source bus.

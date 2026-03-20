@@ -1228,6 +1228,56 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
     m3_bbox_stubs = []  # (x1, y1, x2, y2, net) for gap fill
     fallback_shapes = []  # Shapes to re-add after GDS write (KLayout PCell workaround)
 
+    # ── L2N guard: identify APs safe for expanded M3 search ──
+    # Build L2N with M1+Via1+M2 to find which APs share M2 connectivity
+    # across different signal nets (same MOSFET D/G pairs).
+    # Only APs on single-net M2 clusters can safely receive Via2 when
+    # searching physical M3 endpoints — mixed clusters would create
+    # cross-net merges through M1→Via1→M2→Via2→M3 paths.
+    _l2n_safe_pins = set()
+    try:
+        _layout = top.layout()
+        _l2n = klayout.db.LayoutToNetlist(
+            klayout.db.RecursiveShapeIterator(_layout, top, []))
+        _l2n_layers = {}
+        for _ln, _ll in [('M1', _layout.find_layer(8, 0)),
+                         ('Via1', _layout.find_layer(19, 0)),
+                         ('M2', _layout.find_layer(10, 0))]:
+            if _ll is not None:
+                _l2n_layers[_ln] = _l2n.make_layer(_ll, _ln)
+        for _lr in _l2n_layers.values():
+            _l2n.connect(_lr)
+        if 'Via1' in _l2n_layers and 'M1' in _l2n_layers:
+            _l2n.connect(_l2n_layers['Via1'], _l2n_layers['M1'])
+        if 'Via1' in _l2n_layers and 'M2' in _l2n_layers:
+            _l2n.connect(_l2n_layers['Via1'], _l2n_layers['M2'])
+        _l2n.extract_netlist()
+
+        _cluster_pins = {}  # cluster_id -> [(pin_key, net), ...]
+        for _pk, _ap in aps.items():
+            _pnet = pin_net.get(_pk)
+            if not _pnet:
+                for _nn, _rt in routing.get('signal_routes', {}).items():
+                    if _pk in _rt.get('pins', []):
+                        _pnet = _nn
+                        break
+            if not _pnet:
+                continue
+            _nobj = _l2n.probe_net(
+                _l2n_layers['M2'],
+                klayout.db.Point(_ap['x'], _ap['y']))
+            if _nobj is not None:
+                _cluster_pins.setdefault(
+                    _nobj.cluster_id, []).append((_pk, _pnet))
+        for _cid, _cpins in _cluster_pins.items():
+            if len(set(n for _, n in _cpins)) == 1:
+                for _pk, _ in _cpins:
+                    _l2n_safe_pins.add(_pk)
+        print(f'    L2N guard: {len(_l2n_safe_pins)} safe APs '
+              f'(of {sum(len(v) for v in _cluster_pins.values())} probed)')
+    except Exception as _e:
+        print(f'    L2N guard failed ({_e}), using M5-only search for all')
+
     def _m2_island_has_via2(segs, ap_x, ap_y, m2r):
         """Check if the M2 island touching AP actually connects to M3/M4.
 
@@ -1349,15 +1399,18 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
             else:
                 _is_bypass = False
 
-            # Find nearest route vertex on M5/Via3 (conservative — M3/M4 search
-            # causes too many Via2 in PCell M1 connected areas → cross-net merge).
-            # TODO(via2_layers): expanding to M3/M4 requires PCell M1 connectivity
-            # awareness to avoid placing Via2 at S/D pins of same device.
+            # Find nearest route vertex. For L2N-safe APs (single-net M2
+            # cluster), also search M1_LYR (physical M3) endpoints.
+            # Unsafe APs (mixed-net M2 cluster = same-device D/G pairs)
+            # stay M5-only to avoid cross-net merge through M1→Via1→M2→Via2→M3.
+            _search_layers = (M3_LYR, M4_LYR, -3)
+            if pin_key in _l2n_safe_pins:
+                _search_layers = (M1_LYR, M3_LYR, M4_LYR, -3)
             best_dist = float('inf')
             best_pos = None
             for seg in segs:
                 lyr = seg[4]
-                if lyr not in (M3_LYR, M4_LYR, -3):
+                if lyr not in _search_layers:
                     continue
                 for px, py in ((seg[0], seg[1]), (seg[2], seg[3])):
                     dist = abs(px - ap_x) + abs(py - ap_y)
@@ -1365,8 +1418,6 @@ def _add_missing_ap_via2(top, li_v2, li_m2, li_m3, li_v3, li_m4, routing,
                         best_dist = dist
                         best_pos = (px, py)
 
-            # TODO(via2_reach): conservative 500nm works with M5-only search.
-            # Expanding requires PCell M1 awareness (see via2_layers TODO).
             if not best_pos or best_dist > 500:
                 continue
 
