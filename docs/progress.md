@@ -170,11 +170,32 @@ Compact VCO stage: 20.0 x 12.0 um, M1.b=0
 方法论突破: 模块化 DRC，每个模块独立 clean 后再组装。
 全局调 DRC 不收敛（Session 8 前半段证明），模块化调 DRC 可精确定位和修复。
 
+### VCO Stage 完整构建记录
+
+逐步添加 assembly shapes，每步验证 CI DRC=0：
+1. PCell placement (4 devices, compact 20x12um) → DRC=0 ✅
+2. S/D bus straps (source/drain 分离) → DRC=0 ✅
+3. Internal M1 routing (OUT, NodeA, NodeB) → DRC=0 ✅
+4. Tie cells (2 ntap + 1 ptap) → LU.b fixed ✅
+5. NW.b1 fix (Mpb y=12000, binary search) → NW.b1=0 ✅
+6. Gate contacts (Mpu.G + Mpd.G = INPUT) → DRC=0 ✅
+   - PCell poly 已自带延伸，不需要额外画 poly
+   - Contact 需 Cnt.e=140nm clearance from active edge
+   - 层号：GatPoly=(5,0), Cont=(6,0), NWell=(31,0)
+
+关键经验：
+- 每步 DRC=0 才继续
+- 看图说话（3D+平面图）定位问题
+- PCell 已有结构要利用，不重复画
+- 层号必须从 PDK lyp 文件确认
+
+剩余：Mnb.G/Mpb.G bias routing (需 M2), pin labels, LVS
+
 ### 下一步
-1. VCO 5 stage 复制 + 环形连接 → 完整 VCO
-2. 其他模拟模块 (BIAS, OTA, COMP...) — 同样方法
-3. 集成: 数字 block + VCO + 模拟模块
-4. 数字增强 (I/Q 相关器, SPI, 扫频) — 模拟完成后
+1. VCO stage bias gate routing (M2) → DRC clean
+2. VCO 5 stage 复制 + 环形连接
+3. 其他模拟模块 — 同样方法
+4. 集成 + 数字增强
 
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
