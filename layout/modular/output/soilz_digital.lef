@@ -1,0 +1,232 @@
+VERSION 5.7 ;
+  NOWIREEXTENSIONATPIN ON ;
+  DIVIDERCHAR "/" ;
+  BUSBITCHARS "[]" ;
+MACRO soilz_digital
+  CLASS BLOCK ;
+  FOREIGN soilz_digital ;
+  ORIGIN 0.000 0.000 ;
+  SIZE 80.000 BY 30.000 ;
+  PIN VGND
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER TopMetal1 ;
+        RECT 19.660 3.150 21.860 22.900 ;
+    END
+    PORT
+      LAYER TopMetal1 ;
+        RECT 58.530 3.150 60.730 22.900 ;
+    END
+  END VGND
+  PIN VPWR
+    DIRECTION INOUT ;
+    USE POWER ;
+    PORT
+      LAYER TopMetal1 ;
+        RECT 13.460 3.560 15.660 23.310 ;
+    END
+    PORT
+      LAYER TopMetal1 ;
+        RECT 52.330 3.560 54.530 23.310 ;
+    END
+  END VPWR
+  PIN buf_ref_I
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNADIFFAREA 0.632400 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 47.320 0.000 47.720 2.000 ;
+    END
+  END buf_ref_I
+  PIN buf_ref_Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNADIFFAREA 0.632400 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 45.400 0.000 45.800 2.000 ;
+    END
+  END buf_ref_Q
+  PIN div16_I
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.226200 ;
+    ANTENNADIFFAREA 0.632400 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 42.520 0.000 42.920 2.000 ;
+    END
+  END div16_I
+  PIN div16_Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.226200 ;
+    ANTENNADIFFAREA 0.632400 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 41.560 0.000 41.960 2.000 ;
+    END
+  END div16_Q
+  PIN div2_I
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.483600 ;
+    ANTENNADIFFAREA 0.632400 ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0.000 12.820 2.000 13.220 ;
+    END
+  END div2_I
+  PIN div4_I
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.468000 ;
+    ANTENNADIFFAREA 0.632400 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 29.080 0.000 29.480 2.000 ;
+    END
+  END div4_I
+  PIN div4_Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.226200 ;
+    ANTENNADIFFAREA 0.632400 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 31.000 0.000 31.400 2.000 ;
+    END
+  END div4_Q
+  PIN f_exc
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.967200 ;
+    ANTENNADIFFAREA 1.008100 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 49.240 0.000 49.640 2.000 ;
+    END
+  END f_exc
+  PIN f_exc_b
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.483600 ;
+    ANTENNADIFFAREA 0.706800 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 53.080 0.000 53.480 2.000 ;
+    END
+  END f_exc_b
+  PIN freq_sel
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.180700 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 39.640 0.000 40.040 2.000 ;
+    END
+  END freq_sel
+  PIN iq_sel
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.180700 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 44.440 0.000 44.840 2.000 ;
+    END
+  END iq_sel
+  PIN phi_n
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNADIFFAREA 0.632400 ;
+    PORT
+      LAYER Metal3 ;
+        RECT 78.000 13.660 80.000 14.060 ;
+    END
+  END phi_n
+  PIN phi_p
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNADIFFAREA 0.632400 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 52.120 0.000 52.520 2.000 ;
+    END
+  END phi_p
+  PIN ref_I
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.468000 ;
+    ANTENNADIFFAREA 1.008100 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 46.360 0.000 46.760 2.000 ;
+    END
+  END ref_I
+  PIN ref_Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.468000 ;
+    ANTENNADIFFAREA 1.008100 ;
+    PORT
+      LAYER Metal2 ;
+        RECT 43.480 0.000 43.880 2.000 ;
+    END
+  END ref_Q
+  PIN reset_b
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.213200 ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0.000 13.660 2.000 14.060 ;
+    END
+  END reset_b
+  PIN vco_out
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    ANTENNAGATEAREA 0.483600 ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0.000 11.980 2.000 12.380 ;
+    END
+  END vco_out
+  OBS
+      LAYER GatPoly ;
+        RECT 0.960 3.630 78.720 22.830 ;
+      LAYER Metal1 ;
+        RECT 0.960 3.560 78.720 22.900 ;
+      LAYER Metal2 ;
+        RECT 1.335 2.210 60.550 22.825 ;
+        RECT 1.335 2.000 28.870 2.210 ;
+        RECT 29.690 2.000 30.790 2.210 ;
+        RECT 31.610 2.000 39.430 2.210 ;
+        RECT 40.250 2.000 41.350 2.210 ;
+        RECT 42.170 2.000 42.310 2.210 ;
+        RECT 43.130 2.000 43.270 2.210 ;
+        RECT 44.090 2.000 44.230 2.210 ;
+        RECT 45.050 2.000 45.190 2.210 ;
+        RECT 46.010 2.000 46.150 2.210 ;
+        RECT 46.970 2.000 47.110 2.210 ;
+        RECT 47.930 2.000 49.030 2.210 ;
+        RECT 49.850 2.000 51.910 2.210 ;
+        RECT 52.730 2.000 52.870 2.210 ;
+        RECT 53.690 2.000 60.550 2.210 ;
+      LAYER Metal3 ;
+        RECT 1.295 14.270 78.000 22.780 ;
+        RECT 2.210 13.450 77.790 14.270 ;
+        RECT 1.295 13.430 78.000 13.450 ;
+        RECT 2.210 12.610 78.000 13.430 ;
+        RECT 1.295 12.590 78.000 12.610 ;
+        RECT 2.210 11.770 78.000 12.590 ;
+        RECT 1.295 2.000 78.000 11.770 ;
+      LAYER Metal4 ;
+        RECT 13.640 3.635 60.550 22.825 ;
+      LAYER Metal5 ;
+        RECT 13.595 3.470 60.595 22.990 ;
+  END
+END soilz_digital
+END LIBRARY
+
