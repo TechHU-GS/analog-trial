@@ -63,17 +63,10 @@ assembly Via3 at (143.3,175.0) 连到 PCell M4 wire (140.6-145.4)。
 修法: Via3 placement 前 GDS M4 shape overlap 检查 → 24 个 Via3 被正确拦截。
 文件: `assemble_gds.py` need_via3 block
 
-### DRC 706 → 112 (-84%) ✅ verified
-
-pad-stub merge fix 附带效果: M1.b 400+→0, M1.e 全消。
-剩余 112: pSD.c=27, NW.c=24, CntB=23, NW.f=8, M3.d=6, 其他小数。
-主要是 NWell/Contact boundary 问题 (placement/tie 级别)。
-OffGrid: 全部 0。
-
 ### 最终状态
 ```
 LVS: 246/257, 0 merge, 0 WB ✅ (verified)
-DRC: 112 (maximal rules) ✅ (verified, was 706)
+DRC (CI-aligned ihp-sg13g2.drc): 273 total (assembly 引入 156 M1.b)
 Via2: 107 ok / 527 fail / 155 skip
 L2N: 283 safe / 2 unsafe, 16 l2n_only (false positive)
 ```
@@ -104,27 +97,23 @@ M1.b=213 中 85% 来自 access_points phase。根因: gate contact M1 pad (290nm
 - Analog pin ua[0] 未连接
 - 需要 wrapper cell 或调整 GDS 提交结构
 
-### ⚠️ DRC 错误结论修正
+### DRC 正确分析
 
-之前声称"assembly DRC-neutral, 273 全是 PCell placement"——错误。
-BARE=CURRENT=273 是巧合：CI DRC (hierarchical) 包含 PCell 内部 violation。
+PCell 单独 DRC clean（Session 4 验证）。BARE flattened M1 space_check = 0。
+CI DRC BARE=CURRENT=273 中包含 PCell 内部预期 violation（CntB.h1 等 waiver），
+这些不是我们的问题。
 
-正确数据 (flattened Region space_check 180nm):
-- BARE flattened M1: 857 shapes, space_check = **0** (PCell placement clean)
-- CURRENT flattened M1: 2773 shapes, space_check = **156** (assembly 引入)
+Assembly 引入 **156 个 M1.b violation** (flattened 验证: BARE=0, CURRENT=156)。
+主要来自 pad-stub merge 后 stub 变成 310nm 宽（原始 160nm），
+和邻近 PCell strip/gate pad 间距 < 180nm。
+e4b82ae 有 M1.b=68 (CI DRC)，我们多了 88 个（pad-stub 分离的代价）。
 
-**Assembly 引入 156 个 M1.b violation，不是 0。**
-CI DRC 273 = PCell 内部 (~117) + assembly 引入 (156)，数字重叠。
-
-G pin M1 pad 全部跳过（250/250）✅ verified。
-但 access_points 仍引入 +123 M1.spacing (inline DRC)。
-Assembly 层面 DRC 工作未完成。
+Y-stretch 试过但对 M1.b 无效（157 vs 156），因为不是 device 间距问题。
 
 ### 下一步
-1. DRC assembly 引入 156 M1.b — 继续分析和修复
-2. DRC M3.b=46, 其他 — 分析来源
-3. CI precheck 非 DRC 失败修复（top cell name, layer, analog pin）
-4. Router 改进 — 增加 route 覆盖 (11 unmatched devices)
+1. DRC assembly M1.b 156 — pad-stub 310nm 宽度问题
+2. CI precheck 非 DRC 失败修复（top cell name, layer, analog pin）
+3. Router 改进 — 增加 route 覆盖 (11 unmatched devices)
 
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
