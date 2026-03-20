@@ -2,11 +2,11 @@
 
 > Read this after compact to restore context.
 
-## ★ Session 8 — LVS Pipeline 闭环 + LVS 112→246 (2026-03-20 17:35)
+## ★ Session 8 — LVS Pipeline 闭环 + LVS 112→246/0 merge (2026-03-20 18:10)
 
 ### 核心成果
 
-**LVS 112 → 246 (+134 devices, 9→1 merges, 14→0 wrong-bulk)**
+**LVS 112 → 246/257 matched, 9→0 merges, 14→0 wrong-bulk**
 
 根因: `access_points.py` 的 pad-stub merge 逻辑把同一 MOSFET 的 D/G 的 M1 区域
 合并成 bounding box → 665x2560nm M1 shape 桥接了不同 net 的 pin。
@@ -54,15 +54,32 @@ L2N safe: 283/285
 DRC: 未重测 (assembly 改动后)
 ```
 
-### 剩余 11 unmatched devices
+### Via3 M4 cross-net check (ns3↔vco3 最后 1 个 merge → 0)
+
+根因: `_add_missing_ap_via2` 在 Mpu3.D(vco3) 放 Via3 → Via3 M4 pad 和 PCell
+M4 wire (ns3, 连接 Mpb3.D→Mpu3.S) 重叠 → cross-net merge。
+证据链: bare L2N cluster 413≠422(分开), current 353=353(合并), GDS 对比确认
+assembly Via3 at (143.3,175.0) 连到 PCell M4 wire (140.6-145.4)。
+修法: Via3 placement 前 GDS M4 shape overlap 检查 → 24 个 Via3 被正确拦截。
+文件: `assemble_gds.py` need_via3 block
+
+### 最终状态
+```
+LVS: 246/257, 0 merge, 0 WB ✅ (verified)
+Via2: 107 ok / 527 fail / 155 skip
+L2N: 283 safe / 2 unsafe, 16 l2n_only (false positive)
+DRC: ⚠️ 未重测
+```
+
+### 剩余 11 unmatched devices (全部是 routing 覆盖不足)
 - 7 passive (3 cap_cmim + 4 rhigh): 无 route, 4 个 SHARED-M2
-- 4 MOSFET (2 nmos + 2 pmos): substrate merge 影响
+- 4 MOSFET: route 覆盖不足 (48/129 routes)
+- 不是 assembly 问题，需要 router 输出更多 route
 
 ### 下一步
-1. ns3↔vco3 substrate merge — NWell/substrate 隔离问题
-2. Passive device routing — router 不支持
-3. Via2 继续改进 — 504 fail 中 346 是 no_route (路由覆盖不足)
-4. DRC 重测
+1. DRC 重测 — pad-stub fix 可能大幅改善
+2. Router 改进 — 增加 route 覆盖 (passive devices, more signal nets)
+3. Via2 继续改进 — 159 too_far, 22 unknown
 
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
