@@ -158,12 +158,23 @@ Compact VCO stage: 20.0 x 12.0 um, M1.b=0
 结构: Mpb(长条顶) → Mpu(小方块) → Mpd(小方块) → Mnb(长条底)
 文件: modular/output/vco_stage_compact.gds
 
+### VCO Stage CI DRC = 0 ✅ verified (本项目首个 CI DRC clean 模拟模块)
+
+21.0 x 12.7um, 4 PCells (Mpb+Mpu+Mpd+Mnb) + routing + ties
+关键修复:
+- Mpb 间距 y=11.5um (binary search 找到 NW.b1 临界点)
+- ntap/ptap tie cell 解决 LU.b
+- M1 routing X 对齐到 PCell strip 消除 M1.a
+- 所有 DRC 规则 = 0
+
+方法论突破: 模块化 DRC，每个模块独立 clean 后再组装。
+全局调 DRC 不收敛（Session 8 前半段证明），模块化调 DRC 可精确定位和修复。
+
 ### 下一步
-1. VCO stage 加 assembly (bus straps, ties, routing) → DRC clean
-2. 5 stage 复制 + 环形连接 → 完整 VCO
-3. 其他模拟模块 (BIAS, OTA, COMP...)
-4. 集成: 数字 block + VCO + 模拟模块
-5. 数字增强 (I/Q 相关器, SPI, 扫频) — 模拟完成后
+1. VCO 5 stage 复制 + 环形连接 → 完整 VCO
+2. 其他模拟模块 (BIAS, OTA, COMP...) — 同样方法
+3. 集成: 数字 block + VCO + 模拟模块
+4. 数字增强 (I/Q 相关器, SPI, 扫频) — 模拟完成后
 
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
