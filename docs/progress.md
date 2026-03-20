@@ -129,11 +129,23 @@ TFF macro baseline 已提取: modular/output/tff_macro.gds
 - 64 M1 shapes, M1.b=0, M1.a=0 (PCell only, DRC clean)
 - 下一步: 逐步加 bus straps → ties → gate → AP, 每步验证 DRC
 
+### LibreLane 数字 block 生成 ✅ verified
+
+soilz_digital.v → LibreLane 3.0.0.dev44 → soilz_digital.gds
+- 23 standard cells: 7 DFF + 3 MUX2 + 2 NAND2 + 11 INV
+- 替换 164 custom transistors (TFF+BUF+MUX+NOL)
+- 80x30um, M1.b=0, 18 秒 build
+- 服务器 100.64.0.4 Docker 跑的
+
+标准单元替换实验结果:
+- 替换 TFF 区域后 CI DRC: 161→72 (-55%)
+- M1.b: 57→21, M3.b: 46→20
+
 ### 下一步
-1. TFF macro assembly (bus straps + ties + gate + AP, DRC clean)
-2. TFF 实例化 × 7 + inter-TFF 验证
-3. 模拟区模块化
-4. 全局拼装
+1. 集成 soilz_digital.gds 到模拟设计 (power + signal 对接)
+2. 更新 LVS 参考网表 (164 transistors → 23 standard cells)
+3. 模拟区 75 devices 版图优化
+4. CI precheck 通过
 
 ## ★ Session 5 — LVS Gap 根因分析 + DRC Baseline (2026-03-18 22:00)
 
