@@ -63,12 +63,19 @@ assembly Via3 at (143.3,175.0) 连到 PCell M4 wire (140.6-145.4)。
 修法: Via3 placement 前 GDS M4 shape overlap 检查 → 24 个 Via3 被正确拦截。
 文件: `assemble_gds.py` need_via3 block
 
+### DRC 706 → 112 (-84%) ✅ verified
+
+pad-stub merge fix 附带效果: M1.b 400+→0, M1.e 全消。
+剩余 112: pSD.c=27, NW.c=24, CntB=23, NW.f=8, M3.d=6, 其他小数。
+主要是 NWell/Contact boundary 问题 (placement/tie 级别)。
+OffGrid: 全部 0。
+
 ### 最终状态
 ```
 LVS: 246/257, 0 merge, 0 WB ✅ (verified)
+DRC: 112 (maximal rules) ✅ (verified, was 706)
 Via2: 107 ok / 527 fail / 155 skip
 L2N: 283 safe / 2 unsafe, 16 l2n_only (false positive)
-DRC: ⚠️ 未重测
 ```
 
 ### 剩余 11 unmatched devices (全部是 routing 覆盖不足)
