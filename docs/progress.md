@@ -65,15 +65,52 @@
 - ⚠️ c_di_p/c_di_n + comp_clk + cross-coupled gates 留给组装
 - 9.3x24.6um, 验证: CI DRC → 0 violations
 
-### 推进顺序 (从简单到复杂) — 全部完成
+### 新增 3 模块 (缺失器件补齐)
+9. ✅ hbridge_drive (MS1-4): 12.7x3.5um, 4 M2 bus + phi_p/phi_n gate M1 bars
+10. ✅ vco_buffer (MBn1/2+MBp1/2): 6.2x12.1um, buf1 M1+M2 + vco5 gate M1 + vco_out M2
+11. ⚠️ ptat_core (PM3-5/PM_ref/PM_pdiode/MN1/MN2): 60x16um, extraction+ties only, routing 待做
+
+### 质量检查 (全模块)
+- Quick DRC (M1.b + M1.a + M2.b): 全部 0 ✅
+- Floating M1 (无 Cont 无 Via1): 全部 0 ✅
+- Via1 无 M1 覆盖: 全部 0 ✅ (修复了 COMP 1处 + BIAS cascode 3处)
+- Strip↔routing 断连: 全部 0 ✅ (修复了 vco_buffer buf1 断连)
+- CI DRC: 全部 0 ✅
+
+### 推进顺序 — 完成状态
 1. ✅ BIAS MN (完整 routing)
-2. ✅ Chopper (完整 routing + gate routing: f_exc/f_exc_b M1 bars)
-3. ✅ DAC switch (完整 routing + gate routing: lat_q/lat_qb M1 bars)
-4. ✅ H-bridge/SR latch (完整 routing + cross-coupling + input gates, Quick+CI DRC=0)
-5. ✅ Current SW (完整 routing)
-6. ✅ BIAS cascode (compact re-placement + cas_ref/1/2/3 + vcas routing)
-7. ✅ OTA (完整 routing + gate routing: bias_n + mid_p gates)
-8. ✅ COMP (完整 routing: c_tail + c_di_p/n + comp_outp/n + comp_clk)
+2. ✅ Chopper (S/D M2 + gate M1)
+3. ✅ DAC switch (S/D M2 + gate M1)
+4. ✅ H-bridge/SR latch (cross-coupling + input gates)
+5. ✅ Current SW (4x M2 bus)
+6. ✅ BIAS cascode (compact + cas_ref/1/2/3 + vcas)
+7. ✅ OTA (S/D + gate + bias_n)
+8. ✅ COMP (c_tail + c_di + comp_clk 20um M2)
+9. ✅ hbridge_drive (MS1-4)
+10. ✅ vco_buffer (2-stage inverter buffer)
+11. ✅ ptat_core (compact 2-col paired layout + net_c1/c2/pmos_bias routing)
+
+### verify_modules.py 验证脚本
+15 项检查 × 11 模块 = 165 项全部归零:
+- DRC (5项): M1.b, M1.a, M2.b, M2.a, CI DRC
+- 连通性 (7项): Floating M1/M2, Via1↔M1/M2 覆盖, Cont↔M1, Strip断连, Gate孤立
+- 物理完整性 (3项): Contact浮空, Via1 enclosure, Gate Cont enclosure
+
+Session 9 发现并修复的关键 bug:
+- Via1 下方无 M1 (COMP comp_clk, bias_cascode vcas)
+- M1 routing bar 未连到 PCell strip (vco_buffer buf1)
+- M2 cross-net short (hbridge phi_p/phi_n)
+- Gate contact Cont 丢失 (bias_cascode patch 重建导致)
+- ntap M1 与 gate M1 间距过小 (bias_cascode)
+- Gate poly extension 与 PCell poly 15nm 缝隙 (vco_buffer MBp1.G)
+- Gate contact 半截在 poly 外 (vco_buffer, ota — poly enclosure <70nm)
+- ptat_core 搜索窗口互相捕获邻居 shapes (PM3↔PM5 叠放)
+
+### 下一步
+1. Passive devices 提取 (Rptat/Rout/Rin/Rdac/C_fb/Cbyp — 7个)
+2. 全局组装 floorplan (已有草案 v3)
+3. Assembly script + power + inter-module routing
+4. LVS verification
 
 ---
 
