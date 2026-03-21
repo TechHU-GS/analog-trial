@@ -282,6 +282,61 @@ def check_module(mod_name, run_ci=True):
     if gate_enc_fail:
         results['issues'].append(f'Gate Cont M1 enc <60nm: {gate_enc_fail}')
 
+    # ════════════════════════════════════════════
+    # Check 13: Gate poly continuity (poly→Activ)
+    # Every gate contact's poly must be continuous to device Activ
+    # ════════════════════════════════════════════
+    poly_disc = 0
+    for cp in cont.each():
+        cb = cp.bbox()
+        if (poly & pya.Region(cb)).count() == 0:
+            continue
+        touching_poly = poly.interacting(pya.Region(cb))
+        reaches = False
+        for pp in touching_poly.each():
+            if (activ & pya.Region(pp)).count() > 0:
+                reaches = True
+                break
+        if not reaches:
+            poly_disc += 1
+    results['poly_disc'] = poly_disc
+    if poly_disc:
+        results['issues'].append(f'Gate poly not reaching Activ: {poly_disc}')
+
+    # ════════════════════════════════════════════
+    # Check 14: Gate poly enclosure of Contact (Gat.d ≥ 70nm)
+    # ════════════════════════════════════════════
+    poly_enc_fail = 0
+    for cp in cont.each():
+        cb = cp.bbox()
+        if (poly & pya.Region(cb)).count() == 0:
+            continue
+        for pp in poly.interacting(pya.Region(cb)).each():
+            pb = pp.bbox()
+            enc = min(cb.left-pb.left, pb.right-cb.right, cb.bottom-pb.bottom, pb.top-cb.top)
+            if enc < 70:
+                poly_enc_fail += 1
+            break
+    results['poly_enc'] = poly_enc_fail
+    if poly_enc_fail:
+        results['issues'].append(f'Gate poly enc <70nm: {poly_enc_fail}')
+
+    # ════════════════════════════════════════════
+    # Check 15: Cross-net short detection
+    # Flag M1 regions that are suspiciously large with many contacts
+    # (could mean different-net strips accidentally merged)
+    # ════════════════════════════════════════════
+    cross_short = 0
+    for p in m1.each():
+        region = pya.Region(p)
+        n_cont = (cont & region).count()
+        b = p.bbox()
+        if n_cont > 20 and b.width() > 8000 and b.height() > 8000:
+            cross_short += 1
+    results['cross_short'] = cross_short
+    if cross_short:
+        results['issues'].append(f'Possible cross-net short: {cross_short} large M1 regions')
+
     return results
 
 
@@ -305,13 +360,14 @@ def print_report(results_list):
               f'{r.get("v1_no_m2",0):>5d} {r.get("cont_no_m1",0):>5d} {r["v1_no_cont"]:>5d} {r.get("iso_gates",0):>5d}')
 
     print('\n── Physical Integrity Checks ──')
-    hdr3 = f'{"Module":16s} {"CFloat":>6s} {"V1Enc":>6s} {"GtEnc":>6s}'
+    hdr3 = f'{"Module":16s} {"CFloat":>6s} {"V1Enc":>6s} {"GtEnc":>6s} {"PolyDisc":>8s} {"PolyEnc":>7s} {"XShort":>7s}'
     print(hdr3); print('-'*len(hdr3))
     all_pass = True
     for r in results_list:
         if not r: continue
         if r['issues']: all_pass = False
-        print(f'{r["name"]:16s} {r.get("cont_float",0):>6d} {r.get("v1_enc",0):>6d} {r.get("gate_enc",0):>6d}')
+        print(f'{r["name"]:16s} {r.get("cont_float",0):>6d} {r.get("v1_enc",0):>6d} {r.get("gate_enc",0):>6d} '
+              f'{r.get("poly_disc",0):>8d} {r.get("poly_enc",0):>7d} {r.get("cross_short",0):>7d}')
 
     print()
     if all_pass:

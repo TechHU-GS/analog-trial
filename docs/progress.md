@@ -91,10 +91,11 @@
 11. ✅ ptat_core (compact 2-col paired layout + net_c1/c2/pmos_bias routing)
 
 ### verify_modules.py 验证脚本
-15 项检查 × 11 模块 = 165 项全部归零:
+18 项检查 × 11 模块 = 198 项全部归零 (手动+脚本对比一致):
 - DRC (5项): M1.b, M1.a, M2.b, M2.a, CI DRC
 - 连通性 (7项): Floating M1/M2, Via1↔M1/M2 覆盖, Cont↔M1, Strip断连, Gate孤立
-- 物理完整性 (3项): Contact浮空, Via1 enclosure, Gate Cont enclosure
+- 物理完整性 (6项): Contact浮空, Via1 enclosure, Gate Cont enclosure,
+  Gate poly→Activ连续, Gate poly enclosure≥70nm, Cross-net short检测
 
 Session 9 发现并修复的关键 bug:
 - Via1 下方无 M1 (COMP comp_clk, bias_cascode vcas)
