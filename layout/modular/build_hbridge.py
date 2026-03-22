@@ -202,6 +202,26 @@ def build():
     cell.shapes(l_m1).insert(box(gcx2 - 155, 2230 + 405, gcx2 + 155, 5320 - 405))
     print(f'  comp_outn: x={gcx2}, M1 vertical y={2230+405}-{5320-405}')
 
+    # ─── Step 4b: Via1+M2 pads for inter-module routing ───
+    # Place BELOW NMOS (y=-500) where M2 is completely free.
+    # Gate M1 vertical extends from gate contact (y≈2480) down to Via1 pad.
+    # M1 at x=435-745 (comp_outp) and x=6375-6685 (comp_outn) passes between
+    # S/D strips (gap ≥205nm > M1.b=180nm).
+    print('--- Step 4b: Inter-module Via1+M2 pads ---')
+    l_m2 = out.layer(*M2)
+    l_via1 = out.layer(*VIA1)
+    via1_y = -500  # below NMOS, clear of all M2
+
+    for gcx, name in [(gcx1, 'comp_outp'), (gcx2, 'comp_outn')]:
+        # Extend gate M1 down from gate contact (y=2480) to Via1 pad
+        cell.shapes(l_m1).insert(box(gcx - 155, via1_y - 185, gcx + 155, 2230 + 95))
+        # Via1 (190x190)
+        cell.shapes(l_via1).insert(box(gcx - 95, via1_y - 95, gcx + 95, via1_y + 95))
+        # M1 pad for Via1 (already covered by the extension above)
+        # M2 pad (480x310, safe enclosure)
+        cell.shapes(l_m2).insert(box(gcx - 240, via1_y - 155, gcx + 240, via1_y + 155))
+        print(f'  {name}: Via1+M2 at ({gcx}, {via1_y})')
+
     # ─── Step 5: lat_q / lat_qb drain collection (Via1 + M2) ───
     print('--- Step 5: lat_q / lat_qb M2 ---')
     l_m2 = out.layer(*M2)

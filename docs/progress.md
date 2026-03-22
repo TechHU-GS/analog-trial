@@ -176,9 +176,31 @@ VCO 5-stage + digital: 已有 GDS
 - ⚠️ rptat "1 port" warning: 待确认是否已消除 (Contact 3→6 应该修复了)
 - ⚠️ cbyp_p: 无底层 terminal
 
+### Inter-module routing 开始 (Session 11)
+
+**❌ M1/M2 routing 尝试 → 短路 → 回退**
+- 用 M1 extension + M2 vertical 连 comp_outp/outn → hbridge gate
+- CI DRC=0 但连通性检查发现: comp_outp 和 comp_outn 通过 hbridge 内部 M1 合并为同一 polygon → **短路**
+- LVS -6 是因为 fragment 合并，不是正确连接
+- **已回退**: reassemble.py 重新生成 clean baseline (DRC=0, LVS=434)
+- **教训: 不要在 inter-module routing 中新增 M1/M2，会和模块内部 routing 冲突**
+
+**层策略变更 (2026-03-22):**
+- M3=H, M4=V, M5=H (LEF 默认方向)
+- Inter-module routing 全部使用 M3+ 和 Via2+
+- Via2 落在模块现有 M2 pad 上，往上走 M3/M4/M5
+- 需要 M2 pad 的端点在 build script 里加（属于模块）
+
+**27 inter-module nets 分类:**
+- LOCAL (4): comp_outp, comp_outn, chop_out, exc_out
+- MEDIUM (8): dac_out, lat_q, lat_qb, vptat, src1/2/3, ota_out
+- LONG (13): f_exc, ref_I/Q, vco_out, bias 分配等
+- POWER (2): vdd, gnd
+
 ### 下一步
-1. Inter-module routing (25 signal + 2 power, 手动规划+Python)
-2. LVS 最终验证 (目标: 0 mismatch)
+1. M3+ routing: 从 LOCAL 4 条开始
+2. 部分端点需要先在 build script 加 M2 pad (hbridge gate, rin terminal)
+3. LVS 最终验证 (目标: 0 mismatch)
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
