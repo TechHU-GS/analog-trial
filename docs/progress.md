@@ -292,10 +292,21 @@ VCO 5-stage + digital: 已有 GDS
 - N=1114 (-40 from baseline), Y=939 (未变), warnings=415 (-20)
 - ⚠️ 多条 net identity 基于推断, Y 未增加说明 net 未完全匹配
 
+**Power tap bridging via M3/M4 (verified 2026-03-23):**
+- 方法: auto-detect ntap/ptap M1 → Via1+M2 → Via2+M3(H) → Via3+M4(V) → via stack M2
+- 不用 TM1 stub (之前的 TM1 stub 方法导致交叉短路, 已回退)
+- 96 VDD + 139 GND taps connected
+- CI DRC: **0** ✅
+- N=1024 (-130 from baseline), Y=939 (不变), warnings=373 (-62)
+- ⚠️ M3 quick DRC 130 spacing violations (CI DRC 不报)
+- ⚠️ Y 不变: power net fragment 在合并但未完全匹配 schematic
+- ⚠️ 电气连通性未直接验证
+
 ### 下一步 (deadline 24号)
-1. Power: 连 via stack M2 到模块 ntap/ptap M1 (bridge routing)
+1. 查 M3 130 spacing violations 是否需要修
 2. Blocked signal: sum_n, vco5
-3. LVS 冲刺 — 目标: Y 增加, 最终验证
+3. LVS 冲刺 — 需要 Y 增加才能证明连接正确
+4. 准备提交 (CI precheck = DRC only)
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)

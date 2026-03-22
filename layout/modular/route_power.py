@@ -245,16 +245,74 @@ def route():
 
     print(f'  {gnd_drops} GND via stacks placed (excl x={GND_EXCL[0]/1000:.0f}-{GND_EXCL[1]/1000:.0f})')
 
+    # ─── Power tap connections via M3/M4 (NOT TM1 stubs) ───
+    print('\n  --- Auto-detect taps + M3/M4 bridging ---')
+
+    m1_r = pya.Region(cell.begin_shapes_rec(ly.find_layer(*LY['M1'])))
+    nw_r = pya.Region(cell.begin_shapes_rec(ly.find_layer(31, 0)))
+    cont_r = pya.Region(cell.begin_shapes_rec(ly.find_layer(6, 0)))
+    analog = pya.Region(pya.Box(16000, 2000, 200000, 90000))
+    m1_a = m1_r & analog
+    cont_a = cont_r & analog
+    nw_a = nw_r & analog
+
+    vs_vdd = [x for x in range(15000, 195000, 15000) if not (VDD_EXCL[0] < x < VDD_EXCL[1])]
+    vs_gnd = [x for x in range(15000, 195000, 15000) if not (GND_EXCL[0] < x < GND_EXCL[1])]
+
+    m2_li = ly.layer(*LY['M2']); v1_li = ly.layer(19,0)
+    v2_li = ly.layer(29,0); m3_li = ly.layer(30,0)
+    v3_li = ly.layer(49,0); m4_li = ly.layer(50,0)
+    VH = VN_SZ//2; PH = 145; WH = 105
+
+    vc = gc = 0
+    for p in m1_a.each():
+        b = p.bbox()
+        if not (300 < b.width() < 800 and 300 < b.height() < 800):
+            continue
+        cx, cy = (b.left+b.right)//2, (b.bottom+b.top)//2
+        if (cont_a & pya.Region(pya.Box(cx-100,cy-100,cx+100,cy+100))).count() == 0:
+            continue
+        if 16500 < cx < 46500 and 5000 < cy < 85000:
+            continue  # skip digital block area
+        in_nw = (nw_a & pya.Region(pya.Box(cx-50,cy-50,cx+50,cy+50))).count() > 0
+        bus_y = VDD_Y if in_nw else GND_Y
+        vsx = min(vs_vdd if in_nw else vs_gnd, key=lambda v: abs(v-cx))
+
+        # Via1+M2 at tap
+        cell.shapes(v1_li).insert(box(cx-95,cy-95,cx+95,cy+95))
+        cell.shapes(ly.find_layer(8,0)).insert(box(cx-185,cy-185,cx+185,cy+185))
+        cell.shapes(m2_li).insert(box(cx-240,cy-155,cx+240,cy+155))
+        # Via2+M3 at tap
+        cell.shapes(v2_li).insert(box(cx-VH,cy-VH,cx+VH,cy+VH))
+        cell.shapes(m3_li).insert(box(cx-PH,cy-PH,cx+PH,cy+PH))
+        # M3 horizontal to vs_x
+        x1,x2 = min(cx,vsx),max(cx,vsx)
+        cell.shapes(m3_li).insert(box(x1-PH,cy-WH,x2+PH,cy+WH))
+        # Via3 at (vs_x, cy)
+        cell.shapes(v3_li).insert(box(vsx-VH,cy-VH,vsx+VH,cy+VH))
+        cell.shapes(m3_li).insert(box(vsx-PH,cy-PH,vsx+PH,cy+PH))
+        cell.shapes(m4_li).insert(box(vsx-PH,cy-PH,vsx+PH,cy+PH))
+        # M4 vertical to bus_y
+        y1,y2 = min(cy,bus_y),max(cy,bus_y)
+        cell.shapes(m4_li).insert(box(vsx-WH,y1-PH,vsx+WH,y2+PH))
+        # Via3+Via2 at bus
+        cell.shapes(v3_li).insert(box(vsx-VH,bus_y-VH,vsx+VH,bus_y+VH))
+        cell.shapes(m3_li).insert(box(vsx-PH,bus_y-PH,vsx+PH,bus_y+PH))
+        cell.shapes(m4_li).insert(box(vsx-PH,bus_y-PH,vsx+PH,bus_y+PH))
+        cell.shapes(v2_li).insert(box(vsx-VH,bus_y-VH,vsx+VH,bus_y+VH))
+        if in_nw: vc += 1
+        else: gc += 1
+
+    print(f'  {vc} VDD + {gc} GND taps connected via M3/M4')
+
     # ─── Write ───
     out_path = os.path.join(OUT_DIR, 'soilz_assembled.gds')
     ly.write(out_path)
-
     print(f'\n  Output: {out_path}')
-
-    # Quick DRC on TM1
     tm1_r = pya.Region(cell.begin_shapes_rec(tm1_li))
-    print(f'  TM1 shapes: {tm1_r.count()}')
-    print(f'  TM1 spacing violations: {tm1_r.space_check(TM1_MIN_S).count()}')
+    m3_r = pya.Region(cell.begin_shapes_rec(m3_li))
+    print(f'  TM1: {tm1_r.count()} shapes, spacing: {tm1_r.space_check(TM1_MIN_S).count()}')
+    print(f'  M3 spacing: {m3_r.space_check(210).count()}')
 
 
 if __name__ == '__main__':
