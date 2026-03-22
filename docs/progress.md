@@ -355,11 +355,28 @@ VCO 5-stage + digital: 已有 GDS
 - ❌ 部分信号缺失 (sum_n, vco5, pmos_bias)
 - ⚠️ LVS 参数匹配需要逐 PCell 核对 W/L
 
+**LVS multi-finger 死胡同 (2026-03-23):**
+- soilz_lvs.spice 改了 10+ 次试图匹配 device count — mole-whacking, 无效
+- 前仿 SPICE `sim/_soilz_full.sp` 才是 ground truth (不是 device_lib.json 生成的 schematic)
+  - 关键发现: PM3/PM4/PM5 在 device_lib 写 L=50u, 实际前仿是 L=10u
+- multi-finger 核心阻塞:
+  - flat GDS 没有 PCell hierarchy → extractor 每个 gate poly 是独立 device
+  - combine_devices 不 work (gate poly 分离 + interleaved S/D)
+  - 前仿 ng 参数和实际 PCell finger 数不一致 (ng=8 但 PCell 可能不是 8 finger)
+  - 没有可靠方法将 extracted devices 映射到 schematic devices
+- IHP test case 能过因为用连续 gate poly (ng=2 PCell 是 1 条 poly bar)
+  我们的 PCell 用分离 gate poly (每个 finger 独立 poly bar)
+- `no_simplify=true` 是关键设置 (默认 SIMPLIFY=true 会合并 schematic parallel devices)
+  参数名: `-rd no_simplify=true`
+
+**BLOCKED: LVS analog-only 无法 match, 根因是 PCell multi-finger 提取 vs schematic 表示不一致。
+需要重新生成带 PCell hierarchy 的 GDS, 或找到正确的 finger count 映射。**
+
 ### 下一步
-1. Power routing (M5 层, 避免 M3/M4 冲突)
-2. 缺失信号 routing (sum_n, vco5, pmos_bias)
-3. LVS 参数修正 (逐 PCell 核对 W/L, 生成正确 schematic)
-4. 提交
+1. **LVS**: 需要解决 multi-finger 问题 — 可能需要重新用 IHP PCell instantiation 生成 GDS (保留 hierarchy) 而不是从 flat soilz_bare.gds 提取
+2. **Power routing**: M5 层方案 (已有 TM1 bus, 需要 tap 连接)
+3. **缺失信号**: sum_n, vco5, pmos_bias
+4. **提交**: CI DRC=0 可以提交, 但功能不完整
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
