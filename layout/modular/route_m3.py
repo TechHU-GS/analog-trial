@@ -224,7 +224,29 @@ def route():
             73250, 35700,    # sw SW3.D
             'src3', m4_x=109850)
 
-    # ─── Route 9: exc_out ───
+    # ─── Route 9: dac_out (dac_sw → rdac) ───
+    route_L(cell, layers,
+            183600, 34800,   # dac_sw dac_out bus right end
+            188900, 21200,   # rdac terminal
+            'dac_out', m4_x=186000)
+
+    # ─── Route 10: ota_out (ota → comp Mc_inp.G) ───
+    # ota M2 bus right end: (125000, 41350)
+    # comp Mc_inp.G M2 pad: (160300, 24710)
+    route_L(cell, layers,
+            125000, 41350,   # ota ota_out
+            160300, 24710,   # comp Mc_inp.G
+            'ota_out', m4_x=140000)
+
+    # ─── Route 11: vptat (ptat_core → rout) ───
+    # ptat_core PM5.D M2: (169900, 64400)
+    # rout M2 pad: (196400, 2200) — very long route!
+    route_L(cell, layers,
+            169900, 64400,   # ptat_core PM5.D
+            196400, 2200,    # rout terminal
+            'vptat', m4_x=195000)
+
+    # ─── Route 12: exc_out ───
     # hbridge_drive M2 bus (MS1.D+MS3.D): center (65700, 22650)
     # sw M2 bus (all SW.S): center (66350, 34150)
     # Nearly vertical — M4 at x=66000

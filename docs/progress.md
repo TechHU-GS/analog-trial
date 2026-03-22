@@ -220,12 +220,34 @@ VCO 5-stage + digital: 已有 GDS
 - src1/2/3: M4 直连 (m4_x=src_x, 从 bias_cascode 直降到 sw). M3 线宽缩至 210nm 避 spacing ✅
 - **9/9 collision-free, CI DRC=0, N=1140 (-14 from baseline)**
 
+**MEDIUM nets batch 2: dac_out (verified 2026-03-22):**
+- rdac/rout: add_m2_pads.py 加 Via1+M2 (rdac 1 pad, rout 3 pads)
+- dac_out: Via2→M3→Via3→M4@x=186→Via3→M3→Via2 (dac_sw→rdac) ✅
+- ⚠️ N 没有进一步减少 (1140不变) — 可能 rdac pad 连的是 MINUS 端不是 PLUS 端
+
+**当前 routing 总结 (10/27 nets, verified 2026-03-22):**
+- CI DRC: **0** ✅
+- 10/10 collision-free
+- N=1140 (baseline 1154, **-14**)
+- ⚠️ 部分路由的 net identity 基于 M2 bus 位置推断，未直接验证
+
+**未做 MEDIUM:**
+- ota_out: comp Mc_inp.G 无 M2 (需加 pad, comp M2 拥挤)
+- vptat: ptat_core 无 build script, 无法确认哪条 M2 bus
+
+**MEDIUM batch 3: ota_out + vptat + comp pad (verified 2026-03-22):**
+- add_m2_pads.py: comp Mc_inp.G 加 gate contact + Via1+M2 at (3710, 3500). CI DRC=0 ✅
+- rdac + rout: M2 pads added
+- ota_out: ota (125.0, 41.3) → comp (160.3, 24.7), M4@x=140 ✅
+- vptat: ptat_core (169.9, 64.4) → rout (196.4, 2.2), M4@x=195 ✅
+- dac_out: dac_sw (183.6, 34.8) → rdac (188.9, 21.2), M4@x=186 ✅
+- **12/12 collision-free, CI DRC=0, N=1138 (-16), warnings=427 (-8)**
+- ⚠️ 多处 net identity 基于推断 (M2 bus 位置、Via1 count、gate poly x)，未直接验证
+
 ### 下一步
-1. ota_out routing (ota → comp, 多端口含 c_fb)
-2. dac_out (需先给 rdac 加 M2 pad), vptat (需先给 rout 加 M2 pad)
-3. LONG nets (13条): f_exc, ref_I/Q, vco_out, bias 分配
-4. POWER (2条): vdd, gnd
-5. LVS 最终验证 (目标: 0 mismatch, deadline 24号)
+1. LONG nets (13条): vco_out, f_exc, ref_I/Q, vco5, bias 分配等
+2. POWER (2条): vdd, gnd
+3. LVS 最终验证 (deadline 24号)
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)

@@ -82,10 +82,76 @@ def patch_dac_sw():
     print(f'  dac_sw: written to {path}')
 
 
+def patch_passive(name, description):
+    """Add Via1+M2 at all M1 terminals of a passive module."""
+    path = os.path.join(OUT_DIR, f'{name}.gds')
+    ly = pya.Layout()
+    ly.read(path)
+    cell = ly.top_cell()
+
+    m1_li = ly.find_layer(8, 0)
+    if m1_li is None:
+        print(f'  {name}: no M1 found!')
+        return
+
+    m1 = pya.Region(cell.begin_shapes_rec(m1_li))
+    count = 0
+    for p in m1.each():
+        b = p.bbox()
+        cx = (b.left + b.right) // 2
+        cy = (b.bottom + b.top) // 2
+        # Skip tiny M1 fragments
+        if b.width() < 200 or b.height() < 200:
+            continue
+        # Check if Via1 already exists here
+        v1_li = ly.find_layer(19, 0)
+        if v1_li is not None:
+            v1 = pya.Region(cell.begin_shapes_rec(v1_li))
+            if (v1 & pya.Region(pya.Box(cx-100, cy-100, cx+100, cy+100))).count() > 0:
+                continue  # already has Via1
+        print(f'  {name} ({description}): adding Via1+M2 at ({cx}, {cy})')
+        add_via1_m2(cell, ly, cx, cy)
+        count += 1
+
+    ly.write(path)
+    print(f'  {name}: {count} pads added, written to {path}')
+
+
+def patch_comp_inp():
+    """Add gate contact + M1 + Via1 + M2 for Mc_inp.G (ota_out) in comp."""
+    path = os.path.join(OUT_DIR, 'comp.gds')
+    ly = pya.Layout()
+    ly.read(path)
+    cell = ly.top_cell()
+
+    # Mc_inp.G: gate poly at local x≈3710, band 2 (y≈4-8)
+    # Add contact on poly extension ABOVE the device (y≈3500, below existing M2 routing)
+    gcx = 3710
+    gcy = 3500  # below band 2 gates, above c_tail M2 at y≈1
+
+    # Gate Contact (160x160)
+    cont_li = ly.layer(6, 0)
+    cell.shapes(cont_li).insert(pya.Box(gcx - 80, gcy - 80, gcx + 80, gcy + 80))
+
+    # M1 pad
+    m1_li = ly.layer(8, 0)
+    cell.shapes(m1_li).insert(pya.Box(gcx - 185, gcy - 185, gcx + 185, gcy + 185))
+
+    # Via1 + M2
+    add_via1_m2(cell, ly, gcx, gcy)
+
+    print(f'  comp Mc_inp.G: gate contact + Via1+M2 at ({gcx}, {gcy})')
+    ly.write(path)
+    print(f'  comp: written to {path}')
+
+
 def main():
     print('=== Adding Via1+M2 landing pads ===\n')
     patch_rin()
     patch_dac_sw()
+    patch_passive('rdac', 'dac_out terminal')
+    patch_passive('rout', 'vptat terminal')
+    patch_comp_inp()
     print('\n=== Done ===')
 
 
