@@ -259,6 +259,39 @@ def route():
     cell.shapes(layers[VIA2]).insert(box(107700-vhs, 59300-vhs, 107700+vhs, 59300+vhs))
     cell.shapes(layers[M3]).insert(box(107700-phs, 59300-phs, 107700+phs, 59300+phs))
 
+    # ─── net_rptat: ptat_core MN2.S → rptat PLUS ───
+    # Both M2 endpoints. ptat_core (160500, 51000), rptat (188100, 79100)
+    route_digital_to_m2(cell, layers,
+                        160500, 51000,   # ptat_core bottom M2 bus
+                        188100, 79100,   # rptat M2 pad
+                        175000,          # M4 column
+                        'net_rptat')
+    # Add Via2 at ptat_core source (M2, not M3)
+    cell.shapes(layers[VIA2]).insert(box(160500-vhs, 51000-vhs, 160500+vhs, 51000+vhs))
+    cell.shapes(layers[M3]).insert(box(160500-phs, 51000-phs, 160500+phs, 51000+phs))
+
+    # ─── nmos_bias: bias_mn → vco_5stage bottom bus ───
+    # bias_mn M2 bus: (161.9,36.7)-(167.3,37.0). Via2 at left end (163000, 36900)
+    # vco_5stage bottom bus: (155.0,2.5)-(157.9,2.8). Via2 at right end (157000, 2600)
+    route_digital_to_m2(cell, layers,
+                        163000, 36900,  # bias_mn (as "source")
+                        157000, 2600,   # vco_5stage nmos_bias bus
+                        162000,         # M4 column
+                        'nmos_bias')
+    cell.shapes(layers[VIA2]).insert(box(163000-vhs, 36900-vhs, 163000+vhs, 36900+vhs))
+    cell.shapes(layers[M3]).insert(box(163000-phs, 36900-phs, 163000+phs, 36900+phs))
+
+    # ─── pmos_bias: bias_mn → vco_5stage mid bus ───
+    # Via2 at right end of bias_mn bus (166000, 36900)
+    # vco_5stage mid bus: (155.0,9.7)-(157.1,10.0). Via2 at (156000, 9800)
+    route_digital_to_m2(cell, layers,
+                        166000, 36900,  # bias_mn
+                        156000, 9800,   # vco_5stage pmos_bias bus
+                        158000,         # M4 column (4um from nmos M4)
+                        'pmos_bias')
+    cell.shapes(layers[VIA2]).insert(box(166000-vhs, 36900-vhs, 166000+vhs, 36900+vhs))
+    cell.shapes(layers[M3]).insert(box(166000-phs, 36900-phs, 166000+phs, 36900+phs))
+
     # ─── Write ───
     out_path = os.path.join(OUT_DIR, 'soilz_assembled.gds')
     ly.write(out_path)
