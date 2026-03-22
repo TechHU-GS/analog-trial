@@ -251,24 +251,36 @@ VCO 5-stage + digital: 已有 GDS
 - phi_n: dig(46.0,65.1) → hbridge_drive(65.4,23.2), M4@x=57 ✅
 - f_exc, f_exc_b: SKIPPED — M3 在 y=22-24 区域拥挤，和 exc_out 冲突
 
-**总计 14/27 nets routed (CI DRC=0, N=1134, -20 from baseline)**
-- ⚠️ Quick DRC M3.b=4, CI DRC=0 (CI 可能有 same-net 豁免)
+**LONG nets batch 2 (verified 2026-03-22):**
+- f_exc: Z-route dig(46,55)→chopper(86.2,23), mid_y=28, M4@52/86 ✅
+- f_exc_b: Z-route dig(46,64.2)→chopper(91.9,23.5), mid_y=30, M4@50/92 ✅
+- vco_out: dig LEFT(17,28.1)→vco_buffer(181.4,8.1), 161um M3-H! M4@178 ✅
+- net_c1: bias_cascode(107.7,59.3)→ptat_core(169.3,62.2), M4@135 ✅
+- net_rptat: ptat_core(160.5,51.0)→rptat(188.1,79.1), M4@175 ✅
+- nmos_bias: bias_mn(163,36.9)→vco_5stage(157,2.6), M4@162 ✅
+- pmos_bias: bias_mn(166,36.9)→vco_5stage(156,9.8), M4@158 ✅
+- ref_I, ref_Q: digital 内部信号 — **不需要 inter-module routing** ✅
 
-**剩余 13 nets:**
-- f_exc, f_exc_b: 需 M5 或绕路 (M3 拥挤)
-- vco5: vco_5stage 无 M2 (需查)
-- vco_out: digital(17.5,28.1) → vco_buffer (158um!)
-- nmos_bias, pmos_bias: 多模块 fanout
-- net_c1: ptat_core ↔ bias_cascode
-- net_rptat: ptat_core ↔ rptat (需 rptat M2 pad)
-- sum_n: 4模块 (ota + c_fb + rin + rdac)
-- power: vdd, gnd
+**总計 21/25 signal nets routed (verified 2026-03-22):**
+- CI DRC: **0** ✅
+- N=1118 (baseline 1154, **-36**)
+- Warnings=417 (baseline 435, **-18**)
+- ⚠️ 多条路由 net identity 基于 M2 bus 位置推断，未全部直接验证
+- ⚠️ rptat M2 pads 用 inline script 加（非 build script，reassemble 会丢失）
+
+**Blocked nets (4):**
+- sum_n: ota Min_n.G 无 M2, rin/rdac MINUS 端无 M2, c_fb CMIM 无 M2
+- vco5: vco_5stage 右端 M2 bus 身份不明
+- cbyp_n/cbyp_p: CMIM PLUS terminal 在 M4/M5 无 M2 (nmos/pmos_bias 连接不完整)
+
+**Power (未做):**
+- vdd: 9+ modules, 需 TM1 stripe + via stack
+- gnd: 15+ modules, 需 TM1 stripe + via stack
 
 ### 下一步
-1. 继续 LONG nets (能做的先做)
-2. f_exc/f_exc_b: 换 M5 层或 M4 绕路
-3. Power routing (TM1)
-4. LVS 验证 (deadline 24号)
+1. 攻 blocked nets (sum_n, vco5)
+2. Power routing (TM1 stripe)
+3. LVS 最终验证 (deadline 24号)
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
