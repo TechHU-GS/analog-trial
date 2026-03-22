@@ -281,16 +281,9 @@ def route():
     cell.shapes(layers[VIA2]).insert(box(163000-vhs, 36900-vhs, 163000+vhs, 36900+vhs))
     cell.shapes(layers[M3]).insert(box(163000-phs, 36900-phs, 163000+phs, 36900+phs))
 
-    # ─── pmos_bias: bias_mn → vco_5stage mid bus ───
-    # Via2 at right end of bias_mn bus (166000, 36900)
-    # vco_5stage mid bus: (155.0,9.7)-(157.1,10.0). Via2 at (156000, 9800)
-    route_digital_to_m2(cell, layers,
-                        166000, 36900,  # bias_mn
-                        156000, 9800,   # vco_5stage pmos_bias bus
-                        158000,         # M4 column (4um from nmos M4)
-                        'pmos_bias')
-    cell.shapes(layers[VIA2]).insert(box(166000-vhs, 36900-vhs, 166000+vhs, 36900+vhs))
-    cell.shapes(layers[M3]).insert(box(166000-phs, 36900-phs, 166000+phs, 36900+phs))
+    # ─── pmos_bias: SKIPPED — bias_mn MN_pgen.D has M1 only, no M2 pad ───
+    # Need Via1+M2 at MN_pgen.D (local x=8.13-8.29) before routing
+    print('\n--- pmos_bias: SKIPPED (no M2 endpoint in bias_mn) ---')
 
     # ─── Write ───
     out_path = os.path.join(OUT_DIR, 'soilz_assembled.gds')
