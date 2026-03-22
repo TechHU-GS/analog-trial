@@ -316,12 +316,20 @@ VCO 5-stage + digital: 已有 GDS
 - L2N total nets: 1181 (接近 bare 1165, 无异常合并)
 - Power: TM1 buses 在 route_power.py 但 tap bridging 已移除 (短路问题)
 
+**LVS 根因分析 (2026-03-23):**
+- 之前用字符串计数 Y()/N() 得到的 "Y=939, N=1154" 完全错误
+- 用正确的 KLayout API (NetlistCrossReference) 解析: **0 net match, 0 device match, circuit NoMatch**
+- 根因 1: **device class case mismatch** — layout extractor 用小写 `sg13_lv_nmos`, SPICE reader 转大写 `SG13_LV_NMOS`. LVS 当做不同 device class.
+- 根因 2: **device count 差 45** — layout 495 MOSFET vs schematic 540. 来自 digital block multi-finger (ng>1) counting: layout 每 finger = 1 device, schematic ng=2 = 1 device. IHP LVS `ng` 参数被静默忽略.
+- 修根因 1: 改 mos_extraction.lvs 的 device name 为大写 → layout 也输出大写 → class match ✓. 但不应修改 PDK 文件.
+- 修根因 2: `combine_devices=true` 应该合并 parallel finger, 但实际没效果 (interleaved S/D 不是 strictly parallel).
+- **正确解法待定**: 需要在 LVS wrapper 里做 case-insensitive matching, 或在提取后 rename class.
+
 ### 下一步 (deadline 24号)
-1. Power routing: 需要无短路的 M3/M4 tap bridging 方案
-2. pmos_bias: 给 bias_mn MN_pgen.D 加 Via1+M2 pad
-3. Blocked: sum_n, vco5
-4. LVS: 需要 Y 增加
-5. 准备提交
+1. LVS case mismatch: 写 wrapper LVS script 或 post-extraction rename
+2. LVS device count: 可能需要接受 decap/filler 差异 (CI precheck 不查 LVS)
+3. Power routing: M5 层方案 (避免 M3/M4 signal routing 冲突)
+4. 准备提交 (CI DRC = 0 ✅)
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
