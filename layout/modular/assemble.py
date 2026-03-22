@@ -26,11 +26,12 @@ GDS_MAP = {
 
 # Original (unrotated) GDS sizes for rotation detection
 ORIG_SIZES = {
-    'vco_5stage': (108.8, 14.4), 'vco_buffer': (7.2, 12.7), 'inv_iso': (3.8, 9.8),
+    'vco_5stage': (108.8, 14.4), 'vco_buffer': (7.2, 12.7),
     'digital': (30.0, 80.0),  # native 30x80 from LibreLane (no rotation needed) 'chopper': (9.5, 6.4), 'rin': (3.8, 5.3),
     'ota': (23.0, 18.0), 'c_fb': (27.2, 27.2), 'comp': (9.3, 25.2),
     'hbridge': (7.7, 9.2), 'dac_sw': (8.2, 6.4), 'rdac': (2.3, 3.8),
-    'nol': (30.1, 11.8), 'hbridge_drive': (12.9, 4.1), 'sw': (15.6, 6.1),
+    # nol and inv_iso removed — functionality is in digital block (std cells)
+    'hbridge_drive': (12.9, 4.1), 'sw': (15.6, 6.1),
     'bias_cascode': (55.0, 16.6), 'ptat_core': (14.5, 18.0), 'bias_mn': (8.5, 3.0),
     'cbyp_n': (6.2, 6.2), 'cbyp_p': (6.2, 6.2), 'rptat': (10.6, 135.5), 'rout': (1.6, 101.3),
 }

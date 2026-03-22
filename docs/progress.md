@@ -109,10 +109,47 @@ VCO 5-stage + digital: 已有 GDS
 - Quick DRC: M1=0, M2=0. **CI DRC = 0 ✅**
 - Top cell: tt_um_techhu_analog_trial
 
+### Passive extraction 修复
+- build_passives.py: search box 从 placement w/h → marker-layer 实际 bbox
+- rin: 1→2 Contacts ✓ (两端)
+- rdac: 1→23 Contacts ✓ (扩展到 x=49600)
+- c_fb: 0→18 Contacts ✓
+- cbyp_n: 0→6 Contacts ✓
+- rptat/rout: terminal warning 保留 (PCell 设计: Contact 不 touch Res marker, LVS 仍提取到 4/4 rhigh)
+- cbyp_p: 0 Contact — PCell 无底层 terminal, 需组装时 via stack 连接
+- 3 个 LU.b (rptat, c_fb, cbyp_n) — latchup tie 缺失
+
+### LVS Baseline (post-passive-fix)
+- CI DRC = 0 ✅ (CI precheck 不查 LVS)
+- LVS: **469 net mismatches** (expected — no inter-module routing)
+- Device extraction:
+  - **rhigh: 4/4 ✅** (rptat, rout, rin, rdac 全部提取)
+  - cap_cmim: layout 2-3 / schematic 3
+  - MOSFET: layout 239N+235P / schematic 123N+127P
+    - 差异来自 digital block std cell MOSFET (schematic 是行为级, layout 是 transistor 级)
+    - **不是丢失器件** — analog 部分 device 完整
+- LVS 完整验证需要: digital block transistor-level SPICE (PDK sg13g2_stdcell.spice 可用)
+
+### Digital block 重构
+- 发现: digital block 已包含 NOL + INV_iso (std cell 版本)
+- T1Q, INV_VCO 被 synthesis 优化掉 → Verilog 加 (* keep *) → 重跑 LibreLane
+- 结果: 7 TFF + 3 MUX + 9 NOL + 2 INV_iso + 2 BUF + 4 misc = 完整
+- **去掉 nol.gds 和 inv_iso.gds** — 功能已在 digital block
+- 20 modules assembled (原 22 减 2)
+
+### LVS Baseline (final, post-cleanup)
+- CI DRC = 0 ✅
+- **LVS: 435 net mismatches** (all from unrouted inter-module nets)
+- Device extraction:
+  - **rhigh: 4/4 ✅** (⚠️ rptat/rout 有 "1 port" warning, 但设备被提取)
+  - **cap_cmim: 3/3 ✅**
+  - MOSFET: layout 250N+247P (含 digital std cell transistors)
+- 20 modules, 13468 shapes, DRC=0
+
 ### 下一步
-1. Power routing (VDD/GND TM1 bus)
-2. Inter-module signal routing (M3/M4/M5)
-3. LVS 验证
+1. Inter-module routing (25 signal nets + 2 power, 手动+Python)
+2. 合并 digital SPICE netlist 做完整 LVS
+3. LVS 最终验证 (目标: 0 mismatch)
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)

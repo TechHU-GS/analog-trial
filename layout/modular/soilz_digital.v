@@ -47,9 +47,9 @@ module soilz_digital (
     // ════════════════════════════════════════════
     wire vco_b, vco_buf, vco_buf_b;
 
-    sg13g2_inv_1 INV_VCO   (.A(vco_out),  .Y(vco_b));
-    sg13g2_inv_2 INV_iso   (.A(vco_out),  .Y(vco_buf));
-    sg13g2_inv_2 INV_isob  (.A(vco_buf),  .Y(vco_buf_b));
+    (* keep *) sg13g2_inv_1 INV_VCO   (.A(vco_out),  .Y(vco_b));
+    (* keep *) sg13g2_inv_2 INV_iso   (.A(vco_out),  .Y(vco_buf));
+    (* keep *) sg13g2_inv_2 INV_isob  (.A(vco_buf),  .Y(vco_buf_b));
 
     // ════════════════════════════════════════════
     // 2. TFF divider chain: 7 toggle FFs
@@ -65,7 +65,7 @@ module soilz_digital (
                          .RESET_B(reset_b), .Q(div2_I), .Q_N(div2_I_b));
 
     // T1Q: vco_buf → div2_Q (quadrature: opposite clock edge)
-    sg13g2_dfrbp_1 T1Q (.CLK(vco_buf),   .D(div2_Q_b),
+    (* keep *) sg13g2_dfrbp_1 T1Q (.CLK(vco_buf),   .D(div2_Q_b),
                          .RESET_B(reset_b), .Q(div2_Q), .Q_N(div2_Q_b));
 
     // T2I: div2_I → div4_I

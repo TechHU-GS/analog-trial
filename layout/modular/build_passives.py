@@ -27,13 +27,21 @@ OUT_DIR = os.path.join(SCRIPT_DIR, 'output')
 
 # (name, abs_x, abs_y, w, h, margin)
 PASSIVES = [
-    ('rptat',  15000, 15000,  9060, 135540, 1500),
-    ('rout',   11000, 15000,  1580, 101310, 1500),
-    ('rin',    24760, 59000, 22160,   2260, 1500),
-    ('rdac',   56500, 59000, 22160,   2260, 1500),
-    ('c_fb',   82000, 60000, 27200,  27200, 1500),
-    ('cbyp_n', 72000, 146000, 6200,   6200, 900),  # tight left margin to avoid neighbor at x=71055
-    ('cbyp_p', 60000, 139000, 6200,   6200, 1500),
+    # Coordinates from marker-layer analysis (seed bbox + contacts + 500nm margin)
+    # (name, search_x1, search_y1, search_w, search_h, origin_x_offset)
+    # Using absolute search boxes, not placement+margin
+]
+
+# Precise search boxes based on actual PCell extent (marker + contacts)
+PASSIVES_V2 = [
+    # (name, search_x1, search_y1, search_x2, search_y2)
+    ('rptat',  10770, 14750, 32000, 152610),
+    ('rout',   10700, 14750, 18500, 125500),
+    ('rin',    18500, 52500, 32040, 71640),
+    ('rdac',   49600, 58750, 59060, 75500),  # extended: Contact at x=50.1, Res to y=75
+    ('c_fb',   81500, 59500, 113920, 87700),
+    ('cbyp_n', 70325, 145500, 78700, 152700),
+    ('cbyp_p', 59500, 138500, 66700, 145700),
 ]
 
 
@@ -44,12 +52,12 @@ def build():
     src.read(os.path.join(LAYOUT_DIR, 'output', 'soilz_bare.gds'))
     src_top = src.top_cell()
 
-    for name, px, py, pw, ph, margin in PASSIVES:
+    for name, sx1, sy1, sx2, sy2 in PASSIVES_V2:
         out = pya.Layout()
         out.dbu = 0.001
         cell = out.create_cell(name)
 
-        search = pya.Box(px - margin, py - margin, px + pw + margin, py + ph + margin)
+        search = pya.Box(sx1, sy1, sx2, sy2)
 
         count = 0
         for li in src.layer_indices():
@@ -57,7 +65,7 @@ def build():
             tli = out.layer(info.layer, info.datatype)
             region = pya.Region(src_top.begin_shapes_rec(li))
             for poly in (region & pya.Region(search)).each():
-                cell.shapes(tli).insert(poly.moved(-px, -py))
+                cell.shapes(tli).insert(poly.moved(-sx1, -sy1))
                 count += 1
 
         out_path = os.path.join(OUT_DIR, f'{name}.gds')
