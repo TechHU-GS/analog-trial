@@ -35,12 +35,12 @@ PASSIVES = [
 # Precise search boxes based on actual PCell extent (marker + contacts)
 PASSIVES_V2 = [
     # (name, search_x1, search_y1, search_x2, search_y2)
-    ('rptat',  10770, 14750, 32000, 152610),
+    ('rptat',  14500, 14750, 32000, 150500),  # left=14500 avoids rout (x=11200-12400), upper avoids neighbor
     ('rout',   10700, 14750, 18500, 125500),
     ('rin',    18500, 52500, 32040, 71640),
-    ('rdac',   49600, 58750, 59060, 75500),  # extended: Contact at x=50.1, Res to y=75
-    ('c_fb',   81500, 59500, 113920, 87700),
-    ('cbyp_n', 70325, 145500, 78700, 152700),
+    ('rdac',   50000, 58750, 59060, 75500),  # left=50000 avoids neighbor Active at x=49600
+    ('c_fb',   81500, 59500, 111500, 87700),  # right=111500 avoids neighbor Active at x=112000
+    ('cbyp_n', 71500, 145500, 78700, 152700),  # left=71500 avoids neighbor Active at x=69-71
     ('cbyp_p', 59500, 138500, 66700, 145700),
 ]
 
