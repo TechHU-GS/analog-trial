@@ -146,18 +146,39 @@ VCO 5-stage + digital: 已有 GDS
   - MOSFET: layout 250N+247P (含 digital std cell transistors)
 - 20 modules, 13468 shapes, DRC=0
 
-### Passive stray cleanup + known issues
-- c_fb/cbyp_n: stray removed ✅
-- ⚠️ rdac: 2 stray transistor Active (矩形 search box 无法分离 — Contact 和邻居重叠)
-- ⚠️ rptat/rout: terminal "1 port" LVS warning
+### 全面模块审计 (Session 11, 2026-03-22)
+
+**审计工具**: audit_modules.py (stray detection) + audit_all_layers.py (全图层) + audit_completeness.py (soilz_bare 对比)
+
+**方案 B: Connectivity-based filtering (最终方案)**
+- build_passives.py 完全重写: 宽裕 search box + Res marker 连通性过滤
+- 过滤链: Res(52,0) → GatPoly(5,0) → Contact(6,0) → M1(8,0)
+- 不在链上的 shapes = stray → 自动删除
+
+**过滤结果 (verified 2026-03-22):**
+- rptat: 181→132 (49 stray removed), Contact 3→6 (顶部 terminal 恢复!) ✅
+- rout: 75→69 (6 stray removed) ✅
+- rin: 72→57 (15 stray removed) ✅
+- rdac: 131→23 (**108 stray removed** — 之前 search box 无法修的邻居全部清除) ✅
+- c_fb/cbyp_n/cbyp_p: cap 无需过滤 (upper-metal only, verified clean) ✅
+- **4/4 resistor 全部 PASS, Active=0, 0 stray** ✅
+
+**Completeness 验证:**
+- Passive 7/7 逐层和 soilz_bare.gds 对比 — 无缺失 ✅
+- Transistor 11/11 层完整 — SalBlock/TRANS 只在 resistor 上，transistor 不需要
+- ⚠️ ptat_core Active#4/#5: 有 gate 无 Contact — 推测是共享 S/D 结构，待 LVS 验证
+
+**Baseline (verified 2026-03-22, post-filter):**
+- CI DRC: **0 violations** ✅
+- Quick DRC: M1.a=0, M1.b=0, M2.a=0, M2.b=0 ✅
+- LVS: **434 net mismatches** (全部 inter-module 未连, 0 layout-only nets)
+- Matched nets: 939 (比 filter 前 +1, rptat terminal 恢复效果)
+- ⚠️ rptat "1 port" warning: 待确认是否已消除 (Contact 3→6 应该修复了)
 - ⚠️ cbyp_p: 无底层 terminal
-- Digital SPICE merged ✅ (soilz_lvs_complete.spice)
-- Digital standalone LVS: 0 mismatch ✅
 
 ### 下一步
-1. rdac stray: layer-specific extraction 或接受
-2. Inter-module routing (25 signal + 2 power, 手动+Python)
-3. LVS 最终验证 (目标: 0 mismatch)
+1. Inter-module routing (25 signal + 2 power, 手动规划+Python)
+2. LVS 最终验证 (目标: 0 mismatch)
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
