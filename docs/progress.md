@@ -325,11 +325,24 @@ VCO 5-stage + digital: 已有 GDS
 - 修根因 2: `combine_devices=true` 应该合并 parallel finger, 但实际没效果 (interleaved S/D 不是 strictly parallel).
 - **正确解法待定**: 需要在 LVS wrapper 里做 case-insensitive matching, 或在提取后 rename class.
 
-### 下一步 (deadline 24号)
-1. LVS case mismatch: 写 wrapper LVS script 或 post-extraction rename
-2. LVS device count: 可能需要接受 decap/filler 差异 (CI precheck 不查 LVS)
-3. Power routing: M5 层方案 (避免 M3/M4 signal routing 冲突)
-4. 准备提交 (CI DRC = 0 ✅)
+**LVS 突破 — analog-only 测试 (2026-03-23):**
+- 拆分 LVS: analog-only (不含 digital block) vs analog-only schematic
+- soilz_lvs.spice 修改:
+  1. 移除 164 个 digital device (NOL/TFF/MUX/INV/BUF — 已在 digital block)
+  2. 展开 VCO multi-finger: Mnb(×8), Mpb(×8), MBp2(×2), MBn2(×2) = +72 M-lines
+- 关键设置: `-rd no_simplify=true` (防止 simplifier 合并回 parallel devices)
+- **结果: Layout 171 devices vs Schematic 165 = 差 6！** (之前差 89)
+- 差异: NMOS +9, PMOS -3 — 可能是其他模块 multi-finger 未展开
+- Agent B 确认: `m=N` 不创建 N 个 device (只缩放 W), 必须拆成 N 条 M-line
+- Agent A 确认: `combine_devices` 无法工作 (gate poly 分离 + S/D 交替)
+- Agent B (case): KLayout comparator 本身 case-insensitive ✅, case 不是问题
+
+### 下一步
+1. 查最后 6 个 device 差异来源并修复
+2. 修复后 analog-only LVS 应能 match
+3. Power routing (M5 层方案)
+4. Full-chip LVS (analog + digital 合并)
+5. 提交
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)

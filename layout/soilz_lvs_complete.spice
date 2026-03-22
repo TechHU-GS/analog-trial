@@ -2,75 +2,75 @@
 
 ** === PDK Std Cell Definitions ===
 .subckt sg13g2_buf_1 X A VDD VSS
-XN1 net1 A VSS VSS sg13_lv_nmos w=550.00n l=130.00n ng=1 ad=1.87e-13 as=1.87e-13 pd=1.78e-06 ps=1.78e-06 m=1
-XN0 X net1 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XP1 X net1 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
-XP0 net1 A VDD VDD sg13_lv_pmos w=840.00n l=130.00n ng=1 ad=2.856e-13 as=2.856e-13 pd=2.36e-06 ps=2.36e-06 m=1
+MN1 net1 A VSS VSS sg13_lv_nmos w=550.00n l=130.00n ng=1 ad=1.87e-13 as=1.87e-13 pd=1.78e-06 ps=1.78e-06 m=1
+MN0 X net1 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MP1 X net1 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MP0 net1 A VDD VDD sg13_lv_pmos w=840.00n l=130.00n ng=1 ad=2.856e-13 as=2.856e-13 pd=2.36e-06 ps=2.36e-06 m=1
 .ends
 
 .subckt sg13g2_buf_2 X A VDD VSS
-XN1 net1 A VSS VSS sg13_lv_nmos w=640.00n l=130.00n ng=1 ad=2.176e-13 as=2.176e-13 pd=1.96e-06 ps=1.96e-06 m=1
-XN0 X net1 VSS VSS sg13_lv_nmos w=1.48u l=130.00n ng=2 ad=2.812e-13 as=5.032e-13 pd=2.24e-06 ps=4.32e-06 m=1
-XP1 X net1 VDD VDD sg13_lv_pmos w=2.24u l=130.00n ng=2 ad=4.256e-13 as=7.616e-13 pd=3e-06 ps=5.84e-06 m=1
-XP0 net1 A VDD VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
+MN1 net1 A VSS VSS sg13_lv_nmos w=640.00n l=130.00n ng=1 ad=2.176e-13 as=2.176e-13 pd=1.96e-06 ps=1.96e-06 m=1
+MN0 X net1 VSS VSS sg13_lv_nmos w=1.48u l=130.00n ng=2 ad=2.812e-13 as=5.032e-13 pd=2.24e-06 ps=4.32e-06 m=1
+MP1 X net1 VDD VDD sg13_lv_pmos w=2.24u l=130.00n ng=2 ad=4.256e-13 as=7.616e-13 pd=3e-06 ps=5.84e-06 m=1
+MP0 net1 A VDD VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
 .ends
 
 .subckt sg13g2_decap_4 VDD VSS
-XX1 VSS VDD VSS VSS sg13_lv_nmos w=420.00n l=1.000u ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XX0 VDD VSS VDD VDD sg13_lv_pmos w=1.000u l=1.000u ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
+MX1 VSS VDD VSS VSS sg13_lv_nmos w=420.00n l=1.000u ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MX0 VDD VSS VDD VDD sg13_lv_pmos w=1.000u l=1.000u ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
 .ends
 
 .subckt sg13g2_decap_8 VDD VSS
-XX1 VSS VDD VSS VSS sg13_lv_nmos w=840.00n l=1.000u ng=2 ad=1.596e-13 as=2.856e-13 pd=1.6e-06 ps=3.04e-06 m=1
-XX0 VDD VSS VDD VDD sg13_lv_pmos w=2.000u l=1.000u ng=2 ad=3.8e-13 as=6.8e-13 pd=2.76e-06 ps=5.36e-06 m=1
+MX1 VSS VDD VSS VSS sg13_lv_nmos w=840.00n l=1.000u ng=2 ad=1.596e-13 as=2.856e-13 pd=1.6e-06 ps=3.04e-06 m=1
+MX0 VDD VSS VDD VDD sg13_lv_pmos w=2.000u l=1.000u ng=2 ad=3.8e-13 as=6.8e-13 pd=2.76e-06 ps=5.36e-06 m=1
 .ends
 
 .subckt sg13g2_dfrbp_1 Q Q_N CLK D RESET_B VDD VSS
-XN13 net12 net2 VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN14 net5 clkneg net12 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN15 net2 net5 net11 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN16 net11 RESET_B VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN6 Q_N net5 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN0 Db D net10 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN1 net10 RESET_B VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN7 Db clkneg net6 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN8 net6 clkpos net9 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN9 net9 net4 net8 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN10 net8 RESET_B VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN11 net4 net6 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN2 clkneg CLK VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN12 net4 clkpos net5 VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN3 clkpos clkneg VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN4 Q net1 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN5 net1 net5 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XP14 net5 clkpos net3 VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XP15 net2 net5 VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XP16 net2 RESET_B VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XP6 Q_N net5 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
-XP7 Db clkpos net6 VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XP0 Db RESET_B VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XP1 Db D VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XP8 net7 net4 VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XP9 net6 clkneg net7 VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XP10 net6 RESET_B VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XP2 clkneg CLK VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
-XP3 clkpos clkneg VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
-XP11 net4 net6 VDD VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
-XP12 net4 clkneg net5 VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
-XP4 Q net1 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
-XP13 net3 net2 VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XP5 net1 net5 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MN13 net12 net2 VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN14 net5 clkneg net12 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN15 net2 net5 net11 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN16 net11 RESET_B VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN6 Q_N net5 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN0 Db D net10 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN1 net10 RESET_B VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN7 Db clkneg net6 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN8 net6 clkpos net9 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN9 net9 net4 net8 VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN10 net8 RESET_B VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN11 net4 net6 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN2 clkneg CLK VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN12 net4 clkpos net5 VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN3 clkpos clkneg VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN4 Q net1 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN5 net1 net5 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MP14 net5 clkpos net3 VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP15 net2 net5 VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP16 net2 RESET_B VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP6 Q_N net5 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MP7 Db clkpos net6 VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP0 Db RESET_B VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP1 Db D VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP8 net7 net4 VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP9 net6 clkneg net7 VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP10 net6 RESET_B VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP2 clkneg CLK VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MP3 clkpos clkneg VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MP11 net4 net6 VDD VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
+MP12 net4 clkneg net5 VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
+MP4 Q net1 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MP13 net3 net2 VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP5 net1 net5 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
 .ends
 
 .subckt sg13g2_dlygate4sd3_1 X A VDD VSS
-XP3 X net3 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
-XP2 net3 net2 VDD VDD sg13_lv_pmos w=1.000u l=500.0n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
-XP1 net2 net1 VDD VDD sg13_lv_pmos w=1.000u l=500.0n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
-XP0 net1 A VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN3 X net3 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN2 net3 net2 VSS VSS sg13_lv_nmos w=420.00n l=500.0n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN1 net2 net1 VSS VSS sg13_lv_nmos w=420.00n l=500.0n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
-XN0 net1 A VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MP3 X net3 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MP2 net3 net2 VDD VDD sg13_lv_pmos w=1.000u l=500.0n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
+MP1 net2 net1 VDD VDD sg13_lv_pmos w=1.000u l=500.0n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
+MP0 net1 A VDD VDD sg13_lv_pmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN3 X net3 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN2 net3 net2 VSS VSS sg13_lv_nmos w=420.00n l=500.0n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN1 net2 net1 VSS VSS sg13_lv_nmos w=420.00n l=500.0n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
+MN0 net1 A VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-13 pd=1.52e-06 ps=1.52e-06 m=1
 .ends
 
 .subckt sg13g2_fill_1 VDD VSS
@@ -80,204 +80,65 @@ XN0 net1 A VSS VSS sg13_lv_nmos w=420.00n l=130.00n ng=1 ad=1.428e-13 as=1.428e-
 .ends
 
 .subckt sg13g2_inv_1 Y A VDD VSS
-XX1 Y A VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XX0 Y A VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MX1 Y A VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MX0 Y A VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
 .ends
 
 .subckt sg13g2_inv_2 Y A VDD VSS
-XX1 Y A VSS VSS sg13_lv_nmos w=1.48u l=130.00n ng=2 ad=2.812e-13 as=5.032e-13 pd=2.24e-06 ps=4.32e-06 m=1
-XX0 Y A VDD VDD sg13_lv_pmos w=2.24u l=130.00n ng=2 ad=4.256e-13 as=7.616e-13 pd=3e-06 ps=5.84e-06 m=1
+MX1 Y A VSS VSS sg13_lv_nmos w=1.48u l=130.00n ng=2 ad=2.812e-13 as=5.032e-13 pd=2.24e-06 ps=4.32e-06 m=1
+MX0 Y A VDD VDD sg13_lv_pmos w=2.24u l=130.00n ng=2 ad=4.256e-13 as=7.616e-13 pd=3e-06 ps=5.84e-06 m=1
 .ends
 
 .subckt sg13g2_mux2_1 X A0 A1 S VDD VSS
-XP0 net4 S VDD VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
-XP4 X net6 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
-XP3 net6 A1 net5 VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
-XP5 Sb S VDD VDD sg13_lv_pmos w=840.00n l=130.00n ng=1 ad=2.856e-13 as=2.856e-13 pd=2.36e-06 ps=2.36e-06 m=1
-XP2 net5 Sb VDD VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
-XP1 net6 A0 net4 VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
-XN4 net3 S VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN1 net1 Sb VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN6 X net6 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN5 Sb S VSS VSS sg13_lv_nmos w=550.00n l=130.00n ng=1 ad=1.87e-13 as=1.87e-13 pd=1.78e-06 ps=1.78e-06 m=1
-XN2 net6 A1 net3 VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN0 net6 A0 net1 VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MP0 net4 S VDD VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
+MP4 X net6 VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MP3 net6 A1 net5 VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
+MP5 Sb S VDD VDD sg13_lv_pmos w=840.00n l=130.00n ng=1 ad=2.856e-13 as=2.856e-13 pd=2.36e-06 ps=2.36e-06 m=1
+MP2 net5 Sb VDD VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
+MP1 net6 A0 net4 VDD sg13_lv_pmos w=1.000u l=130.00n ng=1 ad=3.4e-13 as=3.4e-13 pd=2.68e-06 ps=2.68e-06 m=1
+MN4 net3 S VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN1 net1 Sb VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN6 X net6 VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN5 Sb S VSS VSS sg13_lv_nmos w=550.00n l=130.00n ng=1 ad=1.87e-13 as=1.87e-13 pd=1.78e-06 ps=1.78e-06 m=1
+MN2 net6 A1 net3 VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN0 net6 A0 net1 VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
 .ends
 
 .subckt sg13g2_nand2_1 Y A B VDD VSS
-XP1 Y B VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
-XP0 Y A VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
-XN1 net1 B VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
-XN0 Y A net1 VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MP1 Y B VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MP0 Y A VDD VDD sg13_lv_pmos w=1.12u l=130.00n ng=1 ad=3.808e-13 as=3.808e-13 pd=2.92e-06 ps=2.92e-06 m=1
+MN1 net1 B VSS VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
+MN0 Y A net1 VSS sg13_lv_nmos w=740.00n l=130.00n ng=1 ad=2.516e-13 as=2.516e-13 pd=2.16e-06 ps=2.16e-06 m=1
 .ends
 
 ** === Digital Block ===
 .subckt soilz_digital gnd vdd buf_ref_I buf_ref_Q div16_I div16_Q div2_I div4_I div4_Q f_exc f_exc_b freq_sel iq_sel phi_n phi_p ref_I ref_Q reset_b vco_out
-XFILLER_3_56 vdd gnd sg13g2_fill_2
-XFILLER_7_7 vdd gnd sg13g2_decap_8
-XFILLER_0_35 vdd gnd sg13g2_decap_8
-XFILLER_18_42 vdd gnd sg13g2_decap_8
-XFILLER_15_21 vdd gnd sg13g2_decap_8
-XFILLER_3_35 vdd gnd sg13g2_decap_8
-XFILLER_18_21 vdd gnd sg13g2_decap_8
-XFILLER_15_7 vdd gnd sg13g2_decap_8
-XFILLER_0_14 vdd gnd sg13g2_decap_8
-XFILLER_9_56 vdd gnd sg13g2_fill_2
-XFILLER_3_14 vdd gnd sg13g2_decap_8
-XFILLER_9_35 vdd gnd sg13g2_decap_4
-XFILLER_1_0 vdd gnd sg13g2_decap_8
-XFILLER_6_14 vdd gnd sg13g2_fill_1
-XFILLER_15_56 vdd gnd sg13g2_fill_2
-XFILLER_13_5 vdd gnd sg13g2_decap_8
-XFILLER_5_7 vdd gnd sg13g2_decap_8
 XT4Q input3/X gnd vdd T4Q/D div16_Q T4Q/D T3/Q sg13g2_dfrbp_1
 XT3 input3/X gnd vdd T3/D T3/Q T3/D div4_I sg13g2_dfrbp_1
-XFILLER_18_56 vdd gnd sg13g2_fill_2
-XFILLER_0_49 vdd gnd sg13g2_decap_8
-XFILLER_9_14 vdd gnd sg13g2_decap_8
-XFILLER_15_35 vdd gnd sg13g2_decap_8
-XFILLER_3_49 vdd gnd sg13g2_decap_8
-XFILLER_0_28 vdd gnd sg13g2_decap_8
-XFILLER_18_35 vdd gnd sg13g2_decap_8
 XBUF_Q vdd buf_ref_Q ref_Q gnd sg13g2_inv_1
-XFILLER_15_14 vdd gnd sg13g2_decap_8
-XFILLER_3_28 vdd gnd sg13g2_decap_8
-XFILLER_18_14 vdd gnd sg13g2_decap_8
 XT2Q input3/X gnd vdd T2Q/D div4_Q T2Q/D div2_I sg13g2_dfrbp_1
-XFILLER_3_7 vdd gnd sg13g2_decap_8
-XFILLER_9_28 vdd gnd sg13g2_decap_8
-XFILLER_9_39 vdd gnd sg13g2_fill_1
-XFILLER_15_49 vdd gnd sg13g2_decap_8
-XFILLER_18_49 vdd gnd sg13g2_decap_8
-XFILLER_18_0 vdd gnd sg13g2_decap_8
-XFILLER_10_50 vdd gnd sg13g2_decap_8
-XFILLER_15_28 vdd gnd sg13g2_decap_8
-XFILLER_7_51 vdd gnd sg13g2_fill_2
-XFILLER_18_28 vdd gnd sg13g2_decap_8
-XFILLER_1_42 vdd gnd sg13g2_decap_8
-XFILLER_13_40 vdd gnd sg13g2_fill_2
-XFILLER_4_42 vdd gnd sg13g2_decap_8
-XFILLER_1_7 vdd gnd sg13g2_decap_8
-XFILLER_1_21 vdd gnd sg13g2_decap_8
 XINV_isob T1I/CLK INV_iso/Y vdd gnd sg13g2_inv_2
-XFILLER_7_53 vdd gnd sg13g2_fill_1
-XFILLER_4_21 vdd gnd sg13g2_decap_8
-XFILLER_13_52 vdd gnd sg13g2_decap_4
-XFILLER_16_0 vdd gnd sg13g2_decap_8
-XFILLER_13_42 vdd gnd sg13g2_fill_1
-XFILLER_1_56 vdd gnd sg13g2_fill_2
-XFILLER_10_43 vdd gnd sg13g2_decap_8
-XFILLER_7_44 vdd gnd sg13g2_decap_8
-XFILLER_16_42 vdd gnd sg13g2_decap_8
-XFILLER_4_56 vdd gnd sg13g2_fill_2
 XMXfi div4_I div16_I MXfq/S ref_I vdd gnd sg13g2_mux2_1
-XFILLER_6_0 vdd gnd sg13g2_decap_8
-XFILLER_1_35 vdd gnd sg13g2_decap_8
 Xinput1 freq_sel MXfq/S vdd gnd sg13g2_buf_1
-XFILLER_16_21 vdd gnd sg13g2_decap_8
-XFILLER_13_33 vdd gnd sg13g2_decap_8
-XFILLER_4_35 vdd gnd sg13g2_decap_8
-XFILLER_1_14 vdd gnd sg13g2_decap_8
 Xinput2 iq_sel MXiq/S vdd gnd sg13g2_buf_1
-XFILLER_14_0 vdd gnd sg13g2_decap_8
-XFILLER_4_14 vdd gnd sg13g2_decap_8
-XFILLER_13_56 vdd gnd sg13g2_fill_2
-XFILLER_13_12 vdd gnd sg13g2_decap_8
-XFILLER_18_7 vdd gnd sg13g2_decap_8
 Xinput3 reset_b input3/X vdd gnd sg13g2_buf_2
-XFILLER_10_57 vdd gnd sg13g2_fill_1
-XFILLER_16_56 vdd gnd sg13g2_fill_2
-XFILLER_7_14 vdd gnd sg13g2_fill_1
-XFILLER_1_49 vdd gnd sg13g2_decap_8
-XFILLER_4_0 vdd gnd sg13g2_decap_8
-XFILLER_10_36 vdd gnd sg13g2_decap_8
-XFILLER_16_35 vdd gnd sg13g2_decap_8
-XFILLER_4_49 vdd gnd sg13g2_decap_8
-XFILLER_1_28 vdd gnd sg13g2_decap_8
-XFILLER_16_14 vdd gnd sg13g2_decap_8
-XFILLER_12_0 vdd gnd sg13g2_fill_1
-XFILLER_4_28 vdd gnd sg13g2_decap_8
 XMXiq ref_I ref_Q MXiq/S f_exc vdd gnd sg13g2_mux2_1
-XFILLER_13_26 vdd gnd sg13g2_decap_8
-XFILLER_16_7 vdd gnd sg13g2_decap_8
-XFILLER_16_49 vdd gnd sg13g2_decap_8
 XDB1 vdd DB2/A f_exc_b gnd sg13g2_inv_1
-XFILLER_2_0 vdd gnd sg13g2_decap_8
-XFILLER_6_7 vdd gnd sg13g2_decap_8
 XDB2 vdd NB/B DB2/A gnd sg13g2_inv_1
-XFILLER_10_29 vdd gnd sg13g2_decap_8
 XDA1 vdd DA2/A f_exc gnd sg13g2_inv_1
-XFILLER_16_28 vdd gnd sg13g2_decap_8
 XMXfq div4_Q div16_Q MXfq/S ref_Q vdd gnd sg13g2_mux2_1
-XFILLER_2_42 vdd gnd sg13g2_decap_8
 XDA2 vdd NA/B DA2/A gnd sg13g2_inv_1
-XFILLER_14_7 vdd gnd sg13g2_decap_8
-XFILLER_13_19 vdd gnd sg13g2_decap_8
 Xhold1 hold1/A vdd gnd T1I/D sg13g2_dlygate4sd3_1
-XFILLER_5_42 vdd gnd sg13g2_decap_8
-XFILLER_2_21 vdd gnd sg13g2_decap_8
-XFILLER_0_0 vdd gnd sg13g2_decap_8
-XFILLER_8_53 vdd gnd sg13g2_fill_1
-XFILLER_5_21 vdd gnd sg13g2_decap_8
-XFILLER_4_7 vdd gnd sg13g2_decap_8
-XFILLER_11_53 vdd gnd sg13g2_decap_4
 XNA NA/Y f_exc NA/B vdd gnd sg13g2_nand2_1
-XFILLER_14_42 vdd gnd sg13g2_decap_8
 XINV_exc f_exc_b f_exc vdd gnd sg13g2_inv_2
-XFILLER_2_56 vdd gnd sg13g2_fill_2
 XNB NB/Y f_exc_b NB/B vdd gnd sg13g2_nand2_1
-XFILLER_17_42 vdd gnd sg13g2_decap_8
-XFILLER_14_21 vdd gnd sg13g2_decap_8
-XFILLER_5_56 vdd gnd sg13g2_fill_2
-XFILLER_2_35 vdd gnd sg13g2_decap_8
-XFILLER_17_21 vdd gnd sg13g2_decap_8
-XFILLER_5_35 vdd gnd sg13g2_decap_8
-XFILLER_2_14 vdd gnd sg13g2_decap_8
-XFILLER_2_7 vdd gnd sg13g2_decap_8
-XFILLER_9_0 vdd gnd sg13g2_decap_8
-XFILLER_14_56 vdd gnd sg13g2_fill_2
-XFILLER_5_14 vdd gnd sg13g2_decap_8
-XFILLER_11_57 vdd gnd sg13g2_fill_1
-XFILLER_17_56 vdd gnd sg13g2_fill_2
-XFILLER_17_0 vdd gnd sg13g2_decap_8
-XFILLER_14_35 vdd gnd sg13g2_decap_8
 XIA vdd phi_p NA/Y gnd sg13g2_inv_1
-XFILLER_2_49 vdd gnd sg13g2_decap_8
-XFILLER_11_36 vdd gnd sg13g2_decap_8
-XFILLER_17_35 vdd gnd sg13g2_decap_8
-XFILLER_14_14 vdd gnd sg13g2_decap_8
-XFILLER_5_49 vdd gnd sg13g2_decap_8
-XFILLER_2_28 vdd gnd sg13g2_decap_8
 XIB vdd phi_n NB/Y gnd sg13g2_inv_1
-XFILLER_0_7 vdd gnd sg13g2_decap_8
-XFILLER_7_0 vdd gnd sg13g2_decap_8
-XFILLER_17_14 vdd gnd sg13g2_decap_8
-XFILLER_5_28 vdd gnd sg13g2_decap_8
-XFILLER_15_0 vdd gnd sg13g2_decap_8
-XFILLER_14_49 vdd gnd sg13g2_decap_8
-XFILLER_17_49 vdd gnd sg13g2_decap_8
 XT4I input3/X gnd vdd T4I/D div16_I T4I/D T3/Q sg13g2_dfrbp_1
-XFILLER_8_29 vdd gnd sg13g2_decap_4
-XFILLER_14_28 vdd gnd sg13g2_decap_8
-XFILLER_6_51 vdd gnd sg13g2_decap_8
-XFILLER_11_29 vdd gnd sg13g2_decap_8
-XFILLER_17_28 vdd gnd sg13g2_decap_8
-XFILLER_5_0 vdd gnd sg13g2_decap_8
-XFILLER_0_42 vdd gnd sg13g2_decap_8
-XFILLER_9_7 vdd gnd sg13g2_decap_8
 XBUF_I vdd buf_ref_I ref_I gnd sg13g2_inv_1
-XFILLER_3_42 vdd gnd sg13g2_decap_8
-XFILLER_0_21 vdd gnd sg13g2_decap_8
 XT2I input3/X gnd vdd T2I/D div4_I T2I/D div2_I sg13g2_dfrbp_1
-XFILLER_3_21 vdd gnd sg13g2_decap_8
-XFILLER_17_7 vdd gnd sg13g2_decap_8
 XINV_iso INV_iso/Y vco_out vdd gnd sg13g2_inv_2
 XT1I input3/X gnd vdd T1I/D div2_I hold1/A T1I/CLK sg13g2_dfrbp_1
-XFILLER_3_0 vdd gnd sg13g2_decap_8
-XFILLER_0_56 vdd gnd sg13g2_fill_2
-XFILLER_9_21 vdd gnd sg13g2_decap_8
-XFILLER_15_42 vdd gnd sg13g2_decap_8
-XFILLER_6_44 vdd gnd sg13g2_decap_8
 .ends
 
 ** === Top Cell ===
@@ -285,21 +146,7 @@ XFILLER_6_44 vdd gnd sg13g2_decap_8
 ** Auto-generated from netlist.json + device_lib.json
 ** 257 devices: 123 NMOS, 127 PMOS, 4 R
 
-.subckt tt_um_techhu_analog_trial gnd vdd bias_n buf1 buf_ref_I
-+ buf_ref_Q c_di_n c_di_p c_tail cas1 cas2 cas3 cas_ref chop_out comp_clk
-+ comp_outn comp_outp da1 dac_hi dac_lo dac_out db1 div16_I div16_I_b div16_Q
-+ div16_Q_b div2_I div2_I_b div2_Q div2_Q_b div4_I div4_I_b div4_Q div4_Q_b div8
-+ div8_b exc_out f_exc f_exc_b f_exc_b_d f_exc_d freq_sel iq_sel lat_q lat_qb
-+ mid_p mxfi_selb mxfq_selb mxiq_selb n1_mid n2_mid na_mid nand_a nand_b nb1
-+ nb2 nb3 nb4 nb5 nb_mid net_c1 net_c2 net_rptat nmos_bias ns1
-+ ns2 ns3 ns4 ns5 ota_out phi_n phi_p pmos_bias probe_n probe_p
-+ ref_I ref_Q sel0 sel0b sel1 sel1b sel2 sel2b sens_n sens_p
-+ src1 src2 src3 sum_n t1I_m t1I_mb t1I_nmn t1I_nmp t1I_nsn t1I_nsp
-+ t1Q_m t1Q_mb t1Q_nmn t1Q_nmp t1Q_nsn t1Q_nsp t2I_m t2I_mb t2I_nmn t2I_nmp
-+ t2I_nsn t2I_nsp t2Q_m t2Q_mb t2Q_nmn t2Q_nmp t2Q_nsn t2Q_nsp t3_m t3_mb
-+ t3_nmn t3_nmp t3_nsn t3_nsp t4I_m t4I_mb t4I_nmn t4I_nmp t4I_nsn t4I_nsp
-+ t4Q_m t4Q_mb t4Q_nmn t4Q_nmp t4Q_nsn t4Q_nsp tail vcas vco1 vco2
-+ vco3 vco4 vco5 vco_b vco_buf vco_buf_b vco_out vptat vref_comp vref_ota
+.subckt tt_um_techhu_analog_trial gnd vdd bias_n buf1 buf_ref_I buf_ref_Q c_di_n c_di_p c_tail cas1 cas2 cas3 cas_ref chop_out comp_clk comp_outn comp_outp da1 dac_hi dac_lo dac_out db1 div16_I div16_I_b div16_Q div16_Q_b div2_I div2_I_b div2_Q div2_Q_b div4_I div4_I_b div4_Q div4_Q_b div8 div8_b exc_out f_exc f_exc_b f_exc_b_d f_exc_d freq_sel iq_sel lat_q lat_qb mid_p mxfi_selb mxfq_selb mxiq_selb n1_mid n2_mid na_mid nand_a nand_b nb1 nb2 nb3 nb4 nb5 nb_mid net_c1 net_c2 net_rptat nmos_bias ns1 ns2 ns3 ns4 ns5 ota_out phi_n phi_p pmos_bias probe_n probe_p ref_I ref_Q sel0 sel0b sel1 sel1b sel2 sel2b sens_n sens_p src1 src2 src3 sum_n t1I_m t1I_mb t1I_nmn t1I_nmp t1I_nsn t1I_nsp t1Q_m t1Q_mb t1Q_nmn t1Q_nmp t1Q_nsn t1Q_nsp t2I_m t2I_mb t2I_nmn t2I_nmp t2I_nsn t2I_nsp t2Q_m t2Q_mb t2Q_nmn t2Q_nmp t2Q_nsn t2Q_nsp t3_m t3_mb t3_nmn t3_nmp t3_nsn t3_nsp t4I_m t4I_mb t4I_nmn t4I_nmp t4I_nsn t4I_nsp t4Q_m t4Q_mb t4Q_nmn t4Q_nmp t4Q_nsn t4Q_nsp tail vcas vco1 vco2 vco3 vco4 vco5 vco_b vco_buf vco_buf_b vco_out vptat vref_comp vref_ota
 
 MPM3 net_c1 net_c1 vdd vdd sg13_lv_pmos W=0.5u L=50u
 MPM4 net_c2 net_c1 vdd vdd sg13_lv_pmos W=0.5u L=50u
@@ -561,8 +408,6 @@ MINV_isob_p vco_buf_b vco_buf vdd vdd sg13_lv_pmos W=2u L=0.5u
 
 
 ** Digital block instance
-Xdigital gnd vdd buf_ref_I buf_ref_Q div16_I div16_Q div2_I div4_I
-+ div4_Q f_exc f_exc_b freq_sel iq_sel phi_n phi_p ref_I
-+ ref_Q reset_b vco_out soilz_digital
+Xdigital gnd vdd buf_ref_I buf_ref_Q div16_I div16_Q div2_I div4_I div4_Q f_exc f_exc_b freq_sel iq_sel phi_n phi_p ref_I ref_Q reset_b vco_out soilz_digital
 .ends tt_um_techhu_analog_trial
 
