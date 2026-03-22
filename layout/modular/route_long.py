@@ -232,6 +232,33 @@ def route():
     route_z(dig_ports['f_exc_b'][0], dig_ports['f_exc_b'][1],
             91900, 23550, 50000, 30000, 92000, 'f_exc_b')
 
+    # ─── vco_out: digital LEFT → vco_buffer ───
+    # digital LEFT M3 port: (17000, 28100)
+    # vco_buffer M2 bus: (180800,7900)-(182000,8300), center (181400, 8100)
+    # 161um horizontal M3 run! M4 near vco_buffer.
+    route_digital_to_m2(cell, layers,
+                        dig_ports['vco_out'][0], dig_ports['vco_out'][1],
+                        181400, 8100,   # vco_buffer vco_out bus
+                        178000,         # M4 near vco_buffer
+                        'vco_out')
+
+    # ─── net_c1: ptat_core gate bus → bias_cascode gate bus ───
+    # Both M2 endpoints. Use L-route pattern (Via2 → M3 → Via3 → M4 → Via3 → M3 → Via2)
+    # ptat_core bus right end: (169300, 62150)
+    # bias_cascode bus right end: (107700, 59300)
+    # Nearly horizontal, Δy=2.9um. M4 at x=135000.
+    route_digital_to_m2(cell, layers,
+                        107700, 59300,   # bias_cascode (treated as "digital" — just needs M3 pad)
+                        169300, 62150,   # ptat_core
+                        135000,          # M4 column
+                        'net_c1')
+    # Note: source is M2 not M3, so Via2 is needed at source too.
+    # route_digital_to_m2 doesn't add Via2 at source — add manually:
+    vhs = VIA_SZ // 2
+    phs = VIA_PAD // 2
+    cell.shapes(layers[VIA2]).insert(box(107700-vhs, 59300-vhs, 107700+vhs, 59300+vhs))
+    cell.shapes(layers[M3]).insert(box(107700-phs, 59300-phs, 107700+phs, 59300+phs))
+
     # ─── Write ───
     out_path = os.path.join(OUT_DIR, 'soilz_assembled.gds')
     ly.write(out_path)
