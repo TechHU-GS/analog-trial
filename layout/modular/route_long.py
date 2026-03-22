@@ -175,38 +175,62 @@ def route():
                         57000,         # M4 column (2um from phi_p's M4)
                         'phi_n')
 
-    # ─── f_exc: digital → chopper (Mchop1n.G+Mchop2p.G) ───
-    # chopper at (84, 21). f_exc connects to chopper gates.
-    # Need to find chopper f_exc M2 endpoint.
-    # From build_chopper.py: f_exc = gate1/2 bus at local y≈1.0-1.35
-    # In assembled (no rotation): y ≈ 21+1.2 = 22.2
-    # Chopper M2 bus at y_c=22.3 is chop_out (widest bus, all S pins)
-    # The other buses might be f_exc/f_exc_b
-    # From earlier probe: chopper has buses at y=22.14 and two shorter at y=22.8/23.5(approx)
-    # Actually from the chopper local M2 probe:
-    #   y=0.34-0.66: chop_out (widest)
-    #   y=1.04-1.35: f_exc? (2 Via1)
-    #   y=1.75-2.06: f_exc_b? (2 Via1)
-    # In assembled (chopper at 84000, 21000):
-    #   f_exc ≈ y=21000+1200 = 22200 ... but this is very close to chop_out bus
-    # Let me use the second bus: assembled y≈22200+800=23000? Need exact position.
-    # From earlier full probe: chopper buses were:
-    #   (84.0,22.14)-(92.36,22.45) = chop_out
-    #   (84.9,22.84)-(87.56,23.15) = f_exc?
-    #   (90.56,23.55)-(93.24,23.86) = f_exc_b?
-    # Let me try the second bus center: (86.2, 23.0)
-    route_digital_to_m2(cell, layers,
-                        dig_ports['f_exc'][0], dig_ports['f_exc'][1],
-                        86200, 23000,  # chopper f_exc bus (approx)
-                        52000,         # M4 between digital and chopper
-                        'f_exc')
+    # ─── f_exc + f_exc_b: Z-route to avoid M3 congestion at y=22-24 ───
+    # M3 at y=22-24 is occupied by exc_out/phi routes. Use intermediate M3 at y=28/30.
+    # Pattern: dig M3 → Via3 → M4↓(to mid_y) → Via3 → M3(mid_y) → Via3 → M4↓(to dst) → Via3 → M3 → Via2
 
-    # ─── f_exc_b: digital → chopper (Mchop1p.G+Mchop2n.G) ───
-    route_digital_to_m2(cell, layers,
-                        dig_ports['f_exc_b'][0], dig_ports['f_exc_b'][1],
-                        91900, 23550,  # chopper f_exc_b bus (approx)
-                        50000,         # M4 column
-                        'f_exc_b')
+    def route_z(dig_x, dig_y, dst_x, dst_y, m4_top, mid_y, m4_bot, name):
+        """Z-route with intermediate M3 level to avoid congestion."""
+        print(f'\n--- {name}: Z dig({dig_x/1000:.1f},{dig_y/1000:.1f}) → dst({dst_x/1000:.1f},{dst_y/1000:.1f}) mid_y={mid_y/1000:.0f} ---')
+        hw, phs, vhs = W//2, VIA_PAD//2, VIA_SZ//2
+        S = []  # (layer_gds, shape)
+
+        # 1: M3 digital → m4_top
+        S.append((M3, box(min(dig_x,m4_top)-phs, dig_y-hw, max(dig_x,m4_top)+phs, dig_y+hw)))
+        for lg in [VIA3, M4, M3]:
+            S.append((lg, box(m4_top-phs, dig_y-phs, m4_top+phs, dig_y+phs)))
+        # 2: M4 dig_y → mid_y
+        S.append((M4, box(m4_top-hw, min(dig_y,mid_y)-phs, m4_top+hw, max(dig_y,mid_y)+phs)))
+        for lg in [VIA3, M3, M4]:
+            S.append((lg, box(m4_top-phs, mid_y-phs, m4_top+phs, mid_y+phs)))
+        # 3: M3 m4_top → m4_bot at mid_y
+        S.append((M3, box(min(m4_top,m4_bot)-phs, mid_y-hw, max(m4_top,m4_bot)+phs, mid_y+hw)))
+        for lg in [VIA3, M4, M3]:
+            S.append((lg, box(m4_bot-phs, mid_y-phs, m4_bot+phs, mid_y+phs)))
+        # 4: M4 mid_y → dst_y
+        S.append((M4, box(m4_bot-hw, min(mid_y,dst_y)-phs, m4_bot+hw, max(mid_y,dst_y)+phs)))
+        for lg in [VIA3, M3]:
+            S.append((lg, box(m4_bot-phs, dst_y-phs, m4_bot+phs, dst_y+phs)))
+        # 5: M3 m4_bot → dst Via2
+        S.append((M3, box(min(m4_bot,dst_x)-phs, dst_y-hw, max(m4_bot,dst_x)+phs, dst_y+hw)))
+        S.append((VIA2, box(dst_x-vhs, dst_y-vhs, dst_x+vhs, dst_y+vhs)))
+        S.append((M3, box(dst_x-phs, dst_y-phs, dst_x+phs, dst_y+phs)))
+
+        # Check (skip first M3 = digital overlap, skip vias)
+        ok = True
+        for i, (lg, sh) in enumerate(S):
+            if lg in [VIA2, VIA3] or i == 0:
+                continue
+            v = check_collision(cell, sh, lg)
+            if v:
+                b = sh
+                print(f'  ❌ {", ".join(v)} at ({b.left/1000:.1f},{b.bottom/1000:.1f})-({b.right/1000:.1f},{b.top/1000:.1f})')
+                ok = False
+        if not ok:
+            print(f'  ⚠️ {name}: SKIPPED')
+            return False
+        for lg, sh in S:
+            cell.shapes(layers.get(lg, cell.layout().layer(*lg))).insert(sh)
+        print(f'  ✅ {name}: routed (Z)')
+        return True
+
+    # f_exc: mid_y=28000, m4_top@52, m4_bot@86 (near chopper)
+    route_z(dig_ports['f_exc'][0], dig_ports['f_exc'][1],
+            86200, 23000, 52000, 28000, 86000, 'f_exc')
+
+    # f_exc_b: mid_y=30000, m4_top@50, m4_bot@92
+    route_z(dig_ports['f_exc_b'][0], dig_ports['f_exc_b'][1],
+            91900, 23550, 50000, 30000, 92000, 'f_exc_b')
 
     # ─── Write ───
     out_path = os.path.join(OUT_DIR, 'soilz_assembled.gds')
