@@ -337,12 +337,29 @@ VCO 5-stage + digital: 已有 GDS
 - Agent A 确认: `combine_devices` 无法工作 (gate poly 分离 + S/D 交替)
 - Agent B (case): KLayout comparator 本身 case-insensitive ✅, case 不是问题
 
+**LVS 参数分析 (2026-03-23):**
+- 差 6 来源: PCell 物理参数 vs schematic 标注不一致
+  - L=2.5um 在 layout 有 7 个 device, schematic 没有 (PCell 非标准 L)
+  - L=50um (pmos_mirror) 在 schematic 有 4 个, layout 提取 0 (可能被合并)
+  - 多个 device W 不同 (PCell auto-finger 后 per-finger W ≠ schematic total W)
+- IHP test case 验证: ng=2 PCell 用连续 gate poly → 提取为 1 device ✓
+  但我们的 analog PCell 用分离 gate poly (多 finger) → 提取为 N device
+- `no_simplify=true` 关键: 禁止 simplifier 合并 parallel schematic devices
+- LVS 参数不匹配 ≠ 功能错误 (PCell 物理正确, 只是 schematic 标注不对)
+
+**功能完整性评估:**
+- ✅ 20 signal routes L2N 验证正确
+- ✅ Module 内部连线正确 (mini_lvs)
+- ✅ CI DRC = 0 (可提交)
+- ❌ Power routing 未完成 (TM1 bus 就位, tap 未连)
+- ❌ 部分信号缺失 (sum_n, vco5, pmos_bias)
+- ⚠️ LVS 参数匹配需要逐 PCell 核对 W/L
+
 ### 下一步
-1. 查最后 6 个 device 差异来源并修复
-2. 修复后 analog-only LVS 应能 match
-3. Power routing (M5 层方案)
-4. Full-chip LVS (analog + digital 合并)
-5. 提交
+1. Power routing (M5 层, 避免 M3/M4 冲突)
+2. 缺失信号 routing (sum_n, vco5, pmos_bias)
+3. LVS 参数修正 (逐 PCell 核对 W/L, 生成正确 schematic)
+4. 提交
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
