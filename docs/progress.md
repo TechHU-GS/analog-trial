@@ -146,9 +146,17 @@ VCO 5-stage + digital: 已有 GDS
   - MOSFET: layout 250N+247P (含 digital std cell transistors)
 - 20 modules, 13468 shapes, DRC=0
 
+### Passive stray cleanup + known issues
+- c_fb/cbyp_n: stray removed ✅
+- ⚠️ rdac: 2 stray transistor Active (矩形 search box 无法分离 — Contact 和邻居重叠)
+- ⚠️ rptat/rout: terminal "1 port" LVS warning
+- ⚠️ cbyp_p: 无底层 terminal
+- Digital SPICE merged ✅ (soilz_lvs_complete.spice)
+- Digital standalone LVS: 0 mismatch ✅
+
 ### 下一步
-1. Inter-module routing (25 signal nets + 2 power, 手动+Python)
-2. 合并 digital SPICE netlist 做完整 LVS
+1. rdac stray: layer-specific extraction 或接受
+2. Inter-module routing (25 signal + 2 power, 手动+Python)
 3. LVS 最终验证 (目标: 0 mismatch)
 
 ### Floorplan 定稿 (final)
