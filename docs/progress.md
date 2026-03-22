@@ -244,10 +244,31 @@ VCO 5-stage + digital: 已有 GDS
 - **12/12 collision-free, CI DRC=0, N=1138 (-16), warnings=427 (-8)**
 - ⚠️ 多处 net identity 基于推断 (M2 bus 位置、Via1 count、gate poly x)，未直接验证
 
+**LONG nets batch 1: phi_p + phi_n (verified 2026-03-22):**
+- route_long.py: digital M3 pin → Via3 → M4-V → Via3 → M3 → Via2 → hbridge_drive M2
+- Digital M3 ports found via label layer (30,25) at block boundary
+- phi_p: dig(46.0,63.4) → hbridge_drive(68.1,23.7), M4@x=55 ✅
+- phi_n: dig(46.0,65.1) → hbridge_drive(65.4,23.2), M4@x=57 ✅
+- f_exc, f_exc_b: SKIPPED — M3 在 y=22-24 区域拥挤，和 exc_out 冲突
+
+**总计 14/27 nets routed (CI DRC=0, N=1134, -20 from baseline)**
+- ⚠️ Quick DRC M3.b=4, CI DRC=0 (CI 可能有 same-net 豁免)
+
+**剩余 13 nets:**
+- f_exc, f_exc_b: 需 M5 或绕路 (M3 拥挤)
+- vco5: vco_5stage 无 M2 (需查)
+- vco_out: digital(17.5,28.1) → vco_buffer (158um!)
+- nmos_bias, pmos_bias: 多模块 fanout
+- net_c1: ptat_core ↔ bias_cascode
+- net_rptat: ptat_core ↔ rptat (需 rptat M2 pad)
+- sum_n: 4模块 (ota + c_fb + rin + rdac)
+- power: vdd, gnd
+
 ### 下一步
-1. LONG nets (13条): vco_out, f_exc, ref_I/Q, vco5, bias 分配等
-2. POWER (2条): vdd, gnd
-3. LVS 最终验证 (deadline 24号)
+1. 继续 LONG nets (能做的先做)
+2. f_exc/f_exc_b: 换 M5 层或 M4 绕路
+3. Power routing (TM1)
+4. LVS 验证 (deadline 24号)
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
