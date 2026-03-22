@@ -302,11 +302,26 @@ VCO 5-stage + digital: 已有 GDS
 - ⚠️ Y 不变: power net fragment 在合并但未完全匹配 schematic
 - ⚠️ 电气连通性未直接验证
 
+**L2N 验证 + 短路修复 (2026-03-23):**
+- 用 KLayout L2N extraction 验证 routing 正确性 (full metal stack M1→M4)
+- route_m3 12 条: 全部 ✅ (两端 same cluster_id, 无 cross-net)
+- route_long: net_c1 ✅, net_rptat ✅, nmos_bias ✅
+- **pmos_bias 短路发现+修复**: bias_mn M2 bus = nmos_bias only, pmos_bias (MN_pgen.D) 是 M1 only. 我的 Via2 落在 nmos_bias bus 上导致短路. 已移除 pmos_bias route.
+- ⚠️ phi_p/n, f_exc/b, vco_out: digital 端 L2N probe NONE (digital M3 不在 probe 范围)
+- **Power routing 移除**: M3/M4 tap bridging 和 signal routes 交叉导致大量短路. 需要重新设计.
+
+**当前状态 (verified 2026-03-23):**
+- 20 signal routes (15 L2N verified, 5 digital-end unverified)
+- CI DRC: **0** ✅
+- L2N total nets: 1181 (接近 bare 1165, 无异常合并)
+- Power: TM1 buses 在 route_power.py 但 tap bridging 已移除 (短路问题)
+
 ### 下一步 (deadline 24号)
-1. 查 M3 130 spacing violations 是否需要修
-2. Blocked signal: sum_n, vco5
-3. LVS 冲刺 — 需要 Y 增加才能证明连接正确
-4. 准备提交 (CI precheck = DRC only)
+1. Power routing: 需要无短路的 M3/M4 tap bridging 方案
+2. pmos_bias: 给 bias_mn MN_pgen.D 加 Via1+M2 pad
+3. Blocked: sum_n, vco5
+4. LVS: 需要 Y 增加
+5. 准备提交
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)

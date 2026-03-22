@@ -224,9 +224,9 @@ def route():
         print(f'  ✅ {name}: routed (Z)')
         return True
 
-    # f_exc: mid_y=28000, m4_top@52, m4_bot@86 (near chopper)
+    # f_exc: mid_y=32000 (avoid vco_out M3 at y=28100), m4_top@52, m4_bot@86
     route_z(dig_ports['f_exc'][0], dig_ports['f_exc'][1],
-            86200, 23000, 52000, 28000, 86000, 'f_exc')
+            86200, 23000, 52000, 32000, 86000, 'f_exc')
 
     # f_exc_b: mid_y=30000, m4_top@50, m4_bot@92
     route_z(dig_ports['f_exc_b'][0], dig_ports['f_exc_b'][1],
