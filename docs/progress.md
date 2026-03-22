@@ -197,10 +197,27 @@ VCO 5-stage + digital: 已有 GDS
 - LONG (13): f_exc, ref_I/Q, vco_out, bias 分配等
 - POWER (2): vdd, gnd
 
+**M2 pad 准备 (verified 2026-03-22):**
+- build_hbridge.py: comp_outp/outn gate 加 Via1+M2 at y=-500 (NMOS 下方, M2 空闲区). CI DRC=0 ✅
+- add_m2_pads.py: rin terminal 加 Via1+M2 at (9710, 9830). CI DRC=0 ✅
+- hbridge_drive: 已有 4 条 M2 bus, 不需修改
+- Baseline 不变: DRC=0, LVS=434 ✅
+
+**M3 routing 首批 3/4 (route_m3.py, verified 2026-03-22):**
+- comp_outp: Via2@(142.6,27.3) → M3-H → Via3 → M4-V@x=148.0 → Via3 → M3-H → Via2@(150.5,33.9) ✅
+- comp_outn: Via2@(142.1,29.8) → M3-H → Via3 → M4-V@x=144.5 → Via3 → M3-H → Via2@(150.5,39.8) ✅
+- chop_out: Via2@(92.4,22.3) → M3-H → Via3 → M4-V@x=102.8 → Via3 → M3-H → Via2@(113.2,30.8) ✅
+- Collision detection: 3/3 clean
+- CI DRC: **0** ✅
+- LVS: **434 → 432 (-2)**, layout-only=0
+- ⚠️ chop_out: LVS 减少量低于预期, 可能 rin terminal 连的是 sum_n 端 (推测, 未验证)
+- exc_out: 未做 (hbridge_drive exc_out bus 待确认)
+
 ### 下一步
-1. M3+ routing: 从 LOCAL 4 条开始
-2. 部分端点需要先在 build script 加 M2 pad (hbridge gate, rin terminal)
-3. LVS 最终验证 (目标: 0 mismatch)
+1. exc_out routing (hbridge_drive → sw)
+2. 验证 chop_out 是否连对了 rin 端
+3. MEDIUM nets (8条)
+4. LVS 最终验证 (目标: 0 mismatch)
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
