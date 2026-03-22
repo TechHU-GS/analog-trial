@@ -245,6 +245,50 @@ def route():
 
     print(f'  {gnd_drops} GND via stacks placed (excl x={GND_EXCL[0]/1000:.0f}-{GND_EXCL[1]/1000:.0f})')
 
+    # ─── Power tap connections: TM1 stubs + via stacks at module taps ───
+    print('\n  --- Power tap connections ---')
+
+    # For each tap: add TM1 vertical stub from bus to tap y, then via stack M1→TM1
+    def connect_tap(cx, cy, bus_y, net_name, label):
+        """Connect a module tap at (cx, cy) to power bus at bus_y."""
+        # TM1 vertical stub from bus_y to cy
+        y1 = min(bus_y, cy)
+        y2 = max(bus_y, cy)
+        tm1_stub_hw = TM1_W // 2
+        cell.shapes(tm1_li).insert(box(cx - tm1_stub_hw, y1 - tm1_stub_hw,
+                                        cx + tm1_stub_hw, y2 + tm1_stub_hw))
+        # Via stack from M1 up to TM1 at the tap position
+        draw_via_stack(cell, ly, cx, cy, 'M1', 'TM1')
+        print(f'    {label} {net_name}: ({cx/1000:.1f},{cy/1000:.1f}) stub to y={bus_y/1000:.1f}')
+
+    # Key module taps (verified positions from probe)
+    # VDD taps → connect to VDD bus at VDD_Y
+    vdd_taps = [
+        (121500, 41300, 'ota'),       # close to bus
+        (147500, 24800, 'comp'),
+        (113300, 62900, 'bias_cas'),
+        (69200, 38800, 'sw'),
+        (143600, 39400, 'hbridge'),
+        (159100, 59500, 'ptat_core'),
+    ]
+    for cx, cy, label in vdd_taps:
+        connect_tap(cx, cy, VDD_Y, 'vdd', label)
+
+    # GND taps → connect to GND bus at GND_Y
+    gnd_taps = [
+        (128200, 39200, 'ota'),
+        (160100, 27200, 'comp'),
+        (63400, 49900, 'bias_cas'),
+        (63800, 33400, 'sw'),
+        (147500, 39800, 'hbridge'),
+        (173200, 53700, 'ptat_core'),
+        (161400, 36900, 'bias_mn'),
+    ]
+    for cx, cy, label in gnd_taps:
+        connect_tap(cx, cy, GND_Y, 'gnd', label)
+
+    print(f'  {len(vdd_taps)} VDD + {len(gnd_taps)} GND tap connections')
+
     # ─── Write ───
     out_path = os.path.join(OUT_DIR, 'soilz_assembled.gds')
     ly.write(out_path)
