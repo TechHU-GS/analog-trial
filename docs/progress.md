@@ -97,6 +97,23 @@ Passive modules (7): 全部 CI DRC = 0
 VCO 5-stage + digital: 已有 GDS
 **Total: 257/257 devices covered, all CI DRC = 0**
 
+### Digital block 重生成 (30×80 native)
+- LibreLane on 7640 server: DIE_AREA 80×30 → 30×80
+- 17秒完成，std cell 行保持水平，power rails 正确方向
+- 不再需要旋转，soilz_digital.gds 替换为 30×80 版本
+
+### 组装完成
+- assemble.py: 22 modules → soilz_assembled.gds
+- 13738 shapes, bbox 181.1×101.3um
+- 6 modules rotated (comp, hbridge, inv_iso, ota, ptat_core, rptat)
+- Quick DRC: M1=0, M2=0. **CI DRC = 0 ✅**
+- Top cell: tt_um_techhu_analog_trial
+
+### 下一步
+1. Power routing (VDD/GND TM1 bus)
+2. Inter-module signal routing (M3/M4/M5)
+3. LVS 验证
+
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
 - 22 modules placed, 0 overlaps, 7 warnings (structural long wires)
