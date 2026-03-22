@@ -124,16 +124,17 @@ def build():
     cell.shapes(l_psd).insert(box(ptap_x - 100, ptap_y - 100, ptap_x + ptap_size + 100, ptap_y + ptap_size + 100))
     cell.shapes(l_cont).insert(box(ptap_x + 170, ptap_y + 170, ptap_x + 330, ptap_y + 330))
 
-    # ntap: inside NWell but away from gate contacts
-    # NWell1: 1.88-3.68 → ntap at x=1.90 (left side, away from gate1 at 2.78)
-    # NWell2: 7.56-9.36 → ntap at x=8.90 (right side, away from gate4 at 8.46)
-    ntap_y = 4300
+    # ntap: inside NWell, 400nm above PMOS Active top (4310)
+    # NWell extended to cover ntap
+    l_nw = out.layer(31, 0)
+    cell.shapes(l_nw).insert(box(1880, 0, 9360, 5300))
+    ntap_y = 4700
     for ntap_x in [1900, 8900]:
         cell.shapes(l_activ).insert(box(ntap_x, ntap_y, ntap_x + ptap_size, ntap_y + ptap_size))
         cell.shapes(l_m1).insert(box(ntap_x, ntap_y, ntap_x + ptap_size, ntap_y + ptap_size))
         cell.shapes(l_cont).insert(box(ntap_x + 170, ntap_y + 170, ntap_x + 330, ntap_y + 330))
 
-    print('  ptap: x=4.2 y=-0.70; ntap: x=1.9,8.9 y=4.30')
+    print('  ptap: x=4.2 y=-0.70; ntap: x=1.9,8.9 y=4.70')
 
     # ─── Step 3: M2 routing (TG NMOS↔PMOS bridges + chop_out bus) ───
     print('\n--- Step 3: M2 routing ---')

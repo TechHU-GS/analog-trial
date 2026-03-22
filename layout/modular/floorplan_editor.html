@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SoilZ v1 Floorplan Editor</title>
+<style>
+body { margin: 0; font-family: monospace; display: flex; }
+#canvas { border: 1px solid #333; cursor: crosshair; }
+#panel { width: 300px; padding: 8px; background: #f5f5f5; overflow-y: auto; height: 100vh; font-size: 11px; }
+#panel h3 { margin: 8px 0 4px 0; font-size: 12px; border-bottom: 1px solid #ccc; }
+#info { white-space: pre; background: #fff; padding: 4px; border: 1px solid #ccc; min-height: 40px; }
+#overlaps { color: red; margin: 3px 0; }
+#selection { color: #333; background: #e8f0ff; padding: 3px; min-height: 20px; }
+#coords { white-space: pre; background: #fff; padding: 4px; border: 1px solid #ccc; max-height: 350px; overflow-y: auto; font-size: 10px; }
+button { margin: 2px; padding: 3px 8px; cursor: pointer; font-size: 11px; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 2px; margin: 2px 0; }
+.hint { font-size: 10px; color: #666; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="panel">
+  <h3>SoilZ Floorplan Editor</h3>
+  <div class="hint">Click=select | Shift+Click=multi-select | Drag=move | Right-click=rotate</div>
+  <div id="info">Click a module...</div>
+
+  <h3>Actions</h3>
+  <div class="btn-row">
+    <button onclick="checkOverlaps()">Overlaps</button>
+    <button onclick="saveCoords()">Save JSON</button>
+    <button onclick="exportPNG()">PNG</button>
+  </div>
+
+  <h3>Align (shift+click to multi-select)</h3>
+  <div class="btn-row">
+    <button onclick="align('top')">⬆ Top</button>
+    <button onclick="align('bottom')">⬇ Bottom</button>
+    <button onclick="align('left')">⬅ Left</button>
+    <button onclick="align('right')">➡ Right</button>
+    <button onclick="align('centerH')">⬌ CtrH</button>
+    <button onclick="align('centerV')">⬍ CtrV</button>
+  </div>
+
+  <h3>Distribute</h3>
+  <div class="btn-row">
+    <button onclick="distribute('h')">↔ Horiz</button>
+    <button onclick="distribute('v')">↕ Vert</button>
+    <button onclick="setGap()">Set Gap...</button>
+  </div>
+
+  <div id="overlaps"></div>
+  <h3>Selected</h3>
+  <div id="selection"></div>
+  <h3>All Coordinates</h3>
+  <div id="coords"></div>
+</div>
+
+<script>
+const TILE_W = 202.08, TILE_H = 627.48;
+const SCALE = 4.0;
+const POWER_X = 9.2;
+const OX = 35, OY = 15;
+const SNAP = 0.5;
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = Math.ceil(TILE_W * SCALE) + 70;
+canvas.height = Math.ceil(110 * SCALE) + 40;
+canvas.style.width = canvas.width + 'px';
+canvas.style.height = canvas.height + 'px';
+canvas.style.flexShrink = '0';
+
+const modules = [
+  {name:'vco_5stage', w:108.8, h:14.4, x:58.5, y:2.5, color:'#FF6666'},
+  {name:'vco_buffer', w:7.2, h:12.7, x:176, y:2.5, color:'#66FF66'},
+  {name:'inv_iso', w:9.8, h:3.8, x:171, y:21, color:'#6666FF'},
+  {name:'rout', w:1.6, h:101.3, x:196, y:2, color:'#D8D8D8'},
+  {name:'digital', w:30, h:80, x:16.5, y:5, color:'#CCCCCC'},
+  {name:'chopper', w:9.5, h:6.4, x:85.5, y:21, color:'#CC99FF'},
+  {name:'rin', w:3.8, h:5.3, x:103.5, y:21, color:'#C0C0C0'},
+  {name:'ota', w:18, h:23, x:116.5, y:21, color:'#FF99CC'},
+  {name:'c_fb', w:27.2, h:27.2, x:118, y:48, color:'#FFE0B2'},
+  {name:'comp', w:25.2, h:9.3, x:140, y:21, color:'#FFB366'},
+  {name:'hbridge', w:9.2, h:7.7, x:141.5, y:33, color:'#66B3FF'},
+  {name:'dac_sw', w:8.2, h:6.4, x:176.5, y:33, color:'#99FF66'},
+  {name:'rdac', w:2.3, h:3.8, x:188.5, y:21, color:'#B0B0B0'},
+  {name:'nol', w:30.1, h:11.8, x:80.5, y:33, color:'#99CCFF'},
+  {name:'hbridge_drive', w:12.9, h:4.1, x:61, y:21, color:'#99FFCC'},
+  {name:'sw', w:15.6, h:6.1, x:59, y:33, color:'#AAFFAA'},
+  {name:'rptat', w:135.5, h:10.6, x:53, y:78.5, color:'#E8E8E8'},
+  {name:'bias_cascode', w:55, h:16.6, x:59.5, y:48, color:'#FFFF99'},
+  {name:'ptat_core', w:18, h:14.5, x:154.5, y:48, color:'#FF9999'},
+  {name:'bias_mn', w:8.5, h:3, x:160, y:36, color:'#FFCC99'},
+  {name:'cbyp_n', w:6.2, h:6.2, x:180.5, y:48, color:'#A0E0A0'},
+  {name:'cbyp_p', w:6.2, h:6.2, x:181, y:59.5, color:'#A0A0E0'},
+];
+
+let selected = null;
+let multiSelect = [];
+let dragStart = null;
+
+function snap(v) { return Math.round(v / SNAP) * SNAP; }
+function umToPx(x, y) { return [OX + x * SCALE, OY + (110 - y) * SCALE]; }
+function pxToUm(px, py) { return [(px - OX) / SCALE, 110 - (py - OY) / SCALE]; }
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const [tx1,ty1] = umToPx(0, 110);
+  const [tx2,ty2] = umToPx(TILE_W, 0);
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+  ctx.strokeRect(tx1, ty1, tx2-tx1, ty2-ty1);
+
+  // Power stripe
+  const [px1,py1] = umToPx(1.8, 110);
+  const [px2,py2] = umToPx(POWER_X, 0);
+  ctx.fillStyle = 'rgba(255,200,200,0.3)';
+  ctx.fillRect(px1, py1, px2-px1, py2-py1);
+
+  // Grid
+  ctx.strokeStyle = '#eee'; ctx.lineWidth = 0.5;
+  ctx.font = '9px monospace'; ctx.fillStyle = '#aaa';
+  for (let x = 0; x <= TILE_W; x += 25) {
+    const [gx] = umToPx(x, 0); ctx.beginPath(); ctx.moveTo(gx, ty1); ctx.lineTo(gx, ty2); ctx.stroke();
+    ctx.fillText(x, gx-5, ty2+12);
+  }
+  for (let y = 0; y <= 110; y += 10) {
+    const [,gy] = umToPx(0, y); ctx.beginPath(); ctx.moveTo(tx1, gy); ctx.lineTo(tx2, gy); ctx.stroke();
+    ctx.fillText(y, tx1-18, gy+3);
+  }
+
+  // ua pins
+  for (const [ux,uy,label,col] of [[191,5,'ua[0]','red'],[167,5,'ua[1]','blue']]) {
+    const [px,py] = umToPx(ux, uy);
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI*2); ctx.fill();
+    ctx.font = '9px monospace'; ctx.fillText(label, px-12, py-8);
+  }
+
+  // Modules
+  for (const m of modules) {
+    const [x1,y1] = umToPx(m.x, m.y + m.h);
+    const [x2,y2] = umToPx(m.x + m.w, m.y);
+    ctx.fillStyle = m.color + 'AA';
+    ctx.fillRect(x1, y1, x2-x1, y2-y1);
+    const isSel = multiSelect.includes(m);
+    ctx.strokeStyle = isSel ? 'red' : m === selected ? 'blue' : '#333';
+    ctx.lineWidth = isSel ? 2.5 : m === selected ? 1.5 : 0.5;
+    ctx.strokeRect(x1, y1, x2-x1, y2-y1);
+    ctx.fillStyle = '#000';
+    const fs = Math.min(11, Math.max(6, Math.min(m.w, m.h) * SCALE / 3.5));
+    ctx.font = `bold ${fs}px monospace`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(m.name.replace(/_/g,'\n').split('\n')[0], (x1+x2)/2, (y1+y2)/2);
+    if (m.name.includes('_')) {
+      ctx.font = `${fs-1}px monospace`;
+      ctx.fillText(m.name.split('_').slice(1).join('_'), (x1+x2)/2, (y1+y2)/2+fs);
+    }
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+  updateCoordsList();
+}
+
+function findModule(px, py) {
+  const [ux, uy] = pxToUm(px, py);
+  for (let i = modules.length - 1; i >= 0; i--) {
+    const m = modules[i];
+    if (ux >= m.x && ux <= m.x + m.w && uy >= m.y && uy <= m.y + m.h) return m;
+  }
+  return null;
+}
+
+canvas.addEventListener('mousedown', e => {
+  const m = findModule(e.offsetX, e.offsetY);
+  if (e.shiftKey && m) {
+    const idx = multiSelect.indexOf(m);
+    if (idx >= 0) multiSelect.splice(idx, 1); else multiSelect.push(m);
+    selected = m;
+  } else {
+    selected = m;
+    if (m) {
+      if (!multiSelect.includes(m)) multiSelect = [m];
+      dragStart = {px: e.offsetX, py: e.offsetY, starts: multiSelect.map(s => ({m:s, ox:s.x, oy:s.y}))};
+      const idx = modules.indexOf(m); modules.splice(idx, 1); modules.push(m);
+    } else {
+      multiSelect = [];
+    }
+  }
+  updateSelection(); draw(); updateInfo();
+});
+
+canvas.addEventListener('mousemove', e => {
+  if (!dragStart || !dragStart.starts) return;
+  const dx = (e.offsetX - dragStart.px) / SCALE;
+  const dy = -(e.offsetY - dragStart.py) / SCALE;
+  for (const s of dragStart.starts) { s.m.x = s.ox + dx; s.m.y = s.oy + dy; }
+  draw(); updateInfo();
+});
+
+canvas.addEventListener('mouseup', e => {
+  if (dragStart && dragStart.starts) {
+    for (const s of dragStart.starts) { s.m.x = snap(s.m.x); s.m.y = snap(s.m.y); }
+    draw();
+  }
+  dragStart = null;
+});
+
+canvas.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  if (selected) {
+    const cx = selected.x + selected.w/2, cy = selected.y + selected.h/2;
+    [selected.w, selected.h] = [selected.h, selected.w];
+    selected.x = snap(cx - selected.w/2); selected.y = snap(cy - selected.h/2);
+    draw(); updateInfo();
+  }
+});
+
+// === ALIGN FUNCTIONS ===
+function align(mode) {
+  if (multiSelect.length < 2) { alert('Shift+click 2+ modules first'); return; }
+  const sel = multiSelect;
+  switch(mode) {
+    case 'top': { const maxY = Math.max(...sel.map(m => m.y + m.h)); sel.forEach(m => m.y = snap(maxY - m.h)); break; }
+    case 'bottom': { const minY = Math.min(...sel.map(m => m.y)); sel.forEach(m => m.y = snap(minY)); break; }
+    case 'left': { const minX = Math.min(...sel.map(m => m.x)); sel.forEach(m => m.x = snap(minX)); break; }
+    case 'right': { const maxX = Math.max(...sel.map(m => m.x + m.w)); sel.forEach(m => m.x = snap(maxX - m.w)); break; }
+    case 'centerH': { const avgY = sel.reduce((s,m) => s + m.y + m.h/2, 0) / sel.length; sel.forEach(m => m.y = snap(avgY - m.h/2)); break; }
+    case 'centerV': { const avgX = sel.reduce((s,m) => s + m.x + m.w/2, 0) / sel.length; sel.forEach(m => m.x = snap(avgX - m.w/2)); break; }
+  }
+  draw();
+}
+
+// === DISTRIBUTE FUNCTIONS ===
+function distribute(dir) {
+  if (multiSelect.length < 3) { alert('Select 3+ modules'); return; }
+  const sel = [...multiSelect];
+  if (dir === 'h') {
+    sel.sort((a,b) => a.x - b.x);
+    const totalW = sel.reduce((s,m) => s + m.w, 0);
+    const span = (sel[sel.length-1].x + sel[sel.length-1].w) - sel[0].x;
+    const gap = (span - totalW) / (sel.length - 1);
+    let cx = sel[0].x;
+    sel.forEach(m => { m.x = snap(cx); cx += m.w + gap; });
+  } else {
+    sel.sort((a,b) => a.y - b.y);
+    const totalH = sel.reduce((s,m) => s + m.h, 0);
+    const span = (sel[sel.length-1].y + sel[sel.length-1].h) - sel[0].y;
+    const gap = (span - totalH) / (sel.length - 1);
+    let cy = sel[0].y;
+    sel.forEach(m => { m.y = snap(cy); cy += m.h + gap; });
+  }
+  draw();
+}
+
+function setGap() {
+  if (multiSelect.length < 2) { alert('Select 2+ modules'); return; }
+  const gap = parseFloat(prompt('Gap between modules (um):', '3'));
+  if (isNaN(gap)) return;
+  const sel = [...multiSelect].sort((a,b) => a.x - b.x);
+  let cx = sel[0].x;
+  sel.forEach(m => { m.x = snap(cx); cx += m.w + gap; });
+  draw();
+}
+
+function checkOverlaps() {
+  const ovs = [];
+  for (let i = 0; i < modules.length; i++)
+    for (let j = i+1; j < modules.length; j++) {
+      const a = modules[i], b = modules[j];
+      const ox = Math.max(0, Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x));
+      const oy = Math.max(0, Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
+      if (ox > 0.1 && oy > 0.1) ovs.push(`${a.name} ↔ ${b.name}`);
+    }
+  document.getElementById('overlaps').textContent = ovs.length ? 'OVERLAPS:\n'+ovs.join('\n') : '✓ No overlaps';
+  document.getElementById('overlaps').style.color = ovs.length ? 'red' : 'green';
+}
+
+function updateInfo() {
+  const el = document.getElementById('info');
+  if (!selected) { el.textContent = 'Click a module...'; return; }
+  el.textContent = `${selected.name}  (${selected.x.toFixed(1)}, ${selected.y.toFixed(1)})  ${selected.w.toFixed(1)}×${selected.h.toFixed(1)}  end(${(selected.x+selected.w).toFixed(1)}, ${(selected.y+selected.h).toFixed(1)})`;
+}
+
+function updateSelection() {
+  document.getElementById('selection').textContent = multiSelect.length ?
+    multiSelect.map(m => m.name).join(', ') + ` (${multiSelect.length})` : '(none)';
+}
+
+function updateCoordsList() {
+  const el = document.getElementById('coords');
+  let s = '';
+  for (const m of [...modules].sort((a,b) => a.name.localeCompare(b.name)))
+    s += `${m.name.padEnd(17)}(${m.x.toFixed(1)},${m.y.toFixed(1)}) ${m.w.toFixed(1)}×${m.h.toFixed(1)}\n`;
+  el.textContent = s;
+}
+
+function saveCoords() {
+  const obj = {tile:{w:TILE_W,h:TILE_H}};
+  for (const m of modules) obj[m.name] = {x:+m.x.toFixed(1),y:+m.y.toFixed(1),w:+m.w.toFixed(1),h:+m.h.toFixed(1)};
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)]));
+  a.download = 'floorplan_coords.json'; a.click();
+}
+
+function exportPNG() {
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png'); a.download = 'floorplan.png'; a.click();
+}
+
+function runCheck() {
+  // Quick inline check
+  checkOverlaps();
+  let msg = '';
+  const chains = [['chopper','rin'],['rin','ota'],['ota','comp'],['comp','hbridge'],['hbridge','dac_sw'],
+    ['ota','c_fb'],['c_fb','comp'],['nol','hbridge_drive'],['vco_buffer','inv_iso'],['ptat_core','bias_mn']];
+  for (const [n1,n2] of chains) {
+    const a = modules.find(m=>m.name===n1), b = modules.find(m=>m.name===n2);
+    if (a && b) {
+      const d = Math.sqrt((a.x+a.w/2-b.x-b.w/2)**2+(a.y+a.h/2-b.y-b.h/2)**2);
+      if (d > 40) msg += `${n1}→${n2}: ${d.toFixed(0)}um\n`;
+    }
+  }
+  if (msg) { document.getElementById('overlaps').textContent += '\nLong wires:\n'+msg; }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'r' && selected) { canvas.dispatchEvent(new MouseEvent('contextmenu')); }
+  if (e.key === 'c') checkOverlaps();
+  if (e.key === 's') saveCoords();
+  if (e.key === 'a') { multiSelect = [...modules]; updateSelection(); draw(); } // select all
+  if (e.key === 'Escape') { multiSelect = []; selected = null; updateSelection(); draw(); }
+});
+
+draw(); checkOverlaps();
+</script>
+</body>
+</html>

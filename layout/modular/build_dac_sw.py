@@ -92,15 +92,15 @@ def build():
     cell.shapes(l_psd).insert(box(ptap_x-100, -800, ptap_x+600, -100))
     cell.shapes(l_cont).insert(box(ptap_x+170, -530, ptap_x+330, -370))
 
-    # ntap: inside NWell, away from gate centers
-    # NWell1: 1880-3680 → ntap at x=1.90 (left, away from gate1/2 at 2.78)
-    # NWell2: 6260-8060 → ntap at x=7.60 (right side, away from gate4/5 at 7.16)
+    # ntap: inside NWell, 400nm above PMOS Active top (4310)
+    l_nw = out.layer(31, 0)
+    cell.shapes(l_nw).insert(box(1880, 0, 8060, 5300))
     for ntap_x in [1900, 7600]:
-        cell.shapes(l_activ).insert(box(ntap_x, 4300, ntap_x+500, 4800))
-        cell.shapes(l_m1).insert(box(ntap_x, 4300, ntap_x+500, 4800))
-        cell.shapes(l_cont).insert(box(ntap_x+170, 4470, ntap_x+330, 4630))
+        cell.shapes(l_activ).insert(box(ntap_x, 4700, ntap_x+500, 5200))
+        cell.shapes(l_m1).insert(box(ntap_x, 4700, ntap_x+500, 5200))
+        cell.shapes(l_cont).insert(box(ntap_x+170, 4870, ntap_x+330, 5030))
 
-    print('  ptap: x=3.8; ntap: x=1.9,7.6')
+    print('  ptap: x=3.8; ntap: x=1.9,7.6 y=4.70')
 
     # ─── Step 3: M2 routing (S/D) ───
     print('\n--- Step 3: M2 routing ---')

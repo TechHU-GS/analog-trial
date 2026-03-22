@@ -54,8 +54,8 @@ def build():
     # ─── Step 1: Extract PCells ───
     print('\n--- Step 1: Extract PCells ---')
 
-    # Full area: x=31-54, y=70-86
-    search = pya.Box(30500, 69500, 54000, 86500)
+    # Right edge: include our M1 strip (right=53840) but exclude neighbor poly (left=53950)
+    search = pya.Box(30500, 69500, 53940, 86500)
     origin_x = 31000   # M_bias_mir x
     origin_y = 70500   # bottom band y
 
@@ -96,11 +96,16 @@ def build():
         cell.shapes(l_cont).insert(box(ptap_x+170, ptap_y+170, ptap_x+330, ptap_y+330))
 
     # ntap for PMOS (in NWell near top band)
-    # NWell: (9.20-14.50, 11.50-15.50) and (15.50-20.80, 11.50-15.50)
+    # NWell PCell: (9.20-14.50, 11.50-16.00) and (15.50-20.80, 11.50-16.00)
+    # Merge NWell + extend to cover ntap
+    l_nw = out.layer(*NWELL)
+    cell.shapes(l_nw).insert(box(9200, 11500, 20800, 17200))
+    # Place ntap well above PCell poly top (y=15990), gap ≥ 400nm
+    # ntap at y=16500-17000 (inside extended NWell)
     for ntap_x in [10000, 17000]:
-        cell.shapes(l_activ).insert(box(ntap_x, 15700, ntap_x+500, 16200))
-        cell.shapes(l_m1).insert(box(ntap_x, 15700, ntap_x+500, 16200))
-        cell.shapes(l_cont).insert(box(ntap_x+170, 15870, ntap_x+330, 16030))
+        cell.shapes(l_activ).insert(box(ntap_x, 16600, ntap_x + 500, 17100))
+        cell.shapes(l_m1).insert(box(ntap_x, 16600, ntap_x + 500, 17100))
+        cell.shapes(l_cont).insert(box(ntap_x + 170, 16770, ntap_x + 330, 16930))
 
     # Also ntap for M_bias_mir NWell (0.00-3.30, 0.00-1.12)
     cell.shapes(l_activ).insert(box(1000, 1300, 1500, 1800))
@@ -134,7 +139,7 @@ def build():
     # tail bus: Min_p.S [7130,11890,15540] + Min_n.S [15540,20300,25060]
     tail_pads = []
     for xl, xr in [(7130,7290), (11890,12050), (15540,15700),
-                    (20300,20460), (25060,25220)]:
+                    (20300,20460)]:
         tail_pads.append(add_via1(xl, xr, y_tail))
     m2_x1 = min(p[0] for p in tail_pads)
     m2_x2 = max(p[2] for p in tail_pads)
@@ -187,7 +192,8 @@ def build():
     # Bottom band, all at y≈0-4.
 
     # Mbias_d gate poly at (5130-9130, 0-4360). Extend above to 4860.
-    cell.shapes(l_poly).insert(box(5130, 4360, 9130, 4860))
+    # Widen poly ext right edge to ensure Contact enclosure ≥ 70nm
+    cell.shapes(l_poly).insert(box(5130, 4360, 9200, 4860))
     # Gate contact near D strip [9240]: at x=9000, y=4600
     cell.shapes(l_cont).insert(box(8920, 4520, 9080, 4680))
     cell.shapes(l_m1).insert(box(8845, 4445, 9155, 4755))

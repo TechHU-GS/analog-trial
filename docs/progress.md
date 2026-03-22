@@ -2,6 +2,122 @@
 
 > Read this after compact to restore context.
 
+## ★ Session 10 — hbridge 重做 + mini-LVS 脚本 (2026-03-22)
+
+### hbridge (SR latch) 重做
+- 找外援分析：确认是 sense-amplifier latch (不是全并联)，Mn1a/Mn2a 是输入管 (stacked)
+- 尝试 M3 cross-coupling routing → CI DRC=0 但用户决定不在模块内用 M3（留给组装）
+- 从 soilz_bare.gds 提取改为 **PCell 重新摆放**: compact symmetric, pair2 X-flip
+  - 7.7×9.2um (原 12.6×8.5um), NWell 全合并, CI DRC=0
+  - M1: n1_mid, n2_mid 桥 + comp_outp/outn gate routing
+  - M2: lat_q/lat_qb drain collection (Via1+M2 bus)
+  - Cross-coupling gate 连接留给组装
+- verify_modules.py 18 项全 0 ✅
+
+### mini_lvs.py — 模块级 netlist 验证
+- 新脚本 `modular/mini_lvs.py`：自动检测 S/D strips + gate pairing + M1/M2 connectivity vs netlist
+- MODULE_MAP: 11 模块的 device→netlist 映射
+- 关键修复过程：
+  - strip/gate 检测阈值放宽 (支持多指 gate 400-5000nm, strip 高度 ≥800nm)
+  - device pairing 改为 gate-centric (找 gate 两侧最近 strip)
+  - quality-based filtering (expected device count 约束，避免 routing poly extension 误配)
+  - sort by (cx, cy) 解决 NMOS/PMOS 交替排序匹配
+  - MODULE_FLIPS 支持 X-flip 器件 S/D 交换
+  - Via1-strip 匹配改用 merged M1 region (解决 Via1 在 routing pad 上方的误报)
+  - POWER_NETS (vdd/gnd) disconnect 标记为 deferred
+- **当前结果: 9/11 pass** (bias_mn, chopper, dac_sw, sw, bias_cascode, hbridge, hbridge_drive, vco_buffer, ptat_core)
+- **2 个 fail**: ota (3 disconnect, 疑似 device 匹配问题), comp (10 errors, 复杂多行排布)
+
+### OTA M2 stub 修复
+- mini-LVS 过程中用户发现 OTA 有 M2 stub 超出模块边界 (x=22.84→25.39, y≈7.0)
+- 原因: build_ota.py tail bus Via1 列表包含虚假坐标 (25060,25220) — 该位置无 strip
+- 修复: 移除多余 Via1，OTA 从 25.4→23.0um
+- CI DRC: 10 violations (全部 placement 已有, 非 routing)
+
+### 前仿对齐审查
+- 257 devices: 197 有 GDS 模块, 52 在 row_group 但无 GDS, 8 孤儿
+- 缺 build script: hbridge_drive, vco_buffer, ptat_core (GDS 存在但不可重现)
+- 缺 GDS: NOL (22), MUX+buffer (26, 可能在 digital block), INV_iso (4), passive (7)
+- 废弃 GDS 待清理: sr_latch, bias_core, bias_mirrors, vco_stage, vco_stage_routed
+
+### CI DRC 逐模块修复
+Session 9 记录 "CI DRC 全部 0" 但重新跑发现 73 violations (8 模块)。全部是 placement/tie 问题。
+修复方法: patch GDS (直接修 ntap 位置/NWell 合并)，未改 build script。
+- ✅ vco_buffer: NW.b1×2 → 合并 NWell → CI=0
+- ✅ chopper: Act.b×2+Cnt.g1×2 → ntap 上移 300nm + NWell 扩展 → CI=0
+- ✅ dac_sw: Act.b×2+Cnt.g1×2 → 同 chopper → CI=0
+- ✅ comp: NW.b1×4 → NWell 合并 + V1.b → Via1 去重 → CI=0
+- ✅ bias_cascode: LU.b×7 → ntap M1 补全 + NWell 扩展覆盖 → CI=0
+- ✅ ota: 10 violations → NWell 合并 + ntap 上移 + search box 精调 + poly ext 修正 → CI=0
+- ✅ ptat_core: NW.b1×5 → NWell 合并 + ntap 碎片清理 → CI=0
+- ✅ sw: Cnt.c×11 + Cnt.g2×11 → search box 扩展 + ntap 上移 → CI=0
+- **11/11 全部 CI DRC = 0 ✅ (verified 2026-03-22 01:12)**
+
+### NOL 模块 ✅ (新建)
+- `build_nol.py`: 22 devices, non-overlapping clock logic
+- M_inv0 从 x=112 搬到 block A 旁边 (47um→30um 压缩)
+- Routing: 7 inverter outputs (Via1+M2, 3 层 y 避免交叉) + 2 NAND mid (M1 bar)
+- 30.1×11.8um, CI DRC=0, mini-LVS pass
+
+### CI DRC build script 修复
+Session 9 声称 CI DRC 全 0，但重跑发现 73 violations。全部是 placement/tie 问题：
+- ota: search box 切了邻居 poly (50nm 碎片) + ntap 太近 PMOS + NWell 未合并 → build_ota.py 修复
+- sw: search box 切了 PCell M1 strip + ntap 太近 → build_sw.py search box 扩展 + ntap 上移
+- chopper/dac_sw: ntap 太近 PMOS Active → build_chopper.py/build_dac_sw.py ntap 上移 + NWell 扩展
+- comp: NWell 未合并 + Via1 重叠 → GDS patch
+- bias_cascode: ntap 缺 NWell 覆盖 → NWell 扩展 patch
+- vco_buffer: NWell 未合并 → GDS patch
+- ptat_core: NWell 未合并 + ntap 碎片 → GDS patch
+
+### 当前模块状态 (12 modules, 全部 CI DRC=0)
+1. ✅ bias_mn — CI=0
+2. ✅ chopper — CI=0 (build script 修复)
+3. ✅ dac_sw — CI=0 (build script 修复)
+4. ✅ sw — CI=0 (build script 修复)
+5. ✅ ota — CI=0 (build script 修复 + M2 stub 移除)
+6. ✅ comp — CI=0 (GDS patch)
+7. ✅ bias_cascode — CI=0 (GDS patch)
+8. ✅ hbridge — CI=0 (compact symmetric, PCell 重摆)
+9. ✅ hbridge_drive — CI=0
+10. ✅ vco_buffer — CI=0 (GDS patch)
+11. ✅ ptat_core — CI=0 (GDS patch)
+12. ✅ nol — CI=0 (新建, 30.1×11.8um)
+
+### 缺口: 0 — 257/257 全覆盖 ✅
+- ~~NOL (22 devices)~~ → ✅ build_nol.py, 30.1×11.8um, CI=0
+- ~~INV_iso (4 devices)~~ → ✅ build_inv_iso.py, 3.8×9.8um, CI=0
+- ~~Passive (7 devices)~~ → ✅ build_passives.py, 全部 CI=0
+  - rptat (10.6×135.5um), rout (1.6×101.3um)
+  - rin (3.8×5.3um), rdac (2.3×3.8um)
+  - c_fb (27.2×27.2um), cbyp_n (6.2×6.2um), cbyp_p (6.2×6.2um)
+
+### 全部模块 DRC 状态 (verified 2026-03-22)
+Active transistor modules (14): 全部 CI DRC = 0
+Passive modules (7): 全部 CI DRC = 0
+VCO 5-stage + digital: 已有 GDS
+**Total: 257/257 devices covered, all CI DRC = 0**
+
+### Floorplan 定稿 (final)
+- Tile: 202.08 × 627.48um (1x2)
+- 22 modules placed, 0 overlaps, 7 warnings (structural long wires)
+- 4 row alignment: y=2.5 (VCO), y=21 (SD loop), y=33 (excitation), y=48 (bias)
+- Analog extent: y=2-89um, remaining 538um for digital
+- 10 modules rotated (need GDS 90° transform at assembly)
+- Tools: floorplan_editor.html (interactive), check_floorplan.py (constraint checker)
+- Coords saved: modular/output/floorplan_coords.json
+
+### ⚠️ build_hbridge.py 状态不一致
+- 用户 revert 了 build_hbridge.py 到旧版 (soilz_bare 提取)
+- 但 hbridge.gds 仍是 compact symmetric 版本
+- 需要确认用哪个版本
+
+### 下一步
+1. 确认 hbridge build script 版本
+2. comp mini-LVS 10 errors 排查
+3. 补缺失模块 (NOL 22 devices, passive 7 devices)
+4. 清理废弃 GDS
+5. 全局组装
+
 ## ★ Session 9 — 模块 routing 逐个推进 (2026-03-21)
 
 ### 模块评估
@@ -30,13 +146,14 @@
 - 同 Chopper 拓扑: 3 条 M2 走线 (dac_out, dac_hi, dac_lo)
 - 8.2x5.6um, 验证: CI DRC → 0 violations
 
-### H-bridge (SR latch) routing ✅ (Quick+CI DRC=0)
-- build script: `modular/build_hbridge.py`
-- n1_mid / n2_mid: M1 bars
-- lat_q / lat_qb: M2 S/D chains + M1 vertical gate contacts (避免 M2 cross-net)
-- Cross-coupling: lat_q→Mn2b.G+Mp2b.G, lat_qb→Mn1b.G+Mp1b.G via M1 verticals+Via1
-- Input gates: comp_outp (M1 L-route), comp_outn (M1 block)
-- 12.6x8.5um, 验证: Quick DRC M1.b=0 M1.a=0 M2.b=0 + CI DRC → 0
+### H-bridge (SR latch) ⚠️ (re-placed, routing deferred to next session)
+- Pair extraction: (Mn1a+Mn1b) normal + (Mn2a+Mn2b) X-mirrored → cross-coupled adjacent
+- 10.5x9.0um, Quick DRC=0, CI DRC=0 (placement+ties only, NO routing)
+- ROUTING DEFERRED: cross-coupling needs M3 (M1+M2 insufficient for 8-device SR latch)
+- 失败的尝试: M2 vertical crossing → M2 cross-net short; M1 vertical → D/G too close (0.5um);
+  dogleg routing → more M1 conflicts; PCell internal M1 features within 140nm of D strips
+- 根因: 同一 device (Mn1b) 的 D(lat_q) 和 G(lat_qb) 物理间距仅 0.5um, M1+M2 两层不够
+- 解决方向: 用 M3 做 cross-coupling, 或在组装时用 M3/M4 routing
 
 ### Current SW routing ✅ (CI DRC=0)
 - build script: `modular/build_sw.py`
@@ -58,17 +175,16 @@
 - Gate routing: mid_p (Mp_load_p diode M1 bridge + Mp_load_n.G via M2)
 - 25.4x17.3um, 验证: CI DRC → 0 violations
 
-### COMP routing ⚠️ (CI DRC=0, 部分 routing)
-- build script: `modular/build_comp.py`
-- c_tail: M2 vertical (tail → diff pair sources)
-- comp_outp/outn: M2 vertical chains through 3 bands (latch+reset)
-- ⚠️ c_di_p/c_di_n + comp_clk + cross-coupled gates 留给组装
-- 9.3x24.6um, 验证: CI DRC → 0 violations
+### COMP routing ✅ (CI DRC=0, all internal nets routed)
+- build script: `modular/build_comp.py` + patch scripts
+- c_tail + c_di_p/c_di_n + comp_outp/outn chains + comp_clk (20um M2 vertical)
+- Cross-coupling gates: M1 blocks band3↔band4
+- 9.3x25.2um, 验证: Quick DRC 全 0 + CI DRC → 0
 
 ### 新增 3 模块 (缺失器件补齐)
 9. ✅ hbridge_drive (MS1-4): 12.7x3.5um, 4 M2 bus + phi_p/phi_n gate M1 bars
 10. ✅ vco_buffer (MBn1/2+MBp1/2): 6.2x12.1um, buf1 M1+M2 + vco5 gate M1 + vco_out M2
-11. ⚠️ ptat_core (PM3-5/PM_ref/PM_pdiode/MN1/MN2): 60x16um, extraction+ties only, routing 待做
+11. ✅ ptat_core (PM3-5/PM_ref/PM_pdiode/MN1/MN2): 14.5x17.9um, compact 2-col + routing
 
 ### 质量检查 (全模块)
 - Quick DRC (M1.b + M1.a + M2.b): 全部 0 ✅
@@ -81,7 +197,7 @@
 1. ✅ BIAS MN (完整 routing)
 2. ✅ Chopper (S/D M2 + gate M1)
 3. ✅ DAC switch (S/D M2 + gate M1)
-4. ✅ H-bridge/SR latch (cross-coupling + input gates)
+4. ⚠️ H-bridge/SR latch (pair2 mirrored re-placement, routing 待做 — 需 M3 for cross-coupling)
 5. ✅ Current SW (4x M2 bus)
 6. ✅ BIAS cascode (compact + cas_ref/1/2/3 + vcas)
 7. ✅ OTA (S/D + gate + bias_n)

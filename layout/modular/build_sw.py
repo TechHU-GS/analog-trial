@@ -52,7 +52,7 @@ def build():
 
     # ─── Step 1: Extract PCells ───
     print('\n--- Step 1: Extract PCells ---')
-    search = pya.Box(136500, 85000, 152500, 90000)
+    search = pya.Box(136500, 85000, 152600, 90000)
     origin_x = 137130
     origin_y = 85500
 
@@ -90,13 +90,15 @@ def build():
         cell.shapes(l_psd).insert(box(ptap_x-100, -800, ptap_x+600, -100))
         cell.shapes(l_cont).insert(box(ptap_x+170, -530, ptap_x+330, -370))
 
-    # ntap inside NWell: (1.88-3.68), (9.56-11.36), (13.94-15.37)
+    # ntap inside NWell, 400nm above PMOS Active top (4310)
+    l_nw = out.layer(31, 0)
+    cell.shapes(l_nw).insert(box(1880, 0, 15500, 5300))
     for ntap_x in [2200, 9900, 14300]:
-        cell.shapes(l_activ).insert(box(ntap_x, 4500, ntap_x+500, 5000))
-        cell.shapes(l_m1).insert(box(ntap_x, 4500, ntap_x+500, 5000))
-        cell.shapes(l_cont).insert(box(ntap_x+170, 4670, ntap_x+330, 4830))
+        cell.shapes(l_activ).insert(box(ntap_x, 4700, ntap_x+500, 5200))
+        cell.shapes(l_m1).insert(box(ntap_x, 4700, ntap_x+500, 5200))
+        cell.shapes(l_cont).insert(box(ntap_x+170, 4870, ntap_x+330, 5030))
 
-    print('  ptap: 4 positions at y=-0.70; ntap: 3 positions at y=4.50')
+    print('  ptap: 4 positions at y=-0.70; ntap: 3 positions at y=4.70')
 
     # ─── Step 3: M2 routing ───
     print('\n--- Step 3: M2 routing ---')
