@@ -102,11 +102,11 @@ def route():
     GND_Y = (GND_Y // 5) * 5  # snap to 5nm grid = 41960
 
     # Digital block TM1 stripes (absolute coords):
-    # VPWR: x=29960-31960 (digital at x=16500, local VPWR x=13460-15660)
-    # VGND: x=36160-38360 (local VGND x=19660-21860)
-    DIG_VPWR_X1 = 29960 - TM1_MIN_S  # notch start with spacing
-    DIG_VPWR_X2 = 31960 + TM1_MIN_S  # notch end with spacing
-    DIG_VGND_X1 = 36160 - TM1_MIN_S
+    # Use actual GDS stripe extents (wider than LEF nominal due to std cell routing):
+    # VPWR actual: x=30000-32200, VGND actual: x=36200-38400
+    DIG_VPWR_X1 = 30000 - TM1_MIN_S  # 28360
+    DIG_VPWR_X2 = 32200 + TM1_MIN_S  # 33840
+    DIG_VGND_X1 = 36200 - TM1_MIN_S  # 34560
     DIG_VGND_X2 = 38360 + TM1_MIN_S
 
     # c_fb MIM cap TM1 plate: check if it conflicts with our bus y levels
@@ -150,26 +150,30 @@ def route():
     m5_hw = m5_w // 2
     tv1_hs = TV1_SZ // 2
 
-    # VDD M5 bridge across VGND notch
-    vdd_bridge_x1 = DIG_VGND_X1 - 500  # overlap with left TM1 segment
-    vdd_bridge_x2 = DIG_VGND_X2 + 500  # overlap with right TM1 segment
-    cell.shapes(m5_li).insert(box(vdd_bridge_x1, VDD_Y - m5_hw, vdd_bridge_x2, VDD_Y + m5_hw))
-    # TopVia1 on each side of bridge
-    for bx in [DIG_VGND_X1 - 1000, DIG_VGND_X2 + 1000]:
+    # VDD M5 bridge across VGND notch — TopVia1 OUTSIDE digital stripe
+    # Place TopVia1 on the TM1 bus segments (outside the notch), not inside the stripe.
+    # Left TopVia1 at x just inside left TM1 segment end (x = DIG_VGND_X1 - TM1_W)
+    # Right TopVia1 at x just inside right TM1 segment start (x = DIG_VGND_X2 + TM1_W)
+    vdd_tv1_left = DIG_VGND_X1 - TM1_W  # well outside VGND stripe
+    vdd_tv1_right = DIG_VGND_X2 + TM1_W
+    cell.shapes(m5_li).insert(box(vdd_tv1_left - 500, VDD_Y - m5_hw,
+                                   vdd_tv1_right + 500, VDD_Y + m5_hw))
+    for bx in [vdd_tv1_left, vdd_tv1_right]:
         cell.shapes(tv1_li).insert(box(bx - tv1_hs, VDD_Y - tv1_hs, bx + tv1_hs, VDD_Y + tv1_hs))
         cell.shapes(m5_li).insert(box(bx - TV1_SZ//2 - TV1_ENC, VDD_Y - TV1_SZ//2 - TV1_ENC,
                                        bx + TV1_SZ//2 + TV1_ENC, VDD_Y + TV1_SZ//2 + TV1_ENC))
-    print(f'  VDD M5 bridge: x={vdd_bridge_x1/1000:.1f}-{vdd_bridge_x2/1000:.1f}')
+    print(f'  VDD M5 bridge: TopVia1 at x={vdd_tv1_left/1000:.1f} and {vdd_tv1_right/1000:.1f}')
 
     # GND M5 bridge across VPWR notch
-    gnd_bridge_x1 = DIG_VPWR_X1 - 500
-    gnd_bridge_x2 = DIG_VPWR_X2 + 500
-    cell.shapes(m5_li).insert(box(gnd_bridge_x1, GND_Y - m5_hw, gnd_bridge_x2, GND_Y + m5_hw))
-    for bx in [DIG_VPWR_X1 - 1000, DIG_VPWR_X2 + 1000]:
+    gnd_tv1_left = DIG_VPWR_X1 - TM1_W
+    gnd_tv1_right = DIG_VPWR_X2 + TM1_W
+    cell.shapes(m5_li).insert(box(gnd_tv1_left - 500, GND_Y - m5_hw,
+                                   gnd_tv1_right + 500, GND_Y + m5_hw))
+    for bx in [gnd_tv1_left, gnd_tv1_right]:
         cell.shapes(tv1_li).insert(box(bx - tv1_hs, GND_Y - tv1_hs, bx + tv1_hs, GND_Y + tv1_hs))
         cell.shapes(m5_li).insert(box(bx - TV1_SZ//2 - TV1_ENC, GND_Y - TV1_SZ//2 - TV1_ENC,
                                        bx + TV1_SZ//2 + TV1_ENC, GND_Y + TV1_SZ//2 + TV1_ENC))
-    print(f'  GND M5 bridge: x={gnd_bridge_x1/1000:.1f}-{gnd_bridge_x2/1000:.1f}')
+    print(f'  GND M5 bridge: TopVia1 at x={gnd_tv1_left/1000:.1f} and {gnd_tv1_right/1000:.1f}')
 
     # ─── Via stacks at module taps ───
     # Find all ntap (VDD) and ptap (GND) M1 pads in the assembled GDS
@@ -219,18 +223,27 @@ def route():
     # These create M2-M5 pads at regular intervals along y=44/46.
     # Then signal-style M3/M4 routing connects module taps to nearest via stack.
 
-    # Place via stacks every 15um
+    # Exclusion zones: digital TM1 stripes + margins
+    # VDD must avoid VGND stripe: x=36160-38360 ± TM1_W/2(820) for TM1 pad
+    # GND must avoid VPWR stripe: x=29960-31960 ± TM1_W/2(820)
+    VDD_EXCL = (DIG_VGND_X1 - TM1_W, DIG_VGND_X2 + TM1_W)  # (32680, 41640)
+    GND_EXCL = (DIG_VPWR_X1 - TM1_W, DIG_VPWR_X2 + TM1_W)  # (26080, 36000)
+
     for x in range(15000, 195000, 15000):
+        if VDD_EXCL[0] < x < VDD_EXCL[1]:
+            continue  # skip near VGND stripe
         draw_via_stack(cell, ly, x, VDD_Y, 'M2', 'TM1')
         vdd_drops += 1
 
-    print(f'  {vdd_drops} VDD via stacks placed')
+    print(f'  {vdd_drops} VDD via stacks placed (excl x={VDD_EXCL[0]/1000:.0f}-{VDD_EXCL[1]/1000:.0f})')
 
     for x in range(15000, 195000, 15000):
+        if GND_EXCL[0] < x < GND_EXCL[1]:
+            continue  # skip near VPWR stripe
         draw_via_stack(cell, ly, x, GND_Y, 'M2', 'TM1')
         gnd_drops += 1
 
-    print(f'  {gnd_drops} GND via stacks placed')
+    print(f'  {gnd_drops} GND via stacks placed (excl x={GND_EXCL[0]/1000:.0f}-{GND_EXCL[1]/1000:.0f})')
 
     # ─── Write ───
     out_path = os.path.join(OUT_DIR, 'soilz_assembled.gds')

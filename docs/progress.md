@@ -277,10 +277,25 @@ VCO 5-stage + digital: 已有 GDS
 - vdd: 9+ modules, 需 TM1 stripe + via stack
 - gnd: 15+ modules, 需 TM1 stripe + via stack
 
-### 下一步
-1. 攻 blocked nets (sum_n, vco5)
-2. Power routing (TM1 stripe)
-3. LVS 最终验证 (deadline 24号)
+**Power TM1 infrastructure (verified 2026-03-23):**
+- route_power.py: TM1 horizontal buses + via stacks
+- VDD bus at y=45.2um, GND bus at y=41.1um, 2400nm wide, full tile width
+- Notches at digital stripes (VPWR x=30-32, VGND x=36-38) with M5 bridges
+- 12+11 via stacks (M2→TM1) at 15um intervals, exclusion zones near digital
+- Cross-net verified: GND bus 和 VPWR stripe 在独立 merged polygon ✅
+- CI DRC=0 ✅
+- ⚠️ Via stacks 底部 (M2 level) 未连接到模块 ntap/ptap M1 — power 还不 functional
+
+**Session 11 总结 (2026-03-23):**
+- 21/25 signal nets routed (M3-H, M4-V, collision-free, CI DRC=0)
+- Power TM1 基础设施就位但未连到模块
+- N=1114 (-40 from baseline), Y=939 (未变), warnings=415 (-20)
+- ⚠️ 多条 net identity 基于推断, Y 未增加说明 net 未完全匹配
+
+### 下一步 (deadline 24号)
+1. Power: 连 via stack M2 到模块 ntap/ptap M1 (bridge routing)
+2. Blocked signal: sum_n, vco5
+3. LVS 冲刺 — 目标: Y 增加, 最终验证
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
