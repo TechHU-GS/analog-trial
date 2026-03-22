@@ -63,9 +63,29 @@ def patch_rin():
     print(f'  rin: written to {path}')
 
 
+def patch_dac_sw():
+    """Add Via1+M2 for lat_q and lat_qb gate M1 bars in dac_sw."""
+    path = os.path.join(OUT_DIR, 'dac_sw.gds')
+    ly = pya.Layout()
+    ly.read(path)
+    cell = ly.top_cell()
+
+    # lat_q M1 bar: y=5145-5455, x=435-7315. Via1+M2 at left end (x=590, y=5300)
+    print('  dac_sw lat_q: adding Via1+M2 at (590, 5300)')
+    add_via1_m2(cell, ly, 590, 5300)
+
+    # lat_qb M1 bar: y=4645-4955, x=2625-5045. Via1+M2 at left end (x=2780, y=4800)
+    print('  dac_sw lat_qb: adding Via1+M2 at (2780, 4800)')
+    add_via1_m2(cell, ly, 2780, 4800)
+
+    ly.write(path)
+    print(f'  dac_sw: written to {path}')
+
+
 def main():
     print('=== Adding Via1+M2 landing pads ===\n')
     patch_rin()
+    patch_dac_sw()
     print('\n=== Done ===')
 
 

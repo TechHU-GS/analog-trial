@@ -105,8 +105,8 @@ def route_L(cell, layers, src_x, src_y, dst_x, dst_y, name, m4_x=None):
     # Snap to 5nm grid
     mid_x = (mid_x // 5) * 5
 
-    w3 = 300   # M3 wire width (comfortable > 200nm min)
-    w4 = 300   # M4 wire width
+    w3 = 210   # M3 wire width (tight but DRC-clean, allows 290nm gap at 500nm pitch)
+    w4 = 210   # M4 wire width
     hw3 = w3 // 2
     hw4 = w4 // 2
 
@@ -189,7 +189,42 @@ def route():
             113210, 30830,   # rin terminal
             'chop_out')
 
-    # ─── Route 4: exc_out ───
+    # ─── Route 4: lat_q (hbridge → dac_sw) ───
+    # hbridge lat_q M2 pad: (148600, 36200)
+    # dac_sw lat_q M2 pad: (177200, 39600)
+    route_L(cell, layers,
+            148600, 36250,   # hbridge lat_q
+            177150, 39600,   # dac_sw lat_q
+            'lat_q', m4_x=163000)
+
+    # ─── Route 5: lat_qb (hbridge → dac_sw) ───
+    # hbridge lat_qb M2 pad: (148600, 37500)
+    # dac_sw lat_qb M2 pad: (179400, 39100)
+    route_L(cell, layers,
+            148600, 37550,   # hbridge lat_qb
+            179350, 39000,   # dac_sw lat_qb (shifted -100nm to avoid M3 spacing with lat_q)
+            'lat_qb', m4_x=165000)
+
+    # ─── Route 6-8: src1/2/3 (bias_cascode → sw) ───
+    # M4 drops straight down from bias_cascode Via2 (m4_x = src_x).
+    # Top M3 is just a pad. Bottom M3 runs at different y levels (34.65/35.15/35.70)
+    # with 500nm pitch, 210nm wire → 290nm gap > 210nm min ✓
+    route_L(cell, layers,
+            81700, 60300,    # bias_cascode PM_cas1.D
+            61250, 34650,    # sw SW1.D
+            'src1', m4_x=81700)
+
+    route_L(cell, layers,
+            96200, 60300,    # bias_cascode PM_cas2.D
+            67250, 35150,    # sw SW2.D
+            'src2', m4_x=96200)
+
+    route_L(cell, layers,
+            109850, 60300,   # bias_cascode PM_cas3.D
+            73250, 35700,    # sw SW3.D
+            'src3', m4_x=109850)
+
+    # ─── Route 9: exc_out ───
     # hbridge_drive M2 bus (MS1.D+MS3.D): center (65700, 22650)
     # sw M2 bus (all SW.S): center (66350, 34150)
     # Nearly vertical — M4 at x=66000

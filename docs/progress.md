@@ -213,11 +213,19 @@ VCO 5-stage + digital: 已有 GDS
 - ⚠️ chop_out: LVS 减少量低于预期, 可能 rin terminal 连的是 sum_n 端 (推测, 未验证)
 - exc_out: 未做 (hbridge_drive exc_out bus 待确认)
 
+**MEDIUM nets batch 1: lat_q + lat_qb + src1/2/3 (verified 2026-03-22):**
+- dac_sw: add_m2_pads.py 给 lat_q/lat_qb gate M1 加 Via1+M2. CI DRC=0 ✅
+- lat_q: Via2→M3→Via3→M4@x=163→Via3→M3→Via2 (hbridge→dac_sw) ✅
+- lat_qb: 同上 M4@x=165, dst_y 下移 100nm 避 M3 spacing ✅
+- src1/2/3: M4 直连 (m4_x=src_x, 从 bias_cascode 直降到 sw). M3 线宽缩至 210nm 避 spacing ✅
+- **9/9 collision-free, CI DRC=0, N=1140 (-14 from baseline)**
+
 ### 下一步
-1. exc_out routing (hbridge_drive → sw)
-2. 验证 chop_out 是否连对了 rin 端
-3. MEDIUM nets (8条)
-4. LVS 最终验证 (目标: 0 mismatch)
+1. ota_out routing (ota → comp, 多端口含 c_fb)
+2. dac_out (需先给 rdac 加 M2 pad), vptat (需先给 rout 加 M2 pad)
+3. LONG nets (13条): f_exc, ref_I/Q, vco_out, bias 分配
+4. POWER (2条): vdd, gnd
+5. LVS 最终验证 (目标: 0 mismatch, deadline 24号)
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
