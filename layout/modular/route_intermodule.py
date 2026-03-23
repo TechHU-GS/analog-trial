@@ -321,6 +321,9 @@ def route_all():
     # Track used pads per module (to avoid reuse)
     used_pads = {}
 
+    # Sort nets: priority nets first (often fail due to congestion), then by length
+    PRIORITY_NETS = {'ota_out', 'sum_n', 'nmos_bias', 'pmos_bias'}
+    # Route priority nets FIRST (index 0), then others by length
     # Sort nets by estimated length (short first)
     def net_length(net_def):
         name, terminals = net_def
@@ -336,7 +339,7 @@ def route_all():
         return sum(abs(coords[i][0]-coords[i+1][0]) + abs(coords[i][1]-coords[i+1][1])
                    for i in range(len(coords)-1))
 
-    sorted_nets = sorted(NETS, key=net_length)
+    sorted_nets = sorted(NETS, key=lambda n: (0 if n[0] in PRIORITY_NETS else 1, net_length(n)))
 
     # Route each net
     routed = []
@@ -371,7 +374,11 @@ def route_all():
             failed.append((net_name, 'insufficient M2 pads'))
             continue
 
-        # For multi-terminal nets, route as chain (pad0→pad1→pad2→...)
+        # For multi-terminal nets, sort pads geographically (left→right) for better chain routing
+        if len(pads) > 2:
+            pads.sort(key=lambda p: p[1]['cx'])
+
+        # Route as chain (pad0→pad1→pad2→...)
         all_shapes = []
         success = True
         for i in range(len(pads) - 1):
@@ -399,11 +406,16 @@ def route_all():
                 if not check_collision(shapes, obstacles, M3_SPACE):
                     found = True
                     break
-            # If L-route fails and involves digital pin, try Z-route via free y channels
-            if not found and (src_pad.get('is_m3') or dst_pad.get('is_m3')):
-                free_ys = [8, 10, 12, 15, 68, 70, 72, 80, 82, 84]
+            # If L-route fails, try Z-route via alternate y channels
+            if not found:
+                sy, dy = src_pad['cy'], dst_pad['cy']
+                # Try y offsets from both endpoints
+                z_ys = sorted(set([sy+o for o in [-5,-3,3,5,8,10,15,-8,-10,-15]] +
+                                   [dy+o for o in [-5,-3,3,5,8,10,15,-8,-10,-15]] +
+                                   [8,10,12,15,68,70,72,80,82,84,90]))
                 for m4_x in candidates:
-                    for mid_y in free_ys:
+                    for mid_y in z_ys:
+                        if mid_y < 1 or mid_y > 95: continue
                         shapes = z_route(src_pad, dst_pad, m4_x, mid_y)
                         if not check_collision(shapes, obstacles, M3_SPACE):
                             found = True
