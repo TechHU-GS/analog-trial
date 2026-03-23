@@ -146,7 +146,7 @@ def main():
             'comp': {'vdd_y': my1 + mh - 3.0, 'gnd_y': my1 + 1.1},
             'sw': {'vdd_y': my1 + mh - 2.2, 'gnd_y': my1 + 4.6},
             'ota': {'gnd_y': my1 + 3.1},
-            'hbridge_drive': {'vdd_y': my1 + 2.8, 'skip_gnd': True},  # GND via manual M5 route
+            'hbridge_drive': {'skip_vdd': True, 'skip_gnd': True},  # both via manual routes
             'ptat_core': {'gnd_y': my1 + 2.8},
         }
         if mod in TAP_OVERRIDES:
