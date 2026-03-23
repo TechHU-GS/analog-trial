@@ -47,6 +47,24 @@ L_M4 = (50, 0)
 
 # Net definitions: (net_name, [(module, terminal_type), ...])
 # terminal_type: 'auto' = find nearest M2 pad
+# Digital M3 pin positions (label layer 30/25, offset by digital placement x=23, y=5)
+DIGITAL_ORIGIN = (23.0, 5.0)
+DIGITAL_M3_PINS = {
+    'f_exc':   (29.0, 50.0),
+    'f_exc_b': (29.0, 59.2),
+    'phi_p':   (29.0, 58.4),
+    'phi_n':   (29.0, 60.1),
+    'vco_out': (1.0, 23.1),  # left edge!
+}
+
+def digital_pin_abs(pin_name):
+    """Get absolute position of digital M3 pin."""
+    rel = DIGITAL_M3_PINS.get(pin_name)
+    if rel:
+        return {'cx': DIGITAL_ORIGIN[0] + rel[0], 'cy': DIGITAL_ORIGIN[1] + rel[1],
+                'is_m3': True}
+    return None
+
 NETS = [
     # Signal chain
     ('chop_out',   [('chopper', 'auto'), ('rin', 'auto')]),
@@ -67,13 +85,13 @@ NETS = [
     ('src3',       [('bias_cascode', 'auto'), ('sw', 'auto')]),
     ('vptat',      [('ptat_core', 'auto'), ('rout', 'auto')]),
     ('net_rptat',  [('ptat_core', 'auto'), ('rptat', 'auto')]),
-    # Clock / digital
-    ('f_exc',      [('digital', 'auto'), ('chopper', 'auto')]),
-    ('f_exc_b',    [('digital', 'auto'), ('chopper', 'auto')]),
-    ('phi_p',      [('digital', 'auto'), ('hbridge_drive', 'auto')]),
-    ('phi_n',      [('digital', 'auto'), ('hbridge_drive', 'auto')]),
+    # Clock / digital (use M3 pins directly)
+    ('f_exc',      [('digital', 'f_exc'), ('chopper', 'auto')]),
+    ('f_exc_b',    [('digital', 'f_exc_b'), ('chopper', 'auto')]),
+    ('phi_p',      [('digital', 'phi_p'), ('hbridge_drive', 'auto')]),
+    ('phi_n',      [('digital', 'phi_n'), ('hbridge_drive', 'auto')]),
     ('vco5',       [('vco_5stage', 'auto'), ('vco_buffer', 'auto')]),
-    ('vco_out',    [('vco_buffer', 'auto'), ('digital', 'auto')]),
+    ('vco_out',    [('vco_buffer', 'auto'), ('digital', 'vco_out')]),
 ]
 
 
@@ -147,12 +165,14 @@ def l_route_flex(src, dst, m4_x):
     v3_half = VIA3_SIZE / 2
     m4_pad = v3_half + M4_VIA3_ENC
 
-    # Via2 at source and dest
-    shapes.append((L_VIA2, sbox(sx - v2_half, sy - v2_half, sx + v2_half, sy + v2_half)))
-    shapes.append((L_VIA2, sbox(dx - v2_half, dy - v2_half, dx + v2_half, dy + v2_half)))
-
-    # M3 pads at via2 positions
+    # Via2 + M3 pad at source (skip if M3 pin)
+    src_is_m3 = src.get('is_m3', False)
+    dst_is_m3 = dst.get('is_m3', False)
+    if not src_is_m3:
+        shapes.append((L_VIA2, sbox(sx - v2_half, sy - v2_half, sx + v2_half, sy + v2_half)))
     shapes.append((L_M3, sbox(sx - m3_pad, sy - hw, sx + m3_pad, sy + hw)))
+    if not dst_is_m3:
+        shapes.append((L_VIA2, sbox(dx - v2_half, dy - v2_half, dx + v2_half, dy + v2_half)))
     shapes.append((L_M3, sbox(dx - m3_pad, dy - hw, dx + m3_pad, dy + hw)))
 
     # M3 horizontal from src to m4_x
@@ -253,9 +273,15 @@ def route_all():
         if len(terminals) < 2:
             continue
 
-        # Find M2 pads for each terminal (exclude previously used pads)
+        # Find pads for each terminal
         pads = []
-        for mod, _ in terminals:
+        for mod, term_type in terminals:
+            # Digital M3 pin?
+            if mod == 'digital' and term_type != 'auto':
+                dpin = digital_pin_abs(term_type)
+                if dpin:
+                    pads.append((mod, dpin))
+                    continue
             other_mods = [t[0] for t in terminals if t[0] != mod]
             if other_mods:
                 om = floorplan.get(other_mods[0], {})
@@ -263,7 +289,6 @@ def route_all():
                 target_cy = om.get('y', 0) + om.get('h', 0)/2
             else:
                 target_cx = target_cy = None
-            # Exclude pads already used by routed nets
             used = used_pads.get(mod, [])
             pad = find_nearest_pad(module_pads, mod, target_cx, target_cy, exclude_pads=used)
             if pad:
