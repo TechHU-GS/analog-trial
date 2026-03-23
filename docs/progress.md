@@ -531,18 +531,53 @@ VCO 5-stage + digital: 已有 GDS
 - KLayout Region API: M1/M2 spacing 预检 + poly-in-Active parasitic 检测
 - shapely (PDK venv) 用于空间分析和精确间距计算
 
-### comp ⚠️ parasitic 消除, LVS net mismatch 待调 (Session 13)
-- Shapely 分析定位: Mc_inp gate1 poly (x=1.34) 和 Mc_tail gate2 poly (x=1.22) 在 Active 内重叠 → L=0.62u parasitic
-- 修法: Mc_inp rel_x 从 1.0 → 2.0 (增大 gate poly x 间距)
-- 同时修了 Mc_tail gate routing: 两个 gate 都向上延伸 (不再用 Active 内 bridge)
-- 结果: 14 devices 全部 L=0.5u (无 parasitic), CI DRC=1 (Cnt.e), LVS net mismatch
-- 10 extracted nets = 10 schematic nets, 无 isolated — topology 差异待查
+### comp ✅ COMPLETE (DRC=0, LVS pass) — Session 13
+- Mc_inp rel_x 1.0→2.0 (gate poly 重叠修复), Mc_tail 两个 gate 都向上延伸
+- CI DRC=0, LVS pass (verified 2026-03-23 23:14)
+
+### ptat_core ✅ COMPLETE (DRC=0, LVS pass) — Session 13
+- 7 devices, MN2 ng=8 (9S+8D strips, 8 gates = 3 competing nets)
+- **核心策略 (from vco_5stage pattern)**: D strips→M2, S strips→M1, Gates→M2 (不同层避免交叉)
+- 布局调整: PM4/PM_ref moved x=53→75 (outside MN2 x range, M2 vertical 不穿过 gate M2 bus)
+- PM_pdiode moved y=0→19 (避免 NWell 覆盖 NMOS), PM3/4 y=11.5→15, PM5/ref y=13.5→17
+- build_module: ntap_offset + ptap_offset 参数化, vco_5stage 用 ntap_offset=1500
+- gnd_y = dev_bot - 1500 (避开 ptap)
+- PM gate routing: M1 bus in PM area + 单点 Via1 at PM3 x 连 gate M2 bus (不穿过 c2/rptat 区域)
+- CI DRC=0, LVS pass (verified 2026-03-24 00:56)
+
+### ★★★ 12/12 模块全部 DRC=0 + LVS pass (verified 2026-03-24 01:00) ★★★
+全部 12 个 GDS 确认 ROUTED (M2+Via1 shapes 存在) + CI DRC=0 + LVS Congratulations
+
+### Session 13 关键教训
+1. **空间不够先调布局** — 不要在小空间里挤。挤了就拉开距离。
+2. **D strips→M2, S strips→M1** — ng>1 的 S/D 用不同层避免交叉 (from vco_5stage pattern)
+3. **M2 vertical 不能穿过 M2 horizontal bus** — 会短路。PM gate M2 连接要绕到 bus x 范围外。
+4. **poly bridge 不能穿过 Active/ntap** — 造成寄生 MOSFET。individual Contact + bus 代替。
+5. **shapely 空间分析** — gdstk 读 GDS + shapely 分析间距/重叠，比盲算坐标可靠。
+6. **routing_check.py** — 建了但要实际用。每次 insert 前检查。
+
+### 工作流命令
+```bash
+# 单模块完整流程
+cd /Users/techhu/Code/GS_IC/designs/analog-trial/layout
+source ~/pdk/venv/bin/activate
+# 1. Build + Route
+klayout -n sg13g2 -zz -r modular/route_MODULE.py
+# 2. CI DRC
+klayout -n sg13g2 -zz -r ~/pdk/IHP-Open-PDK/ihp-sg13g2/libs.tech/klayout/tech/drc/ihp-sg13g2.drc \
+  -rd input=$PWD/modular/output/MODULE.gds -rd cell=MODULE -rd report=$PWD/modular/output/MODULE_drc.lyrdb
+# 3. LVS
+python3 ~/pdk/IHP-Open-PDK/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py \
+  --layout=$PWD/modular/output/MODULE.gds --netlist=$PWD/modular/output/MODULE_lvs.spice \
+  --topcell=MODULE --run_dir=/tmp/lvs_MODULE --no_simplify --allow_unmatched_ports
+# 4. Shapely 空间分析
+python3 -c "import gdstk; from shapely..."  # 用 PDK venv 的 python3
+```
 
 ### 下一步
-1. comp: 调查 LVS net topology mismatch → pass
-2. ptat_core: routing (last module)
-3. 全量 CI DRC + LVS 验证 9 个已通过模块 (build_module ntap 变更)
-4. 组装 → inter-module routing → 全芯片 LVS
+1. 组装 → inter-module routing → 全芯片 LVS
+2. Power routing (TM1 buses + via stacks)
+3. 提交 TTIHP
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)
