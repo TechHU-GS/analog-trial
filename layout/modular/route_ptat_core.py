@@ -41,7 +41,7 @@ def scy(s): return (s[2]+s[3])//2
 def route():
     with open(os.path.join(SCRIPT_DIR, 'module_devices.json')) as f:
         mods = json.load(f)
-    ly, cell, devs = build_module('ptat_core', mods['ptat_core'], ptap_offset=1500)
+    ly, cell, devs = build_module('ptat_core', mods['ptat_core'], ptap_offset=2500)
     D = {d['name']: d for d in devs}
     l_m1 = ly.layer(*M1)
     l_m2 = ly.layer(*M2)
