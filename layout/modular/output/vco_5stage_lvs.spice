@@ -1,0 +1,101 @@
+* VCO 5-stage ring oscillator — LVS schematic (expanded for ng>1)
+* 20 devices: Mnb1-5 (ng=8), Mpd1-5 (ng=1), Mpu1-5 (ng=1), Mpb1-5 (ng=8)
+* Ring: vco{i} → Mpd{i+1}.G + Mpu{i+1}.G, vco5 → Mpd1.G + Mpu1.G
+
+.subckt vco_5stage nmos_bias pmos_bias gnd vdd
+* --- Stage 1: vco5→gates, output=vco1 ---
+MMnb1_0 nb1 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb1_1 gnd nmos_bias nb1 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb1_2 nb1 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb1_3 gnd nmos_bias nb1 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb1_4 nb1 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb1_5 gnd nmos_bias nb1 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb1_6 nb1 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb1_7 gnd nmos_bias nb1 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMpd1 vco1 vco5 nb1 gnd sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+MMpu1 vco1 vco5 ns1 vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMpb1_0 ns1 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_1 vdd pmos_bias ns1 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_2 ns1 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_3 vdd pmos_bias ns1 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_4 ns1 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_5 vdd pmos_bias ns1 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_6 ns1 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_7 vdd pmos_bias ns1 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+* --- Stage 2: vco1→gates, output=vco2 ---
+MMnb2_0 nb2 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb2_1 gnd nmos_bias nb2 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb2_2 nb2 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb2_3 gnd nmos_bias nb2 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb2_4 nb2 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb2_5 gnd nmos_bias nb2 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb2_6 nb2 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb2_7 gnd nmos_bias nb2 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMpd2 vco2 vco1 nb2 gnd sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+MMpu2 vco2 vco1 ns2 vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMpb2_0 ns2 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_1 vdd pmos_bias ns2 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_2 ns2 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_3 vdd pmos_bias ns2 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_4 ns2 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_5 vdd pmos_bias ns2 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_6 ns2 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_7 vdd pmos_bias ns2 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+* --- Stage 3: vco2→gates, output=vco3 ---
+MMnb3_0 nb3 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb3_1 gnd nmos_bias nb3 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb3_2 nb3 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb3_3 gnd nmos_bias nb3 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb3_4 nb3 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb3_5 gnd nmos_bias nb3 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb3_6 nb3 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb3_7 gnd nmos_bias nb3 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMpd3 vco3 vco2 nb3 gnd sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+MMpu3 vco3 vco2 ns3 vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMpb3_0 ns3 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_1 vdd pmos_bias ns3 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_2 ns3 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_3 vdd pmos_bias ns3 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_4 ns3 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_5 vdd pmos_bias ns3 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_6 ns3 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_7 vdd pmos_bias ns3 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+* --- Stage 4: vco3→gates, output=vco4 ---
+MMnb4_0 nb4 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb4_1 gnd nmos_bias nb4 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb4_2 nb4 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb4_3 gnd nmos_bias nb4 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb4_4 nb4 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb4_5 gnd nmos_bias nb4 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb4_6 nb4 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb4_7 gnd nmos_bias nb4 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMpd4 vco4 vco3 nb4 gnd sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+MMpu4 vco4 vco3 ns4 vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMpb4_0 ns4 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_1 vdd pmos_bias ns4 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_2 ns4 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_3 vdd pmos_bias ns4 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_4 ns4 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_5 vdd pmos_bias ns4 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_6 ns4 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_7 vdd pmos_bias ns4 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+* --- Stage 5: vco4→gates, output=vco5 ---
+MMnb5_0 nb5 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb5_1 gnd nmos_bias nb5 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb5_2 nb5 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb5_3 gnd nmos_bias nb5 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb5_4 nb5 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb5_5 gnd nmos_bias nb5 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb5_6 nb5 nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMnb5_7 gnd nmos_bias nb5 gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMpd5 vco5 vco4 nb5 gnd sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+MMpu5 vco5 vco4 ns5 vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMpb5_0 ns5 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_1 vdd pmos_bias ns5 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_2 ns5 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_3 vdd pmos_bias ns5 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_4 ns5 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_5 vdd pmos_bias ns5 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_6 ns5 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_7 vdd pmos_bias ns5 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+.ends vco_5stage

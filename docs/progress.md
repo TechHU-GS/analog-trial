@@ -517,21 +517,32 @@ VCO 5-stage + digital: 已有 GDS
 3. ⚠️ comp (DRC=0, LVS 差 1 parasitic)
 4. 待做: vco_5stage (20 devices, ng=8), ptat_core (7 devices, ng=8)
 
-### vco_5stage ⚠️ NEAR CLEAN (M2.b=0, M1.b=11 ptap/bias overlap)
-- 4 rows × 5 stages, 20 devices
-- Per-stage M2 routing for nb/ns/vco nets works
-- ng=8 gates: poly bridge below/above Active + single Contact (avoids dense gate contact M1.b)
-- BLOCKED: nmos_bias M1 pad (y≈-1000) overlaps ptap M1 (y≈-800), gap=45nm
-  Fix confirmed: move bias_n_y to gap12 but script output shows old y — need to verify script runs correctly
-- Gat.d×1 + Cnt.e×1 also pending
+### vco_5stage ✅ COMPLETE (DRC=0, LVS pass) — Session 13, 2026-03-23
+- CI DRC = 0, LVS = Congratulations! Netlists match. (verified 2026-03-23 22:50)
+- 20 devices, 4 rows × 5 stages, 90 extracted devices (45N+45P)
+- Per-stage: nb/ns/vco M2 routing, ring feedback (5 connections, 3 y levels)
+- nmos_bias: poly bridge ABOVE Active + Contact + M1 bus (bridge below Active → L=18.66u parasitic)
+- pmos_bias: individual Contact per gate bar + Via1 + M2 bus (poly bridge → ntap parasitic)
+- GND: M1 bus + ptap-aware S strip stubs, VDD: M1 bus + S strip stubs
+- **关键教训**: ng=8 gate routing 空间不够时，先调布局 (ntap +500→+1500) 不要在小空间挤
+- **⚠️ build_module.py ntap 从 +500 改到 +1500，需验证其他模块**
+
+### routing_check.py — 路由预检工具 (Session 13)
+- KLayout Region API: M1/M2 spacing 预检 + poly-in-Active parasitic 检测
+- shapely (PDK venv) 用于空间分析和精确间距计算
+
+### comp ⚠️ parasitic 消除, LVS net mismatch 待调 (Session 13)
+- Shapely 分析定位: Mc_inp gate1 poly (x=1.34) 和 Mc_tail gate2 poly (x=1.22) 在 Active 内重叠 → L=0.62u parasitic
+- 修法: Mc_inp rel_x 从 1.0 → 2.0 (增大 gate poly x 间距)
+- 同时修了 Mc_tail gate routing: 两个 gate 都向上延伸 (不再用 Active 内 bridge)
+- 结果: 14 devices 全部 L=0.5u (无 parasitic), CI DRC=1 (Cnt.e), LVS net mismatch
+- 10 extracted nets = 10 schematic nets, 无 isolated — topology 差异待查
 
 ### 下一步
-1. vco_5stage: verify bias_n_y fix actually applies, fix remaining DRC
-2. comp: probe Mc_tail Contact Active geometry, fix parasitic
-3. ptat_core: PCell + routing (last module)
+1. comp: 调查 LVS net topology mismatch → pass
+2. ptat_core: routing (last module)
+3. 全量 CI DRC + LVS 验证 9 个已通过模块 (build_module ntap 变更)
 4. 组装 → inter-module routing → 全芯片 LVS
-2. 每个模块: build_module → route → check_nets → CI DRC → LVS
-3. 组装 → inter-module routing → 全芯片 LVS
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)

@@ -43,7 +43,7 @@ def m2_connect(cell, ly, l_m2, strips, bus_y):
 def route():
     with open(os.path.join(SCRIPT_DIR, 'module_devices.json')) as f:
         mods = json.load(f)
-    ly, cell, devs = build_module('vco_5stage', mods['vco_5stage'])
+    ly, cell, devs = build_module('vco_5stage', mods['vco_5stage'], ntap_offset=1500)
     D = {d['name']: d for d in devs}
     l_m1 = ly.layer(*M1)
     l_m2 = ly.layer(*M2)
@@ -98,23 +98,61 @@ def route():
 
         print(f'  stage{i}: nb@{nb_y} ns@{ns_y} vco@{vco_y}')
 
+    # ─── Ring feedback: vco{i} → next stage Mpd/Mpu gates ───
+    y_lo = r2_top + 500   # 5860
+    y_hi = r3_bot - 500   # 7000
+    ring = [(1,2,'lo'), (2,3,'mid'), (3,4,'lo'), (4,5,'mid'), (5,1,'hi')]
+
+    for src, dst, level in ring:
+        y_ring = y_lo if level == 'lo' else (g23 if level == 'mid' else y_hi)
+
+        # Source: tap vco M2 bus
+        vco_cx = scx(D[f'Mpd{src}']['strips'][-1])
+        if level == 'mid':
+            # Via1 directly on vco M2 bus at g23
+            add_via1_m2(cell, ly, vco_cx, g23)
+        else:
+            # M2 vertical from vco bus to y_ring, Via1 at y_ring (no M1 at g23)
+            cell.shapes(l_m2).insert(box(vco_cx-150, min(g23, y_ring)-155,
+                                         vco_cx+150, max(g23, y_ring)+155))
+            add_via1_m2(cell, ly, vco_cx, y_ring)
+
+        # Destination gate contacts
+        mpd_g = D[f'Mpd{dst}']['gates'][0]
+        mpu_g = D[f'Mpu{dst}']['gates'][0]
+        gate_cx = (mpd_g[0] + mpd_g[1]) // 2
+        gw = mpd_g[1] - mpd_g[0]
+
+        # Poly extensions: Mpd up, Mpu down — meet at y_ring
+        cell.shapes(l_po).insert(box(gate_cx-gw//2, mpd_g[3], gate_cx+gw//2, y_ring+80))
+        cell.shapes(l_po).insert(box(gate_cx-gw//2, y_ring-80, gate_cx+gw//2, mpu_g[2]))
+
+        # Contact + M1 pad at gate junction
+        cell.shapes(l_ct).insert(box(gate_cx-80, y_ring-80, gate_cx+80, y_ring+80))
+        cell.shapes(l_m1).insert(box(gate_cx-155, y_ring-155, gate_cx+155, y_ring+155))
+
+        # M1 horizontal from vco source to gate contacts
+        x_lo = min(vco_cx, gate_cx)
+        x_hi = max(vco_cx, gate_cx)
+        cell.shapes(l_m1).insert(box(x_lo-155, y_ring-155, x_hi+155, y_ring+155))
+
+        print(f'  ring vco{src}->S{dst}: y={y_ring} ({level})')
+
     # ─── Global nets ───
 
-    # nmos_bias: all Mnb gates — poly bridge per device (below Active) + 1 Contact each
-    bias_n_y = g12 - 500  # in gap between Mnb and Mpd (safe from ptap at dev_bot-800)
+    # nmos_bias: all Mnb gates — poly bridge ABOVE Active (same pattern as pmos_bias)
+    bias_n_y = g12 - 500  # in gap between Mnb and Mpd
     all_bias_n_x = []
     for i in range(1, 6):
         gates = D[f'Mnb{i}']['gates']
         if not gates: continue
-        # Poly bridge below Active connecting all gate bars
         g_xmin = min(g[0] for g in gates)
         g_xmax = max(g[1] for g in gates)
-        g_bot = min(g[2] for g in gates)
-        cell.shapes(l_po).insert(box(g_xmin, bias_n_y-250, g_xmax, g_bot))  # bridge
-        # Extend each gate bar down to bridge
+        g_top = max(g[3] for g in gates)
+        cell.shapes(l_po).insert(box(g_xmin, g_top, g_xmax, bias_n_y+250))
         for g in gates:
             gx = (g[0]+g[1])//2; gw = g[1]-g[0]
-            cell.shapes(l_po).insert(box(gx-gw//2, bias_n_y-250, gx+gw//2, g[2]))
+            cell.shapes(l_po).insert(box(gx-gw//2, g[3], gx+gw//2, bias_n_y+250))
         # Single Contact + M1 pad on bridge
         bridge_cx = (g_xmin + g_xmax) // 2
         cell.shapes(l_ct).insert(box(bridge_cx-80, bias_n_y-80, bridge_cx+80, bias_n_y+80))
@@ -124,36 +162,45 @@ def route():
                                  max(all_bias_n_x)+155, bias_n_y+155))
     print(f'  nmos_bias: M1 y={bias_n_y}')
 
-    # pmos_bias: all Mpb gates — poly bridge per device (above Active) + 1 Contact each
-    bias_p_y = r4_top + 1500
+    # pmos_bias: individual Contact + Via1 + M2 bus (M1 pads between VDD stubs in x)
+    bias_p_y = max(g[3] for g in D['Mpb1']['gates']) + 500  # plenty of room (ntap now at +1500)
     all_bias_p_x = []
     for i in range(1, 6):
         gates = D[f'Mpb{i}']['gates']
         if not gates: continue
-        g_xmin = min(g[0] for g in gates)
-        g_xmax = max(g[1] for g in gates)
-        g_top = max(g[3] for g in gates)
-        cell.shapes(l_po).insert(box(g_xmin, g_top, g_xmax, bias_p_y+250))
         for g in gates:
             gx = (g[0]+g[1])//2; gw = g[1]-g[0]
-            cell.shapes(l_po).insert(box(gx-gw//2, g[3], gx+gw//2, bias_p_y+250))
-        bridge_cx = (g_xmin + g_xmax) // 2
-        cell.shapes(l_ct).insert(box(bridge_cx-80, bias_p_y-80, bridge_cx+80, bias_p_y+80))
-        cell.shapes(l_m1).insert(box(bridge_cx-155, bias_p_y-155, bridge_cx+155, bias_p_y+155))
-        all_bias_p_x.append(bridge_cx)
-    cell.shapes(l_m1).insert(box(min(all_bias_p_x)-155, bias_p_y-155,
-                                 max(all_bias_p_x)+155, bias_p_y+155))
-    print(f'  pmos_bias: M1 y={bias_p_y}')
+            cell.shapes(l_po).insert(box(gx-gw//2, g[3], gx+gw//2, bias_p_y+150))
+            cell.shapes(l_ct).insert(box(gx-80, bias_p_y-80, gx+80, bias_p_y+80))
+            add_via1_m2(cell, ly, gx, bias_p_y)
+            all_bias_p_x.append(gx)
+    # M2 bus (not M1 — M1 would conflict with VDD stubs)
+    cell.shapes(l_m2).insert(box(min(all_bias_p_x)-150, bias_p_y-155,
+                                 max(all_bias_p_x)+150, bias_p_y+155))
+    print(f'  pmos_bias: M2 y={bias_p_y} ({len(all_bias_p_x)} contacts)')
 
     # GND: Mnb S strips
     gnd_y = dev_bot - 1000
     n_xmin = min(d['bbox'][0] for d in devs if d['type']=='nmos')
     n_xmax = max(d['bbox'][2] for d in devs if d['type']=='nmos')
-    cell.shapes(l_m1).insert(box(n_xmin, gnd_y-155, n_xmax, gnd_y+155))
+    cell.shapes(l_m1).insert(box(n_xmin, gnd_y-155, n_xmax, gnd_y+500))
+    # Stubs from GND bus to Mnb S strip bottoms (widen near ptap to merge)
+    ptap_edges = [(310 + k*10000, 810 + k*10000) for k in range(11)]
+    for i in range(1, 6):
+        for j in range(0, len(D[f'Mnb{i}']['strips']), 2):
+            s = D[f'Mnb{i}']['strips'][j]
+            sx = scx(s)
+            sl, sr = sx - 80, sx + 80
+            for pl, pr in ptap_edges:
+                if 0 < sl - pr < 180:
+                    sl = pl
+                elif 0 < pl - sr < 180:
+                    sr = pr
+            cell.shapes(l_m1).insert(box(sl, gnd_y+155, sr, s[2]))
     print(f'  gnd: M1 y={gnd_y}')
 
     # VDD: Mpb S strips + ntap
-    vdd_y = r4_top + 500
+    vdd_y = r4_top + 1500  # match ntap at +1500
     p_xmin = min(d['bbox'][0] for d in devs if d['type']=='pmos')
     p_xmax = max(d['bbox'][2] for d in devs if d['type']=='pmos')
     cell.shapes(l_m1).insert(box(p_xmin, vdd_y-155, p_xmax, vdd_y+500))

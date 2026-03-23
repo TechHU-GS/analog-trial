@@ -1,0 +1,27 @@
+* PTAT core — LVS schematic (expanded for ng>1)
+* From soilz_lvs_expanded.spice
+* 7 devices: MN1(ng=1), MN2(ng=8), PM3/4/5/ref(ng=1), PM_pdiode(ng=1)
+
+.subckt ptat_core net_c1 net_c2 net_rptat vptat nmos_bias pmos_bias gnd vdd
+* MN1: diode (D=G=net_c1), S=gnd
+MMN1 net_c1 net_c1 gnd gnd sg13_lv_nmos w=2u l=4u ng=1 m=1
+* MN2: ng=8 expanded, W=16/8=2u each, D=net_c2, G=net_c1, S=net_rptat
+MMN2_0 net_c2 net_c1 net_rptat gnd sg13_lv_nmos w=2u l=4u ng=1 m=1
+MMN2_1 net_rptat net_c1 net_c2 gnd sg13_lv_nmos w=2u l=4u ng=1 m=1
+MMN2_2 net_c2 net_c1 net_rptat gnd sg13_lv_nmos w=2u l=4u ng=1 m=1
+MMN2_3 net_rptat net_c1 net_c2 gnd sg13_lv_nmos w=2u l=4u ng=1 m=1
+MMN2_4 net_c2 net_c1 net_rptat gnd sg13_lv_nmos w=2u l=4u ng=1 m=1
+MMN2_5 net_rptat net_c1 net_c2 gnd sg13_lv_nmos w=2u l=4u ng=1 m=1
+MMN2_6 net_c2 net_c1 net_rptat gnd sg13_lv_nmos w=2u l=4u ng=1 m=1
+MMN2_7 net_rptat net_c1 net_c2 gnd sg13_lv_nmos w=2u l=4u ng=1 m=1
+* PM3: diode (D=G=net_c1), S=vdd
+MPM3 net_c1 net_c1 vdd vdd sg13_lv_pmos w=0.5u l=10u ng=1 m=1
+* PM4: D=net_c2, G=net_c1, S=vdd
+MPM4 net_c2 net_c1 vdd vdd sg13_lv_pmos w=0.5u l=10u ng=1 m=1
+* PM5: D=vptat, G=net_c1, S=vdd
+MPM5 vptat net_c1 vdd vdd sg13_lv_pmos w=0.5u l=10u ng=1 m=1
+* PM_ref: D=nmos_bias, G=net_c1, S=vdd
+MPM_ref nmos_bias net_c1 vdd vdd sg13_lv_pmos w=0.5u l=10u ng=1 m=1
+* PM_pdiode: diode (D=G=pmos_bias), S=vdd
+MPM_pdiode pmos_bias pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+.ends ptat_core

@@ -31,7 +31,7 @@ def nm(um):
     return int(round(um * 1000))
 
 
-def build_module(module_name, devices, ly=None):
+def build_module(module_name, devices, ly=None, ntap_offset=500, ptap_offset=800):
     """Build a bare module (PCell placement + ties). Returns (layout, cell, device_info)."""
     if ly is None:
         ly = pya.Layout()
@@ -141,7 +141,7 @@ def build_module(module_name, devices, ly=None):
         n_ymin = min(d['bbox'][1] for d in nmos_devs)
         n_xmin = min(d['bbox'][0] for d in nmos_devs)
         n_xmax = max(d['bbox'][2] for d in nmos_devs)
-        ptap_y = n_ymin - 800
+        ptap_y = n_ymin - ptap_offset
         # Place ptaps: one every 10um, at least 1
         ptap_positions = list(range(n_xmin, n_xmax + 1, 10000))
         if not ptap_positions:
@@ -159,7 +159,7 @@ def build_module(module_name, devices, ly=None):
         p_ymin = min(d['bbox'][1] for d in pmos_devs)
         p_xmin = min(d['bbox'][0] for d in pmos_devs)
         p_xmax = max(d['bbox'][2] for d in pmos_devs)
-        ntap_y = p_ymax + 500
+        ntap_y = p_ymax + ntap_offset
         # NWell covering all PMOS + ntaps
         nw_margin = 310
         cell.shapes(l_nw).insert(box(p_xmin - nw_margin, p_ymin - nw_margin,
