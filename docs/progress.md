@@ -423,11 +423,30 @@ VCO 5-stage + digital: 已有 GDS
   | pmos 2.0 | 10.0 | 2 | 3 | -1 | PM_mir3 |
 - 最大 gap 来源: nmos W=2 L=4 差 7（layout 提取 W/L 和 SPICE 标注不一致，类似之前 device_lib.json L=50u vs 实际 L=10u）
 
+### 通用 PCell module builder (2026-03-23 14:00)
+- `build_module.py`: 读 module_devices.json → PCell instantiation → placement → ties
+- `module_devices.json`: 12 模块的器件参数 (from SPICE) + 相对位置 (from placement.json)
+- **全部 12 模块 CI DRC = 0** (裸 placement, 无 routing)
+- 关键 bug fix: PCell strip probe 去重 (重复 shapes 导致 S/D 误判)
+
+### check_nets.py connectivity checker (2026-03-23 15:00)
+- Region merge + Union-Find 跨层连通性检查 (M1 + Via1→M2 + Contact→GatPoly)
+- 不用 L2N probe (有 bug, 返回 None), 改用 polygon.inside(point) + Region overlap
+- 输入: expected netlist (哪些 terminal 该在同一 net)
+- 输出: ✅ OK / ❌ OPEN / ⚠️ SHORT + 精确定位
+
+### vco_buffer routing 进展
+- PCell placement + ties: DRC=0 ✅
+- M1 routing (gap zone): buf1, vco5, GND, VDD 基本正确
+- 已知问题 (check_nets 发现):
+  1. vco_out M2 vertical 断开 (MBn2.D ↔ MBp2.D)
+  2. buf1↔vco5 M1 短路 (MBn1.D extension 穿过 vco5 gate bus)
+
 ### 下一步
-1. **逐个排查 16-device gap**: 确认每个差异来源（W/L 不匹配 vs 缺失 device vs finger 数不对）
-2. **修正 schematic**: 调整 W/L 匹配 layout 实际提取值
-3. **Power routing**: M5 层方案
-4. **提交**: CI DRC=0 可以提交, 但功能不完整
+1. 修 vco_buffer routing (2 个问题)
+2. 用 check_nets + CI DRC 验证 → module LVS
+3. 其他模块: 用 build_module 生成裸 GDS → 走线 → check_nets → DRC → LVS
+4. 组装 → 全芯片 LVS
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)

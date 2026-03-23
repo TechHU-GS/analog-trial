@@ -85,6 +85,12 @@ def build_module(module_name, devices, ly=None):
                 if b.height() > 500:
                     strips.append(b)
         strips.sort(key=lambda b: b.left)
+        # Deduplicate (PCell hierarchy can produce identical shapes)
+        deduped = []
+        for s in strips:
+            if not deduped or abs(s.left - deduped[-1].left) > 50:
+                deduped.append(s)
+        strips = deduped
 
         gates = []
         if li_gat is not None:
@@ -93,6 +99,12 @@ def build_module(module_name, devices, ly=None):
                 if b.height() > 500:
                     gates.append(b)
         gates.sort(key=lambda b: b.left)
+        # Deduplicate gates too
+        deduped_g = []
+        for g in gates:
+            if not deduped_g or abs(g.left - deduped_g[-1].left) > 50:
+                deduped_g.append(g)
+        gates = deduped_g
 
         # Calculate absolute strip/gate positions
         def to_abs(b):
