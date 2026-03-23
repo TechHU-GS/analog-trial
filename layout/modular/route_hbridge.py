@@ -85,15 +85,11 @@ def route():
     add_via1_m2(cell, ly, scx(p1a_d), scy(p1a_d))
     add_via1_m2(cell, ly, scx(p1b_d), scy(p1b_d))
 
-    # M2 verticals connecting NMOS D to PMOS D
-    for pd in [p1a_d, p1b_d]:
-        mx = (scx(n1b_d) + scx(pd)) // 2
-        cell.shapes(l_m2).insert(box(min(scx(n1b_d),scx(pd))-150, scy(n1b_d)-155,
-                                     max(scx(n1b_d),scx(pd))+150, scy(pd)+155))
-
-    # M2 horizontal connecting Mp1a.D and Mp1b.D
-    cell.shapes(l_m2).insert(box(min(scx(p1a_d),scx(p1b_d))-150, scy(p1a_d)-155,
-                                 max(scx(p1a_d),scx(p1b_d))+150, scy(p1a_d)+155))
+    # M2 L-shape: vertical at NMOS D x, horizontal at PMOS level
+    cell.shapes(l_m2).insert(box(scx(n1b_d)-150, scy(n1b_d)-155,
+                                 scx(n1b_d)+150, scy(p1a_d)+155))  # vertical
+    cell.shapes(l_m2).insert(box(min(scx(n1b_d),scx(p1a_d),scx(p1b_d))-150, scy(p1a_d)-155,
+                                 max(scx(n1b_d),scx(p1a_d),scx(p1b_d))+150, scy(p1a_d)+155))  # horizontal
 
     # lat_q cross-coupling: connect to Mn2b.G + Mp2b.G via M1 in gap
     lat_q_y = nmos_top + 1200  # moved up to avoid Cnt.b with comp_outp contacts
@@ -130,11 +126,11 @@ def route():
     add_via1_m2(cell, ly, scx(p2a_d), scy(p2a_d))
     add_via1_m2(cell, ly, scx(p2b_d), scy(p2b_d))
 
-    for pd in [p2a_d, p2b_d]:
-        cell.shapes(l_m2).insert(box(min(scx(n2b_d),scx(pd))-150, scy(n2b_d)-155,
-                                     max(scx(n2b_d),scx(pd))+150, scy(pd)+155))
-    cell.shapes(l_m2).insert(box(min(scx(p2a_d),scx(p2b_d))-150, scy(p2a_d)-155,
-                                 max(scx(p2a_d),scx(p2b_d))+150, scy(p2a_d)+155))
+    # M2 L-shape for lat_qb
+    cell.shapes(l_m2).insert(box(scx(n2b_d)-150, scy(n2b_d)-155,
+                                 scx(n2b_d)+150, scy(p2a_d)+155))  # vertical
+    cell.shapes(l_m2).insert(box(min(scx(n2b_d),scx(p2a_d),scx(p2b_d))-150, scy(p2a_d)-155,
+                                 max(scx(n2b_d),scx(p2a_d),scx(p2b_d))+150, scy(p2a_d)+155))  # horizontal
 
     lat_qb_y = nmos_top + 1800  # above lat_q with spacing
     lat_qb_via_x = scx(n2b_d)
@@ -198,8 +194,10 @@ def route():
     gnd_strips = [D['Mn1a']['strips'][0], D['Mn2a']['strips'][0]]
     for s in gnd_strips:
         cell.shapes(l_m1).insert(box(scx(s)-80, gnd_y, scx(s)+80, s[2]))
-    cell.shapes(l_m1).insert(box(min(scx(s) for s in gnd_strips)-155, gnd_y-155,
-                                 max(scx(s) for s in gnd_strips)+155, gnd_y+155))
+    # Extend GND bus to cover all ptaps (full NMOS width)
+    n_xmin = min(D[n]['bbox'][0] for n in ['Mn1a','Mn1b','Mn2a','Mn2b'])
+    n_xmax = max(D[n]['bbox'][2] for n in ['Mn1a','Mn1b','Mn2a','Mn2b'])
+    cell.shapes(l_m1).insert(box(n_xmin, gnd_y-155, n_xmax, gnd_y+155))
     print(f'  gnd: y={gnd_y}')
 
     # ─── 8. VDD: all PMOS S + ntap ───
