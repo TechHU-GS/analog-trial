@@ -624,12 +624,19 @@ python3 -c "import gdstk; from shapely..."  # 用 PDK venv 的 python3
 - 去掉 digital block 单独验证 analog: **180 M = 180 M, 4R = 4R, 3C = 3C — device 完全匹配**
 - LVS 不 pass 因为无 inter-module routing（net 未连），device 无误
 
+### Inter-module net 表 (verified from sim/_soilz_full.sp, 2026-03-24)
+**23 signal nets** (完整，已交叉验证):
+- Signal chain: chop_out(2), ota_out(3), comp_outp(2), comp_outn(2), lat_q(2), lat_qb(2), dac_out(2), sum_n(4), exc_out(2)
+- Bias: nmos_bias(4), pmos_bias(4), net_c1(2), src1/2/3(2each), vptat(2), net_rptat(2)
+- Clock/digital: f_exc(2), f_exc_b(2), phi_p(2), phi_n(2), vco5(2), vco_out(2)
+- External pins (不需要routing): comp_clk, vref_ota, vref_comp, probe_p/n, sens_p/n, dac_hi/lo, sel0-2, reset_b
+- Power: vdd(11 modules), gnd(17 modules)
+
 ### 下一步: 自动化 inter-module router
-- 用户同意自动化方案: probe M2 pads → L-route (M3-H + M4-V) → shapely 碰撞检测
-- M3/M4/M5 全空（模块只用 M1/M2），路由空间干净
-- 已有 helpers: route_m3.py (add_via2/via3, check_collision), shapely (PDK venv)
-- 27 analog signal nets + digital nets + power
-- 顺序: analog signal → digital signal → power → 全芯片 LVS
+- 用户同意方案: probe M2 pads → L-route (M3-H + M4-V) → shapely 碰撞检测
+- M3/M4/M5 全空，路由空间干净
+- 已有 helpers: route_m3.py (add_via2/via3, check_collision)
+- 顺序: 23 analog signal nets → power → 全芯片 LVS
 
 ### 下一步
 1. 确认 hbridge build script 版本
