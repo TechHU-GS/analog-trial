@@ -462,8 +462,46 @@ VCO 5-stage + digital: 已有 GDS
 - 关键经验: Via1 只在 strip level 放，bus level 不需要（否则悬空）
   M2 bus Via1 M1 pad 不能和 GND M1 bus 重叠（10nm overlap → short）
 
+### hbridge ✅ COMPLETE (DRC=0, LVS pass)
+- PCell: 8 devices (Mn1a/b, Mn2a/b, Mp1a/b, Mp2a/b, all ng=1)
+- Routing: cross-coupled SR latch
+  - n1_mid/n2_mid: M1 bridge between adjacent strips
+  - lat_q/lat_qb: M2 L-shape (drains) + M1 cross-coupling (gates, staggered y for Cnt.b)
+  - comp_outp/outn: staggered gate contacts in gap
+  - GND bus extended to cover all ptaps
+- CI DRC = 0, LVS = Congratulations!
+
+### dac_sw ✅ COMPLETE (DRC=0, LVS pass)
+- PCell: 4 TG devices (2 NMOS + 2 PMOS, all ng=1)
+- 关键修改: TG 模块从单行改为双行 (NMOS y=0, PMOS y=5)
+  原因: 单行时 NWell 覆盖 NMOS → extractor 把 NMOS 当 PMOS
+  同步修改了 chopper 和 sw 的 placement
+- CI DRC = 0, LVS = Congratulations!
+
+### Session 12 完成模块汇总 (6/12)
+1. ✅ bias_mn (2 devices)
+2. ✅ vco_buffer (4 devices, 2 ng=2)
+3. ✅ bias_cascode (9 devices, 2 ng=2)
+4. ✅ hbridge_drive (4 devices, 4 ng=2)
+5. ✅ hbridge (8 devices, cross-coupled)
+6. ✅ dac_sw (4 TG devices)
+
+### chopper ✅ COMPLETE (DRC=0, LVS pass) — first-time clean
+### sw ✅ COMPLETE (DRC=0, LVS pass)
+- SW3 gates routed below NMOS to avoid ntap Gat.d violation
+
+### Session 12 完成模块汇总 (8/12)
+1. ✅ bias_mn (2 devices)
+2. ✅ vco_buffer (4 devices, 2 ng=2)
+3. ✅ bias_cascode (9 devices, 2 ng=2)
+4. ✅ hbridge_drive (4 devices, 4 ng=2)
+5. ✅ hbridge (8 devices, cross-coupled)
+6. ✅ dac_sw (4 TG devices)
+7. ✅ chopper (4 TG devices)
+8. ✅ sw (6 TG devices)
+
 ### 下一步
-1. 其他模块: hbridge → ota → comp → chopper/sw/dac_sw → vco_5stage → ptat_core
+1. 剩余模块: ota → comp → vco_5stage → ptat_core
 2. 每个模块: build_module → route → check_nets → CI DRC → LVS
 3. 组装 → inter-module routing → 全芯片 LVS
 

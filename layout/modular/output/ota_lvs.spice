@@ -1,0 +1,15 @@
+.subckt ota bias_n tail mid_p ota_out vref_ota sum_n gnd vdd
+MMbias_d bias_n bias_n gnd gnd sg13_lv_nmos w=4u l=4u ng=1 m=1
+MMtail_0 tail bias_n gnd gnd sg13_lv_nmos w=4u l=4u ng=1 m=1
+MMtail_1 gnd bias_n tail gnd sg13_lv_nmos w=4u l=4u ng=1 m=1
+MMin_p_0 mid_p vref_ota tail gnd sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_p_1 tail vref_ota mid_p gnd sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_p_2 mid_p vref_ota tail gnd sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_p_3 tail vref_ota mid_p gnd sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_n_0 ota_out sum_n tail gnd sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_n_1 tail sum_n ota_out gnd sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_n_2 ota_out sum_n tail gnd sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_n_3 tail sum_n ota_out gnd sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMp_load_p mid_p mid_p vdd vdd sg13_lv_pmos w=4u l=4u ng=1 m=1
+MMp_load_n ota_out mid_p vdd vdd sg13_lv_pmos w=4u l=4u ng=1 m=1
+.ends ota

@@ -49,6 +49,14 @@ NETLISTS = {
         'gnd':       [('Mn1a','S'), ('Mn2a','S')],
         'vdd':       [('Mp1a','S'), ('Mp1b','S'), ('Mp2a','S'), ('Mp2b','S')],
     },
+    'ota': {
+        'bias_n':   [('Mbias_d','D'), ('Mbias_d','G'), ('Mtail','G')],
+        'tail':     [('Mtail','D'), ('Min_p','S'), ('Min_n','S')],
+        'mid_p':    [('Min_p','D'), ('Mp_load_p','D'), ('Mp_load_p','G'), ('Mp_load_n','G')],
+        'ota_out':  [('Min_n','D'), ('Mp_load_n','D')],
+        'gnd':      [('Mbias_d','S'), ('Mtail','S')],
+        'vdd':      [('Mp_load_p','S'), ('Mp_load_n','S')],
+    },
     'sw': {
         'exc_out': [('SW1n','S'), ('SW1p','S'), ('SW2n','S'), ('SW2p','S'), ('SW3n','S'), ('SW3p','S')],
         'src1':    [('SW1n','D'), ('SW1p','D')],
