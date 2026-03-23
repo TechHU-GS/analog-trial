@@ -183,12 +183,15 @@ def l_route_flex(src, dst, m4_x):
     return shapes
 
 
-def check_collision(new_shapes, obstacles, spacing):
-    """Check if any new shape collides with existing obstacles."""
+LAYER_SPACING = {L_M3: 0.250, L_M4: 0.250, L_VIA2: 0.260, L_VIA3: 0.260}
+
+def check_collision(new_shapes, obstacles, spacing=None):
+    """Check if any new shape collides with existing obstacles (per-layer spacing)."""
     for layer, shape in new_shapes:
         obs = obstacles.get(layer)
         if obs and not obs.is_empty:
-            buffered = obs.buffer(spacing)
+            sp = LAYER_SPACING.get(layer, 0.250)
+            buffered = obs.buffer(sp)
             if shape.intersects(buffered):
                 return True
     return False
@@ -205,8 +208,22 @@ def route_all():
 
     print(f'Loaded {len(m2_pads)} M2 pads across {len(module_pads)} modules\n')
 
-    # Obstacle maps per layer (shapely)
-    obstacles = {L_M3: None, L_M4: None}
+    # Obstacle maps per layer — initialize from existing GDS shapes
+    obstacles = {}
+    lib_obs = gdstk.read_gds(os.path.join(OUT_DIR, 'soilz_assembled.gds'))
+    cell_obs = [c for c in lib_obs.cells if c.name == 'tt_um_techhu_analog_trial'][0]
+    cell_obs.flatten()
+    for layer_key in [L_M3, L_M4, L_VIA2, L_VIA3]:
+        polys = []
+        for p in cell_obs.polygons:
+            if p.layer == layer_key[0] and p.datatype == layer_key[1]:
+                try:
+                    pg = Polygon(p.points)
+                    if pg.is_valid: polys.append(pg)
+                except: pass
+        obstacles[layer_key] = unary_union(polys) if polys else None
+        if polys:
+            print(f'  Pre-existing {layer_key}: {len(polys)} shapes')
 
     # Track used pads per module (to avoid reuse)
     used_pads = {}
