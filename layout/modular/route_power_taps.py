@@ -63,15 +63,21 @@ def add_power_drop(cell, x, bus_y, tap_y, obstacles):
     # M4 vertical from bus_y to tap_y
     add_rect(cell, L_M4, x - M4_HW, y1, x + M4_HW, y2)
 
-    # At bus_y: Via3 to connect to existing M3 pad from power via stack
-    add_rect(cell, L_V3, x - VIA_H, bus_y - VIA_H, x + VIA_H, bus_y + VIA_H)
-    add_rect(cell, L_M3, x - PAD_HW, bus_y - PAD_HW, x + PAD_HW, bus_y + PAD_HW)
-    add_rect(cell, L_M4, x - PAD_HW, bus_y - PAD_HW, x + PAD_HW, bus_y + PAD_HW)
+    # Via3 at bus_y and tap_y (merge if too close to avoid V3.b)
+    if abs(bus_y - tap_y) < VIA_SZ * 2 + 0.22:
+        mid_y = (bus_y + tap_y) / 2
+        add_rect(cell, L_V3, x - VIA_H, mid_y - VIA_H, x + VIA_H, mid_y + VIA_H)
+        add_rect(cell, L_M3, x - PAD_HW, mid_y - PAD_HW, x + PAD_HW, mid_y + PAD_HW)
+        add_rect(cell, L_M4, x - PAD_HW, mid_y - PAD_HW, x + PAD_HW, mid_y + PAD_HW)
+    else:
+        add_rect(cell, L_V3, x - VIA_H, bus_y - VIA_H, x + VIA_H, bus_y + VIA_H)
+        add_rect(cell, L_M3, x - PAD_HW, bus_y - PAD_HW, x + PAD_HW, bus_y + PAD_HW)
+        add_rect(cell, L_M4, x - PAD_HW, bus_y - PAD_HW, x + PAD_HW, bus_y + PAD_HW)
+        add_rect(cell, L_V3, x - VIA_H, tap_y - VIA_H, x + VIA_H, tap_y + VIA_H)
+        add_rect(cell, L_M3, x - PAD_HW, tap_y - PAD_HW, x + PAD_HW, tap_y + PAD_HW)
+        add_rect(cell, L_M4, x - PAD_HW, tap_y - PAD_HW, x + PAD_HW, tap_y + PAD_HW)
 
-    # At tap_y: Via3 → M3 → Via2 → M2 → Via1 (no new M1 — land on existing tap M1)
-    add_rect(cell, L_V3, x - VIA_H, tap_y - VIA_H, x + VIA_H, tap_y + VIA_H)
-    add_rect(cell, L_M3, x - PAD_HW, tap_y - PAD_HW, x + PAD_HW, tap_y + PAD_HW)
-    add_rect(cell, L_M4, x - PAD_HW, tap_y - PAD_HW, x + PAD_HW, tap_y + PAD_HW)
+    # At tap_y: Via2 → M2 → Via1 (no new M1 — land on existing tap M1)
     add_rect(cell, L_V2, x - VIA_H, tap_y - VIA_H, x + VIA_H, tap_y + VIA_H)
     add_rect(cell, L_M2, x - PAD_HW, tap_y - PAD_HW, x + PAD_HW, tap_y + PAD_HW)
     add_rect(cell, L_V1, x - V1_H, tap_y - V1_H, x + V1_H, tap_y + V1_H)
@@ -133,10 +139,15 @@ def main():
         vdd_tap_y = my1 + mh - 0.5
         gnd_tap_y = my1 + 0.5
 
-        # Per-module overrides for DRC-clean landing
+        # Per-module tap y overrides (from assembled GDS M1 probe)
         TAP_OVERRIDES = {
-            'bias_mn': {'gnd_y': my1 + 0.7},  # V1.c: shift GND tap up to center on M1
-            'bias_cascode': {'x_offset': 5},
+            'bias_mn': {'gnd_y': my1 + 0.7},
+            'bias_cascode': {'x_offset': 5, 'gnd_y': my1 + 1.3},
+            'comp': {'vdd_y': my1 + mh - 3.0, 'gnd_y': my1 + 1.1},
+            'sw': {'vdd_y': my1 + mh - 2.2, 'gnd_y': my1 + 4.6},
+            'ota': {'gnd_y': my1 + 3.1},
+            'hbridge_drive': {'vdd_y': my1 + 2.8, 'skip_gnd': True},  # GND via manual M5 route
+            'ptat_core': {'gnd_y': my1 + 2.8},
         }
         if mod in TAP_OVERRIDES:
             ov = TAP_OVERRIDES[mod]
@@ -145,7 +156,7 @@ def main():
             if 'x_offset' in ov: mcx += ov['x_offset']
 
         placed_vdd = False
-        placed_gnd = False
+        placed_gnd = TAP_OVERRIDES.get(mod, {}).get('skip_gnd', False)
 
         for x_off in [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, -6, 6, -8, 8, -10, 10, -12, 12, -15, 15, -20, 20]:
             x = mcx + x_off
