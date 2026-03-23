@@ -173,18 +173,31 @@ def route():
     # Mc_tail gate: SHORT poly extension (don't cross inp Active!) + M2 to clk bus
     clk_y = pmos_top + 1500
     clk_xs = []
-    # Mc_tail: short poly ext below tail, Contact+Via1+M2 to clk bus
-    tail_g = D['Mc_tail']['gates'][0]
-    tail_gx = (tail_g[0]+tail_g[1])//2; tail_gw = tail_g[1]-tail_g[0]
-    tail_clk_y = dev_bot - 2300  # well below GND bus (dev_bot-1500) AND ptap
-    cell.shapes(l_po).insert(box(tail_gx-tail_gw//2, tail_clk_y-400, tail_gx+tail_gw//2, tail_g[2]))
-    cell.shapes(l_ct).insert(box(tail_gx-80, tail_clk_y-80, tail_gx+80, tail_clk_y+80))
-    cell.shapes(l_m1).insert(box(tail_gx-155, tail_clk_y-155, tail_gx+155, tail_clk_y+155))
-    # Route tail gate to clk bus via M1 on left edge (avoids crossing M2)
-    edge_x = min(d['bbox'][0] for d in devs) - 1000  # far left
-    cell.shapes(l_m1).insert(box(edge_x-155, tail_clk_y-155, tail_gx+155, tail_clk_y+155))  # horizontal
-    cell.shapes(l_m1).insert(box(edge_x-155, tail_clk_y-155, edge_x+155, clk_y+155))  # vertical up
-    cell.shapes(l_m1).insert(box(edge_x-155, clk_y-155, tail_gx+155, clk_y+155))  # horizontal to clk bus
+    # Mc_tail gate: extend poly UP to gap between tail and inp (safe zone)
+    # Mc_tail ng=2: 2 SEPARATE gate bars — Contact on LAST gate (avoids parasitic)
+    # + M1 bus in gap connecting both gates
+    tail_top = D['Mc_tail']['bbox'][3]
+    inp_bot = D['Mc_inp']['bbox'][1]
+    tail_clk_y = (tail_top + inp_bot) // 2
+    # ONLY extend LAST gate (first gate has Contact Active → parasitic)
+    last_tg = D['Mc_tail']['gates'][-1]
+    first_tg = D['Mc_tail']['gates'][0]
+    last_gx = (last_tg[0]+last_tg[1])//2; last_gw = last_tg[1]-last_tg[0]
+    first_gx = (first_tg[0]+first_tg[1])//2; first_gw = first_tg[1]-first_tg[0]
+    # Last gate: poly extension + Contact
+    cell.shapes(l_po).insert(box(last_gx-last_gw//2, last_tg[3], last_gx+last_gw//2, tail_clk_y+250))
+    cell.shapes(l_ct).insert(box(last_gx-80, tail_clk_y-80, last_gx+80, tail_clk_y+80))
+    cell.shapes(l_m1).insert(box(last_gx-155, tail_clk_y-155, last_gx+155, tail_clk_y+155))
+    # Poly bridge connecting both gates WITHIN device (y=2000, below Contact Active)
+    bridge_y = (first_tg[2] + first_tg[3]) // 2  # mid-gate, safely below Active top
+    cell.shapes(l_po).insert(box(first_gx-first_gw//2, bridge_y-100,
+                                 last_gx+last_gw//2, bridge_y+100))
+    tail_gx = last_gx
+    # Route from gap to left edge, then up to clk bus (all at gap y — no crossing)
+    edge_x = min(d['bbox'][0] for d in devs) - 1000
+    cell.shapes(l_m1).insert(box(edge_x-155, tail_clk_y-155, tail_gx+155, tail_clk_y+155))
+    cell.shapes(l_m1).insert(box(edge_x-155, tail_clk_y-155, edge_x+155, clk_y+155))
+    cell.shapes(l_m1).insert(box(edge_x-155, clk_y-155, tail_gx+155, clk_y+155))
     clk_xs.append(edge_x)
     # RST gates: long poly ext is OK (no crossing issue for rst devices at top)
     for dn in ['Mc_rst_dp', 'Mc_rst_dn', 'Mc_rst_op', 'Mc_rst_on']:
