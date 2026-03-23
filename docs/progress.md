@@ -435,6 +435,15 @@ VCO 5-stage + digital: 已有 GDS
 - 输入: expected netlist (哪些 terminal 该在同一 net)
 - 输出: ✅ OK / ❌ OPEN / ⚠️ SHORT + 精确定位
 
+### bias_cascode ✅ COMPLETE (DRC=0, LVS pass)
+- PCell: 9 devices (MN_cas_load ng=1, PM_cas_diode/1/2 ng=1, PM_cas3 ng=2, PM_cas_ref/mir1/mir2 ng=1, PM_mir3 ng=2)
+- Routing: 3-band layout (NMOS/cascode/mirror)
+  - cas_ref/1/2/3: staggered M1 horizontals in gap2 + M2 verticals to strips
+  - vcas: M2 from MN gate to cascode, M1 gate bus across all cascode gates
+  - net_c1: M1 gate bus for mirror gates
+  - ng>1 extra strips: M2 vertical (not M1 — M1 crosses M1 horizontals)
+- CI DRC = 0, LVS = Congratulations! Netlists match.
+
 ### vco_buffer ✅ COMPLETE (DRC=0, LVS pass)
 - PCell: 4 devices (MBn1 ng=1, MBn2 ng=2, MBp1 ng=1, MBp2 ng=2)
 - Routing: buf1(M2 vertical + M1 gate bus), vco_out(M2 L-shape), vco5(M1 staggered contacts), GND/VDD(M1 bus)
@@ -447,11 +456,16 @@ VCO 5-stage + digital: 已有 GDS
   - Gate contact 间距不够 → stagger y 位置
   - ntap 必须和 VDD bus M1 连通
 
+### hbridge_drive ✅ COMPLETE (DRC=0, LVS pass)
+- PCell: 4 NMOS (MS1-MS4, all ng=2)
+- Routing: M2 buses for probe_p/probe_n/exc_out, M1 for gnd, gate M1 buses
+- 关键经验: Via1 只在 strip level 放，bus level 不需要（否则悬空）
+  M2 bus Via1 M1 pad 不能和 GND M1 bus 重叠（10nm overlap → short）
+
 ### 下一步
-1. 修 vco_buffer routing (2 个问题)
-2. 用 check_nets + CI DRC 验证 → module LVS
-3. 其他模块: 用 build_module 生成裸 GDS → 走线 → check_nets → DRC → LVS
-4. 组装 → 全芯片 LVS
+1. 其他模块: hbridge → ota → comp → chopper/sw/dac_sw → vco_5stage → ptat_core
+2. 每个模块: build_module → route → check_nets → CI DRC → LVS
+3. 组装 → inter-module routing → 全芯片 LVS
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)

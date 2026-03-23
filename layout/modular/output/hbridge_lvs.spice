@@ -1,0 +1,10 @@
+.subckt hbridge n1_mid n2_mid lat_q lat_qb comp_outp comp_outn gnd vdd
+MMn1a n1_mid comp_outp gnd gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMn1b lat_q lat_qb n1_mid gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMn2a n2_mid comp_outn gnd gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMn2b lat_qb lat_q n2_mid gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMp1a lat_q comp_outp vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMp1b lat_q lat_qb vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMp2a lat_qb comp_outn vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMp2b lat_qb lat_q vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+.ends hbridge

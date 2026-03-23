@@ -39,6 +39,16 @@ NETLISTS = {
         'net_c1':  [('PM_cas_ref','G'), ('PM_mir1','G'), ('PM_mir2','G'), ('PM_mir3','G')],
         'vdd':     [('PM_cas_ref','S'), ('PM_mir1','S'), ('PM_mir2','S'), ('PM_mir3','S')],
     },
+    'hbridge': {
+        'n1_mid':    [('Mn1a','D'), ('Mn1b','S')],
+        'n2_mid':    [('Mn2a','D'), ('Mn2b','S')],
+        'lat_q':     [('Mn1b','D'), ('Mp1a','D'), ('Mp1b','D'), ('Mn2b','G'), ('Mp2b','G')],
+        'lat_qb':    [('Mn2b','D'), ('Mp2a','D'), ('Mp2b','D'), ('Mn1b','G'), ('Mp1b','G')],
+        'comp_outp': [('Mn1a','G'), ('Mp1a','G')],
+        'comp_outn': [('Mn2a','G'), ('Mp2a','G')],
+        'gnd':       [('Mn1a','S'), ('Mn2a','S')],
+        'vdd':       [('Mp1a','S'), ('Mp1b','S'), ('Mp2a','S'), ('Mp2b','S')],
+    },
     'hbridge_drive': {
         'probe_p':  [('MS1','S'), ('MS2','S')],
         'probe_n':  [('MS3','S'), ('MS4','S')],
