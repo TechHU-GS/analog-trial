@@ -7,21 +7,25 @@ sections.
 
 ## How it works
 
-Configurable ring oscillator for IHP SG13G2 130nm process characterization.
+SoilZ v1 is a 1-bit IQ lock-in sigma-delta impedance analyzer for soil moisture sensing, implemented in IHP SG13G2 130nm BiCMOS.
 
-A chain of 501 inverters forms a ring oscillator when enabled. Output taps at 15 different chain lengths (3, 5, 7, 13, 21, 31, 51, 75, 101, 149, 201, 251, 351, 401, 501 inverters) allow measuring oscillation frequency vs. chain length, providing insight into gate delay characteristics of the IHP SG13G2 process.
+Signal chain: PTAT current source → cascode mirror → H-bridge excitation → external soil probe → chopper demodulator → CT-ΣΔ integrator (OTA + C_fb + R_in) → Strong-arm comparator → SR latch → TG DAC feedback → digital divider chain (VCO ÷2/÷4/÷8/÷16 with I/Q) → bitstream output.
 
-The `enable` input (ui[0]) gates the oscillator via a NAND feedback. When disabled, the chain holds static low.
-
-A 3-bit mux (ui[3:1]) selects which tap drives the primary output (uo[0]).
+Key blocks:
+- 5-stage ring VCO (~9 MHz) with PTAT bias for temperature compensation
+- Programmable current source (3-bit binary weighted, 3.7-24 µA)
+- Chopper-based lock-in demodulation at excitation frequency
+- First-order CT-ΣΔ modulator with 1 pF MIM feedback capacitor
+- Digital frequency divider with quadrature output selection
 
 ## How to test
 
-1. Set `enable` (ui[0]) high to start oscillation.
-2. Use a frequency counter or oscilloscope on any output pin to measure the oscillation frequency.
-3. The gate delay can be calculated as: `t_pd = 1 / (2 * N * f)` where N is the number of inverters and f is the measured frequency.
-4. Compare frequencies across different tap lengths to verify the linear relationship between chain length and period.
+1. Connect a resistive load (1-27 kOhm) between ua[0] (probe_p) and ua[1] (probe_n).
+2. The internal VCO generates the excitation clock; the digital divider selects the measurement frequency.
+3. The bitstream density output on uo[] is proportional to the probe impedance.
+4. Use an ESP32 or similar to count the bitstream density over a measurement window.
 
 ## External hardware
 
-A frequency counter or oscilloscope connected to the output pins. An FPGA with a frequency counter can also be used for automated measurement.
+- Soil moisture probe or resistive test load connected to ua[0] and ua[1]
+- MCU (e.g., ESP32) to read bitstream density from digital outputs
