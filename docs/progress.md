@@ -588,10 +588,28 @@ python3 -c "import gdstk; from shapely..."  # 用 PDK venv 的 python3
 - **Total: 19/19 modules clean**
 - 下一步: floorplan → assemble → inter-module routing → 全芯片 LVS
 
+### Assembly v2 ✅ (Session 13, 2026-03-24 02:08)
+- assemble.py 重写: auto-rotation detection, PCell flatten, find_cell for multi-top GDS
+- 20 modules assembled, 14082 shapes, bbox 177×93um
+- CI DRC = 0 ✅
+- 3 modules rotated: chopper, rptat, vco_buffer
+- ⚠️ 全芯片 LVS 未验证（需要 inter-module routing 后才有意义）
+
+### 工具清单 (Session 13)
+- `modular/build_module.py` — 通用 PCell builder (ntap_offset/ptap_offset 参数)
+- `modular/build_passives_pcell.py` — 7 passive PCell builder
+- `modular/build_bias_mn.py` — bias_mn PCell + routing
+- `modular/route_*.py` — 11 transistor module routing scripts
+- `modular/routing_check.py` — M1/M2 spacing + poly parasitic 预检
+- `modular/check_nets.py` — Region-based 连通性检查
+- `modular/check_floorplan.py` — Floorplan constraint checker
+- `modular/floorplan_editor.html` — Interactive floorplan editor (localStorage auto-save)
+- `modular/assemble.py` — Module assembly with auto-rotation
+
 ### 下一步
-1. 更新 floorplan_editor.html 模块尺寸 → 摆位置
-2. 组装 → inter-module routing → 全芯片 LVS
-3. Power routing (TM1 buses + via stacks)
+1. Inter-module routing (M3+ 信号连线, 27 nets)
+2. Power routing (TM1 buses + via stacks)
+3. 全芯片 LVS
 4. 提交 TTIHP
 
 ### Floorplan 定稿 (final)
