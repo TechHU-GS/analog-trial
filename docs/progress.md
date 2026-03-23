@@ -574,10 +574,25 @@ python3 ~/pdk/IHP-Open-PDK/ihp-sg13g2/libs.tech/klayout/tech/lvs/run_lvs.py \
 python3 -c "import gdstk; from shapely..."  # 用 PDK venv 的 python3
 ```
 
+### Passive modules ✅ PCell 重建 (Session 13, 2026-03-24)
+- 旧 build_passives.py 从 soilz_bare.gds 提取 → 废弃 (rptat CntB.h1, rout M2.b violations)
+- 新 build_passives_pcell.py: 直接用 PCell API 生成 7 个 passive
+  - rhigh: rptat (w=0.5 l=133 b=12), rin/rdac (w=0.5 l=20 b=2)
+  - rppd: rout (w=0.5 l=25 b=4)
+  - cmim: c_fb (26×26), cbyp_n/cbyp_p (5×5)
+- 7/7 CI DRC = 0 ✅
+
+### ★ Session 13 最终状态 (2026-03-24 01:25)
+- **12/12 transistor modules**: DRC=0, LVS pass, all ROUTED (verified)
+- **7/7 passive modules**: DRC=0, PCell 重建 (verified)
+- **Total: 19/19 modules clean**
+- 下一步: floorplan → assemble → inter-module routing → 全芯片 LVS
+
 ### 下一步
-1. 组装 → inter-module routing → 全芯片 LVS
-2. Power routing (TM1 buses + via stacks)
-3. 提交 TTIHP
+1. 更新 floorplan_editor.html 模块尺寸 → 摆位置
+2. 组装 → inter-module routing → 全芯片 LVS
+3. Power routing (TM1 buses + via stacks)
+4. 提交 TTIHP
 
 ### Floorplan 定稿 (final)
 - Tile: 202.08 × 627.48um (1x2)

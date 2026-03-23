@@ -70,28 +70,31 @@ canvas.style.height = canvas.height + 'px';
 canvas.style.flexShrink = '0';
 
 const modules = [
-  {name:'vco_5stage', w:108.8, h:14.4, x:58.5, y:2.5, color:'#FF6666'},
-  {name:'vco_buffer', w:7.2, h:12.7, x:176, y:2.5, color:'#66FF66'},
-  {name:'inv_iso', w:9.8, h:3.8, x:171, y:21, color:'#6666FF'},
-  {name:'rout', w:1.6, h:101.3, x:196, y:2, color:'#D8D8D8'},
+  // Digital
   {name:'digital', w:30, h:80, x:16.5, y:5, color:'#CCCCCC'},
-  {name:'chopper', w:9.5, h:6.4, x:85.5, y:21, color:'#CC99FF'},
-  {name:'rin', w:3.8, h:5.3, x:103.5, y:21, color:'#C0C0C0'},
-  {name:'ota', w:18, h:23, x:116.5, y:21, color:'#FF99CC'},
-  {name:'c_fb', w:27.2, h:27.2, x:118, y:48, color:'#FFE0B2'},
-  {name:'comp', w:25.2, h:9.3, x:140, y:21, color:'#FFB366'},
-  {name:'hbridge', w:9.2, h:7.7, x:141.5, y:33, color:'#66B3FF'},
-  {name:'dac_sw', w:8.2, h:6.4, x:176.5, y:33, color:'#99FF66'},
-  {name:'rdac', w:2.3, h:3.8, x:188.5, y:21, color:'#B0B0B0'},
-  {name:'nol', w:30.1, h:11.8, x:80.5, y:33, color:'#99CCFF'},
-  {name:'hbridge_drive', w:12.9, h:4.1, x:61, y:21, color:'#99FFCC'},
-  {name:'sw', w:15.6, h:6.1, x:59, y:33, color:'#AAFFAA'},
-  {name:'rptat', w:135.5, h:10.6, x:53, y:78.5, color:'#E8E8E8'},
-  {name:'bias_cascode', w:55, h:16.6, x:59.5, y:48, color:'#FFFF99'},
-  {name:'ptat_core', w:18, h:14.5, x:154.5, y:48, color:'#FF9999'},
-  {name:'bias_mn', w:8.5, h:3, x:160, y:36, color:'#FFCC99'},
-  {name:'cbyp_n', w:6.2, h:6.2, x:180.5, y:48, color:'#A0E0A0'},
-  {name:'cbyp_p', w:6.2, h:6.2, x:181, y:59.5, color:'#A0A0E0'},
+  // VCO
+  {name:'vco_5stage', w:102.6, h:16.4, x:58, y:2.5, color:'#FF6666'},
+  {name:'vco_buffer', w:5.8, h:13.3, x:165, y:2.5, color:'#66FF66'},
+  // Signal chain
+  {name:'chopper', w:9.8, h:14.4, x:85, y:21, color:'#CC99FF'},
+  {name:'hbridge_drive', w:12.9, h:6.2, x:61, y:21, color:'#99FFCC'},
+  {name:'sw', w:16.1, h:16.0, x:59, y:30, color:'#AAFFAA'},
+  {name:'ota', w:20.8, h:18.2, x:100, y:21, color:'#FF99CC'},
+  {name:'comp', w:24.3, h:22.0, x:125, y:21, color:'#FFB366'},
+  {name:'hbridge', w:13.2, h:10.2, x:152, y:21, color:'#66B3FF'},
+  {name:'dac_sw', w:8.5, h:14.4, x:168, y:21, color:'#99FF66'},
+  // Bias
+  {name:'bias_cascode', w:69.7, h:18.6, x:59, y:48, color:'#FFFF99'},
+  {name:'ptat_core', w:86.9, h:15.9, x:59, y:68, color:'#FF9999'},
+  {name:'bias_mn', w:8.4, h:3.0, x:150, y:48, color:'#FFCC99'},
+  // Passive
+  {name:'rptat', w:9.1, h:135.5, x:185, y:2, color:'#E8E8E8'},
+  {name:'rout', w:3.6, h:27.4, x:195, y:2, color:'#D8D8D8'},
+  {name:'rin', w:2.3, h:22.2, x:100, y:48, color:'#C0C0C0'},
+  {name:'rdac', w:2.3, h:22.2, x:105, y:48, color:'#B0B0B0'},
+  {name:'c_fb', w:27.2, h:27.2, x:130, y:48, color:'#FFE0B2'},
+  {name:'cbyp_n', w:6.2, h:6.2, x:160, y:48, color:'#A0E0A0'},
+  {name:'cbyp_p', w:6.2, h:6.2, x:160, y:56, color:'#A0A0E0'},
 ];
 
 let selected = null;
