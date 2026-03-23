@@ -49,6 +49,13 @@ NETLISTS = {
         'gnd':       [('Mn1a','S'), ('Mn2a','S')],
         'vdd':       [('Mp1a','S'), ('Mp1b','S'), ('Mp2a','S'), ('Mp2b','S')],
     },
+    'chopper': {
+        'chop_out': [('Mchop1n','S'), ('Mchop1p','S'), ('Mchop2n','S'), ('Mchop2p','S')],
+        'sens_p':   [('Mchop1n','D'), ('Mchop1p','D')],
+        'sens_n':   [('Mchop2n','D'), ('Mchop2p','D')],
+        'f_exc':    [('Mchop1n','G'), ('Mchop2p','G')],
+        'f_exc_b':  [('Mchop1p','G'), ('Mchop2n','G')],
+    },
     'dac_sw': {
         'dac_out': [('Mdac_tg1n','S'), ('Mdac_tg1p','S'), ('Mdac_tg2n','S'), ('Mdac_tg2p','S')],
         'dac_hi':  [('Mdac_tg1n','D'), ('Mdac_tg1p','D')],
