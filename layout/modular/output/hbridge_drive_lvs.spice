@@ -1,0 +1,11 @@
+* hbridge_drive LVS schematic (ng=2 expanded)
+.subckt hbridge_drive exc_out probe_p probe_n phi_p phi_n gnd
+MMS1_0 exc_out phi_p probe_p gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMS1_1 probe_p phi_p exc_out gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMS2_0 gnd phi_n probe_p gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMS2_1 probe_p phi_n gnd gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMS3_0 exc_out phi_n probe_n gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMS3_1 probe_n phi_n exc_out gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMS4_0 gnd phi_p probe_n gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMS4_1 probe_n phi_p gnd gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+.ends hbridge_drive

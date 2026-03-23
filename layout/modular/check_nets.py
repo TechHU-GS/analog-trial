@@ -39,6 +39,14 @@ NETLISTS = {
         'net_c1':  [('PM_cas_ref','G'), ('PM_mir1','G'), ('PM_mir2','G'), ('PM_mir3','G')],
         'vdd':     [('PM_cas_ref','S'), ('PM_mir1','S'), ('PM_mir2','S'), ('PM_mir3','S')],
     },
+    'hbridge_drive': {
+        'probe_p':  [('MS1','S'), ('MS2','S')],
+        'probe_n':  [('MS3','S'), ('MS4','S')],
+        'exc_out':  [('MS1','D'), ('MS3','D')],
+        'gnd':      [('MS2','D'), ('MS4','D')],
+        'phi_p':    [('MS1','G'), ('MS4','G')],
+        'phi_n':    [('MS2','G'), ('MS3','G')],
+    },
 }
 
 
