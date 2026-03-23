@@ -82,7 +82,7 @@ MACRO tt_um_techhu_analog_trial
   END VDPWR
   PIN VGND
     DIRECTION INOUT ;
-    USE POWER ;
+    USE GROUND ;
     PORT
       LAYER TopMetal1 ;
         RECT 6.800 5.000 9.200 308.000 ;
