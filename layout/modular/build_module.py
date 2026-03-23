@@ -199,18 +199,16 @@ if __name__ == '__main__':
     with open(DEVICES_JSON) as f:
         all_modules = json.load(f)
 
-    # Get module name from -rd parameter or build all
-    module_name = os.environ.get('KLAYOUT_rd_module', 'all')
-    # KLayout passes -rd as variable
-    import sys
-    for arg in sys.argv:
-        if arg.startswith('module='):
-            module_name = arg.split('=', 1)[1]
+    # Module name via env var (klayout -rd doesn't work for Python)
+    # Usage: MODULE=bias_cascode klayout -n sg13g2 -zz -r modular/build_module.py
+    #    or: MODULE=all klayout ... (explicit all)
+    module_name = os.environ.get('MODULE', '')
+    if not module_name:
+        print('Usage: MODULE=<name|all> klayout -n sg13g2 -zz -r modular/build_module.py')
+        print(f'Available: {", ".join(sorted(all_modules.keys()))}')
+        sys.exit(1)
 
-    if module_name == 'all':
-        targets = list(all_modules.keys())
-    else:
-        targets = [module_name]
+    targets = list(all_modules.keys()) if module_name == 'all' else [module_name]
 
     for mod in targets:
         if mod not in all_modules:
