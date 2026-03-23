@@ -49,6 +49,14 @@ NETLISTS = {
         'gnd':       [('Mn1a','S'), ('Mn2a','S')],
         'vdd':       [('Mp1a','S'), ('Mp1b','S'), ('Mp2a','S'), ('Mp2b','S')],
     },
+    'comp': {
+        'c_tail':     [('Mc_tail','D'), ('Mc_inp','S'), ('Mc_inn','S')],
+        'c_di_p':     [('Mc_inp','D'), ('Mc_ln1','S'), ('Mc_rst_dp','D')],
+        'c_di_n':     [('Mc_inn','D'), ('Mc_ln2','S'), ('Mc_rst_dn','D')],
+        'comp_outp':  [('Mc_ln1','D'), ('Mc_lp1','D'), ('Mc_rst_op','D'), ('Mc_ln2','G'), ('Mc_lp2','G')],
+        'comp_outn':  [('Mc_ln2','D'), ('Mc_lp2','D'), ('Mc_rst_on','D'), ('Mc_ln1','G'), ('Mc_lp1','G')],
+        'comp_clk':   [('Mc_tail','G'), ('Mc_rst_dp','G'), ('Mc_rst_dn','G'), ('Mc_rst_op','G'), ('Mc_rst_on','G')],
+    },
     'ota': {
         'bias_n':   [('Mbias_d','D'), ('Mbias_d','G'), ('Mtail','G')],
         'tail':     [('Mtail','D'), ('Min_p','S'), ('Min_n','S')],
