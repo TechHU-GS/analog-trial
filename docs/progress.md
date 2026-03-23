@@ -500,8 +500,27 @@ VCO 5-stage + digital: 已有 GDS
 7. ✅ chopper (4 TG devices)
 8. ✅ sw (6 TG devices)
 
+### ota ✅ COMPLETE (DRC=0, LVS pass)
+### chopper ✅ COMPLETE (DRC=0, LVS pass)
+### sw ✅ COMPLETE (DRC=0, LVS pass)
+
+### comp ⚠️ NEAR CLEAN (DRC=0, check_nets OK, LVS 1 parasitic)
+- Staircase 2-column layout, M1 edge routing for comp_clk
+- 所有信号 net 正确分离
+- BLOCKED: Mc_tail 第一个 gate finger 有 Contact Active pad
+  poly extension 穿过 → 寄生 MOSFET (W=2 L=0.62) → comp_clk 短到 GND
+- 需要: probe Contact Active 精确位置后再设计路由
+
+### Session 12 完成模块汇总 (9/12 clean + 1 near + 2 pending)
+1. ✅ bias_mn, vco_buffer, bias_cascode, hbridge_drive
+2. ✅ hbridge, dac_sw, chopper, sw, ota
+3. ⚠️ comp (DRC=0, LVS 差 1 parasitic)
+4. 待做: vco_5stage (20 devices, ng=8), ptat_core (7 devices, ng=8)
+
 ### 下一步
-1. 剩余模块: ota → comp → vco_5stage → ptat_core
+1. comp: probe Mc_tail PCell Contact Active → 设计安全 poly route
+2. vco_5stage + ptat_core: PCell + routing
+3. 组装 → inter-module routing → 全芯片 LVS
 2. 每个模块: build_module → route → check_nets → CI DRC → LVS
 3. 组装 → inter-module routing → 全芯片 LVS
 
