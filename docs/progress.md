@@ -735,11 +735,26 @@ klayout -n sg13g2 -zz -r ~/pdk/IHP-Open-PDK/ihp-sg13g2/libs.tech/klayout/tech/dr
 - M1.b violations: power M1 pad near but not overlapping module M1 routing
 - ⚠️ 需要精确 tap 定位（实际 ntap/ptap M1 位置, 不是 module_y ± 0.5 估算）
 
+### ★★★ 12/12 Power Complete, CI DRC=0 (verified 2026-03-24 07:00) ★★★
+- **12/12 VDD + 12/12 GND** 全部连通
+- 9 auto (route_power_taps.py) + 3 manual (bias_mn direct, hbridge_drive M3 L-route, +M5 L-routes)
+- dac_sw VDD: M5 L-route x=166→187, mod_y offset 1.5 避 M2.b
+- hbridge_drive GND: M5 L-route x=80→102, mod_y offset 1.5
+- Cap bypass: cbyp_n→GND, cbyp_p→VDD via M5 L-route
+- Cap signal: Via2+M3 pads for nmos_bias, pmos_bias, sum_n, ota_out
+- **CI DRC = 0** ✅
+
+### LVS 状态 (2026-03-24 06:51)
+- Analog-only: **98N + 82P + 3 cap + 4 res = 设备完全匹配** ✅
+- 51 unmatched nets (power 碎片化 + 部分信号未连通)
+- Device class case: layout=lowercase, schematic=uppercase, comparator case-insensitive → 不是问题
+- Full chip: 222 unmatched nets (digital block flat transistors vs subckt instances)
+- Digital LVS 需要 hierarchical matching (已知阻塞, 非本 session 能解)
+
 ### 下一步
-1. 修 M1.b: 精确定位 ntap/ptap M1 位置，让 power pad 落在 tap M1 上
-2. 连接 dac_sw VDD, hbridge_drive VDD+GND
-3. 全芯片 LVS
-4. 提交 TTIHP
+1. LVS net 连通性改善 (减少 51 unmatched)
+2. Digital LVS hierarchical matching
+3. 提交 TTIHP
 
 ### 下一步
 1. 确认 hbridge build script 版本
