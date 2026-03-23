@@ -49,6 +49,15 @@ NETLISTS = {
         'gnd':       [('Mn1a','S'), ('Mn2a','S')],
         'vdd':       [('Mp1a','S'), ('Mp1b','S'), ('Mp2a','S'), ('Mp2b','S')],
     },
+    'sw': {
+        'exc_out': [('SW1n','S'), ('SW1p','S'), ('SW2n','S'), ('SW2p','S'), ('SW3n','S'), ('SW3p','S')],
+        'src1':    [('SW1n','D'), ('SW1p','D')],
+        'src2':    [('SW2n','D'), ('SW2p','D')],
+        'src3':    [('SW3n','D'), ('SW3p','D')],
+        'sel0':    [('SW1n','G')], 'sel0b': [('SW1p','G')],
+        'sel1':    [('SW2n','G')], 'sel1b': [('SW2p','G')],
+        'sel2':    [('SW3n','G')], 'sel2b': [('SW3p','G')],
+    },
     'chopper': {
         'chop_out': [('Mchop1n','S'), ('Mchop1p','S'), ('Mchop2n','S'), ('Mchop2p','S')],
         'sens_p':   [('Mchop1n','D'), ('Mchop1p','D')],

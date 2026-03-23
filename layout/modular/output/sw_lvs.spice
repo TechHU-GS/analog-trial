@@ -1,0 +1,8 @@
+.subckt sw exc_out src1 src2 src3 sel0 sel0b sel1 sel1b sel2 sel2b gnd vdd
+MSW1n src1 sel0 exc_out gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MSW1p src1 sel0b exc_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+MSW2n src2 sel1 exc_out gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MSW2p src2 sel1b exc_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+MSW3n src3 sel2 exc_out gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MSW3p src3 sel2b exc_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+.ends sw
