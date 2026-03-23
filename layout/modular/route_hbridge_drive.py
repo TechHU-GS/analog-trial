@@ -77,8 +77,7 @@ def route():
     for s in pp_strips:
         cx = (s[0]+s[1])//2
         scy = (s[2]+s[3])//2
-        add_via1_m2(cell, ly, cx, scy)   # Via1 at strip level
-        add_via1_m2(cell, ly, cx, pp_y)  # Via1 at bus level
+        add_via1_m2(cell, ly, cx, scy)   # Via1 at strip level only
         cell.shapes(l_m2).insert(box(cx-150, min(scy, pp_y)-155, cx+150, max(scy, pp_y)+155))
     pp_x1 = min((s[0]+s[1])//2 for s in pp_strips)
     pp_x2 = max((s[0]+s[1])//2 for s in pp_strips)
@@ -92,7 +91,6 @@ def route():
         cx = (s[0]+s[1])//2
         scy = (s[2]+s[3])//2
         add_via1_m2(cell, ly, cx, scy)
-        add_via1_m2(cell, ly, cx, pn_y)
         cell.shapes(l_m2).insert(box(cx-150, min(scy, pn_y)-155, cx+150, max(scy, pn_y)+155))
     pn_x1 = min((s[0]+s[1])//2 for s in pn_strips)
     pn_x2 = max((s[0]+s[1])//2 for s in pn_strips)
@@ -106,7 +104,6 @@ def route():
         cx = (s[0]+s[1])//2
         scy = (s[2]+s[3])//2
         add_via1_m2(cell, ly, cx, scy)
-        add_via1_m2(cell, ly, cx, eo_y)
         cell.shapes(l_m2).insert(box(cx-150, min(scy, eo_y)-155, cx+150, max(scy, eo_y)+155))
     eo_x1 = min((s[0]+s[1])//2 for s in eo_strips)
     eo_x2 = max((s[0]+s[1])//2 for s in eo_strips)
