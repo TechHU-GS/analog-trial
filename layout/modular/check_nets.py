@@ -49,6 +49,13 @@ NETLISTS = {
         'gnd':       [('Mn1a','S'), ('Mn2a','S')],
         'vdd':       [('Mp1a','S'), ('Mp1b','S'), ('Mp2a','S'), ('Mp2b','S')],
     },
+    'dac_sw': {
+        'dac_out': [('Mdac_tg1n','S'), ('Mdac_tg1p','S'), ('Mdac_tg2n','S'), ('Mdac_tg2p','S')],
+        'dac_hi':  [('Mdac_tg1n','D'), ('Mdac_tg1p','D')],
+        'dac_lo':  [('Mdac_tg2n','D'), ('Mdac_tg2p','D')],
+        'lat_q':   [('Mdac_tg1n','G'), ('Mdac_tg2p','G')],
+        'lat_qb':  [('Mdac_tg1p','G'), ('Mdac_tg2n','G')],
+    },
     'hbridge_drive': {
         'probe_p':  [('MS1','S'), ('MS2','S')],
         'probe_n':  [('MS3','S'), ('MS4','S')],

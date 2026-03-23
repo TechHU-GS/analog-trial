@@ -1,0 +1,6 @@
+.subckt dac_sw dac_out dac_hi dac_lo lat_q lat_qb gnd vdd
+MMdac_tg1n dac_hi lat_q dac_out gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMdac_tg1p dac_hi lat_qb dac_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+MMdac_tg2n dac_lo lat_qb dac_out gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMdac_tg2p dac_lo lat_q dac_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+.ends dac_sw
