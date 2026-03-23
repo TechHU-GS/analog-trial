@@ -48,7 +48,7 @@ L_M4 = (50, 0)
 # Net definitions: (net_name, [(module, terminal_type), ...])
 # terminal_type: 'auto' = find nearest M2 pad
 # Digital M3 pin positions (label layer 30/25, offset by digital placement x=23, y=5)
-DIGITAL_ORIGIN = (23.0, 5.0)
+DIGITAL_ORIGIN = None  # Set dynamically from floorplan in route_all()
 DIGITAL_M3_PINS = {
     'f_exc':   (29.0, 50.0),
     'f_exc_b': (29.0, 59.2),
@@ -57,12 +57,19 @@ DIGITAL_M3_PINS = {
     'vco_out': (1.0, 23.1),  # left edge!
 }
 
-def digital_pin_abs(pin_name):
+def digital_pin_abs(pin_name, floorplan=None):
     """Get absolute position of digital M3 pin."""
     rel = DIGITAL_M3_PINS.get(pin_name)
     if rel:
-        return {'cx': DIGITAL_ORIGIN[0] + rel[0], 'cy': DIGITAL_ORIGIN[1] + rel[1],
-                'is_m3': True}
+        # Read origin from floorplan
+        if floorplan and 'digital' in floorplan:
+            ox = floorplan['digital']['x']
+            oy = floorplan['digital']['y']
+        elif DIGITAL_ORIGIN:
+            ox, oy = DIGITAL_ORIGIN
+        else:
+            ox, oy = 23.0, 5.0
+        return {'cx': ox + rel[0], 'cy': oy + rel[1], 'is_m3': True}
     return None
 
 NETS = [
@@ -285,10 +292,12 @@ def route_all():
 
     # Obstacle maps per layer — initialize from existing GDS shapes
     # Exclude zones around digital M3 pins (they are connection points, not obstacles)
+    dig_ox = floorplan['digital']['x'] if 'digital' in floorplan else 23.0
+    dig_oy = floorplan['digital']['y'] if 'digital' in floorplan else 5.0
     pin_exclusions = []
     for pin_name, rel in DIGITAL_M3_PINS.items():
-        ax = DIGITAL_ORIGIN[0] + rel[0]
-        ay = DIGITAL_ORIGIN[1] + rel[1]
+        ax = dig_ox + rel[0]
+        ay = dig_oy + rel[1]
         pin_exclusions.append(sbox(ax - 1.0, ay - 0.5, ax + 1.0, ay + 0.5))
     pin_excl_union = unary_union(pin_exclusions) if pin_exclusions else None
 
@@ -354,7 +363,7 @@ def route_all():
         for mod, term_type in terminals:
             # Digital M3 pin?
             if mod == 'digital' and term_type != 'auto':
-                dpin = digital_pin_abs(term_type)
+                dpin = digital_pin_abs(term_type, floorplan)
                 if dpin:
                     pads.append((mod, dpin))
                     continue
@@ -390,8 +399,8 @@ def route_all():
             found = False
             sx, dx = src_pad['cx'], dst_pad['cx']
             mid_x = (sx + dx) / 2
-            DIG_RIGHT = DIGITAL_ORIGIN[0] + 31
-            DIG_LEFT = DIGITAL_ORIGIN[0] - 1
+            DIG_RIGHT = dig_ox + 31
+            DIG_LEFT = dig_ox - 1
             if src_pad.get('is_m3') or dst_pad.get('is_m3'):
                 dig_pad = src_pad if src_pad.get('is_m3') else dst_pad
                 if dig_pad['cx'] > 40:
