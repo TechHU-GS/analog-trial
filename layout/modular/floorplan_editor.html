@@ -64,7 +64,7 @@ const SNAP = 0.5;
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = Math.ceil(TILE_W * SCALE) + 70;
-canvas.height = Math.ceil(110 * SCALE) + 40;
+canvas.height = Math.ceil(200 * SCALE) + 40;
 canvas.style.width = canvas.width + 'px';
 canvas.style.height = canvas.height + 'px';
 canvas.style.flexShrink = '0';
@@ -101,19 +101,36 @@ let selected = null;
 let multiSelect = [];
 let dragStart = null;
 
+// Restore positions from localStorage
+const saved = localStorage.getItem('floorplan_positions');
+if (saved) {
+  try {
+    const pos = JSON.parse(saved);
+    for (const m of modules) {
+      if (pos[m.name]) { m.x = pos[m.name].x; m.y = pos[m.name].y; if (pos[m.name].w) m.w = pos[m.name].w; if (pos[m.name].h) m.h = pos[m.name].h; }
+    }
+  } catch(e) {}
+}
+
+function autoSave() {
+  const pos = {};
+  for (const m of modules) pos[m.name] = {x:m.x, y:m.y, w:m.w, h:m.h};
+  localStorage.setItem('floorplan_positions', JSON.stringify(pos));
+}
+
 function snap(v) { return Math.round(v / SNAP) * SNAP; }
-function umToPx(x, y) { return [OX + x * SCALE, OY + (110 - y) * SCALE]; }
-function pxToUm(px, py) { return [(px - OX) / SCALE, 110 - (py - OY) / SCALE]; }
+function umToPx(x, y) { return [OX + x * SCALE, OY + (200 - y) * SCALE]; }
+function pxToUm(px, py) { return [(px - OX) / SCALE, 200 - (py - OY) / SCALE]; }
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const [tx1,ty1] = umToPx(0, 110);
+  const [tx1,ty1] = umToPx(0, 200);
   const [tx2,ty2] = umToPx(TILE_W, 0);
   ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
   ctx.strokeRect(tx1, ty1, tx2-tx1, ty2-ty1);
 
   // Power stripe
-  const [px1,py1] = umToPx(1.8, 110);
+  const [px1,py1] = umToPx(1.8, 200);
   const [px2,py2] = umToPx(POWER_X, 0);
   ctx.fillStyle = 'rgba(255,200,200,0.3)';
   ctx.fillRect(px1, py1, px2-px1, py2-py1);
@@ -125,7 +142,7 @@ function draw() {
     const [gx] = umToPx(x, 0); ctx.beginPath(); ctx.moveTo(gx, ty1); ctx.lineTo(gx, ty2); ctx.stroke();
     ctx.fillText(x, gx-5, ty2+12);
   }
-  for (let y = 0; y <= 110; y += 10) {
+  for (let y = 0; y <= 200; y += 10) {
     const [,gy] = umToPx(0, y); ctx.beginPath(); ctx.moveTo(tx1, gy); ctx.lineTo(tx2, gy); ctx.stroke();
     ctx.fillText(y, tx1-18, gy+3);
   }
@@ -200,7 +217,7 @@ canvas.addEventListener('mousemove', e => {
 canvas.addEventListener('mouseup', e => {
   if (dragStart && dragStart.starts) {
     for (const s of dragStart.starts) { s.m.x = snap(s.m.x); s.m.y = snap(s.m.y); }
-    draw();
+    draw(); autoSave();
   }
   dragStart = null;
 });
@@ -211,7 +228,7 @@ canvas.addEventListener('contextmenu', e => {
     const cx = selected.x + selected.w/2, cy = selected.y + selected.h/2;
     [selected.w, selected.h] = [selected.h, selected.w];
     selected.x = snap(cx - selected.w/2); selected.y = snap(cy - selected.h/2);
-    draw(); updateInfo();
+    draw(); updateInfo(); autoSave();
   }
 });
 
