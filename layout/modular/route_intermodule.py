@@ -148,6 +148,61 @@ def l_route(src, dst):
     return l_route_flex(src, dst, dst['cx'])
 
 
+def z_route(src, dst, m4_x, mid_y):
+    """Z-route: src → M4-V(at m4_x) to mid_y → M3-H to dst_x → M4-V to dst_y.
+    Used when direct L-route is blocked (e.g., digital M3 obstacles).
+    """
+    sx, sy = src['cx'], src['cy']
+    dx, dy = dst['cx'], dst['cy']
+    hw = M3_WIDTH / 2
+    v2_half = VIA2_SIZE / 2
+    m3_enc = M3_VIA2_ENC
+    m3_pad = v2_half + m3_enc
+    v3_half = VIA3_SIZE / 2
+    m4_pad = v3_half + M4_VIA3_ENC
+
+    shapes = []
+    src_is_m3 = src.get('is_m3', False)
+    dst_is_m3 = dst.get('is_m3', False)
+
+    # Via2 at endpoints (skip for M3 pins)
+    if not src_is_m3:
+        shapes.append((L_VIA2, sbox(sx-v2_half, sy-v2_half, sx+v2_half, sy+v2_half)))
+    if not dst_is_m3:
+        shapes.append((L_VIA2, sbox(dx-v2_half, dy-v2_half, dx+v2_half, dy+v2_half)))
+
+    # M3 pads at endpoints
+    shapes.append((L_M3, sbox(sx-m3_pad, sy-hw, sx+m3_pad, sy+hw)))
+    shapes.append((L_M3, sbox(dx-m3_pad, dy-hw, dx+m3_pad, dy+hw)))
+
+    # Segment 1: M4-V from src_y to mid_y at m4_x
+    # M3-H from src_x to m4_x at src_y
+    if abs(sx - m4_x) > 0.01:
+        shapes.append((L_M3, sbox(min(sx,m4_x)-hw, sy-hw, max(sx,m4_x)+hw, sy+hw)))
+    shapes.append((L_M4, sbox(m4_x-hw, min(sy,mid_y)-hw, m4_x+hw, max(sy,mid_y)+hw)))
+    shapes.append((L_VIA3, sbox(m4_x-v3_half, sy-v3_half, m4_x+v3_half, sy+v3_half)))
+    shapes.append((L_M3, sbox(m4_x-m3_pad, sy-hw, m4_x+m3_pad, sy+hw)))
+    shapes.append((L_M4, sbox(m4_x-hw, sy-m4_pad, m4_x+hw, sy+m4_pad)))
+
+    # Segment 2: M3-H from m4_x to dx at mid_y
+    shapes.append((L_M3, sbox(min(m4_x,dx)-hw, mid_y-hw, max(m4_x,dx)+hw, mid_y+hw)))
+    shapes.append((L_VIA3, sbox(m4_x-v3_half, mid_y-v3_half, m4_x+v3_half, mid_y+v3_half)))
+    shapes.append((L_M3, sbox(m4_x-m3_pad, mid_y-hw, m4_x+m3_pad, mid_y+hw)))
+    shapes.append((L_M4, sbox(m4_x-hw, mid_y-m4_pad, m4_x+hw, mid_y+m4_pad)))
+
+    # Segment 3: M4-V from mid_y to dst_y at dx
+    if abs(mid_y - dy) > 0.01:
+        shapes.append((L_M4, sbox(dx-hw, min(mid_y,dy)-hw, dx+hw, max(mid_y,dy)+hw)))
+    shapes.append((L_VIA3, sbox(dx-v3_half, mid_y-v3_half, dx+v3_half, mid_y+v3_half)))
+    shapes.append((L_M3, sbox(dx-m3_pad, mid_y-hw, dx+m3_pad, mid_y+hw)))
+    shapes.append((L_M4, sbox(dx-hw, mid_y-m4_pad, dx+hw, mid_y+m4_pad)))
+    shapes.append((L_VIA3, sbox(dx-v3_half, dy-v3_half, dx+v3_half, dy+v3_half)))
+    shapes.append((L_M3, sbox(dx-m3_pad, dy-hw, dx+m3_pad, dy+hw)))
+    shapes.append((L_M4, sbox(dx-hw, dy-m4_pad, dx+hw, dy+m4_pad)))
+
+    return shapes
+
+
 def l_route_flex(src, dst, m4_x):
     """Generate L-route shapes with configurable M4 column x position.
     Pattern: src → M3-H → Via3 → M4-V(at m4_x) → Via3 → M3-H → dst
@@ -229,6 +284,14 @@ def route_all():
     print(f'Loaded {len(m2_pads)} M2 pads across {len(module_pads)} modules\n')
 
     # Obstacle maps per layer — initialize from existing GDS shapes
+    # Exclude zones around digital M3 pins (they are connection points, not obstacles)
+    pin_exclusions = []
+    for pin_name, rel in DIGITAL_M3_PINS.items():
+        ax = DIGITAL_ORIGIN[0] + rel[0]
+        ay = DIGITAL_ORIGIN[1] + rel[1]
+        pin_exclusions.append(sbox(ax - 1.0, ay - 0.5, ax + 1.0, ay + 0.5))
+    pin_excl_union = unary_union(pin_exclusions) if pin_exclusions else None
+
     obstacles = {}
     lib_obs = gdstk.read_gds(os.path.join(OUT_DIR, 'soilz_assembled.gds'))
     cell_obs = [c for c in lib_obs.cells if c.name == 'tt_um_techhu_analog_trial'][0]
@@ -239,7 +302,17 @@ def route_all():
             if p.layer == layer_key[0] and p.datatype == layer_key[1]:
                 try:
                     pg = Polygon(p.points)
-                    if pg.is_valid: polys.append(pg)
+                    if pg.is_valid:
+                        # For M3: exclude digital pin zones
+                        if layer_key == L_M3 and pin_excl_union and pg.intersects(pin_excl_union):
+                            remaining = pg.difference(pin_excl_union)
+                            if not remaining.is_empty:
+                                if hasattr(remaining, 'geoms'):
+                                    polys.extend(remaining.geoms)
+                                else:
+                                    polys.append(remaining)
+                        else:
+                            polys.append(pg)
                 except: pass
         obstacles[layer_key] = unary_union(polys) if polys else None
         if polys:
@@ -310,14 +383,32 @@ def route_all():
             found = False
             sx, dx = src_pad['cx'], dst_pad['cx']
             mid_x = (sx + dx) / 2
-            # Try: dst_x, src_x, mid_x, and offsets
-            offsets = [0, -1, 1, -2, 2, -3, 3, -5, 5, -8, 8, -12, 12, -15, 15, -20, 20]
-            candidates = [dx + o for o in offsets] + [sx + o for o in offsets] + [mid_x + o for o in offsets]
+            DIG_RIGHT = DIGITAL_ORIGIN[0] + 31
+            DIG_LEFT = DIGITAL_ORIGIN[0] - 1
+            if src_pad.get('is_m3') or dst_pad.get('is_m3'):
+                dig_pad = src_pad if src_pad.get('is_m3') else dst_pad
+                if dig_pad['cx'] > 40:
+                    candidates = [DIG_RIGHT + o for o in [0,1,2,3,5,8,10,15]]
+                else:
+                    candidates = [DIG_LEFT + o for o in [0,-1,-2,-3,-5,-8]]
+            else:
+                offsets = [0, -1, 1, -2, 2, -3, 3, -5, 5, -8, 8, -12, 12, -15, 15, -20, 20]
+                candidates = [dx + o for o in offsets] + [sx + o for o in offsets] + [mid_x + o for o in offsets]
             for m4_x in candidates:
                 shapes = l_route_flex(src_pad, dst_pad, m4_x)
                 if not check_collision(shapes, obstacles, M3_SPACE):
                     found = True
                     break
+            # If L-route fails and involves digital pin, try Z-route via free y channels
+            if not found and (src_pad.get('is_m3') or dst_pad.get('is_m3')):
+                free_ys = [8, 10, 12, 15, 68, 70, 72, 80, 82, 84]
+                for m4_x in candidates:
+                    for mid_y in free_ys:
+                        shapes = z_route(src_pad, dst_pad, m4_x, mid_y)
+                        if not check_collision(shapes, obstacles, M3_SPACE):
+                            found = True
+                            break
+                    if found: break
             if not found:
                 failed.append((net_name, f'{src_mod}→{dst_mod} collision'))
                 success = False
