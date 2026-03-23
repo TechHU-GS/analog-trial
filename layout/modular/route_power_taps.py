@@ -50,13 +50,15 @@ def add_power_drop(cell, x, bus_y, tap_y, obstacles):
     obs_m4 = obstacles.get(L_M4)
     if obs_m4 and not obs_m4.is_empty and m4_shape.intersects(obs_m4):
         return False
-    # Check M2/M3 collision at tap landing point (NOT M1 — we want M1 overlap with taps)
-    spacing = 0.250
+    # Check M2/M3 collision at BOTH tap and bus landing points
+    spacing = 0.260
     for lk in [L_M2, L_M3]:
-        pad = sbox(x - PAD_HW, tap_y - PAD_HW, x + PAD_HW, tap_y + PAD_HW)
         obs = obstacles.get(lk)
-        if obs and not obs.is_empty and pad.buffer(spacing).intersects(obs):
-            return False
+        if obs and not obs.is_empty:
+            for check_y in [tap_y, bus_y]:
+                pad = sbox(x - PAD_HW, check_y - PAD_HW, x + PAD_HW, check_y + PAD_HW)
+                if pad.buffer(spacing).intersects(obs):
+                    return False
 
     # M4 vertical from bus_y to tap_y
     add_rect(cell, L_M4, x - M4_HW, y1, x + M4_HW, y2)
@@ -66,14 +68,14 @@ def add_power_drop(cell, x, bus_y, tap_y, obstacles):
     add_rect(cell, L_M3, x - PAD_HW, bus_y - PAD_HW, x + PAD_HW, bus_y + PAD_HW)
     add_rect(cell, L_M4, x - PAD_HW, bus_y - PAD_HW, x + PAD_HW, bus_y + PAD_HW)
 
-    # At tap_y: Via3 → M3 → Via2 → M2 → Via1 → M1
+    # At tap_y: Via3 → M3 → Via2 → M2 → Via1 (no new M1 — land on existing tap M1)
     add_rect(cell, L_V3, x - VIA_H, tap_y - VIA_H, x + VIA_H, tap_y + VIA_H)
     add_rect(cell, L_M3, x - PAD_HW, tap_y - PAD_HW, x + PAD_HW, tap_y + PAD_HW)
     add_rect(cell, L_M4, x - PAD_HW, tap_y - PAD_HW, x + PAD_HW, tap_y + PAD_HW)
     add_rect(cell, L_V2, x - VIA_H, tap_y - VIA_H, x + VIA_H, tap_y + VIA_H)
     add_rect(cell, L_M2, x - PAD_HW, tap_y - PAD_HW, x + PAD_HW, tap_y + PAD_HW)
     add_rect(cell, L_V1, x - V1_H, tap_y - V1_H, x + V1_H, tap_y + V1_H)
-    add_rect(cell, L_M1, x - PAD_HW, tap_y - PAD_HW, x + PAD_HW, tap_y + PAD_HW)
+    # No M1 pad — Via1 lands on existing module ntap/ptap M1
 
     return True
 
@@ -104,9 +106,18 @@ def main():
         if polys:
             print(f'  {lk}: {len(polys)} obstacles')
 
-    # Module tap targets: (module, net, tap_y, preferred_x_range)
-    # ntap (VDD) near module top, ptap (GND) near module bottom
-    # Use module boundaries to estimate tap positions
+    # Probe actual M1 positions from assembled GDS for each module
+    # Find M1 shapes within module boundaries, near top (VDD/ntap) and bottom (GND/ptap)
+    m1_shapes = []
+    for p in cell.polygons:
+        if p.layer == L_M1[0] and p.datatype == L_M1[1]:
+            b = p.bounding_box()
+            cx = (b[0][0] + b[1][0]) / 2
+            cy = (b[0][1] + b[1][1]) / 2
+            w = b[1][0] - b[0][0]
+            h = b[1][1] - b[0][1]
+            m1_shapes.append((cx, cy, w, h))
+
     mods = ['bias_mn', 'bias_cascode', 'chopper', 'comp', 'dac_sw', 'hbridge',
             'hbridge_drive', 'ota', 'ptat_core', 'sw', 'vco_5stage', 'vco_buffer']
 
@@ -116,40 +127,43 @@ def main():
     for mod in mods:
         d = fp[mod]
         mx1, my1, mw, mh = d['x'], d['y'], d['w'], d['h']
+        mx2, my2 = mx1 + mw, my1 + mh
+
         mcx = mx1 + mw / 2
+        vdd_tap_y = my1 + mh - 0.5
+        gnd_tap_y = my1 + 0.5
 
-        # VDD tap: near module top (ntap at top of module)
-        vdd_tap_y = my1 + mh - 0.5  # 0.5um from top edge
-        # GND tap: near module bottom (ptap at bottom)
-        gnd_tap_y = my1 + 0.5  # 0.5um from bottom edge
+        # Per-module overrides for DRC-clean landing
+        TAP_OVERRIDES = {
+            'bias_mn': {'gnd_y': my1 + 0.7},  # V1.c: shift GND tap up to center on M1
+            'bias_cascode': {'x_offset': 5},
+        }
+        if mod in TAP_OVERRIDES:
+            ov = TAP_OVERRIDES[mod]
+            if 'vdd_y' in ov: vdd_tap_y = ov['vdd_y']
+            if 'gnd_y' in ov: gnd_tap_y = ov['gnd_y']
+            if 'x_offset' in ov: mcx += ov['x_offset']
 
-        # Try multiple x positions near module center
         placed_vdd = False
         placed_gnd = False
-        for x_off in [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, -6, 6, -7, 7, -8, 8, -10, 10, -12, 12, -15, 15, -20, 20]:
+
+        for x_off in [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, -6, 6, -8, 8, -10, 10, -12, 12, -15, 15, -20, 20]:
             x = mcx + x_off
             if x < mx1 or x > mx1 + mw:
                 continue
             if not placed_vdd and add_power_drop(cell, x, VDD_Y, vdd_tap_y, obstacles):
                 placed_vdd = True
                 vdd_count += 1
-                # Update obstacles
                 y1, y2 = min(VDD_Y, vdd_tap_y), max(VDD_Y, vdd_tap_y)
                 new_m4 = sbox(x - M4_HW, y1, x + M4_HW, y2)
-                if obstacles[L_M4]:
-                    obstacles[L_M4] = unary_union([obstacles[L_M4], new_m4])
-                else:
-                    obstacles[L_M4] = new_m4
+                obstacles[L_M4] = unary_union([obstacles[L_M4], new_m4]) if obstacles[L_M4] else new_m4
 
             if not placed_gnd and add_power_drop(cell, x + 1, GND_Y, gnd_tap_y, obstacles):
                 placed_gnd = True
                 gnd_count += 1
                 y1, y2 = min(GND_Y, gnd_tap_y), max(GND_Y, gnd_tap_y)
                 new_m4 = sbox(x + 1 - M4_HW, y1, x + 1 + M4_HW, y2)
-                if obstacles[L_M4]:
-                    obstacles[L_M4] = unary_union([obstacles[L_M4], new_m4])
-                else:
-                    obstacles[L_M4] = new_m4
+                obstacles[L_M4] = unary_union([obstacles[L_M4], new_m4]) if obstacles[L_M4] else new_m4
 
             if placed_vdd and placed_gnd:
                 break
