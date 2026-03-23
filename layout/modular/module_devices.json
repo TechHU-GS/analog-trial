@@ -1,0 +1,1471 @@
+{
+  "bias_cascode": [
+    {
+      "name": "MN_cas_load",
+      "type": "nmos",
+      "W": "0.5",
+      "L": "2",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 0.0,
+      "pcell_w": 2.68,
+      "pcell_h": 0.86,
+      "nets": {
+        "D": "vcas",
+        "G": "vcas",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "PM_cas_diode",
+      "type": "pmos",
+      "W": "1",
+      "L": "2",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 6.0,
+      "pcell_w": 3.3,
+      "pcell_h": 1.62,
+      "nets": {
+        "D": "vcas",
+        "G": "vcas",
+        "S": "cas_ref",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "PM_cas1",
+      "type": "pmos",
+      "W": "1",
+      "L": "2",
+      "ng": "1",
+      "rel_x": 7.8,
+      "rel_y": 6.0,
+      "pcell_w": 3.3,
+      "pcell_h": 1.62,
+      "nets": {
+        "D": "src1",
+        "G": "vcas",
+        "S": "cas1",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "PM_cas2",
+      "type": "pmos",
+      "W": "2",
+      "L": "2",
+      "ng": "1",
+      "rel_x": 15.6,
+      "rel_y": 6.0,
+      "pcell_w": 3.3,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "src2",
+        "G": "vcas",
+        "S": "cas2",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "PM_cas3",
+      "type": "pmos",
+      "W": "4",
+      "L": "2",
+      "ng": "2",
+      "rel_x": 23.4,
+      "rel_y": 6.0,
+      "pcell_w": 5.68,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "src3",
+        "G": "vcas",
+        "S": "cas3",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "PM_cas_ref",
+      "type": "pmos",
+      "W": "1",
+      "L": "10",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 14.0,
+      "pcell_w": 11.3,
+      "pcell_h": 1.62,
+      "nets": {
+        "D": "cas_ref",
+        "G": "net_c1",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "PM_mir1",
+      "type": "pmos",
+      "W": "1",
+      "L": "10",
+      "ng": "1",
+      "rel_x": 15.8,
+      "rel_y": 14.0,
+      "pcell_w": 11.3,
+      "pcell_h": 1.62,
+      "nets": {
+        "D": "cas1",
+        "G": "net_c1",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "PM_mir2",
+      "type": "pmos",
+      "W": "2",
+      "L": "10",
+      "ng": "1",
+      "rel_x": 31.6,
+      "rel_y": 14.0,
+      "pcell_w": 11.3,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "cas2",
+        "G": "net_c1",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "PM_mir3",
+      "type": "pmos",
+      "W": "4",
+      "L": "10",
+      "ng": "2",
+      "rel_x": 47.4,
+      "rel_y": 14.0,
+      "pcell_w": 21.68,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "cas3",
+        "G": "net_c1",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    }
+  ],
+  "bias_mn": [
+    {
+      "name": "MN_diode",
+      "type": "nmos",
+      "W": "1",
+      "L": "2",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 0.0,
+      "pcell_w": 2.68,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "nmos_bias",
+        "G": "nmos_bias",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "MN_pgen",
+      "type": "nmos",
+      "W": "1",
+      "L": "2",
+      "ng": "1",
+      "rel_x": 4.68,
+      "rel_y": 0.0,
+      "pcell_w": 2.68,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "pmos_bias",
+        "G": "nmos_bias",
+        "S": "0",
+        "B": "0"
+      }
+    }
+  ],
+  "chopper": [
+    {
+      "name": "Mchop1n",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "sens_p",
+        "G": "f_exc",
+        "S": "chop_out",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mchop1p",
+      "type": "pmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 1.88,
+      "rel_y": 0.0,
+      "pcell_w": 1.8,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "sens_p",
+        "G": "f_exc_b",
+        "S": "chop_out",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mchop2n",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 5.68,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "sens_n",
+        "G": "f_exc_b",
+        "S": "chop_out",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mchop2p",
+      "type": "pmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 7.56,
+      "rel_y": 0.0,
+      "pcell_w": 1.8,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "sens_n",
+        "G": "f_exc",
+        "S": "chop_out",
+        "B": "vdd"
+      }
+    }
+  ],
+  "comp": [
+    {
+      "name": "Mc_tail",
+      "type": "nmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "2",
+      "rel_x": 3.62,
+      "rel_y": 0.0,
+      "pcell_w": 2.06,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "c_tail",
+        "G": "comp_clk",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mc_inp",
+      "type": "nmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "2",
+      "rel_x": 2.24,
+      "rel_y": 5.5,
+      "pcell_w": 2.06,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "c_di_p",
+        "G": "ota_out",
+        "S": "c_tail",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mc_inn",
+      "type": "nmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "2",
+      "rel_x": 5.0,
+      "rel_y": 5.5,
+      "pcell_w": 2.06,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "c_di_n",
+        "G": "vref_comp",
+        "S": "c_tail",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mc_ln1",
+      "type": "nmos",
+      "W": "1",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 3.12,
+      "rel_y": 11.0,
+      "pcell_w": 1.18,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "comp_outp",
+        "G": "comp_outn",
+        "S": "c_di_p",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mc_ln2",
+      "type": "nmos",
+      "W": "1",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 5.0,
+      "rel_y": 11.0,
+      "pcell_w": 1.18,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "comp_outn",
+        "G": "comp_outp",
+        "S": "c_di_n",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mc_lp1",
+      "type": "pmos",
+      "W": "1",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 2.5,
+      "rel_y": 15.5,
+      "pcell_w": 1.8,
+      "pcell_h": 1.62,
+      "nets": {
+        "D": "comp_outp",
+        "G": "comp_outn",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mc_lp2",
+      "type": "pmos",
+      "W": "1",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 5.0,
+      "rel_y": 15.5,
+      "pcell_w": 1.8,
+      "pcell_h": 1.62,
+      "nets": {
+        "D": "comp_outn",
+        "G": "comp_outp",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mc_rst_dp",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 20.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "c_di_p",
+        "G": "comp_clk",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mc_rst_dn",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 2.5,
+      "rel_y": 20.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "c_di_n",
+        "G": "comp_clk",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mc_rst_op",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 5.0,
+      "rel_y": 20.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "comp_outp",
+        "G": "comp_clk",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mc_rst_on",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 7.5,
+      "rel_y": 20.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "comp_outn",
+        "G": "comp_clk",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    }
+  ],
+  "dac_sw": [
+    {
+      "name": "Mdac_tg1n",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "dac_hi",
+        "G": "lat_q",
+        "S": "dac_out",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mdac_tg1p",
+      "type": "pmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 1.88,
+      "rel_y": 0.0,
+      "pcell_w": 1.8,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "dac_hi",
+        "G": "lat_qb",
+        "S": "dac_out",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mdac_tg2n",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 4.38,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "dac_lo",
+        "G": "lat_qb",
+        "S": "dac_out",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mdac_tg2p",
+      "type": "pmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 6.26,
+      "rel_y": 0.0,
+      "pcell_w": 1.8,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "dac_lo",
+        "G": "lat_q",
+        "S": "dac_out",
+        "B": "vdd"
+      }
+    }
+  ],
+  "hbridge": [
+    {
+      "name": "Mn1a",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 1.24,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "n1_mid",
+        "G": "comp_outp",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mn1b",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 3.12,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "lat_q",
+        "G": "lat_qb",
+        "S": "n1_mid",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mn2a",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 8.3,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "n2_mid",
+        "G": "comp_outn",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mn2b",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 10.18,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "lat_qb",
+        "G": "lat_q",
+        "S": "n2_mid",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mp1a",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 5.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "lat_q",
+        "G": "comp_outp",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mp1b",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 2.5,
+      "rel_y": 5.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "lat_q",
+        "G": "lat_qb",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mp2a",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 8.3,
+      "rel_y": 5.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "lat_qb",
+        "G": "comp_outn",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mp2b",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 10.8,
+      "rel_y": 5.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "lat_qb",
+        "G": "lat_q",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    }
+  ],
+  "hbridge_drive": [
+    {
+      "name": "MS1",
+      "type": "nmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "2",
+      "rel_x": 0.0,
+      "rel_y": 0,
+      "pcell_w": 2.06,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "exc_out",
+        "G": "phi_p",
+        "S": "probe_p",
+        "B": "0"
+      }
+    },
+    {
+      "name": "MS2",
+      "type": "nmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "2",
+      "rel_x": 3.56,
+      "rel_y": 0,
+      "pcell_w": 2.06,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "0",
+        "G": "phi_n",
+        "S": "probe_p",
+        "B": "0"
+      }
+    },
+    {
+      "name": "MS3",
+      "type": "nmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "2",
+      "rel_x": 7.12,
+      "rel_y": 0,
+      "pcell_w": 2.06,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "exc_out",
+        "G": "phi_n",
+        "S": "probe_n",
+        "B": "0"
+      }
+    },
+    {
+      "name": "MS4",
+      "type": "nmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "2",
+      "rel_x": 10.68,
+      "rel_y": 0,
+      "pcell_w": 2.06,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "0",
+        "G": "phi_p",
+        "S": "probe_n",
+        "B": "0"
+      }
+    }
+  ],
+  "ota": [
+    {
+      "name": "Mbias_d",
+      "type": "nmos",
+      "W": "4",
+      "L": "4",
+      "ng": "1",
+      "rel_x": 0.11,
+      "rel_y": 0.0,
+      "pcell_w": 4.68,
+      "pcell_h": 4.36,
+      "nets": {
+        "D": "bias_n",
+        "G": "bias_n",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mtail",
+      "type": "nmos",
+      "W": "8",
+      "L": "4",
+      "ng": "2",
+      "rel_x": 5.79,
+      "rel_y": 0.0,
+      "pcell_w": 9.06,
+      "pcell_h": 4.36,
+      "nets": {
+        "D": "tail",
+        "G": "bias_n",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Min_p",
+      "type": "nmos",
+      "W": "10",
+      "L": "2",
+      "ng": "4",
+      "rel_x": 0.0,
+      "rel_y": 6.5,
+      "pcell_w": 9.82,
+      "pcell_h": 2.86,
+      "nets": {
+        "D": "mid_p",
+        "G": "vref_ota",
+        "S": "tail",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Min_n",
+      "type": "nmos",
+      "W": "10",
+      "L": "2",
+      "ng": "4",
+      "rel_x": 10.79,
+      "rel_y": 6.5,
+      "pcell_w": 9.82,
+      "pcell_h": 2.86,
+      "nets": {
+        "D": "ota_out",
+        "G": "sum_n",
+        "S": "tail",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mp_load_p",
+      "type": "pmos",
+      "W": "4",
+      "L": "4",
+      "ng": "1",
+      "rel_x": 4.52,
+      "rel_y": 11.5,
+      "pcell_w": 5.3,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "mid_p",
+        "G": "mid_p",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mp_load_n",
+      "type": "pmos",
+      "W": "4",
+      "L": "4",
+      "ng": "1",
+      "rel_x": 10.82,
+      "rel_y": 11.5,
+      "pcell_w": 5.3,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "ota_out",
+        "G": "mid_p",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    }
+  ],
+  "ptat_core": [
+    {
+      "name": "PM_pdiode",
+      "type": "pmos",
+      "W": "0.5",
+      "L": "2",
+      "ng": "1",
+      "rel_x": 45.35,
+      "rel_y": 0.0,
+      "pcell_w": 3.3,
+      "pcell_h": 1.12,
+      "nets": {
+        "D": "pmos_bias",
+        "G": "pmos_bias",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "MN1",
+      "type": "nmos",
+      "W": "2",
+      "L": "4",
+      "ng": "1",
+      "rel_x": 25.99,
+      "rel_y": 7.0,
+      "pcell_w": 4.68,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "net_c1",
+        "G": "net_c1",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "MN2",
+      "type": "nmos",
+      "W": "16",
+      "L": "4",
+      "ng": "8",
+      "rel_x": 32.72,
+      "rel_y": 7.0,
+      "pcell_w": 35.34,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "net_c2",
+        "G": "net_c1",
+        "S": "net_rptat",
+        "B": "0"
+      }
+    },
+    {
+      "name": "PM3",
+      "type": "pmos",
+      "W": "0.5",
+      "L": "10",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 11.5,
+      "pcell_w": 51.3,
+      "pcell_h": 1.12,
+      "nets": {
+        "D": "net_c1",
+        "G": "net_c1",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "PM4",
+      "type": "pmos",
+      "W": "0.5",
+      "L": "10",
+      "ng": "1",
+      "rel_x": 53.0,
+      "rel_y": 11.5,
+      "pcell_w": 51.3,
+      "pcell_h": 1.12,
+      "nets": {
+        "D": "net_c2",
+        "G": "net_c1",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "PM5",
+      "type": "pmos",
+      "W": "0.5",
+      "L": "10",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 13.5,
+      "pcell_w": 51.3,
+      "pcell_h": 1.12,
+      "nets": {
+        "D": "vptat",
+        "G": "net_c1",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "PM_ref",
+      "type": "pmos",
+      "W": "0.5",
+      "L": "10",
+      "ng": "1",
+      "rel_x": 53.0,
+      "rel_y": 13.5,
+      "pcell_w": 51.3,
+      "pcell_h": 1.12,
+      "nets": {
+        "D": "nmos_bias",
+        "G": "net_c1",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    }
+  ],
+  "sw": [
+    {
+      "name": "SW1n",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "src1",
+        "G": "sel0",
+        "S": "exc_out",
+        "B": "0"
+      }
+    },
+    {
+      "name": "SW1p",
+      "type": "pmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 1.88,
+      "rel_y": 0.0,
+      "pcell_w": 1.8,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "src1",
+        "G": "sel0b",
+        "S": "exc_out",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "SW2n",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 4.38,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "src2",
+        "G": "sel1",
+        "S": "exc_out",
+        "B": "0"
+      }
+    },
+    {
+      "name": "SW2p",
+      "type": "pmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 9.56,
+      "rel_y": 0.0,
+      "pcell_w": 1.8,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "src2",
+        "G": "sel1b",
+        "S": "exc_out",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "SW3n",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 12.06,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "src3",
+        "G": "sel2",
+        "S": "exc_out",
+        "B": "0"
+      }
+    },
+    {
+      "name": "SW3p",
+      "type": "pmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 13.94,
+      "rel_y": 0.0,
+      "pcell_w": 1.8,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "src3",
+        "G": "sel2b",
+        "S": "exc_out",
+        "B": "vdd"
+      }
+    }
+  ],
+  "vco_5stage": [
+    {
+      "name": "Mnb1",
+      "type": "nmos",
+      "W": "8",
+      "L": "2",
+      "ng": "8",
+      "rel_x": 0.31,
+      "rel_y": 0,
+      "pcell_w": 19.34,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "nb1",
+        "G": "nmos_bias",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mnb2",
+      "type": "nmos",
+      "W": "8",
+      "L": "2",
+      "ng": "8",
+      "rel_x": 20.81,
+      "rel_y": 0,
+      "pcell_w": 19.34,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "nb2",
+        "G": "nmos_bias",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mnb3",
+      "type": "nmos",
+      "W": "8",
+      "L": "2",
+      "ng": "8",
+      "rel_x": 41.31,
+      "rel_y": 0,
+      "pcell_w": 19.34,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "nb3",
+        "G": "nmos_bias",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mnb4",
+      "type": "nmos",
+      "W": "8",
+      "L": "2",
+      "ng": "8",
+      "rel_x": 61.81,
+      "rel_y": 0,
+      "pcell_w": 19.34,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "nb4",
+        "G": "nmos_bias",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mnb5",
+      "type": "nmos",
+      "W": "8",
+      "L": "2",
+      "ng": "8",
+      "rel_x": 82.31,
+      "rel_y": 0,
+      "pcell_w": 19.34,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "nb5",
+        "G": "nmos_bias",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mpd1",
+      "type": "nmos",
+      "W": "1",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 9.39,
+      "rel_y": 4.0,
+      "pcell_w": 1.18,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "vco1",
+        "G": "vco5",
+        "S": "nb1",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mpd2",
+      "type": "nmos",
+      "W": "1",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 29.89,
+      "rel_y": 4.0,
+      "pcell_w": 1.18,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "vco2",
+        "G": "vco1",
+        "S": "nb2",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mpd3",
+      "type": "nmos",
+      "W": "1",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 50.39,
+      "rel_y": 4.0,
+      "pcell_w": 1.18,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "vco3",
+        "G": "vco2",
+        "S": "nb3",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mpd4",
+      "type": "nmos",
+      "W": "1",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 70.89,
+      "rel_y": 4.0,
+      "pcell_w": 1.18,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "vco4",
+        "G": "vco3",
+        "S": "nb4",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mpd5",
+      "type": "nmos",
+      "W": "1",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 91.39,
+      "rel_y": 4.0,
+      "pcell_w": 1.18,
+      "pcell_h": 1.36,
+      "nets": {
+        "D": "vco5",
+        "G": "vco4",
+        "S": "nb5",
+        "B": "0"
+      }
+    },
+    {
+      "name": "Mpu1",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 9.08,
+      "rel_y": 7.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "vco1",
+        "G": "vco5",
+        "S": "ns1",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mpu2",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 29.58,
+      "rel_y": 7.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "vco2",
+        "G": "vco1",
+        "S": "ns2",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mpu3",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 50.08,
+      "rel_y": 7.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "vco3",
+        "G": "vco2",
+        "S": "ns3",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mpu4",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 70.58,
+      "rel_y": 7.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "vco4",
+        "G": "vco3",
+        "S": "ns4",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mpu5",
+      "type": "pmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 91.08,
+      "rel_y": 7.5,
+      "pcell_w": 1.8,
+      "pcell_h": 2.62,
+      "nets": {
+        "D": "vco5",
+        "G": "vco4",
+        "S": "ns5",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mpb1",
+      "type": "pmos",
+      "W": "4",
+      "L": "2",
+      "ng": "8",
+      "rel_x": 0.0,
+      "rel_y": 12.0,
+      "pcell_w": 19.96,
+      "pcell_h": 1.12,
+      "nets": {
+        "D": "ns1",
+        "G": "pmos_bias",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mpb2",
+      "type": "pmos",
+      "W": "4",
+      "L": "2",
+      "ng": "8",
+      "rel_x": 20.5,
+      "rel_y": 12.0,
+      "pcell_w": 19.96,
+      "pcell_h": 1.12,
+      "nets": {
+        "D": "ns2",
+        "G": "pmos_bias",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mpb3",
+      "type": "pmos",
+      "W": "4",
+      "L": "2",
+      "ng": "8",
+      "rel_x": 41.0,
+      "rel_y": 12.0,
+      "pcell_w": 19.96,
+      "pcell_h": 1.12,
+      "nets": {
+        "D": "ns3",
+        "G": "pmos_bias",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mpb4",
+      "type": "pmos",
+      "W": "4",
+      "L": "2",
+      "ng": "8",
+      "rel_x": 61.5,
+      "rel_y": 12.0,
+      "pcell_w": 19.96,
+      "pcell_h": 1.12,
+      "nets": {
+        "D": "ns4",
+        "G": "pmos_bias",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "Mpb5",
+      "type": "pmos",
+      "W": "4",
+      "L": "2",
+      "ng": "8",
+      "rel_x": 82.0,
+      "rel_y": 12.0,
+      "pcell_w": 19.96,
+      "pcell_h": 1.12,
+      "nets": {
+        "D": "ns5",
+        "G": "pmos_bias",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    }
+  ],
+  "vco_buffer": [
+    {
+      "name": "MBn1",
+      "type": "nmos",
+      "W": "2",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 0.0,
+      "pcell_w": 1.18,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "buf1",
+        "G": "vco5",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "MBn2",
+      "type": "nmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "2",
+      "rel_x": 1.88,
+      "rel_y": 0.0,
+      "pcell_w": 2.06,
+      "pcell_h": 2.36,
+      "nets": {
+        "D": "vco_out",
+        "G": "buf1",
+        "S": "0",
+        "B": "0"
+      }
+    },
+    {
+      "name": "MBp2",
+      "type": "pmos",
+      "W": "8",
+      "L": "0.5",
+      "ng": "2",
+      "rel_x": 2.5,
+      "rel_y": 6.7,
+      "pcell_w": 2.68,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "vco_out",
+        "G": "buf1",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    },
+    {
+      "name": "MBp1",
+      "type": "pmos",
+      "W": "4",
+      "L": "0.5",
+      "ng": "1",
+      "rel_x": 0.0,
+      "rel_y": 6.72,
+      "pcell_w": 1.8,
+      "pcell_h": 4.62,
+      "nets": {
+        "D": "buf1",
+        "G": "vco5",
+        "S": "vdd",
+        "B": "vdd"
+      }
+    }
+  ]
+}
