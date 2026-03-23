@@ -44,11 +44,20 @@ L_VIA2 = (29, 0)
 L_M3 = (30, 0)
 L_VIA3 = (49, 0)
 L_M4 = (50, 0)
+L_VIA4 = (66, 0)
+L_M5 = (67, 0)
+
+# M5/Via4 DRC rules (um)
+M5_WIDTH = 0.200
+M5_SPACE = 0.210
+VIA4_SIZE = 0.190
+M4_VIA4_ENC = 0.055  # using same as Via3 for robustness (PDK min=5nm)
+M5_VIA4_ENC = 0.055
 
 # Net definitions: (net_name, [(module, terminal_type), ...])
 # terminal_type: 'auto' = find nearest M2 pad
 # Digital M3 pin positions (label layer 30/25, offset by digital placement x=23, y=5)
-DIGITAL_ORIGIN = None  # Set dynamically from floorplan in route_all()
+DIGITAL_ORIGIN = (17.0, 17.5)  # Fallback only; route_all() reads from floorplan dynamically
 DIGITAL_M3_PINS = {
     'f_exc':   (29.0, 50.0),
     'f_exc_b': (29.0, 59.2),
@@ -252,20 +261,91 @@ def l_route_flex(src, dst, m4_x):
     if y_max - y_min > 0.01:
         shapes.append((L_M4, sbox(m4_x - hw, y_min - hw, m4_x + hw, y_max + hw)))
 
-    # Via3 at corners
-    shapes.append((L_VIA3, sbox(m4_x - v3_half, sy - v3_half, m4_x + v3_half, sy + v3_half)))
-    shapes.append((L_VIA3, sbox(m4_x - v3_half, dy - v3_half, m4_x + v3_half, dy + v3_half)))
-
-    # M3/M4 pads at via3 positions
-    shapes.append((L_M3, sbox(m4_x - m3_pad, sy - hw, m4_x + m3_pad, sy + hw)))
-    shapes.append((L_M4, sbox(m4_x - hw, sy - m4_pad, m4_x + hw, sy + m4_pad)))
-    shapes.append((L_M3, sbox(m4_x - m3_pad, dy - hw, m4_x + m3_pad, dy + hw)))
-    shapes.append((L_M4, sbox(m4_x - hw, dy - m4_pad, m4_x + hw, dy + m4_pad)))
+    # Via3 at corners (merge if too close to avoid V3.a overlap)
+    if abs(sy - dy) < VIA3_SIZE + 0.01:
+        mid_y = (sy + dy) / 2
+        shapes.append((L_VIA3, sbox(m4_x - v3_half, mid_y - v3_half, m4_x + v3_half, mid_y + v3_half)))
+        shapes.append((L_M3, sbox(m4_x - m3_pad, mid_y - hw, m4_x + m3_pad, mid_y + hw)))
+        shapes.append((L_M4, sbox(m4_x - hw, mid_y - m4_pad, m4_x + hw, mid_y + m4_pad)))
+    else:
+        shapes.append((L_VIA3, sbox(m4_x - v3_half, sy - v3_half, m4_x + v3_half, sy + v3_half)))
+        shapes.append((L_VIA3, sbox(m4_x - v3_half, dy - v3_half, m4_x + v3_half, dy + v3_half)))
+        shapes.append((L_M3, sbox(m4_x - m3_pad, sy - hw, m4_x + m3_pad, sy + hw)))
+        shapes.append((L_M4, sbox(m4_x - hw, sy - m4_pad, m4_x + hw, sy + m4_pad)))
+        shapes.append((L_M3, sbox(m4_x - m3_pad, dy - hw, m4_x + m3_pad, dy + hw)))
+        shapes.append((L_M4, sbox(m4_x - hw, dy - m4_pad, m4_x + hw, dy + m4_pad)))
 
     return shapes
 
 
-LAYER_SPACING = {L_M3: 0.250, L_M4: 0.250, L_VIA2: 0.260, L_VIA3: 0.260}
+def m5_l_route_flex(src, dst, m4_x):
+    """L-route using M5 for horizontal runs, M4 for vertical.
+    Full via stack: M2→Via2→M3→Via3→M4→Via4→M5-H at endpoints,
+    M4-V column connects src_y to dst_y.
+    """
+    sx, sy = src['cx'], src['cy']
+    dx, dy = dst['cx'], dst['cy']
+    hw3 = M3_WIDTH / 2
+    hw5 = M5_WIDTH / 2
+    v2h = VIA2_SIZE / 2
+    v3h = VIA3_SIZE / 2
+    v4h = VIA4_SIZE / 2
+    m3_pad = v2h + M3_VIA2_ENC
+    m4_pad3 = v3h + M4_VIA3_ENC  # M4 pad for Via3
+    m4_pad4 = v4h + M4_VIA4_ENC  # M4 pad for Via4
+    m5_pad = v4h + M5_VIA4_ENC
+
+    shapes = []
+    src_is_m3 = src.get('is_m3', False)
+    dst_is_m3 = dst.get('is_m3', False)
+
+    # --- Source endpoint: M2 → full stack up to M5 ---
+    if not src_is_m3:
+        shapes.append((L_VIA2, sbox(sx-v2h, sy-v2h, sx+v2h, sy+v2h)))
+    shapes.append((L_M3, sbox(sx-m3_pad, sy-hw3, sx+m3_pad, sy+hw3)))
+    shapes.append((L_VIA3, sbox(sx-v3h, sy-v3h, sx+v3h, sy+v3h)))
+    shapes.append((L_M4, sbox(sx-m4_pad3, sy-m4_pad3, sx+m4_pad3, sy+m4_pad3)))
+    shapes.append((L_VIA4, sbox(sx-v4h, sy-v4h, sx+v4h, sy+v4h)))
+    shapes.append((L_M5, sbox(sx-m5_pad, sy-hw5, sx+m5_pad, sy+hw5)))
+
+    # --- Dst endpoint: M2 → full stack up to M5 ---
+    if not dst_is_m3:
+        shapes.append((L_VIA2, sbox(dx-v2h, dy-v2h, dx+v2h, dy+v2h)))
+    shapes.append((L_M3, sbox(dx-m3_pad, dy-hw3, dx+m3_pad, dy+hw3)))
+    shapes.append((L_VIA3, sbox(dx-v3h, dy-v3h, dx+v3h, dy+v3h)))
+    shapes.append((L_M4, sbox(dx-m4_pad3, dy-m4_pad3, dx+m4_pad3, dy+m4_pad3)))
+    shapes.append((L_VIA4, sbox(dx-v4h, dy-v4h, dx+v4h, dy+v4h)))
+    shapes.append((L_M5, sbox(dx-m5_pad, dy-hw5, dx+m5_pad, dy+hw5)))
+
+    # --- M5 horizontal: src_x to m4_x at src_y ---
+    if abs(sx - m4_x) > 0.01:
+        shapes.append((L_M5, sbox(min(sx,m4_x)-hw5, sy-hw5, max(sx,m4_x)+hw5, sy+hw5)))
+
+    # --- Via4 + M4 pad at (m4_x, sy) for M5→M4 transition ---
+    shapes.append((L_VIA4, sbox(m4_x-v4h, sy-v4h, m4_x+v4h, sy+v4h)))
+    shapes.append((L_M5, sbox(m4_x-m5_pad, sy-hw5, m4_x+m5_pad, sy+hw5)))
+    shapes.append((L_M4, sbox(m4_x-m4_pad4, sy-m4_pad4, m4_x+m4_pad4, sy+m4_pad4)))
+
+    # --- M4 vertical column from sy to dy ---
+    y_min, y_max = min(sy, dy), max(sy, dy)
+    if y_max - y_min > 0.01:
+        hw4 = M4_WIDTH / 2
+        shapes.append((L_M4, sbox(m4_x-hw4, y_min-hw4, m4_x+hw4, y_max+hw4)))
+
+    # --- Via4 + M4 pad at (m4_x, dy) for M4→M5 transition ---
+    shapes.append((L_VIA4, sbox(m4_x-v4h, dy-v4h, m4_x+v4h, dy+v4h)))
+    shapes.append((L_M5, sbox(m4_x-m5_pad, dy-hw5, m4_x+m5_pad, dy+hw5)))
+    shapes.append((L_M4, sbox(m4_x-m4_pad4, dy-m4_pad4, m4_x+m4_pad4, dy+m4_pad4)))
+
+    # --- M5 horizontal: m4_x to dst_x at dst_y ---
+    if abs(m4_x - dx) > 0.01:
+        shapes.append((L_M5, sbox(min(m4_x,dx)-hw5, dy-hw5, max(m4_x,dx)+hw5, dy+hw5)))
+
+    return shapes
+
+
+LAYER_SPACING = {L_M3: 0.250, L_M4: 0.250, L_VIA2: 0.260, L_VIA3: 0.260,
+                 L_M5: 0.250, L_VIA4: 0.260}
 
 def check_collision(new_shapes, obstacles, spacing=None):
     """Check if any new shape collides with existing obstacles (per-layer spacing)."""
@@ -305,7 +385,7 @@ def route_all():
     lib_obs = gdstk.read_gds(os.path.join(OUT_DIR, 'soilz_assembled.gds'))
     cell_obs = [c for c in lib_obs.cells if c.name == 'tt_um_techhu_analog_trial'][0]
     cell_obs.flatten()
-    for layer_key in [L_M3, L_M4, L_VIA2, L_VIA3]:
+    for layer_key in [L_M3, L_M4, L_VIA2, L_VIA3, L_M5, L_VIA4]:
         polys = []
         for p in cell_obs.polygons:
             if p.layer == layer_key[0] and p.datatype == layer_key[1]:
@@ -331,7 +411,7 @@ def route_all():
     used_pads = {}
 
     # Sort nets: priority nets first (often fail due to congestion), then by length
-    PRIORITY_NETS = {'ota_out', 'sum_n', 'nmos_bias', 'pmos_bias'}
+    PRIORITY_NETS = {'ota_out', 'sum_n', 'nmos_bias', 'vco_out', 'comp_outp', 'comp_outn'}
     # Route priority nets FIRST (index 0), then others by length
     # Sort nets by estimated length (short first)
     def net_length(net_def):
@@ -430,6 +510,14 @@ def route_all():
                             found = True
                             break
                     if found: break
+            # M5 fallback: use M5 horizontal + M4 vertical (M5 is nearly empty)
+            if not found:
+                for m4_x in candidates:
+                    shapes = m5_l_route_flex(src_pad, dst_pad, m4_x)
+                    if not check_collision(shapes, obstacles, M3_SPACE):
+                        found = True
+                        print(f'    → M5 fallback at m4_x={m4_x:.1f}')
+                        break
             if not found:
                 failed.append((net_name, f'{src_mod}→{dst_mod} collision'))
                 success = False

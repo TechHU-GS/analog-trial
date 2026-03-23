@@ -632,11 +632,67 @@ python3 -c "import gdstk; from shapely..."  # 用 PDK venv 的 python3
 - External pins (不需要routing): comp_clk, vref_ota, vref_comp, probe_p/n, sens_p/n, dac_hi/lo, sel0-2, reset_b
 - Power: vdd(11 modules), gnd(17 modules)
 
-### 下一步: 自动化 inter-module router
-- 用户同意方案: probe M2 pads → L-route (M3-H + M4-V) → shapely 碰撞检测
-- M3/M4/M5 全空，路由空间干净
-- 已有 helpers: route_m3.py (add_via2/via3, check_collision)
-- 顺序: 23 analog signal nets → power → 全芯片 LVS
+### Inter-module auto router (Session 13, 2026-03-24)
+- `route_intermodule.py`: shapely-based auto router
+  - L-route (M3-H + M4-V) + Z-route (绕过 digital M3 obstacles)
+  - Pre-existing obstacle detection from assembled GDS
+  - Digital M3 pin support (从 label layer 30/25 读位置)
+  - Pin exclusion zones (digital pin 不作为 obstacle)
+  - Pad exclusion (已用 pad 不重复选)
+  - Geographic chain sorting (multi-terminal net 按 x 排)
+- `add_passive_m2.py`: 给 passive modules 加 M2 pad (resistor Via1+M2, cap via stack)
+- `floorplan_server.py`: 本地 HTTP server, 网页 Route Test 按钮集成
+- `solve_routes.py`: OR-Tools CP-SAT solver (开发中)
+- **当前: 22/23 routed, CI DRC=0**
+- 唯一 fail: **pmos_bias** (chain 中某段碰撞)
+- 192 核 ECS 穷举确认: ota→c_fb 物理不可路由 → 改布局 c_fb 叠在 ota 上解决
+- ⚠️ DIGITAL_ORIGIN 需要从 floorplan 动态读 (目前部分硬编码)
+- ⚠️ floorplan_server 和命令行共享文件有竞争风险
+
+### M5 fallback routing + 23/23 达成 (Session 13 续, 2026-03-24)
+
+**M5 路由支持:**
+- `route_intermodule.py` 新增 M5=(67,0) + Via4=(66,0) 支持
+- `m5_l_route_flex()`: M2→Via2→M3→Via3→M4→Via4→M5-H, M4-V column, 回程同路
+- 路由 fallback 链: L-route → Z-route → M5 fallback
+- obstacle 加载包含 M5/Via4 pre-existing shapes
+
+**Pipeline 修复 (教训):**
+- `add_passive_m2.py` 给 CMIM cap 加 via stack → 变成 obstacle → 挡住其他 route
+- 正确做法: resistor 加 M2 pad, cap 不加 (via stack 在 routing 后加)
+- `build_passives_pcell.py` 重建全部 7 passive → 会清掉 resistor M2 pad → 要先 build 再 add_passive_m2
+- 路由顺序影响大: vco_out/comp_outp/outn 必须优先路由
+
+**正确 pipeline:**
+```bash
+cd /Users/techhu/Code/GS_IC/designs/analog-trial/layout
+source ~/pdk/venv/bin/activate
+klayout -n sg13g2 -zz -r modular/build_passives_pcell.py  # 1. rebuild all passives clean
+klayout -n sg13g2 -zz -r modular/add_passive_m2.py        # 2. add M2 to resistors only (caps skipped)
+klayout -n sg13g2 -zz -r modular/assemble.py              # 3. assemble 20 modules
+python3 modular/route_intermodule.py                       # 4. route 23 signal nets
+```
+
+**23/23 达成 (verified 2026-03-24 06:04):**
+```
+Routed: 23/23
+```
+- CI DRC: **1 violation** (V3.a in vco_buffer — 模块内部 Via3 375nm > 190nm max, 非 routing 引入)
+- PRIORITY_NETS: ota_out, sum_n, nmos_bias, vco_out, comp_outp, comp_outn
+- Floorplan: digital(17,17.5), rin(139,67), comp(168.5,52.5) — 关键变化是 rin 远离 comp-hbridge 通道
+
+**23/23 Floorplan 坐标:**
+bias_cascode(60.5,62.5) bias_mn(60,22.5) c_fb(133.5,29.5) cbyp_n(142.5,8) cbyp_p(61,17.5)
+chopper(116.5,21) comp(168.5,52.5) dac_sw(184.5,23.5) digital(17,17.5) hbridge(166,12)
+hbridge_drive(98.5,29) ota(136.5,34) ptat_core(60,83) rdac(160.5,79.5) rin(139,67)
+rout(159.5,88.5) rptat(58,106) sw(60.5,44) vco_5stage(58,2.5) vco_buffer(172,3.5)
+
+### 下一步
+1. 修 V3.a (vco_buffer Via3 尺寸) → CI DRC=0
+2. Cap via stacks (routing 后加 cbyp_n/cbyp_p/c_fb 连接)
+3. Power routing (TM1 buses + via stacks)
+4. 全芯片 LVS pass
+5. 提交 TTIHP
 
 ### 下一步
 1. 确认 hbridge build script 版本

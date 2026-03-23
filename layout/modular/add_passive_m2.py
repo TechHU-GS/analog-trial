@@ -131,6 +131,7 @@ def process_cap(mod_name):
 print('=== Adding M2 pads to passive modules ===')
 for mod in ['rin', 'rdac', 'rptat', 'rout']:
     process_resistor(mod)
-for mod in ['c_fb', 'cbyp_n', 'cbyp_p']:
-    process_cap(mod)
+# Cap via stacks added AFTER routing to avoid creating obstacles
+# for mod in ['c_fb', 'cbyp_n', 'cbyp_p']:
+#     process_cap(mod)
 print('\n=== Done ===')
