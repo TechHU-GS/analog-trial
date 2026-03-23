@@ -44,48 +44,66 @@ def route():
     # ────────────────────────────────────────
     # 1. vco5: MBn1.G + MBp1.G at y=3500
     # ────────────────────────────────────────
-    vy = 3500
-    for g in [n1['gates'][0], p1['gates'][0]]:
+    # Stagger contacts to avoid Cnt.b (MBn1.G and MBp1.G only 310nm apart)
+    vy_n = 3000  # MBn1.G contact y
+    vy_p = 3500  # MBp1.G contact y (500nm apart, no Cnt.b)
+
+    for g, cy in [(n1['gates'][0], vy_n), (p1['gates'][0], vy_p)]:
         cx = (g[0]+g[1])//2
         gw = g[1]-g[0]
-        # Extend poly to vy
-        if g[3] < vy:
-            cell.shapes(l_po).insert(box(cx-gw//2, g[3], cx+gw//2, vy+80))
+        if g[3] < cy:
+            cell.shapes(l_po).insert(box(cx-gw//2, g[3], cx+gw//2, cy+250))
         else:
-            cell.shapes(l_po).insert(box(cx-gw//2, vy-80, cx+gw//2, g[2]))
-        cell.shapes(l_ct).insert(box(cx-80, vy-80, cx+80, vy+80))
-        cell.shapes(l_m1).insert(box(cx-155, vy-155, cx+155, vy+155))
+            cell.shapes(l_po).insert(box(cx-gw//2, cy-250, cx+gw//2, g[2]))
+        cell.shapes(l_ct).insert(box(cx-80, cy-80, cx+80, cy+80))
+        cell.shapes(l_m1).insert(box(cx-155, cy-155, cx+155, cy+155))
 
-    vco5_x = sorted([(n1['gates'][0][0]+n1['gates'][0][1])//2,
-                      (p1['gates'][0][0]+p1['gates'][0][1])//2])
-    cell.shapes(l_m1).insert(box(vco5_x[0]-155, vy-155, vco5_x[1]+155, vy+155))
-    print(f'  vco5: y={vy}, x={vco5_x[0]}-{vco5_x[1]}')
+    # M1 bus connecting both contacts (L-shape: vertical + horizontal)
+    n1g_cx = (n1['gates'][0][0]+n1['gates'][0][1])//2
+    p1g_cx = (p1['gates'][0][0]+p1['gates'][0][1])//2
+    cell.shapes(l_m1).insert(box(n1g_cx-155, vy_n-155, n1g_cx+155, vy_p+155))  # vertical
+    cell.shapes(l_m1).insert(box(n1g_cx-155, vy_p-155, p1g_cx+155, vy_p+155))  # horizontal
+    print(f'  vco5: y={vy_n}-{vy_p}, x={n1g_cx}-{p1g_cx}')
 
     # ────────────────────────────────────────
-    # 2. buf1: drains + INV2 gates at y=5000
+    # 2. buf1: drains via M2 vertical (avoids crossing vco5 M1 bus)
+    #    then M1 horizontal in gap connects to INV2 gates
     # ────────────────────────────────────────
     by = 5000
-    buf1_xs = []
 
-    # MBn1.D: extend M1 up from strip top to by
-    s = n1['strips'][-1]  # D strip
-    cx = (s[0]+s[1])//2
-    cell.shapes(l_m1).insert(box(cx-155, s[3], cx+155, by+155))
-    buf1_xs.append(cx)
+    # MBn1.D → Via1 → M2
+    n1d = n1['strips'][-1]
+    n1d_cx = (n1d[0]+n1d[1])//2
+    n1d_cy = (n1d[2]+n1d[3])//2
+    cell.shapes(l_m1).insert(box(n1d_cx-155, n1d_cy-155, n1d_cx+155, n1d_cy+155))
+    cell.shapes(ly.layer(*VIA1)).insert(box(n1d_cx-95, n1d_cy-95, n1d_cx+95, n1d_cy+95))
+    cell.shapes(l_m2).insert(box(n1d_cx-245, n1d_cy-155, n1d_cx+245, n1d_cy+155))
 
-    # MBp1.D: extend M1 down from strip bottom to by
+    # MBp1.D → Via1 → M2
     p1_d = [p1['strips'][i] for i in range(1, len(p1['strips']), 2)]
-    if p1_d:
-        s = p1_d[0]
-        cx = (s[0]+s[1])//2
-        cell.shapes(l_m1).insert(box(cx-155, by-155, cx+155, s[2]))
-        buf1_xs.append(cx)
+    p1d_cx = (p1_d[0][0]+p1_d[0][1])//2 if p1_d else n1d_cx
+    p1d_cy = (p1_d[0][2]+p1_d[0][3])//2 if p1_d else by
+    cell.shapes(l_m1).insert(box(p1d_cx-155, p1d_cy-155, p1d_cx+155, p1d_cy+155))
+    cell.shapes(ly.layer(*VIA1)).insert(box(p1d_cx-95, p1d_cy-95, p1d_cx+95, p1d_cy+95))
+    cell.shapes(l_m2).insert(box(p1d_cx-245, p1d_cy-155, p1d_cx+245, p1d_cy+155))
 
-    # MBn2 gates: extend poly up to by, contact at by
+    # M2 vertical connecting MBn1.D ↔ MBp1.D (buf1 drain-drain)
+    buf1_m2_cx = (n1d_cx + p1d_cx) // 2
+    cell.shapes(l_m2).insert(box(buf1_m2_cx-150, min(n1d_cy, p1d_cy)-155,
+                                 buf1_m2_cx+150, max(n1d_cy, p1d_cy)+155))
+
+    # Via1 from buf1 M2 down to M1 at buf1_y for gate connection
+    cell.shapes(ly.layer(*VIA1)).insert(box(buf1_m2_cx-95, by-95, buf1_m2_cx+95, by+95))
+    cell.shapes(l_m1).insert(box(buf1_m2_cx-155, by-155, buf1_m2_cx+155, by+155))
+    cell.shapes(l_m2).insert(box(buf1_m2_cx-245, by-155, buf1_m2_cx+245, by+155))
+
+    buf1_xs = [buf1_m2_cx]
+
+    # MBn2 gates: extend poly up to by, contact at by (poly enclosure ≥70nm)
     for g in n2['gates']:
         cx = (g[0]+g[1])//2
         gw = g[1]-g[0]
-        cell.shapes(l_po).insert(box(cx-gw//2, g[3], cx+gw//2, by+80))
+        cell.shapes(l_po).insert(box(cx-gw//2, g[3], cx+gw//2, by+250))
         cell.shapes(l_ct).insert(box(cx-80, by-80, cx+80, by+80))
         cell.shapes(l_m1).insert(box(cx-155, by-155, cx+155, by+155))
         buf1_xs.append(cx)
@@ -94,7 +112,7 @@ def route():
     for g in p2['gates']:
         cx = (g[0]+g[1])//2
         gw = g[1]-g[0]
-        cell.shapes(l_po).insert(box(cx-gw//2, by-80, cx+gw//2, g[2]))
+        cell.shapes(l_po).insert(box(cx-gw//2, by-250, cx+gw//2, g[2]))
         cell.shapes(l_ct).insert(box(cx-80, by-80, cx+80, by+80))
         cell.shapes(l_m1).insert(box(cx-155, by-155, cx+155, by+155))
         buf1_xs.append(cx)
@@ -115,13 +133,15 @@ def route():
             cell.shapes(l_m1).insert(box(cx-155, cy-155, cx+155, cy+155))
             cell.shapes(l_v1).insert(box(cx-95, cy-95, cx+95, cy+95))
             cell.shapes(l_m2).insert(box(cx-245, cy-155, cx+245, cy+155))
-        # M2 vertical
-        cx1 = (n2_d[0][0]+n2_d[0][1])//2
+        # M2 L-shape: vertical at MBn2.D x, horizontal at top, vertical at MBp2.D x
+        cx1 = (n2_d[0][0]+n2_d[0][1])//2  # MBn2.D
         cy1 = (n2_d[0][2]+n2_d[0][3])//2
-        cx2 = (p2_d[0][0]+p2_d[0][1])//2
+        cx2 = (p2_d[0][0]+p2_d[0][1])//2  # MBp2.D
         cy2 = (p2_d[0][2]+p2_d[0][3])//2
-        mx = (cx1+cx2)//2
-        cell.shapes(l_m2).insert(box(mx-150, min(cy1,cy2)-155, mx+150, max(cy1,cy2)+155))
+        # Vertical at cx1 from MBn2.D up to MBp2.D level
+        cell.shapes(l_m2).insert(box(cx1-150, cy1-155, cx1+150, cy2+155))
+        # Horizontal at MBp2.D y connecting cx1 to cx2
+        cell.shapes(l_m2).insert(box(min(cx1,cx2)-150, cy2-155, max(cx1,cx2)+150, cy2+155))
     print(f'  vco_out: M2 vertical')
 
     # ────────────────────────────────────────
@@ -140,7 +160,12 @@ def route():
     # ────────────────────────────────────────
     p_s = [p1['strips'][i] for i in range(0, len(p1['strips']), 2)] + \
           [p2['strips'][i] for i in range(0, len(p2['strips']), 2)]
-    vy2 = max(s[3] for s in p_s) + 500
+    # VDD bus extends to ntap position to ensure connection
+    nmos_top = max(d['bbox'][3] for d in devs if d['type']=='nmos')
+    pmos_bot = min(d['bbox'][1] for d in devs if d['type']=='pmos')
+    pmos_top = max(d['bbox'][3] for d in devs if d['type']=='pmos')
+    ntap_y = pmos_top + 500  # matches build_module ntap placement
+    vy2 = ntap_y + 250  # extend past ntap to ensure overlap
     cell.shapes(l_m1).insert(box(min(s[0] for s in p_s), vy2-155,
                                  max(s[1] for s in p_s), vy2+155))
     for s in p_s:

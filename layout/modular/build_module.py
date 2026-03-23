@@ -142,15 +142,16 @@ def build_module(module_name, devices, ly=None):
         n_xmin = min(d['bbox'][0] for d in nmos_devs)
         n_xmax = max(d['bbox'][2] for d in nmos_devs)
         ptap_y = n_ymin - 800
-        # Place ptaps at regular intervals
-        ptap_x = n_xmin
-        while ptap_x < n_xmax:
+        # Place ptaps: one every 10um, at least 1
+        ptap_positions = list(range(n_xmin, n_xmax + 1, 10000))
+        if not ptap_positions:
+            ptap_positions = [(n_xmin + n_xmax) // 2]
+        for ptap_x in ptap_positions:
             cell.shapes(l_act).insert(box(ptap_x, ptap_y, ptap_x + 500, ptap_y + 500))
             cell.shapes(l_m1).insert(box(ptap_x, ptap_y, ptap_x + 500, ptap_y + 500))
             cell.shapes(l_psd).insert(box(ptap_x - 100, ptap_y - 100, ptap_x + 600, ptap_y + 600))
             cell.shapes(l_cont).insert(box(ptap_x + 170, ptap_y + 170, ptap_x + 330, ptap_y + 330))
-            ptap_x += 5000
-        print(f'  ptaps: y={ptap_y/1000:.1f}um, {n_xmin/1000:.1f}-{n_xmax/1000:.1f}')
+        print(f'  ptaps: y={ptap_y/1000:.1f}um, {len(ptap_positions)} ties')
 
     # ntap for PMOS: above the highest PMOS device, with NWell
     if pmos_devs:
@@ -163,14 +164,15 @@ def build_module(module_name, devices, ly=None):
         nw_margin = 310
         cell.shapes(l_nw).insert(box(p_xmin - nw_margin, p_ymin - nw_margin,
                                      p_xmax + nw_margin, ntap_y + 600))
-        # Place ntaps
-        ntap_x = p_xmin
-        while ntap_x < p_xmax:
+        # Place ntaps: one every 10um, at least 1
+        ntap_positions = list(range(p_xmin, p_xmax + 1, 10000))
+        if not ntap_positions:
+            ntap_positions = [(p_xmin + p_xmax) // 2]
+        for ntap_x in ntap_positions:
             cell.shapes(l_act).insert(box(ntap_x, ntap_y, ntap_x + 500, ntap_y + 500))
             cell.shapes(l_m1).insert(box(ntap_x, ntap_y, ntap_x + 500, ntap_y + 500))
             cell.shapes(l_cont).insert(box(ntap_x + 170, ntap_y + 170, ntap_x + 330, ntap_y + 330))
-            ntap_x += 5000
-        print(f'  ntaps: y={ntap_y/1000:.1f}um, NWell ({p_xmin-nw_margin:.0f}-{p_xmax+nw_margin:.0f})')
+        print(f'  ntaps: y={ntap_y/1000:.1f}um, {len(ntap_positions)} ties')
 
     # ─── Output ───
     out_path = os.path.join(OUT_DIR, f'{module_name}.gds')

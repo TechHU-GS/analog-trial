@@ -435,12 +435,17 @@ VCO 5-stage + digital: 已有 GDS
 - 输入: expected netlist (哪些 terminal 该在同一 net)
 - 输出: ✅ OK / ❌ OPEN / ⚠️ SHORT + 精确定位
 
-### vco_buffer routing 进展
-- PCell placement + ties: DRC=0 ✅
-- M1 routing (gap zone): buf1, vco5, GND, VDD 基本正确
-- 已知问题 (check_nets 发现):
-  1. vco_out M2 vertical 断开 (MBn2.D ↔ MBp2.D)
-  2. buf1↔vco5 M1 短路 (MBn1.D extension 穿过 vco5 gate bus)
+### vco_buffer ✅ COMPLETE (DRC=0, LVS pass)
+- PCell: 4 devices (MBn1 ng=1, MBn2 ng=2, MBp1 ng=1, MBp2 ng=2)
+- Routing: buf1(M2 vertical + M1 gate bus), vco_out(M2 L-shape), vco5(M1 staggered contacts), GND/VDD(M1 bus)
+- CI DRC = 0, LVS = Congratulations! Netlists match.
+- 验证: check_nets ✅ ALL NETS OK, CI DRC 0, LVS pass
+- 关键经验:
+  - PCell strip probe 必须去重 (重复 shapes 导致 S/D 误判)
+  - M1 drain extension 不能穿过 gate bus → 用 M2 vertical 代替
+  - M2 vertical 连不同 x 的 D strip → 用 L 形不用矩形
+  - Gate contact 间距不够 → stagger y 位置
+  - ntap 必须和 VDD bus M1 连通
 
 ### 下一步
 1. 修 vco_buffer routing (2 个问题)

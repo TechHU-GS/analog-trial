@@ -1,0 +1,13 @@
+* VCO buffer module — LVS schematic (expanded for ng>1)
+* From sim/_soilz_full.sp
+
+.subckt vco_buffer vco5 buf1 vco_out gnd vdd
+* INV1: MBn1 + MBp1 (ng=1)
+MMBn1 buf1 vco5 gnd gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMBp1 buf1 vco5 vdd vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+* INV2: MBn2 (ng=2) + MBp2 (ng=2) — expanded
+MMBn2_0 vco_out buf1 gnd gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMBn2_1 gnd buf1 vco_out gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMBp2_0 vco_out buf1 vdd vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+MMBp2_1 vdd buf1 vco_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+.ends vco_buffer
