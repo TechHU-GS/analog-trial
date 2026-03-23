@@ -1,9 +1,9 @@
 # Tiny Tapeout project information
 project:
-  title:        "PTAT Temperature Sensor + VCO"
+  title:        "SoilZ v1 Lock-In Impedance Analyzer"
   author:       "TechHU"
   discord:      ""
-  description:  "CMOS Vittoz PTAT + 5-stage ring VCO, ~9 MHz @ 27C on IHP SG13G2 130nm"
+  description:  "1-bit IQ lock-in sigma-delta impedance analyzer for soil moisture, IHP SG13G2 130nm"
   language:     "Analog"
   clock_hz:     0
 
@@ -47,8 +47,8 @@ pinout:
   uio[7]: ""
 
   # Analog pins
-  ua[0]: "VCO output (~9 MHz square wave)"
-  ua[1]: "VPTAT (proportional to absolute temperature)"
+  ua[0]: "Soil probe positive (H-bridge excitation + chopper sensing)"
+  ua[1]: "Soil probe negative (H-bridge excitation + chopper sensing)"
   ua[2]: ""
   ua[3]: ""
   ua[4]: ""
