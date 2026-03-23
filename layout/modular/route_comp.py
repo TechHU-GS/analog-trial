@@ -118,7 +118,7 @@ def route():
     cell.shapes(l_m2).insert(box(min(scx(s) for s in coutp_strips)-150, g23-155,
                                  max(scx(s) for s in coutp_strips)+150, g23+155))
     # Cross-coupling gates: ln2.G + lp2.G (column 2)
-    coutp_gy = g23 + 500
+    coutp_gy = g23 + 700  # 700 > 310+210 for M2.b spacing
     for dn in ['Mc_ln2', 'Mc_lp2']:
         g = D[dn]['gates'][0]; gx=(g[0]+g[1])//2; gw=g[1]-g[0]
         if g[3] < coutp_gy:
@@ -149,7 +149,7 @@ def route():
         cell.shapes(l_m2).insert(box(scx(s)-150, min(scy(s),g23_c2)-155, scx(s)+150, max(scy(s),g23_c2)+155))
     cell.shapes(l_m2).insert(box(min(scx(s) for s in coutn_strips)-150, g23_c2-155,
                                  max(scx(s) for s in coutn_strips)+150, g23_c2+155))
-    coutn_gy = g23_c2 - 500  # below g23, stay in gap (not in PMOS region)
+    coutn_gy = g23_c2 - 700  # symmetric with coutp_gy offset
     for dn in ['Mc_ln1', 'Mc_lp1']:
         g = D[dn]['gates'][0]; gx=(g[0]+g[1])//2; gw=g[1]-g[0]
         if g[3] < coutn_gy:
@@ -176,8 +176,8 @@ def route():
     # Mc_tail: short poly ext below tail, Contact+Via1+M2 to clk bus
     tail_g = D['Mc_tail']['gates'][0]
     tail_gx = (tail_g[0]+tail_g[1])//2; tail_gw = tail_g[1]-tail_g[0]
-    tail_clk_y = D['Mc_tail']['bbox'][1] - 500  # below tail, safe
-    cell.shapes(l_po).insert(box(tail_gx-tail_gw//2, tail_clk_y-250, tail_gx+tail_gw//2, tail_g[2]))
+    tail_clk_y = D['Mc_tail']['bbox'][1] - 600  # below tail, safe + extra Cnt.e margin
+    cell.shapes(l_po).insert(box(tail_gx-tail_gw//2, tail_clk_y-300, tail_gx+tail_gw//2, tail_g[2]))
     cell.shapes(l_ct).insert(box(tail_gx-80, tail_clk_y-80, tail_gx+80, tail_clk_y+80))
     cell.shapes(l_m1).insert(box(tail_gx-155, tail_clk_y-155, tail_gx+155, tail_clk_y+155))
     # Route tail gate to clk bus via M1 on left edge (avoids crossing M2)
