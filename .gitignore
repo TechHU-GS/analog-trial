@@ -26,3 +26,14 @@ layout/*.gds
 
 # Claude internal
 .claude/
+
+# Internal project docs (not for submission)
+docs/archive-from-parent-memory/
+docs/debug-log.md
+docs/progress.md
+docs/pdk_reference.md
+docs/session-history-complete.md
+
+# Layout working files
+layout/modular/output/*.lyrdb
+layout/output/
