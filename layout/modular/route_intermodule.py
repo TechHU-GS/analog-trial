@@ -95,7 +95,7 @@ NETS = [
     # Bias
     ('nmos_bias',  [('bias_mn', 'auto'), ('cbyp_n', 'auto'), ('vco_5stage', 'auto'), ('ptat_core', 'auto')]),
     ('pmos_bias',  [('bias_mn', 'auto'), ('cbyp_p', 'auto'), ('vco_5stage', 'auto'), ('ptat_core', 'auto')]),
-    ('net_c1',     [('ptat_core', 'auto'), ('bias_cascode', 'auto')]),
+    ('net_c1',     [('ptat_core', 'auto')]),  # bias_cascode gate bus M2 at y≈90 already spans both modules
     ('src1',       [('bias_cascode', 'auto'), ('sw', 'auto')]),
     ('src2',       [('bias_cascode', 'auto'), ('sw', 'auto')]),
     ('src3',       [('bias_cascode', 'auto'), ('sw', 'auto')]),

@@ -142,7 +142,7 @@ def main():
         # Per-module tap y overrides (from assembled GDS M1 probe)
         TAP_OVERRIDES = {
             'bias_mn': {'gnd_y': my1 + 0.7},
-            'bias_cascode': {'x_offset': 5, 'gnd_y': my1 + 1.3},
+            'bias_cascode': {'skip_vdd': True, 'skip_gnd': True},  # manual power route (auto M4-V crosses internal routing)
             'comp': {'vdd_y': my1 + mh - 3.0, 'gnd_y': my1 + 1.1},
             'sw': {'vdd_y': my1 + mh - 2.2, 'gnd_y': my1 + 4.6},
             'ota': {'gnd_y': my1 + 3.1},
@@ -155,7 +155,7 @@ def main():
             if 'gnd_y' in ov: gnd_tap_y = ov['gnd_y']
             if 'x_offset' in ov: mcx += ov['x_offset']
 
-        placed_vdd = False
+        placed_vdd = TAP_OVERRIDES.get(mod, {}).get('skip_vdd', False)
         placed_gnd = TAP_OVERRIDES.get(mod, {}).get('skip_gnd', False)
 
         for x_off in [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, -6, 6, -8, 8, -10, 10, -12, 12, -15, 15, -20, 20]:
