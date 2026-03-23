@@ -28,6 +28,10 @@ button { margin: 2px; padding: 3px 8px; cursor: pointer; font-size: 11px; }
     <button onclick="checkOverlaps()">Overlaps</button>
     <button onclick="saveCoords()">Save JSON</button>
     <button onclick="exportPNG()">PNG</button>
+    <button onclick="testRoute()" style="background:#4CAF50;color:white;font-weight:bold">Route Test</button>
+  </div>
+  <div id="route-result" style="margin:3px 0;padding:3px;font-size:11px;min-height:20px"></div>
+  <div class="btn-row" style="display:none">
   </div>
 
   <h3>Align (shift+click to multi-select)</h3>
@@ -309,6 +313,25 @@ function updateCoordsList() {
   for (const m of [...modules].sort((a,b) => a.name.localeCompare(b.name)))
     s += `${m.name.padEnd(17)}(${m.x.toFixed(1)},${m.y.toFixed(1)}) ${m.w.toFixed(1)}×${m.h.toFixed(1)}\n`;
   el.textContent = s;
+}
+
+function testRoute() {
+  const el = document.getElementById('route-result');
+  el.textContent = 'Routing... (10-15s)';
+  el.style.color = '#666';
+  const obj = {};
+  for (const m of modules) obj[m.name] = {x:+m.x.toFixed(1),y:+m.y.toFixed(1),w:+m.w.toFixed(1),h:+m.h.toFixed(1)};
+  fetch('http://localhost:8765/api/route', {
+    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(obj)
+  }).then(r => r.json()).then(d => {
+    if (d.routed === d.total) {
+      el.textContent = `${d.routed}/${d.total} ALL ROUTED!`;
+      el.style.color = 'green';
+    } else {
+      el.textContent = `${d.routed}/${d.total} routed\n${d.failed.join('\n')}`;
+      el.style.color = d.routed >= 21 ? 'orange' : 'red';
+    }
+  }).catch(e => { el.textContent = 'Server not running. Start: python3 modular/floorplan_server.py'; el.style.color = 'red'; });
 }
 
 function saveCoords() {
