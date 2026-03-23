@@ -176,8 +176,8 @@ def route():
     # Mc_tail: short poly ext below tail, Contact+Via1+M2 to clk bus
     tail_g = D['Mc_tail']['gates'][0]
     tail_gx = (tail_g[0]+tail_g[1])//2; tail_gw = tail_g[1]-tail_g[0]
-    tail_clk_y = D['Mc_tail']['bbox'][1] - 600  # below tail, safe + extra Cnt.e margin
-    cell.shapes(l_po).insert(box(tail_gx-tail_gw//2, tail_clk_y-300, tail_gx+tail_gw//2, tail_g[2]))
+    tail_clk_y = dev_bot - 2300  # well below GND bus (dev_bot-1500) AND ptap
+    cell.shapes(l_po).insert(box(tail_gx-tail_gw//2, tail_clk_y-400, tail_gx+tail_gw//2, tail_g[2]))
     cell.shapes(l_ct).insert(box(tail_gx-80, tail_clk_y-80, tail_gx+80, tail_clk_y+80))
     cell.shapes(l_m1).insert(box(tail_gx-155, tail_clk_y-155, tail_gx+155, tail_clk_y+155))
     # Route tail gate to clk bus via M1 on left edge (avoids crossing M2)
@@ -213,20 +213,23 @@ def route():
         print(f'  {label}: M1 y={gy}')
 
     # 8. GND + VDD
+    # GND: extend bus to ptap position
     gnd_y = dev_bot - 1500
     n_xmin = min(d['bbox'][0] for d in devs if d['type']=='nmos')
     n_xmax = max(d['bbox'][2] for d in devs if d['type']=='nmos')
-    cell.shapes(l_m1).insert(box(n_xmin, gnd_y-155, n_xmax, gnd_y+155))
+    cell.shapes(l_m1).insert(box(n_xmin, gnd_y-155, n_xmax, gnd_y+155))  # horizontal bus only
     for dn in ['Mc_tail']:
         for i in range(0, len(D[dn]['strips']), 2):
             s = D[dn]['strips'][i]
             cell.shapes(l_m1).insert(box(scx(s)-80, gnd_y+155, scx(s)+80, s[2]))
     print(f'  gnd: M1 y={gnd_y}')
 
+    # VDD: extend bus to ntap position
     vdd_y = pmos_top + 500
     p_xmin = min(d['bbox'][0] for d in devs if d['type']=='pmos')
     p_xmax = max(d['bbox'][2] for d in devs if d['type']=='pmos')
-    cell.shapes(l_m1).insert(box(p_xmin, vdd_y-155, p_xmax, vdd_y+500))
+    ntap_y = pmos_top + 500  # ntap placed by build_module
+    cell.shapes(l_m1).insert(box(p_xmin, vdd_y-155, p_xmax, ntap_y+600))  # extend to ntap
     for dn in ['Mc_lp1','Mc_lp2','Mc_rst_dp','Mc_rst_dn','Mc_rst_op','Mc_rst_on']:
         s = D[dn]['strips'][0]
         cell.shapes(l_m1).insert(box(scx(s)-80, s[3], scx(s)+80, vdd_y-155))
