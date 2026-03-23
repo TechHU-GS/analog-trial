@@ -123,6 +123,30 @@ def route():
         cell.shapes(l_m1).insert(box(min(cas_s[0], mir_d[0])-155, route_y-155,
                                      max(cas_s[0], mir_d[0])+155, route_y+155))
 
+        # For ng>1: connect extra strips via M2 vertical + Via1 (avoids M1 crossing)
+        cas_strips = D[cas_name]['strips']
+        mir_strips = D[mir_name]['strips']
+
+        if len(cas_strips) > 2:  # ng>1 cascode: extra S strips → M2 to gap2 route
+            s_strips = [cas_strips[i] for i in range(0, len(cas_strips), 2)]
+            for s in s_strips[1:]:
+                scx = (s[0]+s[1])//2
+                scy = (s[2]+s[3])//2
+                add_via1_m2(cell, ly, scx, scy)           # Via1 on strip
+                add_via1_m2(cell, ly, scx, route_y)        # Via1 at route level
+                cell.shapes(l_m2).insert(box(scx-150, min(scy,route_y)-155,
+                                             scx+150, max(scy,route_y)+155))
+
+        if len(mir_strips) > 2:  # ng>1 mirror: extra D strips → M2 to gap2 route
+            d_strips_m = [mir_strips[i] for i in range(1, len(mir_strips), 2)]
+            for ds in d_strips_m[1:]:
+                dcx = (ds[0]+ds[1])//2
+                dcy = (ds[2]+ds[3])//2
+                add_via1_m2(cell, ly, dcx, dcy)
+                add_via1_m2(cell, ly, dcx, route_y)
+                cell.shapes(l_m2).insert(box(dcx-150, min(dcy,route_y)-155,
+                                             dcx+150, max(dcy,route_y)+155))
+
         print(f'  {net_name}: {cas_name}.S({cas_s[0]}) → M1@y={route_y} → {mir_name}.D({mir_d[0]})')
 
     # ─── 2. vcas: MN_cas_load.D/G + PM_cas_diode.D/G + PM_cas1/2/3.G ───
@@ -198,7 +222,7 @@ def route():
 
     # PM_cas1/2/3.G: gate bus for vcas
     # All cascode gates should connect to vcas
-    vcas_gate_y = gap1_mid + 500  # in gap1, above MN connection
+    vcas_gate_y = gap1_mid + 800  # in gap1, above MN connection (enough M2.b gap)
     vcas_gate_xs = []
     for cas_name in ['PM_cas_diode', 'PM_cas1', 'PM_cas2', 'PM_cas3']:
         gates = D[cas_name]['gates']
