@@ -1,0 +1,16 @@
+.subckt comp c_tail c_di_p c_di_n comp_outp comp_outn comp_clk ota_out vref_comp gnd vdd
+MMc_tail_0 c_tail comp_clk gnd gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMc_tail_1 gnd comp_clk c_tail gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMc_inp_0 c_di_p ota_out c_tail gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMc_inp_1 c_tail ota_out c_di_p gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMc_inn_0 c_di_n vref_comp c_tail gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMc_inn_1 c_tail vref_comp c_di_n gnd sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMc_ln1 comp_outp comp_outn c_di_p gnd sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+MMc_ln2 comp_outn comp_outp c_di_n gnd sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+MMc_lp1 comp_outp comp_outn vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+MMc_lp2 comp_outn comp_outp vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+MMc_rst_dp c_di_p comp_clk vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMc_rst_dn c_di_n comp_clk vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMc_rst_op comp_outp comp_clk vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMc_rst_on comp_outn comp_clk vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+.ends comp

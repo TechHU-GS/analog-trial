@@ -129,13 +129,16 @@ def route():
         cell.shapes(l_m1).insert(box(gx-155, coutp_gy-155, gx+155, coutp_gy+155))
     cg = [(D[n]['gates'][0][0]+D[n]['gates'][0][1])//2 for n in ['Mc_ln2','Mc_lp2']]
     cell.shapes(l_m1).insert(box(min(cg)-155, coutp_gy-155, max(cg)+155, coutp_gy+155))
-    # Connect gate bus to drain M2 via cross-column M2
-    add_via1_m2(cell, ly, cg[0], coutp_gy)
-    # M2 horizontal from column 2 gates to column 1 drains
-    coutp_drain_x = max(scx(s) for s in coutp_strips)
-    cell.shapes(l_m2).insert(box(min(coutp_drain_x, cg[0])-150, g23-155,
-                                 max(coutp_drain_x, cg[0])+150, coutp_gy+155))
-    print(f'  comp_outp: M2 y={g23}, gates y={coutp_gy}')
+    # Connect gate bus to drain net via M1 horizontal (NOT M2 — avoids crossing)
+    # M1 from column 2 gate bus to column 1, then Via1 to join drain M2
+    coutp_drain_x = scx(coutp_strips[0])  # ln1.D x in column 1
+    cell.shapes(l_m1).insert(box(min(coutp_drain_x, min(cg))-155, coutp_gy-155,
+                                 max(coutp_drain_x, max(cg))+155, coutp_gy+155))
+    # Via1 at column 1 end to connect M1 to drain M2
+    add_via1_m2(cell, ly, coutp_drain_x, coutp_gy)
+    cell.shapes(l_m2).insert(box(coutp_drain_x-150, min(g23, coutp_gy)-155,
+                                 coutp_drain_x+150, max(g23, coutp_gy)+155))
+    print(f'  comp_outp: M2 y={g23}, gates M1 y={coutp_gy}')
 
     # 5. comp_outn: ln2.D + lp2.D + rst_on.D (column 2)
     g23_c2 = gap_y('Mc_ln2', 'Mc_lp2')
@@ -146,7 +149,7 @@ def route():
         cell.shapes(l_m2).insert(box(scx(s)-150, min(scy(s),g23_c2)-155, scx(s)+150, max(scy(s),g23_c2)+155))
     cell.shapes(l_m2).insert(box(min(scx(s) for s in coutn_strips)-150, g23_c2-155,
                                  max(scx(s) for s in coutn_strips)+150, g23_c2+155))
-    coutn_gy = g23_c2 + 500
+    coutn_gy = g23_c2 - 500  # below g23, stay in gap (not in PMOS region)
     for dn in ['Mc_ln1', 'Mc_lp1']:
         g = D[dn]['gates'][0]; gx=(g[0]+g[1])//2; gw=g[1]-g[0]
         if g[3] < coutn_gy:
@@ -157,16 +160,34 @@ def route():
         cell.shapes(l_m1).insert(box(gx-155, coutn_gy-155, gx+155, coutn_gy+155))
     cg2 = [(D[n]['gates'][0][0]+D[n]['gates'][0][1])//2 for n in ['Mc_ln1','Mc_lp1']]
     cell.shapes(l_m1).insert(box(min(cg2)-155, coutn_gy-155, max(cg2)+155, coutn_gy+155))
-    add_via1_m2(cell, ly, cg2[0], coutn_gy)
-    coutn_drain_x = max(scx(s) for s in coutn_strips)
-    cell.shapes(l_m2).insert(box(min(coutn_drain_x, cg2[0])-150, g23_c2-155,
-                                 max(coutn_drain_x, cg2[0])+150, coutn_gy+155))
-    print(f'  comp_outn: M2 y={g23_c2}, gates y={coutn_gy}')
+    # M1 horizontal from column 1 gates to column 2 drains
+    coutn_drain_x = scx(coutn_strips[0])  # ln2.D x in column 2
+    cell.shapes(l_m1).insert(box(min(coutn_drain_x, min(cg2))-155, coutn_gy-155,
+                                 max(coutn_drain_x, max(cg2))+155, coutn_gy+155))
+    add_via1_m2(cell, ly, coutn_drain_x, coutn_gy)
+    cell.shapes(l_m2).insert(box(coutn_drain_x-150, min(g23_c2, coutn_gy)-155,
+                                 coutn_drain_x+150, max(g23_c2, coutn_gy)+155))
+    print(f'  comp_outn: M2 y={g23_c2}, gates M1 y={coutn_gy}')
 
-    # 6. comp_clk: tail.G + all rst gates — M1 above PMOS
+    # 6. comp_clk: tail.G + all rst gates
+    # Mc_tail gate: SHORT poly extension (don't cross inp Active!) + M2 to clk bus
     clk_y = pmos_top + 1500
     clk_xs = []
-    for dn in ['Mc_tail', 'Mc_rst_dp', 'Mc_rst_dn', 'Mc_rst_op', 'Mc_rst_on']:
+    # Mc_tail: short poly ext below tail, Contact+Via1+M2 to clk bus
+    tail_g = D['Mc_tail']['gates'][0]
+    tail_gx = (tail_g[0]+tail_g[1])//2; tail_gw = tail_g[1]-tail_g[0]
+    tail_clk_y = D['Mc_tail']['bbox'][1] - 500  # below tail, safe
+    cell.shapes(l_po).insert(box(tail_gx-tail_gw//2, tail_clk_y-250, tail_gx+tail_gw//2, tail_g[2]))
+    cell.shapes(l_ct).insert(box(tail_gx-80, tail_clk_y-80, tail_gx+80, tail_clk_y+80))
+    cell.shapes(l_m1).insert(box(tail_gx-155, tail_clk_y-155, tail_gx+155, tail_clk_y+155))
+    # Route tail gate to clk bus via M1 on left edge (avoids crossing M2)
+    edge_x = min(d['bbox'][0] for d in devs) - 1000  # far left
+    cell.shapes(l_m1).insert(box(edge_x-155, tail_clk_y-155, tail_gx+155, tail_clk_y+155))  # horizontal
+    cell.shapes(l_m1).insert(box(edge_x-155, tail_clk_y-155, edge_x+155, clk_y+155))  # vertical up
+    cell.shapes(l_m1).insert(box(edge_x-155, clk_y-155, tail_gx+155, clk_y+155))  # horizontal to clk bus
+    clk_xs.append(edge_x)
+    # RST gates: long poly ext is OK (no crossing issue for rst devices at top)
+    for dn in ['Mc_rst_dp', 'Mc_rst_dn', 'Mc_rst_op', 'Mc_rst_on']:
         for g in D[dn]['gates']:
             gx=(g[0]+g[1])//2; gw=g[1]-g[0]
             cell.shapes(l_po).insert(box(gx-gw//2, g[3], gx+gw//2, clk_y+250))
