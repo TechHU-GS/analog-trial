@@ -727,10 +727,19 @@ klayout -n sg13g2 -zz -r ~/pdk/IHP-Open-PDK/ihp-sg13g2/libs.tech/klayout/tech/dr
 - `modular/route_power_v2.py` — TM1 power buses + collision-aware via stacks
 - `modular/floorplan_server.py` — HTTP server for interactive layout + route test
 
+### Power last mile (2026-03-24 06:35)
+- `route_power_taps.py`: M4-V from TM1 bus y down to each module, via stack to M1
+- Collision-aware: checks M2/M3/M4 obstacles, NOT M1 (want M1 overlap with taps)
+- **10/12 VDD + 11/12 GND connected**, DRC=10 (8 M1.b + 1 M3.b + 1 M4.b)
+- Failed: dac_sw VDD, hbridge_drive VDD+GND (M2/M3 congestion at tap area)
+- M1.b violations: power M1 pad near but not overlapping module M1 routing
+- ⚠️ 需要精确 tap 定位（实际 ntap/ptap M1 位置, 不是 module_y ± 0.5 估算）
+
 ### 下一步
-1. ⚠️ Power "last mile": via stack M2 → module ntap/ptap M1 连接
-2. 全芯片 LVS
-3. 提交 TTIHP
+1. 修 M1.b: 精确定位 ntap/ptap M1 位置，让 power pad 落在 tap M1 上
+2. 连接 dac_sw VDD, hbridge_drive VDD+GND
+3. 全芯片 LVS
+4. 提交 TTIHP
 
 ### 下一步
 1. 确认 hbridge build script 版本
