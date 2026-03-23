@@ -1,0 +1,18 @@
+* bias_cascode module — LVS schematic (expanded for ng>1)
+* From sim/_soilz_full.sp
+
+.subckt bias_cascode vcas cas_ref cas1 cas2 cas3 src1 src2 src3 net_c1 gnd vdd
+MMN_cas_load vcas vcas gnd gnd sg13_lv_nmos w=0.5u l=2u ng=1 m=1
+MPM_cas_diode vcas vcas cas_ref vdd sg13_lv_pmos w=1u l=2u ng=1 m=1
+MPM_cas1 src1 vcas cas1 vdd sg13_lv_pmos w=1u l=2u ng=1 m=1
+MPM_cas2 src2 vcas cas2 vdd sg13_lv_pmos w=2u l=2u ng=1 m=1
+* PM_cas3 ng=2 expanded
+MPM_cas3_0 src3 vcas cas3 vdd sg13_lv_pmos w=2u l=2u ng=1 m=1
+MPM_cas3_1 cas3 vcas src3 vdd sg13_lv_pmos w=2u l=2u ng=1 m=1
+MPM_cas_ref cas_ref net_c1 vdd vdd sg13_lv_pmos w=1u l=10u ng=1 m=1
+MPM_mir1 cas1 net_c1 vdd vdd sg13_lv_pmos w=1u l=10u ng=1 m=1
+MPM_mir2 cas2 net_c1 vdd vdd sg13_lv_pmos w=2u l=10u ng=1 m=1
+* PM_mir3 ng=2 expanded
+MPM_mir3_0 cas3 net_c1 vdd vdd sg13_lv_pmos w=2u l=10u ng=1 m=1
+MPM_mir3_1 vdd net_c1 cas3 vdd sg13_lv_pmos w=2u l=10u ng=1 m=1
+.ends bias_cascode

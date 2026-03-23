@@ -29,6 +29,16 @@ NETLISTS = {
         'pmos_bias': [('MN_pgen','D')],
         'GND':       [('MN_diode','S'), ('MN_pgen','S')],
     },
+    'bias_cascode': {
+        'vcas':    [('PM_cas_diode','D'), ('PM_cas_diode','G'),
+                    ('PM_cas1','G'), ('PM_cas2','G'), ('PM_cas3','G')],
+        'cas_ref': [('PM_cas_diode','S'), ('PM_cas_ref','D')],
+        'cas1':    [('PM_cas1','S'), ('PM_mir1','D')],
+        'cas2':    [('PM_cas2','S'), ('PM_mir2','D')],
+        'cas3':    [('PM_cas3','S'), ('PM_mir3','D')],
+        'net_c1':  [('PM_cas_ref','G'), ('PM_mir1','G'), ('PM_mir2','G'), ('PM_mir3','G')],
+        'vdd':     [('PM_cas_ref','S'), ('PM_mir1','S'), ('PM_mir2','S'), ('PM_mir3','S')],
+    },
 }
 
 
@@ -226,8 +236,5 @@ def check_module(module_name):
 
 
 if __name__ == '__main__':
-    module = 'vco_buffer'
-    for arg in sys.argv:
-        if arg.startswith('module='):
-            module = arg.split('=', 1)[1]
+    module = os.environ.get('MODULE', 'vco_buffer')
     check_module(module)

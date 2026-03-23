@@ -82,7 +82,7 @@ def build_module(module_name, devices, ly=None):
         if li_m1 is not None:
             for si in pc.begin_shapes_rec(li_m1):
                 b = si.shape().bbox()
-                if b.height() > 500:
+                if b.height() >= 400:
                     strips.append(b)
         strips.sort(key=lambda b: b.left)
         # Deduplicate (PCell hierarchy can produce identical shapes)
@@ -96,7 +96,7 @@ def build_module(module_name, devices, ly=None):
         if li_gat is not None:
             for si in pc.begin_shapes_rec(li_gat):
                 b = si.shape().bbox()
-                if b.height() > 500:
+                if b.height() >= 400:
                     gates.append(b)
         gates.sort(key=lambda b: b.left)
         # Deduplicate gates too
