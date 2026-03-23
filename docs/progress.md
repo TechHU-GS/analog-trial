@@ -606,25 +606,30 @@ python3 -c "import gdstk; from shapely..."  # 用 PDK venv 的 python3
 - `modular/floorplan_editor.html` — Interactive floorplan editor (localStorage auto-save)
 - `modular/assemble.py` — Module assembly with auto-rotation
 
-### 下一步
-1. Inter-module routing (M3+ 信号连线, 27 nets)
-2. Power routing (TM1 buses + via stacks)
-3. 全芯片 LVS
-4. 提交 TTIHP
+### 全芯片 LVS Baseline (Session 13, 2026-03-24 02:28)
+- `soilz_lvs_full.spice`: analog expanded (180 M-lines) + digital (24 std cell X-instances, 5 subckt defs inlined from PDK)
+  - 来源: `sim/_soilz_full.sp` (ground truth) → expanded ng>1 + cbyp_n/cbyp_p + digital from `soilz_digital.v`
+  - subckt name = `tt_um_techhu_analog_trial` (匹配 layout top cell)
+- Extracted: 948 MOSFET (482N+466P), 4 resistors, 3 caps, 268 nets
+- LVS: ERROR (预期 — 无 inter-module routing，模块间 net 未连)
+- **Device count 正确，无 parasitic，无异常 L 值**
+- ⚠️ 旧 SPICE 文件 (soilz_lvs_complete.spice, soilz_lvs_expanded.spice 等) 不要用，和 PCell 模块不一致
 
-### Floorplan 定稿 (final)
-- Tile: 202.08 × 627.48um (1x2)
-- 22 modules placed, 0 overlaps, 7 warnings (structural long wires)
-- 4 row alignment: y=2.5 (VCO), y=21 (SD loop), y=33 (excitation), y=48 (bias)
-- Analog extent: y=2-89um, remaining 538um for digital
-- 10 modules rotated (need GDS 90° transform at assembly)
-- Tools: floorplan_editor.html (interactive), check_floorplan.py (constraint checker)
-- Coords saved: modular/output/floorplan_coords.json
+### Floorplan v2 定稿 (Session 13, 2026-03-24)
+- 20 modules (12 transistor + 7 passive + 1 digital), 0 errors, 5 warnings, wirelength=1575
+- floorplan_editor.html: localStorage auto-save (position + rotation)
+- Coords: modular/output/floorplan_coords.json
 
-### ⚠️ build_hbridge.py 状态不一致
-- 用户 revert 了 build_hbridge.py 到旧版 (soilz_bare 提取)
-- 但 hbridge.gds 仍是 compact symmetric 版本
-- 需要确认用哪个版本
+### Analog-only LVS 验证 (Session 13, 2026-03-24)
+- 去掉 digital block 单独验证 analog: **180 M = 180 M, 4R = 4R, 3C = 3C — device 完全匹配**
+- LVS 不 pass 因为无 inter-module routing（net 未连），device 无误
+
+### 下一步: 自动化 inter-module router
+- 用户同意自动化方案: probe M2 pads → L-route (M3-H + M4-V) → shapely 碰撞检测
+- M3/M4/M5 全空（模块只用 M1/M2），路由空间干净
+- 已有 helpers: route_m3.py (add_via2/via3, check_collision), shapely (PDK venv)
+- 27 analog signal nets + digital nets + power
+- 顺序: analog signal → digital signal → power → 全芯片 LVS
 
 ### 下一步
 1. 确认 hbridge build script 版本
