@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
-"""Build Chopper module with complete routing.
+"""Build Chopper module — PCell instantiation + routing.
 
 Circuit (2 transmission gates):
-    TG1: Mchop1n (NMOS) + Mchop1p (PMOS) — sens_p ↔ chop_out
-    TG2: Mchop2n (NMOS) + Mchop2p (PMOS) — sens_n ↔ chop_out
+    TG1: Mchop1n (NMOS W=2u L=0.5u) + Mchop1p (PMOS W=4u L=0.5u) — sens_p ↔ chop_out
+    TG2: Mchop2n (NMOS W=2u L=0.5u) + Mchop2p (PMOS W=4u L=0.5u) — sens_n ↔ chop_out
 
-Net connections:
-    chop_out: all 4 sources (external → Rin)
-    sens_p:   Mchop1n.D + Mchop1p.D (internal)
-    sens_n:   Mchop2n.D + Mchop2p.D (internal)
-    f_exc:    Mchop1n.G + Mchop2p.G (external clock)
-    f_exc_b:  Mchop1p.G + Mchop2n.G (external clock complement)
+    chop_out: all S terminals (external → Rin)
+    sens_p:   TG1 D terminals
+    sens_n:   TG2 D terminals
+    f_exc:    Mchop1n.G + Mchop2p.G
+    f_exc_b:  Mchop1p.G + Mchop2n.G
 
-PCell layout (from bare GDS):
-    M1 strips left→right:
-      41.39,42.27 (2um,NMOS-only) → 43.58,44.46 (4um,shared) → 47.07,47.95 (2um,shared) → 49.26,50.14 (4um,shared)
-    NWell: (43.20-45.00) and (48.88-50.68)
+Device params from sim/_soilz_full.sp.
 
 Usage:
     cd layout && source ~/pdk/venv/bin/activate
@@ -24,10 +20,13 @@ Usage:
 
 import klayout.db as pya
 import os
-import json
+import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-LAYOUT_DIR = os.path.dirname(SCRIPT_DIR)
+sys.path.insert(0, SCRIPT_DIR)
+from pcell_utils import (create_nmos, create_pmos, probe_device, place_device,
+                         abs_strips, abs_gates, add_ptap, add_ntap, quick_drc, box)
+
 OUT_DIR = os.path.join(SCRIPT_DIR, 'output')
 
 # Layer definitions
@@ -39,266 +38,220 @@ M2 = (10, 0)
 PSD = (14, 0)
 VIA1 = (19, 0)
 NWELL = (31, 0)
-SUBSTRATE = (40, 0)
-
-# DRC values (nm)
-M1_MIN_S = 180
-M1_MIN_W = 160
-M2_MIN_W = 210
-VIA1_SIZE = 190
-
-
-def box(x1, y1, x2, y2):
-    return pya.Box(x1, y1, x2, y2)
 
 
 def build():
-    print('=== Building Chopper ===')
+    print('=== Building Chopper (PCell) ===')
 
-    # ─── Step 1: Extract PCells from bare GDS ───
-    print('\n--- Step 1: Extract PCells ---')
+    ly = pya.Layout()
+    ly.dbu = 0.001
+    cell = ly.create_cell('chopper')
 
-    with open(os.path.join(LAYOUT_DIR, 'placement.json')) as f:
-        placement = json.load(f)
+    # ─── Step 1: Create PCells ───
+    print('\n--- Step 1: PCell creation ---')
+    nmos_cell = create_nmos(ly, w_um=2, l_um=0.5)
+    pmos_cell = create_pmos(ly, w_um=4, l_um=0.5)
 
-    src = pya.Layout()
-    src.read(os.path.join(LAYOUT_DIR, 'output', 'soilz_bare.gds'))
-    src_top = src.top_cell()
+    n_info = probe_device(ly, nmos_cell)
+    p_info = probe_device(ly, pmos_cell)
+    print(f'  NMOS: {n_info["w"]/1000:.1f}x{n_info["h"]/1000:.1f}um, '
+          f'{len(n_info["strips"])} strips, {len(n_info["gates"])} gates')
+    print(f'  PMOS: {p_info["w"]/1000:.1f}x{p_info["h"]/1000:.1f}um, '
+          f'{len(p_info["strips"])} strips, {len(p_info["gates"])} gates')
 
-    # Full chopper search area (covers all 4 devices + NWell margins)
-    # Devices span x=41.32-50.37, y=63.50-68.12
-    # Add margins: left 500nm, right 500nm, bottom 500nm, top 500nm
-    search_x1 = 40800
-    search_y1 = 63000
-    search_x2 = 51200
-    search_y2 = 68700
-    search = pya.Box(search_x1, search_y1, search_x2, search_y2)
+    # ─── Step 2: Place devices ───
+    print('\n--- Step 2: Placement ---')
+    # Layout: TG1(left) gap TG2(right)
+    # Each TG: NMOS at bottom, PMOS above with gap for NWell spacing
+    nmos_h = n_info['h']
+    pmos_h = p_info['h']
+    nmos_w = n_info['w']
+    pmos_w = p_info['w']
 
-    # Origin shift: place at (0, 0)
-    # Use leftmost Activ as reference
-    origin_x = 41320  # Mchop1n Activ left edge
-    origin_y = 63500  # placement y
+    np_gap = 2000   # vertical gap between NMOS top and PMOS bottom
+    tg_gap = 3000   # horizontal gap between TG1 and TG2
+    pmos_x_ofs = 500  # horizontal offset for PMOS to avoid strip Via1 overlap
 
-    out = pya.Layout()
-    out.dbu = 0.001
-    cell = out.create_cell('chopper')
+    # NMOS devices at y=0
+    # PMOS devices above (need NWell separation from NMOS)
+    pmos_y = nmos_h + np_gap
 
-    shapes_total = 0
-    for li in src.layer_indices():
-        info = src.get_info(li)
-        tli = out.layer(info.layer, info.datatype)
+    # TG1: nmos + pmos (left)
+    n1_x, n1_y = 0, 0
+    p1_x, p1_y = pmos_x_ofs, pmos_y
 
-        region = pya.Region(src_top.begin_shapes_rec(li))
-        clipped = region & pya.Region(search)
+    # TG2: nmos + pmos (right)
+    tg2_x = max(nmos_w, pmos_w + pmos_x_ofs) + tg_gap
+    n2_x, n2_y = tg2_x, 0
+    p2_x, p2_y = tg2_x + pmos_x_ofs, pmos_y
 
-        for poly in clipped.each():
-            shifted = poly.moved(-origin_x, -origin_y)
-            cell.shapes(tli).insert(shifted)
-            shapes_total += 1
+    place_device(cell, nmos_cell, n1_x, n1_y)  # Mchop1n
+    place_device(cell, pmos_cell, p1_x, p1_y)  # Mchop1p
+    place_device(cell, nmos_cell, n2_x, n2_y)  # Mchop2n
+    place_device(cell, pmos_cell, p2_x, p2_y)  # Mchop2p
 
-    bb = cell.bbox()
-    print(f'  Extracted {shapes_total} shapes')
-    print(f'  Size: {bb.width()/1000:.1f}x{bb.height()/1000:.1f}um')
+    # Get absolute strip/gate positions
+    n1_strips = abs_strips(n_info, n1_x, n1_y)  # [(xl,xr,yb,yt), ...]
+    p1_strips = abs_strips(p_info, p1_x, p1_y)
+    n2_strips = abs_strips(n_info, n2_x, n2_y)
+    p2_strips = abs_strips(p_info, p2_x, p2_y)
 
-    # ─── Step 2: Add ties (positions chosen to avoid gate routing conflicts) ───
-    print('\n--- Step 2: Add ties ---')
+    n1_gates = abs_gates(n_info, n1_x, n1_y)
+    p1_gates = abs_gates(p_info, p1_x, p1_y)
+    n2_gates = abs_gates(n_info, n2_x, n2_y)
+    p2_gates = abs_gates(p_info, p2_x, p2_y)
 
-    l_activ = out.layer(*ACTIV)
-    l_m1 = out.layer(*M1)
-    l_cont = out.layer(*CONT)
-    l_psd = out.layer(*PSD)
-    l_nwell = out.layer(*NWELL)
-    l_m2 = out.layer(*M2)
-    l_via1 = out.layer(*VIA1)
-    l_poly = out.layer(*GATPOLY)
+    # NMOS: S=strip[0](left), D=strip[-1](right)  (ng=1, 2 strips)
+    # PMOS: S=strip[0](left), D=strip[-1](right)
+    # TG net mapping:
+    #   chop_out = TG1 S (n1_S + p1_S) + TG2 S (n2_S + p2_S)
+    #   sens_p = TG1 D (n1_D + p1_D)
+    #   sens_n = TG2 D (n2_D + p2_D)
 
-    # Gates at: x=0.59(g0), 2.78(g1), 6.27(g3), 8.46(g4)
-    # Ties must avoid gate X positions for M1.b clearance
-    ptap_size = 500
+    print(f'  Mchop1n: x={n1_x}, strips@x={[s[0] for s in n1_strips]}')
+    print(f'  Mchop1p: x={p1_x}, strips@x={[s[0] for s in p1_strips]}')
+    print(f'  Mchop2n: x={n2_x}, strips@x={[s[0] for s in n2_strips]}')
+    print(f'  Mchop2p: x={p2_x}, strips@x={[s[0] for s in p2_strips]}')
 
-    # ptap: in gap between TG1 and TG2 (x≈4.2, away from all gates)
-    ptap_x = 4200
-    ptap_y = -700
-    cell.shapes(l_activ).insert(box(ptap_x, ptap_y, ptap_x + ptap_size, ptap_y + ptap_size))
-    cell.shapes(l_m1).insert(box(ptap_x, ptap_y, ptap_x + ptap_size, ptap_y + ptap_size))
-    cell.shapes(l_psd).insert(box(ptap_x - 100, ptap_y - 100, ptap_x + ptap_size + 100, ptap_y + ptap_size + 100))
-    cell.shapes(l_cont).insert(box(ptap_x + 170, ptap_y + 170, ptap_x + 330, ptap_y + 330))
+    # ─── Step 3: Ties ───
+    print('\n--- Step 3: Ties ---')
+    l_m1 = ly.layer(*M1)
+    l_m2 = ly.layer(*M2)
+    l_via1 = ly.layer(*VIA1)
+    l_poly = ly.layer(*GATPOLY)
+    l_cont = ly.layer(*CONT)
+    l_nw = ly.layer(*NWELL)
 
-    # ntap: inside NWell, 400nm above PMOS Active top (4310)
-    # NWell extended to cover ntap
-    l_nw = out.layer(31, 0)
-    cell.shapes(l_nw).insert(box(1880, 0, 9360, 5300))
-    ntap_y = 4700
-    for ntap_x in [1900, 8900]:
-        cell.shapes(l_activ).insert(box(ntap_x, ntap_y, ntap_x + ptap_size, ntap_y + ptap_size))
-        cell.shapes(l_m1).insert(box(ntap_x, ntap_y, ntap_x + ptap_size, ntap_y + ptap_size))
-        cell.shapes(l_cont).insert(box(ntap_x + 170, ntap_y + 170, ntap_x + 330, ntap_y + 330))
+    # ptap below NMOS
+    ptap_y1 = -700
+    ptap_y2 = -200
+    total_w = max(n2_strips[-1][1], p2_strips[-1][1]) + 500
+    mid_x = (n1_strips[-1][1] + n2_strips[0][0]) // 2
+    add_ptap(cell, ly, mid_x, ptap_y1, ptap_y2)
 
-    print('  ptap: x=4.2 y=-0.70; ntap: x=1.9,8.9 y=4.70')
+    # ntap above PMOS (inside NWell)
+    pmos_top = max(p1_strips[-1][3], p2_strips[-1][3])
+    ntap_y1 = pmos_top + 800  # 800nm gap to avoid Cnt.b with gate contacts
+    ntap_y2 = ntap_y1 + 500
 
-    # ─── Step 3: M2 routing (TG NMOS↔PMOS bridges + chop_out bus) ───
-    print('\n--- Step 3: M2 routing ---')
+    # NWell covering both PMOS + ntaps
+    p_bb = p_info['bbox']
+    nw_margin = 310
+    nw_x1 = min(p1_x, p2_x) - nw_margin
+    nw_x2 = max(p1_x + pmos_w, p2_x + pmos_w) + nw_margin
+    nw_y1 = pmos_y - nw_margin
+    nw_y2 = ntap_y2 + 100
+    cell.shapes(l_nw).insert(box(nw_x1, nw_y1, nw_x2, nw_y2))
 
-    # Strip positions (re-origined, center X):
-    # NMOS strips (short, y=0.18-2.18):
-    #   [0] x=0.15  (Mchop1n)
-    #   [1] x=1.03  (Mchop1n)
-    #   [7] x=5.83  (junction Mchop1p/Mchop2n)
-    #   [8] x=6.71  (junction Mchop1p/Mchop2n)
-    # PMOS strips (tall, y=0.31-4.31):
-    #   [3/4] x=2.34  (TG1 shared)
-    #   [5/6] x=3.22  (TG1 shared)
-    #   [10/11] x=8.02 (TG2 shared)
-    #   [12/13] x=8.90 (TG2 shared)
-    #
-    # Net assignment (terminal A=left of gate, B=right):
-    #   chop_out: [0](0.07), [3/4](2.26), [7](5.75), [10/11](7.94)
-    #   sens_p:   [1](0.95), [5/6](3.14)
-    #   sens_n:   [8](6.63), [12/13](8.82)
-    #
-    # Gates: gate0(0.34-0.84)=f_exc, gate1/2(2.53-3.03)=f_exc_b,
-    #         gate3(6.02-6.52)=f_exc_b, gate4/5(8.21-8.71)=f_exc
+    add_ntap(cell, ly, (p1_strips[0][0] + p1_strips[-1][1]) // 2, ntap_y1, ntap_y2)
+    add_ntap(cell, ly, (p2_strips[0][0] + p2_strips[-1][1]) // 2, ntap_y1, ntap_y2)
+    print(f'  ptap: x={mid_x}, ntaps above PMOS')
 
-    # Helper: add Via1 + M1 pad + M2 pad at a strip location
-    def add_via1(strip_xl, strip_xr, via_y_center):
-        """Add Via1 with M1+M2 pads on a strip. Returns M2 pad bbox."""
-        cx = (strip_xl + strip_xr) // 2
-        # M1 pad: 310x310nm centered on strip
-        m1_hw = 155
-        m1_pad = box(cx - m1_hw, via_y_center - m1_hw, cx + m1_hw, via_y_center + m1_hw)
-        cell.shapes(l_m1).insert(m1_pad)
-        # Via1: 190x190nm centered
-        v_hw = 95
-        cell.shapes(l_via1).insert(box(cx - v_hw, via_y_center - v_hw,
-                                       cx + v_hw, via_y_center + v_hw))
-        # M2 pad: 490x310nm centered
-        m2_hw_x = 245
-        m2_hw_y = 155
-        m2_pad = box(cx - m2_hw_x, via_y_center - m2_hw_y,
-                     cx + m2_hw_x, via_y_center + m2_hw_y)
-        cell.shapes(l_m2).insert(m2_pad)
-        return (cx - m2_hw_x, via_y_center - m2_hw_y,
-                cx + m2_hw_x, via_y_center + m2_hw_y)
+    # ─── Step 4: M2 routing (Via1 on S/D strips → M2 buses) ───
+    print('\n--- Step 4: M2 routing ---')
 
-    # M2 route Y centers (need M2.b=210nm spacing between routes)
-    # Route 1: chop_out at y=500nm (center)
-    # Route 2: sens_p at y=1200nm
-    # Route 3: sens_n at y=1900nm
-    y_chop = 500
-    y_sensp = 1200
-    y_sensn = 1900
+    def add_via1_pad(strip, via_y):
+        """Add Via1+M1+M2 pad on a strip at given y. Returns M2 pad bbox."""
+        cx = (strip[0] + strip[1]) // 2
+        cell.shapes(l_m1).insert(box(cx - 155, via_y - 155, cx + 155, via_y + 155))
+        cell.shapes(ly.layer(*VIA1)).insert(box(cx - 95, via_y - 95, cx + 95, via_y + 95))
+        cell.shapes(l_m2).insert(box(cx - 245, via_y - 155, cx + 245, via_y + 155))
+        return (cx - 245, via_y - 155, cx + 245, via_y + 155)
 
-    # ── chop_out M2 bus ──
-    # Via1 on strips: [0](70-230), [3/4](2260-2420), [7](5750-5910), [10/11](7940-8100)
-    pads_chop = []
-    for xl, xr in [(70, 230), (2260, 2420), (5750, 5910), (7940, 8100)]:
-        p = add_via1(xl, xr, y_chop)
-        pads_chop.append(p)
+    # M2 Y centers (spacing ≥ M2.b=210nm)
+    y_chop = 500     # chop_out
+    y_sensp = 1200   # sens_p
+    y_sensn = 1900   # sens_n
 
-    # M2 horizontal bar connecting all chop_out Via1s
-    m2_x1 = min(p[0] for p in pads_chop)
-    m2_x2 = max(p[2] for p in pads_chop)
-    cell.shapes(l_m2).insert(box(m2_x1, y_chop - 155, m2_x2, y_chop + 155))
-    print(f'  chop_out M2: x={m2_x1/1000:.2f}-{m2_x2/1000:.2f}, y={y_chop/1000:.2f}')
+    # chop_out: S strips of all 4 devices
+    chop_strips = [n1_strips[0], p1_strips[0], n2_strips[0], p2_strips[0]]
+    chop_pads = [add_via1_pad(s, y_chop) for s in chop_strips]
+    chop_x1 = min(p[0] for p in chop_pads)
+    chop_x2 = max(p[2] for p in chop_pads)
+    cell.shapes(l_m2).insert(box(chop_x1, y_chop - 155, chop_x2, y_chop + 155))
+    print(f'  chop_out M2: y={y_chop}')
 
-    # ── sens_p M2 ──
-    # Via1 on strips: [1](950-1110), [5/6](3140-3300)
-    pads_sp = []
-    for xl, xr in [(950, 1110), (3140, 3300)]:
-        p = add_via1(xl, xr, y_sensp)
-        pads_sp.append(p)
+    # sens_p: D strips of TG1
+    sp_strips = [n1_strips[-1], p1_strips[-1]]
+    sp_pads = [add_via1_pad(s, y_sensp) for s in sp_strips]
+    sp_x1 = min(p[0] for p in sp_pads)
+    sp_x2 = max(p[2] for p in sp_pads)
+    cell.shapes(l_m2).insert(box(sp_x1, y_sensp - 155, sp_x2, y_sensp + 155))
+    print(f'  sens_p M2: y={y_sensp}')
 
-    m2_x1 = min(p[0] for p in pads_sp)
-    m2_x2 = max(p[2] for p in pads_sp)
-    cell.shapes(l_m2).insert(box(m2_x1, y_sensp - 155, m2_x2, y_sensp + 155))
-    print(f'  sens_p M2: x={m2_x1/1000:.2f}-{m2_x2/1000:.2f}, y={y_sensp/1000:.2f}')
+    # sens_n: D strips of TG2
+    sn_strips = [n2_strips[-1], p2_strips[-1]]
+    sn_pads = [add_via1_pad(s, y_sensn) for s in sn_strips]
+    sn_x1 = min(p[0] for p in sn_pads)
+    sn_x2 = max(p[2] for p in sn_pads)
+    cell.shapes(l_m2).insert(box(sn_x1, y_sensn - 155, sn_x2, y_sensn + 155))
+    print(f'  sens_n M2: y={y_sensn}')
 
-    # ── sens_n M2 ──
-    # Via1 on strips: [8](6630-6790), [12/13](8820-8980)
-    pads_sn = []
-    for xl, xr in [(6630, 6790), (8820, 8980)]:
-        p = add_via1(xl, xr, y_sensn)
-        pads_sn.append(p)
+    # ─── Step 5: Gate routing (f_exc, f_exc_b via M2) ───
+    # Gate contacts extend BELOW devices (avoids M1 conflicts with S/D strips)
+    # Then Via1 → M2 horizontal bar connects gate pairs
+    print('\n--- Step 5: Gate routing (M2) ---')
 
-    m2_x1 = min(p[0] for p in pads_sn)
-    m2_x2 = max(p[2] for p in pads_sn)
-    cell.shapes(l_m2).insert(box(m2_x1, y_sensn - 155, m2_x2, y_sensn + 155))
-    print(f'  sens_n M2: x={m2_x1/1000:.2f}-{m2_x2/1000:.2f}, y={y_sensn/1000:.2f}')
+    g_n1 = n1_gates[0]  # Mchop1n → f_exc
+    g_p1 = p1_gates[0]  # Mchop1p → f_exc_b
+    g_n2 = n2_gates[0]  # Mchop2n → f_exc_b
+    g_p2 = p2_gates[0]  # Mchop2p → f_exc
 
-    # ─── Step 4: Gate routing (f_exc, f_exc_b) ───
-    print('\n--- Step 4: Gate routing ---')
+    poly_ext = 500
 
-    # Gate positions:
-    #   gate0: x=340-840, y=0-2360 (short, f_exc = Mchop1n.G)
-    #   gate1/2: x=2530-3030, y=130-4490 (tall, f_exc_b = Mchop1p.G)
-    #   gate3: x=6020-6520, y=0-2360 (short, f_exc_b = Mchop2n.G)
-    #   gate4/5: x=8210-8710, y=130-4490 (tall, f_exc = Mchop2p.G)
-    #
-    # Strategy: M1-only gate routing above all S/D strips
-    #   - Short gates: extend poly above to y=2860, contact at y≈2550
-    #   - Tall gates: extend poly above to y=5600, contact at y≈4800 (f_exc_b) or 5300 (f_exc)
-    #   - f_exc_b M1 horizontal at y≈4800 (4645-4955)
-    #   - f_exc M1 horizontal at y≈5300 (5145-5455)
-    #   - Verticals connect short gate contacts up to horizontal bars
+    # Gap zone between NMOS top and PMOS bottom: y=nmos_h to pmos_y
+    # Extend NMOS gates UP, PMOS gates DOWN, meet in the gap
+    gap_mid = (nmos_h + pmos_y) // 2  # center of gap
 
-    # Poly extensions
-    cell.shapes(l_poly).insert(box(340, 2360, 840, 2860))      # gate0 above
-    cell.shapes(l_poly).insert(box(2530, 4490, 3030, 4990))    # gate1/2 above
-    cell.shapes(l_poly).insert(box(6020, 2360, 6520, 2860))    # gate3 above
-    cell.shapes(l_poly).insert(box(8210, 4490, 8710, 5600))    # gate4/5 above (longer for f_exc)
+    def gate_to_m2(g, extend_up=True):
+        """Extend gate poly into gap zone, add Contact+Via1+M2. Returns (cx, m2_cy)."""
+        gcx = (g[0] + g[1]) // 2
+        gw = g[1] - g[0]
+        if extend_up:
+            cell.shapes(l_poly).insert(box(gcx - gw // 2, g[3], gcx + gw // 2, g[3] + poly_ext))
+            cy = g[3] + poly_ext - 250
+        else:
+            cell.shapes(l_poly).insert(box(gcx - gw // 2, g[2] - poly_ext, gcx + gw // 2, g[2]))
+            cy = g[2] - poly_ext + 250
+        cell.shapes(l_cont).insert(box(gcx - 80, cy - 80, gcx + 80, cy + 80))
+        cell.shapes(l_m1).insert(box(gcx - 155, cy - 155, gcx + 155, cy + 155))
+        cell.shapes(ly.layer(*VIA1)).insert(box(gcx - 95, cy - 95, gcx + 95, cy + 95))
+        cell.shapes(l_m2).insert(box(gcx - 245, cy - 155, gcx + 245, cy + 155))
+        return gcx, cy
 
-    # Gate contacts (160x160nm) + M1 pads (310x310nm)
-    def add_gate_contact(poly_cx, cont_cy):
-        """Add contact + M1 pad on gate poly. Returns M1 pad bbox."""
-        cx, cy = poly_cx, cont_cy
-        cell.shapes(l_cont).insert(box(cx - 80, cy - 80, cx + 80, cy + 80))
-        cell.shapes(l_m1).insert(box(cx - 155, cy - 155, cx + 155, cy + 155))
-        return (cx - 155, cy - 155, cx + 155, cy + 155)
+    n1_gc = gate_to_m2(g_n1, extend_up=True)   # NMOS → extend up into gap
+    n2_gc = gate_to_m2(g_n2, extend_up=True)
+    p1_gc = gate_to_m2(g_p1, extend_up=False)  # PMOS → extend down into gap
+    p2_gc = gate_to_m2(g_p2, extend_up=False)
 
-    # gate0 (f_exc): contact above short poly, at y=2550
-    g0_pad = add_gate_contact(590, 2550)   # poly center x=590
-    # gate4/5 (f_exc): contact above tall poly extension, at y=5300
-    g4_pad = add_gate_contact(8460, 5300)  # poly center x=8460
+    # f_exc_b M2: connect p1_gc ↔ n2_gc
+    fexcb_y = min(p1_gc[1], n2_gc[1])
+    cell.shapes(l_m2).insert(box(min(p1_gc[0], n2_gc[0]) - 245, fexcb_y - 155,
+                                  max(p1_gc[0], n2_gc[0]) + 245, fexcb_y + 155))
+    # M2 verticals to bar
+    for gcx, gcy in [p1_gc, n2_gc]:
+        y1, y2 = min(gcy, fexcb_y) - 155, max(gcy, fexcb_y) + 155
+        cell.shapes(l_m2).insert(box(gcx - 150, y1, gcx + 150, y2))
+    print(f'  f_exc_b M2: y={fexcb_y}')
 
-    # gate1/2 (f_exc_b): contact above tall poly, at y=4800
-    g1_pad = add_gate_contact(2780, 4800)  # poly center x=2780
-    # gate3 (f_exc_b): contact above short poly, at y=2550
-    g3_pad = add_gate_contact(6190, 2550)  # poly center x=6190 (shifted left to avoid sens_n Via1 M1)
+    # f_exc M2: connect n1_gc ↔ p2_gc (ABOVE f_exc_b to avoid overlap with S/D M2)
+    fexc_y = fexcb_y + 600
+    cell.shapes(l_m2).insert(box(min(n1_gc[0], p2_gc[0]) - 245, fexc_y - 155,
+                                  max(n1_gc[0], p2_gc[0]) + 245, fexc_y + 155))
+    for gcx, gcy in [n1_gc, p2_gc]:
+        y1, y2 = min(gcy, fexc_y) - 155, max(gcy, fexc_y) + 155
+        cell.shapes(l_m2).insert(box(gcx - 150, y1, gcx + 150, y2))
+    print(f'  f_exc M2: y={fexc_y}')
 
-    # f_exc_b M1 route: gate1/2 (x=2780, y=4800) ↔ gate3 (x=6190, y=2550)
-    # Horizontal bar at y=4800 + vertical down to gate3
-    cell.shapes(l_m1).insert(box(2625, 4645, 6345, 4955))   # horizontal
-    cell.shapes(l_m1).insert(box(6035, 2705, 6345, 4645))   # vertical down to gate3
-    print('  f_exc_b: M1 bar y=4.80 (x=2.63-6.35) + vertical x=6.19')
-
-    # f_exc M1 route: gate0 (x=590, y=2550) ↔ gate4/5 (x=8460, y=5300)
-    # Vertical from gate0 up + horizontal bar at y=5300
-    cell.shapes(l_m1).insert(box(435, 2705, 745, 5145))     # vertical up from gate0
-    cell.shapes(l_m1).insert(box(435, 5145, 8615, 5455))    # horizontal
-    print('  f_exc: M1 bar y=5.30 (x=0.44-8.62) + vertical x=0.59')
-
-    # ─── Write output ───
+    # ─── Output ───
     out_path = os.path.join(OUT_DIR, 'chopper.gds')
-    out.write(out_path)
+    ly.write(out_path)
 
     bb = cell.bbox()
     print(f'\n  Output: {bb.width()/1000:.1f}x{bb.height()/1000:.1f}um')
     print(f'  Written: {out_path}')
 
-    # Quick DRC
-    li_m1 = out.find_layer(*M1)
-    m1r = pya.Region(cell.begin_shapes_rec(li_m1))
-    m1b = m1r.space_check(M1_MIN_S)
-    m1a = m1r.width_check(M1_MIN_W)
-    print(f'  Quick DRC: M1.b={m1b.count()}, M1.a={m1a.count()}')
-
-    li_m2 = out.find_layer(*M2)
-    if li_m2 is not None:
-        m2r = pya.Region(cell.begin_shapes_rec(li_m2))
-        m2b = m2r.space_check(210)
-        m2a = m2r.width_check(M2_MIN_W)
-        print(f'  Quick DRC: M2.b={m2b.count()}, M2.a={m2a.count()}')
-
+    quick_drc(ly, cell)
     return out_path
 
 

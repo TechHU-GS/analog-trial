@@ -369,13 +369,64 @@ VCO 5-stage + digital: 已有 GDS
 - `no_simplify=true` 是关键设置 (默认 SIMPLIFY=true 会合并 schematic parallel devices)
   参数名: `-rd no_simplify=true`
 
-**BLOCKED: LVS analog-only 无法 match, 根因是 PCell multi-finger 提取 vs schematic 表示不一致。
-需要重新生成带 PCell hierarchy 的 GDS, 或找到正确的 finger count 映射。**
+**BLOCKED → UNBLOCKED: PCell instantiation 路线验证成功 (Session 12, 2026-03-23)**
+
+### PCell instantiation proof-of-concept: bias_mn ✅
+- 问题回顾: flat GDS 提取 → 无 PCell hierarchy → extractor 每个 gate poly = 独立 device → LVS device count 不匹配
+- 解法: 用 KLayout PCell API `ly.create_cell("nmos", "SG13_dev", {"l": 2e-6, "w": 1e-6, "ng": 1})` 替代从 soilz_bare.gds 切割
+- **build_bias_mn.py 完全重写**: 不再读 flat GDS，直接 PCell instantiation + routing
+- 验证结果 (全部实际运行):
+  - PCell 正确生成 2 个 nmos sub-cell instance（GDS 有 hierarchy）
+  - CI DRC = 0 ✅ (命令: `klayout -n sg13g2 -zz -r ihp-sg13g2.drc`)
+  - Quick DRC M1/M2 = 0 ✅
+  - IHP LVS: **Device 2/2 sg13_lv_nmos W=1 L=2, Net 3/3 完全匹配, PASS** ✅
+    (命令: `klayout -n sg13g2 -zz -r sg13g2.lvs -rd no_simplify=true -rd allow_unmatched_ports=true`)
+  - `allow_unmatched_ports=true` 因为模块级没有 pin label，全芯片不需要
+- PCell API: `ly.create_cell("nmos"/"pmos", "SG13_dev", {"l": meters, "w": meters, "ng": int})`
+- 设备参数来源: `sim/_soilz_full.sp` (ground truth)
+- **关键发现**: PCell GDS 有 hierarchy (bias_mn → 2× nmos instance)，LVS 正确识别 device
+
+### 关键发现：PCell multi-finger gate poly 也是分离的！(2026-03-23 12:45)
+- 实际测试: PCell ng=4 生成 4 个 SEPARATE gate poly bar (gaps=380nm)
+- **PCell 不会合并 gate finger** — 和 flat Magic GDS 一样
+- 但 PCell 保证 finger count = ng（flat Magic GDS 可能不一致）
+- **正确的 LVS 方法 (已验证 PASS)**:
+  1. PCell instantiation → ng=N 生成 N 个 gate bar（可预测）
+  2. Routing 连接所有 S strips (M2 bus), D strips (M2 bus), gate bars (M1 bus)
+  3. Schematic 展开: ng=N device → N 个 W=W_total/N device（`no_simplify=true`）
+  4. LVS S/D symmetric matching 自动处理 interleaved S/D
+  5. 测试: nmos W=10u L=2u ng=4 → 4 devices extracted W=2.5 L=2 → **Congratulations! Netlists match.** ✅
+
+### chopper PCell 化 ⚠️ (DRC=0 但 LVS routing 未完成)
+- PCell instantiation + placement 成功
+- CI DRC = 0
+- LVS: NMOS S/D 和 PMOS S/D 未连通 (TG 结构需要 NMOS.S↔PMOS.S 连接)
+- 需要补完 TG 内跨器件 routing
+
+### Flat GDS finger count probe (2026-03-23 13:20)
+- 直接从 soilz_bare.gds probe 每个 multi-finger device 的实际 gate bar 数
+- **结果: 所有 NMOS 的 actual bars = ng（完全一致）**
+- **PMOS 全部 actual = ng+1**（可能是 dummy gate 或 search box 抓到邻居 poly）
+- 但 LVS extractor 只提取真正的 gate（不含 dummy），所以 PMOS 展开仍用 ng
+
+### Expanded schematic LVS (2026-03-23 13:22)
+- soilz_lvs_expanded.spice: 所有 ng>1 device 拆成 ng 个 W=W/ng device
+- LVS 结果: **device gap = 16** (layout 171 vs schematic 185)
+- 具体差异:
+  | W | L | Layout | Schem | Diff | 可能来源 |
+  |---|---|--------|-------|------|---------|
+  | nmos 2.0 | 0.5 | 24 | 28 | -4 | MS1-4 multiplexer |
+  | nmos 2.0 | 4.0 | 2 | 9 | -7 | Mtail/Mbias 参数不匹配 |
+  | nmos 2.5 | 2.0 | 7 | 8 | -1 | Min_p/n finger |
+  | pmos 0.5 | 2.0 | 42 | 41 | +1 | VCO pmos extra bar |
+  | pmos 0.5 | 10.0 | 0 | 4 | -4 | PM_ref/PM5 W/L 不匹配 |
+  | pmos 2.0 | 10.0 | 2 | 3 | -1 | PM_mir3 |
+- 最大 gap 来源: nmos W=2 L=4 差 7（layout 提取 W/L 和 SPICE 标注不一致，类似之前 device_lib.json L=50u vs 实际 L=10u）
 
 ### 下一步
-1. **LVS**: 需要解决 multi-finger 问题 — 可能需要重新用 IHP PCell instantiation 生成 GDS (保留 hierarchy) 而不是从 flat soilz_bare.gds 提取
-2. **Power routing**: M5 层方案 (已有 TM1 bus, 需要 tap 连接)
-3. **缺失信号**: sum_n, vco5, pmos_bias
+1. **逐个排查 16-device gap**: 确认每个差异来源（W/L 不匹配 vs 缺失 device vs finger 数不对）
+2. **修正 schematic**: 调整 W/L 匹配 layout 实际提取值
+3. **Power routing**: M5 层方案
 4. **提交**: CI DRC=0 可以提交, 但功能不完整
 
 ### Floorplan 定稿 (final)

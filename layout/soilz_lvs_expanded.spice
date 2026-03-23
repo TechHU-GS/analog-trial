@@ -1,0 +1,212 @@
+.subckt soilz gnd vdd
+MPM3 net_c1 net_c1 vdd vdd sg13_lv_pmos w=0.5u l=10u ng=1 m=1
+MPM4 net_c2 net_c1 vdd vdd sg13_lv_pmos w=0.5u l=10u ng=1 m=1
+MMN1 net_c1 net_c1 0 0 sg13_lv_nmos w=2u l=4u ng=1 m=1
+* Expanded MMN2 ng=8 -> 8x w=2.0u
+MMN2_0 net_c2 net_c1 net_rptat 0 sg13_lv_nmos w=2.0u l=4u ng=1 m=1
+MMN2_1 net_rptat net_c1 net_c2 0 sg13_lv_nmos w=2.0u l=4u ng=1 m=1
+MMN2_2 net_c2 net_c1 net_rptat 0 sg13_lv_nmos w=2.0u l=4u ng=1 m=1
+MMN2_3 net_rptat net_c1 net_c2 0 sg13_lv_nmos w=2.0u l=4u ng=1 m=1
+MMN2_4 net_c2 net_c1 net_rptat 0 sg13_lv_nmos w=2.0u l=4u ng=1 m=1
+MMN2_5 net_rptat net_c1 net_c2 0 sg13_lv_nmos w=2.0u l=4u ng=1 m=1
+MMN2_6 net_c2 net_c1 net_rptat 0 sg13_lv_nmos w=2.0u l=4u ng=1 m=1
+MMN2_7 net_rptat net_c1 net_c2 0 sg13_lv_nmos w=2.0u l=4u ng=1 m=1
+RRptat net_rptat 0 0 rhigh w=0.5e-6 l=133.0e-6 b=12 m=1
+MPM_ref nmos_bias net_c1 vdd vdd sg13_lv_pmos w=0.5u l=10u ng=1 m=1
+MMN_diode nmos_bias nmos_bias 0 0 sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMN_pgen pmos_bias nmos_bias 0 0 sg13_lv_nmos w=1u l=2u ng=1 m=1
+MPM_pdiode pmos_bias pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MPM5 vptat net_c1 vdd vdd sg13_lv_pmos w=0.5u l=10u ng=1 m=1
+RRout vptat 0 0 rppd w=0.5e-6 l=25.0e-6 b=4 m=1
+* Expanded MMpb1 ng=8 -> 8x w=0.5u
+MMpb1_0 ns1 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_1 vdd pmos_bias ns1 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_2 ns1 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_3 vdd pmos_bias ns1 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_4 ns1 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_5 vdd pmos_bias ns1 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_6 ns1 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb1_7 vdd pmos_bias ns1 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpu1 vco1 vco5 ns1 vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMpd1 vco1 vco5 nb1 0 sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+* Expanded MMnb1 ng=8 -> 8x w=1.0u
+MMnb1_0 nb1 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb1_1 0 nmos_bias nb1 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb1_2 nb1 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb1_3 0 nmos_bias nb1 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb1_4 nb1 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb1_5 0 nmos_bias nb1 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb1_6 nb1 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb1_7 0 nmos_bias nb1 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+* Expanded MMpb2 ng=8 -> 8x w=0.5u
+MMpb2_0 ns2 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_1 vdd pmos_bias ns2 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_2 ns2 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_3 vdd pmos_bias ns2 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_4 ns2 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_5 vdd pmos_bias ns2 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_6 ns2 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb2_7 vdd pmos_bias ns2 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpu2 vco2 vco1 ns2 vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMpd2 vco2 vco1 nb2 0 sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+* Expanded MMnb2 ng=8 -> 8x w=1.0u
+MMnb2_0 nb2 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb2_1 0 nmos_bias nb2 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb2_2 nb2 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb2_3 0 nmos_bias nb2 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb2_4 nb2 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb2_5 0 nmos_bias nb2 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb2_6 nb2 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb2_7 0 nmos_bias nb2 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+* Expanded MMpb3 ng=8 -> 8x w=0.5u
+MMpb3_0 ns3 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_1 vdd pmos_bias ns3 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_2 ns3 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_3 vdd pmos_bias ns3 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_4 ns3 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_5 vdd pmos_bias ns3 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_6 ns3 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb3_7 vdd pmos_bias ns3 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpu3 vco3 vco2 ns3 vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMpd3 vco3 vco2 nb3 0 sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+* Expanded MMnb3 ng=8 -> 8x w=1.0u
+MMnb3_0 nb3 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb3_1 0 nmos_bias nb3 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb3_2 nb3 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb3_3 0 nmos_bias nb3 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb3_4 nb3 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb3_5 0 nmos_bias nb3 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb3_6 nb3 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb3_7 0 nmos_bias nb3 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+* Expanded MMpb4 ng=8 -> 8x w=0.5u
+MMpb4_0 ns4 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_1 vdd pmos_bias ns4 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_2 ns4 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_3 vdd pmos_bias ns4 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_4 ns4 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_5 vdd pmos_bias ns4 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_6 ns4 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb4_7 vdd pmos_bias ns4 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpu4 vco4 vco3 ns4 vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMpd4 vco4 vco3 nb4 0 sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+* Expanded MMnb4 ng=8 -> 8x w=1.0u
+MMnb4_0 nb4 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb4_1 0 nmos_bias nb4 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb4_2 nb4 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb4_3 0 nmos_bias nb4 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb4_4 nb4 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb4_5 0 nmos_bias nb4 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb4_6 nb4 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb4_7 0 nmos_bias nb4 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+* Expanded MMpb5 ng=8 -> 8x w=0.5u
+MMpb5_0 ns5 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_1 vdd pmos_bias ns5 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_2 ns5 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_3 vdd pmos_bias ns5 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_4 ns5 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_5 vdd pmos_bias ns5 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_6 ns5 pmos_bias vdd vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpb5_7 vdd pmos_bias ns5 vdd sg13_lv_pmos w=0.5u l=2u ng=1 m=1
+MMpu5 vco5 vco4 ns5 vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMpd5 vco5 vco4 nb5 0 sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+* Expanded MMnb5 ng=8 -> 8x w=1.0u
+MMnb5_0 nb5 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb5_1 0 nmos_bias nb5 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb5_2 nb5 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb5_3 0 nmos_bias nb5 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb5_4 nb5 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb5_5 0 nmos_bias nb5 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb5_6 nb5 nmos_bias 0 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMnb5_7 0 nmos_bias nb5 0 sg13_lv_nmos w=1.0u l=2u ng=1 m=1
+MMBp1 buf1 vco5 vdd vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+MMBn1 buf1 vco5 0 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+* Expanded MMBp2 ng=2 -> 2x w=4.0u
+MMBp2_0 vco_out buf1 vdd vdd sg13_lv_pmos w=4.0u l=0.5u ng=1 m=1
+MMBp2_1 vdd buf1 vco_out vdd sg13_lv_pmos w=4.0u l=0.5u ng=1 m=1
+* Expanded MMBn2 ng=2 -> 2x w=2.0u
+MMBn2_0 vco_out buf1 0 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MMBn2_1 0 buf1 vco_out 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MPM_cas_ref cas_ref net_c1 vdd vdd sg13_lv_pmos w=1u l=10u ng=1 m=1
+MPM_cas_diode vcas vcas cas_ref vdd sg13_lv_pmos w=1u l=2u ng=1 m=1
+MMN_cas_load vcas vcas 0 0 sg13_lv_nmos w=0.5u l=2u ng=1 m=1
+MPM_mir1 cas1 net_c1 vdd vdd sg13_lv_pmos w=1u l=10u ng=1 m=1
+MPM_cas1 src1 vcas cas1 vdd sg13_lv_pmos w=1u l=2u ng=1 m=1
+MPM_mir2 cas2 net_c1 vdd vdd sg13_lv_pmos w=2u l=10u ng=1 m=1
+MPM_cas2 src2 vcas cas2 vdd sg13_lv_pmos w=2u l=2u ng=1 m=1
+* Expanded MPM_mir3 ng=2 -> 2x w=2.0u
+MPM_mir3_0 cas3 net_c1 vdd vdd sg13_lv_pmos w=2.0u l=10u ng=1 m=1
+MPM_mir3_1 vdd net_c1 cas3 vdd sg13_lv_pmos w=2.0u l=10u ng=1 m=1
+* Expanded MPM_cas3 ng=2 -> 2x w=2.0u
+MPM_cas3_0 src3 vcas cas3 vdd sg13_lv_pmos w=2.0u l=2u ng=1 m=1
+MPM_cas3_1 cas3 vcas src3 vdd sg13_lv_pmos w=2.0u l=2u ng=1 m=1
+MSW1n src1 sel0 exc_out 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MSW1p src1 sel0b exc_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+MSW2n src2 sel1 exc_out 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MSW2p src2 sel1b exc_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+MSW3n src3 sel2 exc_out 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MSW3p src3 sel2b exc_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+* Expanded MMS1 ng=2 -> 2x w=2.0u
+MMS1_0 exc_out phi_p probe_p 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MMS1_1 probe_p phi_p exc_out 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+* Expanded MMS2 ng=2 -> 2x w=2.0u
+MMS2_0 0 phi_n probe_p 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MMS2_1 probe_p phi_n 0 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+* Expanded MMS3 ng=2 -> 2x w=2.0u
+MMS3_0 exc_out phi_n probe_n 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MMS3_1 probe_n phi_n exc_out 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+* Expanded MMS4 ng=2 -> 2x w=2.0u
+MMS4_0 0 phi_p probe_n 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MMS4_1 probe_n phi_p 0 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MMchop1n sens_p f_exc chop_out 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMchop1p sens_p f_exc_b chop_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+MMchop2n sens_n f_exc_b chop_out 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMchop2p sens_n f_exc chop_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+MMbias_d bias_n bias_n 0 0 sg13_lv_nmos w=4u l=4u ng=1 m=1
+MMp_load_p mid_p mid_p vdd vdd sg13_lv_pmos w=4u l=4u ng=1 m=1
+MMp_load_n ota_out mid_p vdd vdd sg13_lv_pmos w=4u l=4u ng=1 m=1
+* Expanded MMin_p ng=4 -> 4x w=2.5u
+MMin_p_0 mid_p vref_ota tail 0 sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_p_1 tail vref_ota mid_p 0 sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_p_2 mid_p vref_ota tail 0 sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_p_3 tail vref_ota mid_p 0 sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+* Expanded MMin_n ng=4 -> 4x w=2.5u
+MMin_n_0 ota_out sum_n tail 0 sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_n_1 tail sum_n ota_out 0 sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_n_2 ota_out sum_n tail 0 sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+MMin_n_3 tail sum_n ota_out 0 sg13_lv_nmos w=2.5u l=2u ng=1 m=1
+* Expanded MMtail ng=2 -> 2x w=4.0u
+MMtail_0 tail bias_n 0 0 sg13_lv_nmos w=4.0u l=4u ng=1 m=1
+MMtail_1 0 bias_n tail 0 sg13_lv_nmos w=4.0u l=4u ng=1 m=1
+* Expanded MMc_tail ng=2 -> 2x w=2.0u
+MMc_tail_0 c_tail comp_clk 0 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MMc_tail_1 0 comp_clk c_tail 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+* Expanded MMc_inp ng=2 -> 2x w=2.0u
+MMc_inp_0 c_di_p ota_out c_tail 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MMc_inp_1 c_tail ota_out c_di_p 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+* Expanded MMc_inn ng=2 -> 2x w=2.0u
+MMc_inn_0 c_di_n vref_comp c_tail 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MMc_inn_1 c_tail vref_comp c_di_n 0 sg13_lv_nmos w=2.0u l=0.5u ng=1 m=1
+MMc_rst_dp c_di_p comp_clk vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMc_rst_dn c_di_n comp_clk vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMc_ln1 comp_outp comp_outn c_di_p 0 sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+MMc_ln2 comp_outn comp_outp c_di_n 0 sg13_lv_nmos w=1u l=0.5u ng=1 m=1
+MMc_lp1 comp_outp comp_outn vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+MMc_lp2 comp_outn comp_outp vdd vdd sg13_lv_pmos w=1u l=0.5u ng=1 m=1
+MMc_rst_op comp_outp comp_clk vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMc_rst_on comp_outn comp_clk vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMn1a n1_mid comp_outp 0 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMp1a lat_q comp_outp vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMn1b lat_q lat_qb n1_mid 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMp1b lat_q lat_qb vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMn2a n2_mid comp_outn 0 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMp2a lat_qb comp_outn vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMn2b lat_qb lat_q n2_mid 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMp2b lat_qb lat_q vdd vdd sg13_lv_pmos w=2u l=0.5u ng=1 m=1
+MMdac_tg1n dac_hi lat_q dac_out 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMdac_tg1p dac_hi lat_qb dac_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+MMdac_tg2n dac_lo lat_qb dac_out 0 sg13_lv_nmos w=2u l=0.5u ng=1 m=1
+MMdac_tg2p dac_lo lat_q dac_out vdd sg13_lv_pmos w=4u l=0.5u ng=1 m=1
+RRin chop_out sum_n 0 rhigh w=0.5e-6 l=20.0e-6 b=2 m=1
+RRdac dac_out sum_n 0 rhigh w=0.5e-6 l=20.0e-6 b=2 m=1
+CC_fb ota_out sum_n cap_cmim w=26.0e-6 l=26.0e-6 m=1
+.ends soilz

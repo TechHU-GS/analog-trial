@@ -1,22 +1,14 @@
 #!/usr/bin/env python3
-"""Build BIAS MN module with complete routing.
+"""Build BIAS MN module — PCell instantiation + routing.
 
 Circuit:
     MN_diode: S=gnd, D=nmos_bias, G=nmos_bias (diode-connected)
     MN_pgen:  S=gnd, G=nmos_bias, D=pmos_bias
 
-Layout (existing bias_mn.gds):
-    MN_diode (left):  Activ (0.00,0.18)-(2.68,1.18), S strip x=0.07-0.23, D strip x=2.45-2.61
-    MN_pgen  (right): Activ (5.68,0.18)-(8.36,1.18), S strip x=5.75-5.91, D strip x=8.13-8.29
-    Ptap ties: left (0-0.50), right (6.0-6.50) at y=-1.50 to -1.00
-
-Routing plan:
-    1. GND bus: M1 bar connecting ptap ties + source strip extensions
-    2. Gate poly extensions (500nm below active)
-    3. Gate contacts + M1 pads
-    4. Diode connection: M1 bridge from MN_diode.D to gate contact
-    5. nmos_bias M2 route: Via1+M2 connecting MN_diode diode to MN_pgen gate
-    6. pmos_bias: MN_pgen.D strip (leave as-is for assembly)
+Uses IHP SG13G2 PCell API (not flat GDS extraction).
+Device params from sim/_soilz_full.sp:
+    MN_diode: sg13_lv_nmos W=1u L=2u ng=1
+    MN_pgen:  sg13_lv_nmos W=1u L=2u ng=1
 
 Usage:
     cd layout && source ~/pdk/venv/bin/activate
@@ -25,10 +17,8 @@ Usage:
 
 import klayout.db as pya
 import os
-import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-LAYOUT_DIR = os.path.dirname(SCRIPT_DIR)
 OUT_DIR = os.path.join(SCRIPT_DIR, 'output')
 
 # Layer definitions (IHP SG13G2)
@@ -36,8 +26,8 @@ ACTIV = (1, 0)
 GATPOLY = (5, 0)
 CONT = (6, 0)
 M1 = (8, 0)
-M2 = (10, 0)
 PSD = (14, 0)
+M2 = (10, 0)
 VIA1 = (19, 0)
 
 # DRC rule values (nm)
@@ -45,160 +35,241 @@ M1_MIN_W = 160
 M1_MIN_S = 180
 M2_MIN_W = 210
 M2_MIN_S = 210
-GAT_D = 70      # poly enclosure of contact
-CNT_A = 160     # contact size
-CNT_C = 70      # M1 enclosure of contact
-VIA1_SIZE = 190  # Via1 size
-VIA1_M1_ENC = 60  # M1 enclosure of Via1
-
-
-def nm(um_val):
-    """Convert um to nm (integer for KLayout)."""
-    return int(round(um_val * 1000))
+CNT_A = 160
+VIA1_SIZE = 190
 
 
 def box(x1, y1, x2, y2):
-    """Create Box from nm coordinates."""
     return pya.Box(x1, y1, x2, y2)
 
 
+def probe_strips(pcell, ly, layer_pair):
+    """Find S/D strip bboxes in PCell (tall M1 rectangles), sorted by x."""
+    li = ly.find_layer(*layer_pair)
+    if li is None:
+        return []
+    strips = []
+    for si in pcell.begin_shapes_rec(li):
+        b = si.shape().bbox()
+        if b.height() > 500:  # S/D strips are tall
+            strips.append(b)
+    strips.sort(key=lambda b: b.left)
+    return strips
+
+
+def probe_gates(pcell, ly):
+    """Find gate poly bboxes in PCell (tall poly crossing active), sorted by x."""
+    li = ly.find_layer(*GATPOLY)
+    if li is None:
+        return []
+    gates = []
+    for si in pcell.begin_shapes_rec(li):
+        b = si.shape().bbox()
+        if b.height() > 500:
+            gates.append(b)
+    gates.sort(key=lambda b: b.left)
+    return gates
+
+
 def build():
-    # Load existing bias_mn.gds (has PCells + ties)
+    print('=== Building BIAS MN (PCell instantiation) ===')
+
     ly = pya.Layout()
     ly.dbu = 0.001
-    gds_path = os.path.join(OUT_DIR, 'bias_mn.gds')
-    ly.read(gds_path)
-    cell = ly.top_cell()
+    cell = ly.create_cell('bias_mn')
 
-    # Get/create layers
+    # ─── Step 1: Create NMOS PCell ───
+    print('\n--- Step 1: PCell creation ---')
+    pcell = ly.create_cell("nmos", "SG13_dev", {
+        "l": 2e-6,   # L=2um
+        "w": 1e-6,   # W=1um
+        "ng": 1
+    })
+
+    bb = pcell.bbox()
+    print(f'  PCell bbox: ({bb.left},{bb.bottom})-({bb.right},{bb.top})')
+    print(f'  PCell size: {bb.width()/1000:.1f}x{bb.height()/1000:.1f}um')
+
+    # Probe PCell geometry
+    m1_strips = probe_strips(pcell, ly, M1)
+    gates = probe_gates(pcell, ly)
+    print(f'  M1 strips: {len(m1_strips)}')
+    for i, s in enumerate(m1_strips):
+        print(f'    [{i}] ({s.left},{s.bottom})-({s.right},{s.top})')
+    print(f'  Gate polys: {len(gates)}')
+    for i, g in enumerate(gates):
+        print(f'    [{i}] ({g.left},{g.bottom})-({g.right},{g.top})')
+
+    if len(m1_strips) < 2 or len(gates) < 1:
+        print('  ERROR: PCell geometry unexpected, aborting')
+        return None
+
+    # S = leftmost strip, D = rightmost strip, G = gate
+    s_strip = m1_strips[0]
+    d_strip = m1_strips[-1]
+    gate = gates[0]
+
+    # ─── Step 2: Place devices ───
+    print('\n--- Step 2: Place MN_diode + MN_pgen ---')
+
+    # Offset to place PCell origin at (0,0) relative to its bottom-left
+    ox = -bb.left
+    oy = -bb.bottom
+
+    gap = 3000  # nm gap between devices
+    x_pgen = bb.width() + gap  # x offset for second device
+
+    cell.insert(pya.CellInstArray(pcell.cell_index(),
+                pya.Trans(0, False, ox, oy)))
+    cell.insert(pya.CellInstArray(pcell.cell_index(),
+                pya.Trans(0, False, ox + x_pgen, oy)))
+
+    # Absolute coordinates helper
+    def abs_d(rel_box):
+        """Absolute coords for MN_diode (first instance)."""
+        return (rel_box.left + ox, rel_box.right + ox,
+                rel_box.bottom + oy, rel_box.top + oy)
+
+    def abs_p(rel_box):
+        """Absolute coords for MN_pgen (second instance)."""
+        return (rel_box.left + ox + x_pgen, rel_box.right + ox + x_pgen,
+                rel_box.bottom + oy, rel_box.top + oy)
+
+    sd = abs_d(s_strip)  # MN_diode source (xl, xr, yb, yt)
+    dd = abs_d(d_strip)  # MN_diode drain
+    gd = abs_d(gate)     # MN_diode gate
+
+    sp = abs_p(s_strip)  # MN_pgen source
+    dp = abs_p(d_strip)  # MN_pgen drain
+    gp = abs_p(gate)     # MN_pgen gate
+
+    print(f'  MN_diode: S=x({sd[0]}-{sd[1]}), D=x({dd[0]}-{dd[1]}), G=x({gd[0]}-{gd[1]})')
+    print(f'  MN_pgen:  S=x({sp[0]}-{sp[1]}), D=x({dp[0]}-{dp[1]}), G=x({gp[0]}-{gp[1]})')
+
+    # ─── Step 3: Ptap ties + GND bus ───
+    print('\n--- Step 3: Ptap ties + GND bus ---')
     l_m1 = ly.layer(*M1)
+    l_activ = ly.layer(*ACTIV)
+    l_cont = ly.layer(*CONT)
+    l_psd = ly.layer(*PSD)
+    l_poly = ly.layer(*GATPOLY)
     l_m2 = ly.layer(*M2)
     l_via1 = ly.layer(*VIA1)
-    l_poly = ly.layer(*GATPOLY)
-    l_cont = ly.layer(*CONT)
 
-    print('=== Building BIAS MN routing ===')
-    bb = cell.bbox()
-    print(f'  Input: {bb.width()/1000:.1f}x{bb.height()/1000:.1f}um')
+    total_w = bb.width() + x_pgen  # full module width
+    ptap_y1 = -1500
+    ptap_y2 = -1000
 
-    # ─── Step 1: GND source bus ───
-    print('\n--- Step 1: GND source bus ---')
+    # GND M1 bus
+    cell.shapes(l_m1).insert(box(0, ptap_y1, total_w, ptap_y2))
+    print(f'  GND bus: (0,{ptap_y1})-({total_w},{ptap_y2})')
 
-    # M1 GND bar connecting both ptap ties
-    cell.shapes(l_m1).insert(box(0, -1500, 6500, -1000))
+    # Two ptap ties (centered under each device)
+    dev_cx_d = (sd[0] + dd[1]) // 2  # center of MN_diode
+    dev_cx_p = (sp[0] + dp[1]) // 2  # center of MN_pgen
+    for ptap_cx in [dev_cx_d, dev_cx_p]:
+        cell.shapes(l_activ).insert(box(ptap_cx - 250, ptap_y1, ptap_cx + 250, ptap_y2))
+        cell.shapes(l_m1).insert(box(ptap_cx - 250, ptap_y1, ptap_cx + 250, ptap_y2))
+        cell.shapes(l_psd).insert(box(ptap_cx - 350, ptap_y1 - 100, ptap_cx + 350, ptap_y2 + 100))
+        cell.shapes(l_cont).insert(box(ptap_cx - 80, (ptap_y1 + ptap_y2) // 2 - 80,
+                                       ptap_cx + 80, (ptap_y1 + ptap_y2) // 2 + 80))
 
     # Source strip extensions down to GND bar
-    cell.shapes(l_m1).insert(box(70, -1000, 230, 180))     # MN_diode.S
-    cell.shapes(l_m1).insert(box(5750, -1000, 5910, 180))  # MN_pgen.S
+    cell.shapes(l_m1).insert(box(sd[0], ptap_y2, sd[1], sd[2]))  # MN_diode.S
+    cell.shapes(l_m1).insert(box(sp[0], ptap_y2, sp[1], sp[2]))  # MN_pgen.S
+    print(f'  Source ext MN_diode: x=({sd[0]}-{sd[1]})')
+    print(f'  Source ext MN_pgen: x=({sp[0]}-{sp[1]})')
 
-    print('  GND bar: (0,-1.50)-(6.50,-1.00)')
-    print('  Source ext MN_diode: (0.07,-1.00)-(0.23,0.18)')
-    print('  Source ext MN_pgen: (5.75,-1.00)-(5.91,0.18)')
+    # ─── Step 4: Gate poly extensions + contacts ───
+    print('\n--- Step 4: Gate contacts ---')
 
-    # ─── Step 2: Gate poly extensions ───
-    print('\n--- Step 2: Gate poly extensions ---')
+    gate_bot = gd[2]  # bottom of gate poly (abs)
+    ext_bot = gate_bot - 500  # extend 500nm down
+    gate_w = gate.width()
+    gcx_d = (gd[0] + gd[1]) // 2  # gate center x for MN_diode
+    gcx_p = (gp[0] + gp[1]) // 2  # gate center x for MN_pgen
 
-    # Extend GatPoly 500nm below existing (existing ends at y=0)
-    cell.shapes(l_poly).insert(box(340, -500, 2340, 0))    # MN_diode
-    cell.shapes(l_poly).insert(box(6020, -500, 8020, 0))   # MN_pgen
+    # Poly extensions
+    cell.shapes(l_poly).insert(box(gcx_d - gate_w // 2, ext_bot, gcx_d + gate_w // 2, gate_bot))
+    cell.shapes(l_poly).insert(box(gcx_p - gate_w // 2, ext_bot, gcx_p + gate_w // 2, gate_bot))
 
-    print('  MN_diode poly ext: (0.34,-0.50)-(2.34,0.00)')
-    print('  MN_pgen poly ext: (6.02,-0.50)-(8.02,0.00)')
+    # Gate contacts + M1 pads
+    cont_cy = ext_bot + 250  # center of contact in extension
+    for gcx in [gcx_d, gcx_p]:
+        cell.shapes(l_cont).insert(box(gcx - 80, cont_cy - 80, gcx + 80, cont_cy + 80))
+        cell.shapes(l_m1).insert(box(gcx - 155, cont_cy - 155, gcx + 155, cont_cy + 155))
+    print(f'  Gate contacts at y≈{cont_cy}, MN_diode x={gcx_d}, MN_pgen x={gcx_p}')
 
-    # ─── Step 3: Gate contacts + M1 pads ───
-    print('\n--- Step 3: Gate contacts + M1 pads ---')
+    # ─── Step 5: Diode connection (MN_diode.D ↔ G via M1) ───
+    print('\n--- Step 5: Diode connection ---')
+    pad_y1 = cont_cy - 155
+    pad_y2 = cont_cy + 155
+    # M1 bridge from gate pad to drain strip
+    cell.shapes(l_m1).insert(box(gcx_d - 155, pad_y1, dd[1], pad_y2))
+    # Drain strip extension down to bridge
+    cell.shapes(l_m1).insert(box(dd[0], pad_y2, dd[1], dd[2]))
+    print(f'  M1 bridge: ({gcx_d - 155},{pad_y1})-({dd[1]},{pad_y2})')
 
-    # MN_diode gate contact (on poly extension, centered)
-    # Contact: 160x160nm at center of poly X, y≈-250nm
-    cont_d_x = 1240  # center of poly (340+2340)/2 - 80
-    cont_d_y = -330
-    cell.shapes(l_cont).insert(box(cont_d_x, cont_d_y,
-                                   cont_d_x + CNT_A, cont_d_y + CNT_A))
-    # M1 pad: 310x310nm, centered on contact
-    pad_d_x = cont_d_x - CNT_C  # 1240 - 70 = 1170... let me recalculate
-    # Contact: (1240, -330, 1400, -170). M1 pad enclosure 75nm all sides:
-    pad_d = box(1240 - 75, -330 - 75, 1400 + 75, -170 + 75)  # (1165,-405,1475,-95)
-    cell.shapes(l_m1).insert(pad_d)
+    # ─── Step 6: nmos_bias M2 route ───
+    print('\n--- Step 6: nmos_bias M2 route ---')
 
-    print(f'  MN_diode gate Cont: ({cont_d_x/1000:.3f},{cont_d_y/1000:.3f})')
-    print(f'  MN_diode gate M1 pad: {pad_d}')
-
-    # MN_pgen gate contact
-    cont_p_x = 6920
-    cont_p_y = -330
-    cell.shapes(l_cont).insert(box(cont_p_x, cont_p_y,
-                                   cont_p_x + CNT_A, cont_p_y + CNT_A))
-    pad_p = box(6920 - 75, -330 - 75, 7080 + 75, -170 + 75)  # (6845,-405,7155,-95)
-    cell.shapes(l_m1).insert(pad_p)
-
-    print(f'  MN_pgen gate Cont: ({cont_p_x/1000:.3f},{cont_p_y/1000:.3f})')
-    print(f'  MN_pgen gate M1 pad: {pad_p}')
-
-    # ─── Step 4: Diode connection (MN_diode.D ↔ G via M1) ───
-    print('\n--- Step 4: Diode connection ---')
-
-    # Extend drain strip down and bridge to gate contact pad
-    # Drain strip is at (2450, 180)-(2610, 1180)
-    # Gate M1 pad is at (1165, -405)-(1475, -95)
-    # Bridge: horizontal M1 from gate pad right edge to drain strip, at gate pad Y
-    cell.shapes(l_m1).insert(box(1165, -405, 2610, -95))  # horizontal bridge
-    cell.shapes(l_m1).insert(box(2450, -95, 2610, 180))   # drain extension to bridge
-
-    print('  M1 bridge: (1.165,-0.405)-(2.610,-0.095)')
-    print('  Drain ext: (2.450,-0.095)-(2.610,0.180)')
-
-    # ─── Step 5: nmos_bias M2 route ───
-    print('\n--- Step 5: nmos_bias M2 route ---')
-
-    # Via1 on diode bridge (connects to M2)
-    # Place at center of bridge, y centered at -250
-    via1_d_x = 1900
-    via1_d_y = -345
-    cell.shapes(l_via1).insert(box(via1_d_x, via1_d_y,
-                                   via1_d_x + VIA1_SIZE, via1_d_y + VIA1_SIZE))
-    print(f'  Via1 on bridge: ({via1_d_x/1000:.3f},{via1_d_y/1000:.3f})')
+    # Via1 on diode bridge (between gate and drain)
+    via1_d_x = (gcx_d + dd[0]) // 2 - VIA1_SIZE // 2
+    via1_y = cont_cy - VIA1_SIZE // 2
+    cell.shapes(l_via1).insert(box(via1_d_x, via1_y,
+                                   via1_d_x + VIA1_SIZE, via1_y + VIA1_SIZE))
 
     # Via1 on MN_pgen gate pad
-    via1_p_x = 6920
-    via1_p_y = -345
-    cell.shapes(l_via1).insert(box(via1_p_x, via1_p_y,
-                                   via1_p_x + VIA1_SIZE, via1_p_y + VIA1_SIZE))
-    print(f'  Via1 on MN_pgen gate: ({via1_p_x/1000:.3f},{via1_p_y/1000:.3f})')
+    via1_p_x = gcx_p - VIA1_SIZE // 2
+    cell.shapes(l_via1).insert(box(via1_p_x, via1_y,
+                                   via1_p_x + VIA1_SIZE, via1_y + VIA1_SIZE))
 
     # M2 route connecting both Via1s
-    # Via1_1: (1900,-345)-(2090,-155), Via1_2: (6920,-345)-(7110,-155)
-    # M2: 300nm wide bar covering both
-    m2_y1 = -345 - 55   # 55nm enclosure below Via1
-    m2_y2 = -155 + 55   # 55nm enclosure above Via1
-    m2_x1 = 1900 - 100  # 100nm enclosure left of Via1_1
-    m2_x2 = 7110 + 100  # 100nm enclosure right of Via1_2
+    m2_enc = 55  # M2 enclosure of Via1
+    m2_y1 = via1_y - m2_enc
+    m2_y2 = via1_y + VIA1_SIZE + m2_enc
+    m2_x1 = via1_d_x - 100
+    m2_x2 = via1_p_x + VIA1_SIZE + 100
     cell.shapes(l_m2).insert(box(m2_x1, m2_y1, m2_x2, m2_y2))
+    print(f'  Via1 diode: x={via1_d_x}, Via1 pgen: x={via1_p_x}')
+    print(f'  M2 nmos_bias: ({m2_x1},{m2_y1})-({m2_x2},{m2_y2})')
+    print(f'  M2 width: {(m2_y2 - m2_y1)/1000:.3f}um')
 
-    print(f'  M2 nmos_bias: ({m2_x1/1000:.3f},{m2_y1/1000:.3f})-({m2_x2/1000:.3f},{m2_y2/1000:.3f})')
-    print(f'  M2 width: {(m2_y2-m2_y1)/1000:.3f}um')
+    # ─── Step 7: Net labels (for LVS port matching) ───
+    print('\n--- Step 7: Net labels ---')
+    # GND on M1 bus
+    cell.shapes(l_m1).insert(pya.Text('gnd', pya.Trans(total_w // 2, (ptap_y1 + ptap_y2) // 2)))
+    # nmos_bias on M2 route
+    cell.shapes(l_m2).insert(pya.Text('nmos_bias', pya.Trans((m2_x1 + m2_x2) // 2, (m2_y1 + m2_y2) // 2)))
+    # pmos_bias on MN_pgen drain strip (M1)
+    cell.shapes(l_m1).insert(pya.Text('pmos_bias', pya.Trans((dp[0] + dp[1]) // 2, (dp[2] + dp[3]) // 2)))
+    print('  Labels: gnd(M1), nmos_bias(M2), pmos_bias(M1)')
 
     # ─── Output ───
     out_path = os.path.join(OUT_DIR, 'bias_mn.gds')
     ly.write(out_path)
 
-    bb = cell.bbox()
-    print(f'\n  Output: {bb.width()/1000:.1f}x{bb.height()/1000:.1f}um')
+    bb_out = cell.bbox()
+    print(f'\n  Output: {bb_out.width()/1000:.1f}x{bb_out.height()/1000:.1f}um')
     print(f'  Written: {out_path}')
 
-    # Quick M1 DRC checks
+    # ─── Quick DRC (on flattened copy) ───
+    flat = ly.create_cell('_drc_check')
+    flat.copy_tree(cell)
+    flat.flatten(True)
+
     li_m1 = ly.find_layer(*M1)
-    m1_region = pya.Region(cell.begin_shapes_rec(li_m1))
-    m1b = m1_region.space_check(M1_MIN_S)
-    m1a = m1_region.width_check(M1_MIN_W)
-    print(f'\n  Quick DRC: M1.b(space)={m1b.count()}, M1.a(width)={m1a.count()}')
+    m1_region = pya.Region(flat.begin_shapes_rec(li_m1))
+    print(f'\n  Quick DRC: M1.b(space)={m1_region.space_check(M1_MIN_S).count()}'
+          f', M1.a(width)={m1_region.width_check(M1_MIN_W).count()}')
 
     li_m2 = ly.find_layer(*M2)
     if li_m2 is not None:
-        m2_region = pya.Region(cell.begin_shapes_rec(li_m2))
-        m2b = m2_region.space_check(M2_MIN_S)
-        m2a = m2_region.width_check(M2_MIN_W)
-        print(f'  Quick DRC: M2.b(space)={m2b.count()}, M2.a(width)={m2a.count()}')
+        m2_region = pya.Region(flat.begin_shapes_rec(li_m2))
+        print(f'  Quick DRC: M2.b(space)={m2_region.space_check(M2_MIN_S).count()}'
+              f', M2.a(width)={m2_region.width_check(M2_MIN_W).count()}')
 
+    flat.delete()
     return out_path
 
 

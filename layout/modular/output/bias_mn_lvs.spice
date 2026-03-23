@@ -1,0 +1,9 @@
+* BIAS MN module — LVS schematic
+* From sim/_soilz_full.sp (ground truth)
+* MN_diode: diode-connected NMOS (G=D=nmos_bias, S=gnd)
+* MN_pgen:  NMOS current mirror (G=nmos_bias, S=gnd, D=pmos_bias)
+
+.subckt bias_mn gnd nmos_bias pmos_bias
+MMN_diode nmos_bias nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+MMN_pgen pmos_bias nmos_bias gnd gnd sg13_lv_nmos w=1u l=2u ng=1 m=1
+.ends bias_mn
