@@ -687,12 +687,50 @@ chopper(116.5,21) comp(168.5,52.5) dac_sw(184.5,23.5) digital(17,17.5) hbridge(1
 hbridge_drive(98.5,29) ota(136.5,34) ptat_core(60,83) rdac(160.5,79.5) rin(139,67)
 rout(159.5,88.5) rptat(58,106) sw(60.5,44) vco_5stage(58,2.5) vco_buffer(172,3.5)
 
+### Cap via stacks ✅ (2026-03-24 06:12)
+- `add_cap_connections.py`: 给 3 个 CMIM cap 各加 2 个 via stack (M5→Via4→M4→Via3→M3→Via2→M2)
+- 在 routing 之后运行，避免成为 obstacle
+- cbyp_n: T1(143.3,8.8)→nmos_bias, T2(147.9,13.4)→gnd
+- cbyp_p: T1(61.8,18.3)→pmos_bias, T2(66.4,22.9)→vdd
+- c_fb: T1(134.3,30.3)→sum_n, T2(159.9,55.9)→ota_out
+- CI DRC=0 ✅
+
+### Power routing v2 ✅ (2026-03-24 06:22)
+- `route_power_v2.py`: gdstk+shapely based, collision-aware
+- TM1 VDD bus at y=59.5um, GND bus at y=64.0um, 2.4um wide
+- TM1 buses notched around digital VPWR(30.5-32.7) and VGND(36.7-38.9) stripes
+- Via stacks (TM1→M2) at 10um intervals, 11 VDD + 14 GND, collision-checked against signal routes
+- Digital TM1 exclusion zones prevent via stack TM1 pads near digital stripes
+- No M5 bridges (digital block has internal power grid)
+- CI DRC = 0 ✅ (verified 2026-03-24 06:22)
+- ⚠️ Via stacks land at bus y level only — NOT yet connected to module ntap/ptap M1
+- ⚠️ Cap via stack net assignments unverified (LVS will test)
+
+### 完整 pipeline (verified 2026-03-24)
+```bash
+cd /Users/techhu/Code/GS_IC/designs/analog-trial/layout
+source ~/pdk/venv/bin/activate
+klayout -n sg13g2 -zz -r modular/build_passives_pcell.py  # 1. rebuild passives
+klayout -n sg13g2 -zz -r modular/add_passive_m2.py        # 2. resistor M2 pads
+klayout -n sg13g2 -zz -r modular/assemble.py              # 3. assemble 20 modules
+python3 modular/route_intermodule.py                       # 4. route 23 signals
+python3 modular/add_cap_connections.py                     # 5. cap via stacks
+python3 modular/route_power_v2.py                          # 6. TM1 power buses
+# DRC check:
+klayout -n sg13g2 -zz -r ~/pdk/IHP-Open-PDK/ihp-sg13g2/libs.tech/klayout/tech/drc/ihp-sg13g2.drc \
+  -rd input=$PWD/modular/output/soilz_routed.gds -rd cell=tt_um_techhu_analog_trial \
+  -rd report=$PWD/modular/output/soilz_routed_drc.lyrdb
+```
+
+### 工具清单 (Session 13 续)
+- `modular/add_cap_connections.py` — CMIM cap via stack (post-routing)
+- `modular/route_power_v2.py` — TM1 power buses + collision-aware via stacks
+- `modular/floorplan_server.py` — HTTP server for interactive layout + route test
+
 ### 下一步
-1. 修 V3.a (vco_buffer Via3 尺寸) → CI DRC=0
-2. Cap via stacks (routing 后加 cbyp_n/cbyp_p/c_fb 连接)
-3. Power routing (TM1 buses + via stacks)
-4. 全芯片 LVS pass
-5. 提交 TTIHP
+1. ⚠️ Power "last mile": via stack M2 → module ntap/ptap M1 连接
+2. 全芯片 LVS
+3. 提交 TTIHP
 
 ### 下一步
 1. 确认 hbridge build script 版本
