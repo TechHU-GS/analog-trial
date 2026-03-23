@@ -101,7 +101,7 @@ def route():
     # ─── Global nets ───
 
     # nmos_bias: all Mnb gates — poly bridge per device (below Active) + 1 Contact each
-    bias_n_y = dev_bot - 500
+    bias_n_y = g12 - 500  # in gap between Mnb and Mpd (safe from ptap at dev_bot-800)
     all_bias_n_x = []
     for i in range(1, 6):
         gates = D[f'Mnb{i}']['gates']

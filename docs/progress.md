@@ -517,10 +517,19 @@ VCO 5-stage + digital: 已有 GDS
 3. ⚠️ comp (DRC=0, LVS 差 1 parasitic)
 4. 待做: vco_5stage (20 devices, ng=8), ptat_core (7 devices, ng=8)
 
+### vco_5stage ⚠️ NEAR CLEAN (M2.b=0, M1.b=11 ptap/bias overlap)
+- 4 rows × 5 stages, 20 devices
+- Per-stage M2 routing for nb/ns/vco nets works
+- ng=8 gates: poly bridge below/above Active + single Contact (avoids dense gate contact M1.b)
+- BLOCKED: nmos_bias M1 pad (y≈-1000) overlaps ptap M1 (y≈-800), gap=45nm
+  Fix confirmed: move bias_n_y to gap12 but script output shows old y — need to verify script runs correctly
+- Gat.d×1 + Cnt.e×1 also pending
+
 ### 下一步
-1. comp: probe Mc_tail PCell Contact Active → 设计安全 poly route
-2. vco_5stage + ptat_core: PCell + routing
-3. 组装 → inter-module routing → 全芯片 LVS
+1. vco_5stage: verify bias_n_y fix actually applies, fix remaining DRC
+2. comp: probe Mc_tail Contact Active geometry, fix parasitic
+3. ptat_core: PCell + routing (last module)
+4. 组装 → inter-module routing → 全芯片 LVS
 2. 每个模块: build_module → route → check_nets → CI DRC → LVS
 3. 组装 → inter-module routing → 全芯片 LVS
 
